@@ -474,7 +474,7 @@ export default function Home() {
           marginBottom: "0.5rem"
         }}>
           <span style={{ fontSize: "0.8rem", fontWeight: "700", color: "#fff" }}>
-            📍 {showAllMatchDeaths ? "🔥 Тепловая карта смертей (весь матч)" : `Карта убийств — Раунд ${selectedRadarRoundIndex}`}
+            {showAllMatchDeaths ? "Тепловая карта смертей (весь матч)" : `Карта убийств — Раунд ${selectedRadarRoundIndex}`}
           </span>
           <button 
             onClick={() => {
@@ -627,21 +627,11 @@ export default function Home() {
                           <circle 
                             cx={atkX} 
                             cy={atkY} 
-                            r="14" 
+                            r="8" 
                             fill={isVicCT ? "rgba(255, 61, 0, 0.95)" : "rgba(0, 184, 212, 0.95)"} 
                             stroke="#fff" 
-                            strokeWidth="2" 
+                            strokeWidth="1.5" 
                           />
-                          <text 
-                            x={atkX} 
-                            y={atkY + 4} 
-                            fill="#fff" 
-                            fontSize="12" 
-                            fontWeight="bold" 
-                            textAnchor="middle"
-                          >
-                            ⚔️
-                          </text>
                           <title>{`${d.attackerName || "Игрок"} (${d.attackerTeam || "?"})`}</title>
                         </g>
                       )}
@@ -651,20 +641,20 @@ export default function Home() {
                         <circle 
                           cx={vicX} 
                           cy={vicY} 
-                          r="14" 
+                          r="11" 
                           fill={dotColor} 
                           stroke={strokeColor} 
-                          strokeWidth="2.5" 
+                          strokeWidth="2" 
                         />
                         <text 
                           x={vicX} 
-                          y={vicY + 4} 
+                          y={vicY + 3.5} 
                           fill="#fff" 
-                          fontSize="14" 
-                          fontWeight="black" 
+                          fontSize="10" 
+                          fontWeight="bold" 
                           textAnchor="middle"
                         >
-                          ☠️
+                          ✕
                         </text>
                         <title>{`${d.victimName || "Игрок"} (${d.victimTeam || "?"}) умер от ${d.weapon || "оружия"} от ${d.attackerName || "кого-то"}${d.headshot ? " (В голову)" : ""}`}</title>
                       </g>
@@ -685,7 +675,7 @@ export default function Home() {
             padding: "0.25rem 0",
             lineHeight: "1.4"
           }}>
-            🔥 Плотность свечения показывает места наиболее частых смертей за весь матч.<br />
+            Плотность свечения показывает места наиболее частых смертей за весь матч.<br />
             <span style={{ color: "var(--text-secondary)" }}>
               Кликни на любой раунд в таймлайне выше, чтобы посмотреть детальные траектории убийств.
             </span>
@@ -728,7 +718,7 @@ export default function Home() {
                   </div>
                   
                   <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", color: "var(--text-secondary)" }}>
-                    <span>⚔️ [{d.weapon || "weapon"}] {d.headshot ? "🎯" : ""} ➡️</span>
+                    <span>[{d.weapon || "weapon"}]{d.headshot ? " (HS)" : ""} ➔</span>
                   </div>
 
                   <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
@@ -2712,7 +2702,7 @@ export default function Home() {
                                 background: "linear-gradient(to bottom, var(--accent-purple), var(--accent-yellow))"
                               }} />
                               <div className="animate-pulse" style={{ fontSize: "0.85rem", color: "var(--accent-yellow)", fontWeight: "600" }}>
-                                ⚙️ Скачивание и анализ записи игры (демки) с FACEIT...
+                                Скачивание и анализ записи игры (демки) с FACEIT...
                               </div>
                               <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", textAlign: "center" }}>
                                 Это происходит только один раз при первом просмотре матча и занимает около 10-15 сек.
@@ -2741,7 +2731,7 @@ export default function Home() {
                                 background: "var(--accent-purple)"
                               }} />
                               <div style={{ fontSize: "0.8rem", fontWeight: "700", color: "var(--text-primary)", marginBottom: "0.5rem" }}>
-                                🛡️ Ход матча по раундам недоступен автоматически
+                                Ход матча по раундам недоступен автоматически
                               </div>
                               <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginBottom: "1rem", lineHeight: "1.4" }}>
                                 Faceit скрыл прямые ссылки на скачивание записей (они требуют временной подписи). Чтобы отобразить таймлайн раундов: кликни по кнопке «Скачать демо» на Faceit, скопируй ссылку из списка загрузок твоего браузера (Ctrl+J) и вставь её ниже:
@@ -2756,7 +2746,7 @@ export default function Home() {
                                   fontSize: "0.7rem",
                                   marginBottom: "1rem"
                                 }}>
-                                  ❌ Ошибка анализа: {roundHistory.error || "Не удалось скачать или распаковать демку."}
+                                  Ошибка анализа: {roundHistory.error || "Не удалось скачать или распаковать демку."}
                                 </div>
                               )}
                               <div style={{ display: "flex", gap: "0.5rem" }}>
@@ -2958,7 +2948,7 @@ export default function Home() {
                                     transition: "all 0.2s"
                                   }}
                                 >
-                                  🔥 {showAllMatchDeaths ? "Скрыть тепловую карту" : "Тепловая карта всего матча"}
+                                  {showAllMatchDeaths ? "Скрыть тепловую карту" : "Тепловая карта всего матча"}
                                 </button>
 
                                 <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", alignItems: "center" }}>
