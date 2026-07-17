@@ -2378,6 +2378,19 @@ export default function Home() {
                               <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginBottom: "1rem", lineHeight: "1.4" }}>
                                 Faceit скрыл прямые ссылки на скачивание записей (они требуют временной подписи). Чтобы отобразить таймлайн раундов: кликни по кнопке «Скачать демо» на Faceit, скопируй ссылку из списка загрузок твоего браузера (Ctrl+J) и вставь её ниже:
                               </div>
+                              {roundHistory && roundHistory.source === "error" && (
+                                <div style={{
+                                  background: "rgba(255, 61, 0, 0.05)",
+                                  border: "1px solid rgba(255, 61, 0, 0.15)",
+                                  borderRadius: "6px",
+                                  padding: "0.5rem 0.75rem",
+                                  color: "#ff5252",
+                                  fontSize: "0.7rem",
+                                  marginBottom: "1rem"
+                                }}>
+                                  ❌ Ошибка анализа: {roundHistory.error || "Не удалось скачать или распаковать демку."}
+                                </div>
+                              )}
                               <div style={{ display: "flex", gap: "0.5rem" }}>
                                 <input
                                   type="text"
