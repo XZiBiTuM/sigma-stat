@@ -383,9 +383,11 @@ export default function Home() {
       const rounds = data.rounds || [];
       setMatchDetails(rounds);
 
-      // Auto-load history for Map 1 (original index 0)
+      // Auto-load history for ALL maps simultaneously
       if (rounds.length > 0) {
-        loadRoundHistoryForMap(matchId, 0);
+        rounds.forEach((_: any, idx: number) => {
+          loadRoundHistoryForMap(matchId, idx);
+        });
       }
     } catch (err: any) {
       console.error(err);
@@ -2700,40 +2702,8 @@ export default function Home() {
                           }
                         };
 
-                        // Check if we attempted to load history yet
-                        const hasAttempted = !!roundHistory;
+                        // Check if we have timeline data
                         const hasRounds = roundHistory && roundHistory.rounds && roundHistory.rounds.length > 0;
-
-                        if (!hasAttempted && !isLoadingRoundHistory) {
-                          return (
-                            <div style={{
-                              padding: "1.25rem",
-                              background: "rgba(255, 255, 255, 0.01)",
-                              border: "1px solid var(--border-light)",
-                              borderRadius: "10px",
-                              marginBottom: "1.5rem",
-                              display: "flex",
-                              justifyContent: "center",
-                              alignItems: "center"
-                            }}>
-                              <button 
-                                onClick={() => loadRoundHistoryForMap(selectedMatchId!, originalMapIndex)}
-                                style={{
-                                  background: "linear-gradient(135deg, var(--accent-purple), var(--accent-cyan))",
-                                  border: "none",
-                                  borderRadius: "8px",
-                                  padding: "0.5rem 1.25rem",
-                                  color: "#fff",
-                                  fontSize: "0.75rem",
-                                  fontWeight: "600",
-                                  cursor: "pointer"
-                                }}
-                              >
-                                Анализировать ход игры по раундам
-                              </button>
-                            </div>
-                          );
-                        }
 
                         // Only show loading if we are fetching and have no cached data yet
                         if (isLoadingRoundHistory && !hasRounds) {
