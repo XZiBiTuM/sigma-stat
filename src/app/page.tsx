@@ -2042,7 +2042,7 @@ export default function Home() {
       {/* MODAL: MATCH DETAILS STATS */}
       {selectedMatchId && (
         <div className="modal-overlay" onClick={() => setSelectedMatchId(null)}>
-          <div className="modal-content glass-card" onClick={(e) => e.stopPropagation()} style={{ padding: "2rem" }}>
+          <div className="modal-content glass-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: "1000px", width: "100%", padding: "2rem" }}>
             <span className="modal-close-btn" onClick={() => setSelectedMatchId(null)}>✕</span>
             <ErrorBoundary>
 
@@ -3078,6 +3078,7 @@ export default function Home() {
                                     <th style={{ textAlign: "center" }}>K/D</th>
                                     <th style={{ textAlign: "center" }}>СУ/Р</th>
                                     <th style={{ textAlign: "center" }}>HS%</th>
+                                    <th style={{ textAlign: "center" }}>Rating</th>
                                     <th style={{ textAlign: "center" }}>MVP</th>
                                   </tr>
                                 </thead>
@@ -3095,6 +3096,17 @@ export default function Home() {
                                       const kd = parseFloat(p.player_stats?.["K/D Ratio"] || "0");
                                       const isMVP = parseInt(p.player_stats?.MVPs || "0") >= 3;
                                       const cleanAdr = parseFloat(p.player_stats?.ADR || "75");
+
+                                      // Calculate HLTV 2.0 Rating for each player in this match
+                                      const kills = parseInt(p.player_stats?.Kills || "0", 10);
+                                      const deaths = parseInt(p.player_stats?.Deaths || "0", 10);
+                                      const assists = parseInt(p.player_stats?.Assists || "0", 10);
+                                      const rounds = parseInt(round.round_stats?.Rounds || "24", 10);
+                                      const kpr = rounds > 0 ? kills / rounds : 0;
+                                      const dpr = rounds > 0 ? deaths / rounds : 0;
+                                      const apr = rounds > 0 ? assists / rounds : 0;
+                                      const hltv2 = (0.36 * kpr) - (0.53 * dpr) + (0.1 * apr) + (0.003 * cleanAdr) + 0.85;
+                                      const ratingStr = Math.max(0.1, hltv2).toFixed(2);
 
                                       return (
                                         <tr key={p.player_id}>
@@ -3123,6 +3135,9 @@ export default function Home() {
                                           </td>
                                           <td style={{ textAlign: "center", fontSize: "0.85rem", color: "var(--text-secondary)" }}>
                                             {p.player_stats?.["Headshots %"] || "0"}%
+                                          </td>
+                                          <td style={{ textAlign: "center", fontWeight: "700", color: parseFloat(ratingStr) >= 1.2 ? "var(--success)" : parseFloat(ratingStr) < 0.95 ? "var(--danger)" : "var(--accent-cyan)" }}>
+                                            {ratingStr}
                                           </td>
                                           <td style={{ textAlign: "center" }}>
                                             {isMVP ? (
