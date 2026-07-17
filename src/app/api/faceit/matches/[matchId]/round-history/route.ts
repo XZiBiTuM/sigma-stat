@@ -131,27 +131,45 @@ export async function GET(
 
     // 7. Process events
     // Filter events to find competitive rounds.
-    // In CS2, winner = 2 (T), winner = 3 (CT).
-    const validEvents = events.filter((e: any) => e.winner === 2 || e.winner === 3);
+    // In CS2, winner can be "T" / "CT" or 2 (T) / 3 (CT).
+    const validEvents = events.filter((e: any) => {
+      const w = e.winner;
+      return w === "T" || w === "CT" || w === 2 || w === 3;
+    });
 
     // Map reasons to frontend representations
-    // reasons mapping in CS2:
-    // 1 = Target Bombed (T win)
-    // 7 = Bomb Defused (CT win)
-    // 8 = CT win (Elimination)
-    // 9 = T win (Elimination)
-    // 12 = Time Expired (CT win)
     const rounds = validEvents.map((e: any, index: number) => {
+      const winnerStr = (e.winner === 3 || e.winner === "CT") ? "CT" : "T";
+      
       let reasonStr = "elimination";
-      if (e.reason === 1) reasonStr = "bomb_exploded";
-      else if (e.reason === 7) reasonStr = "bomb_defused";
-      else if (e.reason === 12) reasonStr = "time_expired";
-      else if (e.message && e.message.includes("Bomb_Defused")) reasonStr = "bomb_defused";
-      else if (e.message && e.message.includes("Target_Bombed")) reasonStr = "bomb_exploded";
+      const reasonVal = String(e.reason || "").toLowerCase();
+      const messageVal = String(e.message || "").toLowerCase();
+
+      if (
+        reasonVal.includes("bombed") ||
+        reasonVal.includes("exploded") ||
+        reasonVal === "1" ||
+        messageVal.includes("target_bombed") ||
+        messageVal.includes("exploded")
+      ) {
+        reasonStr = "bomb_exploded";
+      } else if (
+        reasonVal.includes("defused") ||
+        reasonVal === "7" ||
+        messageVal.includes("bomb_defused")
+      ) {
+        reasonStr = "bomb_defused";
+      } else if (
+        reasonVal.includes("expired") ||
+        reasonVal === "12" ||
+        messageVal.includes("time_expired")
+      ) {
+        reasonStr = "time_expired";
+      }
 
       return {
         round: index + 1,
-        winner: e.winner === 3 ? "CT" : "T",
+        winner: winnerStr,
         reason: reasonStr,
         tick: e.tick
       };
