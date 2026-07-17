@@ -189,25 +189,37 @@ export async function GET(
     });
 
     if (rawDeaths.length > 0) {
-      console.log("DEBUG rawDeath sample keys:", Object.keys(rawDeaths[0]));
-      console.log("DEBUG rawDeath sample values:", rawDeaths[0]);
+      const sample = rawDeaths[0];
+      const sampleKeys = Object.keys(sample);
+      console.log("DEBUG rawDeath keys:", JSON.stringify(sampleKeys));
+      console.log("DEBUG rawDeath sample:", JSON.stringify(sample));
     }
 
     // Process and simplify player death events for frontend
+    // demoparser2 returns coordinates with various prefix conventions depending on version:
+    // - attacker: attacker_X / attacker_x / attacker_pos_x
+    // - victim (user): user_X / user_x / user_pos_x / victim_X
+    const getCoord = (obj: any, ...keys: string[]): number | null => {
+      for (const k of keys) {
+        if (obj[k] !== undefined && obj[k] !== null) return obj[k];
+      }
+      return null;
+    };
+
     const deaths = rawDeaths.map((d: any) => {
-      const atkX = d.attacker_X !== undefined ? d.attacker_X : (d.attacker_x !== undefined ? d.attacker_x : null);
-      const atkY = d.attacker_Y !== undefined ? d.attacker_Y : (d.attacker_y !== undefined ? d.attacker_y : null);
-      const vicX = d.user_X !== undefined ? d.user_X : (d.user_x !== undefined ? d.user_x : null);
-      const vicY = d.user_Y !== undefined ? d.user_Y : (d.user_y !== undefined ? d.user_y : null);
+      const atkX = getCoord(d, "attacker_X", "attacker_x", "attacker_pos_x");
+      const atkY = getCoord(d, "attacker_Y", "attacker_y", "attacker_pos_y");
+      const vicX = getCoord(d, "user_X", "user_x", "user_pos_x", "victim_X", "victim_x");
+      const vicY = getCoord(d, "user_Y", "user_y", "user_pos_y", "victim_Y", "victim_y");
 
       return {
         tick: d.tick,
-        attackerName: d.attacker_name || null,
-        attackerTeam: d.attacker_team || null,
+        attackerName: d.attacker_name || d.attacker || null,
+        attackerTeam: d.attacker_team || d.attacker_team_name || null,
         attackerX: atkX,
         attackerY: atkY,
-        victimName: d.user_name || null,
-        victimTeam: d.user_team || null,
+        victimName: d.user_name || d.user || d.victim || null,
+        victimTeam: d.user_team || d.user_team_name || null,
         victimX: vicX,
         victimY: vicY,
         weapon: d.weapon || "unknown",
