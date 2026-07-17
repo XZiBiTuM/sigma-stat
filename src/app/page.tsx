@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useTransition, Component, ReactNode } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 class ErrorBoundary extends Component<
   { children: ReactNode },
@@ -867,6 +868,20 @@ export default function Home() {
     if (clean === "vertigo") return "de_vertigo";
     return clean;
   };
+  const getMapImageUrl = (mapNameStr: string) => {
+    const filename = getMapFileName(mapNameStr);
+    const mapping: Record<string, string> = {
+      de_dust2: "https://assets.faceit-cdn.net/third_party/games/ce652bd4-0abb-4c90-9936-1133965ca38b/assets/votables/7c17caa9-64a6-4496-8a0b-885e0f038d79_1695819126962.jpeg",
+      de_mirage: "https://assets.faceit-cdn.net/third_party/games/ce652bd4-0abb-4c90-9936-1133965ca38b/assets/votables/7fb7d725-e44d-4e3c-b557-e1d19b260ab8_1695819144685.jpeg",
+      de_nuke: "https://assets.faceit-cdn.net/third_party/games/ce652bd4-0abb-4c90-9936-1133965ca38b/assets/votables/7197a969-81e4-4fef-8764-55f46c7cec6e_1695819158849.jpeg",
+      de_inferno: "https://assets.faceit-cdn.net/third_party/games/ce652bd4-0abb-4c90-9936-1133965ca38b/assets/votables/993380de-bb5b-4aa1-ada9-a0c1741dc475_1695819220797.jpeg",
+      de_ancient: "https://assets.faceit-cdn.net/third_party/games/ce652bd4-0abb-4c90-9936-1133965ca38b/assets/votables/5b844241-5b15-45bf-a304-ad6df63b5ce5_1695819190976.jpeg",
+      de_anubis: "https://assets.faceit-cdn.net/third_party/games/ce652bd4-0abb-4c90-9936-1133965ca38b/assets/votables/31f01daf-e531-43cf-b949-c094ebc9b3ea_1695819235255.jpeg",
+      de_overpass: "https://assets.faceit-cdn.net/third_party/games/ce652bd4-0abb-4c90-9936-1133965ca38b/assets/votables/058c4eb3-dac4-441c-a810-70afa0f3022c_1695819170133.jpeg",
+      de_vertigo: "https://assets.faceit-cdn.net/third_party/games/ce652bd4-0abb-4c90-9936-1133965ca38b/assets/votables/84a2ca0d-9b57-4148-be85-a7b69c4cd662_1695819208035.jpeg"
+    };
+    return mapping[filename] || `/maps/${filename}.webp`;
+  };
   const getInitial = (name: string) => {
     if (!name) return "";
     return name.charAt(0).toUpperCase();
@@ -1424,7 +1439,7 @@ export default function Home() {
                                     left: 0,
                                     width: "100%",
                                     height: "100%",
-                                    background: `url(/maps/${getMapFileName(matchMaps[0])}.webp) center/cover no-repeat, var(--bg-card)`,
+                                    background: `url(${getMapImageUrl(matchMaps[0])}) center/cover no-repeat, var(--bg-card)`,
                                     clipPath: "polygon(0 0, 52% 0, 48% 100%, 0 100%)"
                                   }} />
                                   <div style={{
@@ -1433,7 +1448,7 @@ export default function Home() {
                                     left: 0,
                                     width: "100%",
                                     height: "100%",
-                                    background: `url(/maps/${getMapFileName(matchMaps[1])}.webp) center/cover no-repeat, var(--bg-card)`,
+                                    background: `url(${getMapImageUrl(matchMaps[1])}) center/cover no-repeat, var(--bg-card)`,
                                     clipPath: "polygon(52% 0, 100% 0, 100% 100%, 48% 100%)"
                                   }} />
                                   <div style={{
@@ -1454,7 +1469,7 @@ export default function Home() {
                                   left: 0,
                                   width: "100%",
                                   height: "100%",
-                                  background: `url(/maps/${getMapFileName(matchMaps[0])}.webp) center/cover no-repeat, var(--bg-card)`
+                                  background: `url(${getMapImageUrl(matchMaps[0])}) center/cover no-repeat, var(--bg-card)`
                                 }} />
                               )}
                               {/* Dark Overlay */}
@@ -1918,7 +1933,7 @@ export default function Home() {
                                           left: 0,
                                           width: "100%",
                                           height: "100%",
-                                          background: `url(/maps/${getMapFileName(tMatchMaps[0])}.webp) center/cover no-repeat, var(--bg-card)`,
+                                          background: `url(${getMapImageUrl(tMatchMaps[0])}) center/cover no-repeat, var(--bg-card)`,
                                           clipPath: "polygon(0 0, 52% 0, 48% 100%, 0 100%)"
                                         }} />
                                         <div style={{
@@ -3571,15 +3586,36 @@ export default function Home() {
                   </div>
                 )}
 
-                <div style={{ marginTop: "0.5rem" }}>
+                <div style={{ marginTop: "0.5rem", display: "flex", gap: "0.5rem" }}>
+                  <Link
+                    href={`/players/${playerProfile.player_id}`}
+                    target="_blank"
+                    style={{
+                      flex: 1,
+                      padding: "0.55rem 1rem",
+                      fontSize: "0.85rem",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "0.35rem",
+                      background: "linear-gradient(135deg, var(--accent-purple), var(--accent-cyan))",
+                      color: "#fff",
+                      borderRadius: "8px",
+                      fontWeight: "700",
+                      textAlign: "center",
+                      textDecoration: "none"
+                    }}
+                  >
+                    <span>Аналитика на сайте 📊</span>
+                  </Link>
                   <a
                     href={`https://www.faceit.com/ru/players/${playerProfile.nickname}`}
                     target="_blank"
                     rel="noreferrer"
                     className="btn btn-primary"
-                    style={{ width: "100%", padding: "0.55rem 1rem", fontSize: "0.85rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.35rem" }}
+                    style={{ flex: 1, padding: "0.55rem 1rem", fontSize: "0.85rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.35rem", margin: 0 }}
                   >
-                    <span>Открыть полный профиль на FACEIT</span> <span>↗</span>
+                    <span>Профиль FACEIT ↗</span>
                   </a>
                 </div>
 
