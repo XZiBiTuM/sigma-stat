@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { faceitFetch } from "@/lib/faceit";
 import * as fs from "fs";
 import * as path from "path";
+import { execFile } from "child_process";
+import { promisify } from "util";
+const execFileAsync = promisify(execFile);
 
 // Cache file path
 const CACHE_FILE = path.join(process.cwd(), "src/lib/round_history_cache.json");
@@ -194,6 +197,25 @@ export async function GET(
         } catch (altErr: any) {
           console.warn("Alt S3 URL failed:", altErr.message);
         }
+      }
+
+      // Attempt 4: curl subprocess — uses system DNS stack which may resolve
+      // FACEIT's private CDN domain via the ISP resolver even when Node.js can't
+      try {
+        console.log(`Attempting curl download for ${url}...`);
+        await execFileAsync("curl", [
+          "-L",                    // follow redirects
+          "--max-time", "120",     // 2 min timeout
+          "--silent",
+          "--fail",                // exit non-zero on HTTP errors
+          "--output", compressedPath,
+          url
+        ]);
+        // If curl succeeded, compressedPath now has the file — return a synthetic response
+        const curlData = await fs.promises.readFile(compressedPath);
+        return new Response(curlData, { status: 200 });
+      } catch (curlErr: any) {
+        console.warn("curl fallback failed:", curlErr.message);
       }
 
       throw new Error(`Не удалось скачать демку (исчерпаны все способы): ${url}`);
