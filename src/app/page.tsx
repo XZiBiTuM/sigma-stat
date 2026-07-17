@@ -217,12 +217,13 @@ export default function Home() {
   const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
   const [matchDetails, setMatchDetails] = useState<MatchRound[] | null>(null);
   const [isLoadingMatchDetails, setIsLoadingMatchDetails] = useState(false);
-  const [roundHistory, setRoundHistory] = useState<any>(null);
-  const [isLoadingRoundHistory, setIsLoadingRoundHistory] = useState(false);
-  const [manualDemoUrl, setManualDemoUrl] = useState("");
-  const [isSubmittingDemoUrl, setIsSubmittingDemoUrl] = useState(false);
-  const [selectedRadarRoundIndex, setSelectedRadarRoundIndex] = useState<number | null>(null);
-  const [showAllMatchDeaths, setShowAllMatchDeaths] = useState(false);
+  // Round history states keyed by mapIndex (0, 1, 2)
+  const [roundHistories, setRoundHistories] = useState<Record<number, any>>({});
+  const [loadingMapIndexes, setLoadingMapIndexes] = useState<Record<number, boolean>>({});
+  const [manualDemoUrls, setManualDemoUrls] = useState<Record<number, string>>({});
+  const [submittingDemoUrls, setSubmittingDemoUrls] = useState<Record<number, boolean>>({});
+  const [selectedRadarRoundIndexes, setSelectedRadarRoundIndexes] = useState<Record<number, number | null>>({});
+  const [showAllMatchDeathsMap, setShowAllMatchDeathsMap] = useState<Record<number, boolean>>({});
 
   // Modal: Player details
   const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
@@ -363,11 +364,14 @@ export default function Home() {
     setSelectedMatchId(matchId);
     setIsLoadingMatchDetails(true);
     setMatchDetails(null);
-    setRoundHistory(null);
-    setIsLoadingRoundHistory(true);
-    setManualDemoUrl("");
-    setSelectedRadarRoundIndex(null);
-    setShowAllMatchDeaths(false);
+    
+    // Clear per-map timeline states
+    setRoundHistories({});
+    setLoadingMapIndexes({});
+    setManualDemoUrls({});
+    setSubmittingDemoUrls({});
+    setSelectedRadarRoundIndexes({});
+    setShowAllMatchDeathsMap({});
     
     try {
       const res = await fetch(`/api/faceit/matches/${matchId}/stats`);
@@ -376,39 +380,47 @@ export default function Home() {
         throw new Error(errData.error || "Ошибка загрузки статистики");
       }
       const data = await res.json();
-      setMatchDetails(data.rounds || []);
+      const rounds = data.rounds || [];
+      setMatchDetails(rounds);
+
+      // Auto-load history for Map 1 (original index 0)
+      if (rounds.length > 0) {
+        loadRoundHistoryForMap(matchId, 0);
+      }
     } catch (err: any) {
       console.error(err);
     } finally {
       setIsLoadingMatchDetails(false);
     }
+  };
 
+  const loadRoundHistoryForMap = async (matchId: string, mapIndex: number) => {
+    setLoadingMapIndexes(prev => ({ ...prev, [mapIndex]: true }));
     try {
-      const res = await fetch(`/api/faceit/matches/${matchId}/round-history`);
+      const res = await fetch(`/api/faceit/matches/${matchId}/round-history?mapIndex=${mapIndex}`);
       if (res.ok) {
         const data = await res.json();
-        setRoundHistory(data);
+        setRoundHistories(prev => ({ ...prev, [mapIndex]: data }));
       }
     } catch (err) {
-      console.error("Failed to load round history", err);
+      console.error("Failed to load round history for map index " + mapIndex, err);
     } finally {
-      setIsLoadingRoundHistory(false);
+      setLoadingMapIndexes(prev => ({ ...prev, [mapIndex]: false }));
     }
   };
 
-  const submitManualDemoUrl = async (url: string) => {
+  const submitManualDemoUrlForMap = async (mapIndex: number, url: string) => {
     if (!selectedMatchId || !url.trim()) return;
-    setIsSubmittingDemoUrl(true);
-    setRoundHistory(null);
-    setIsLoadingRoundHistory(true);
+    setSubmittingDemoUrls(prev => ({ ...prev, [mapIndex]: true }));
+    setLoadingMapIndexes(prev => ({ ...prev, [mapIndex]: true }));
     try {
-      const res = await fetch(`/api/faceit/matches/${selectedMatchId}/round-history?demoUrl=${encodeURIComponent(url.trim())}`);
+      const res = await fetch(`/api/faceit/matches/${selectedMatchId}/round-history?mapIndex=${mapIndex}&demoUrl=${encodeURIComponent(url.trim())}`);
       if (res.ok) {
         const data = await res.json();
-        setRoundHistory(data);
-        setManualDemoUrl("");
-        setSelectedRadarRoundIndex(null);
-        setShowAllMatchDeaths(false);
+        setRoundHistories(prev => ({ ...prev, [mapIndex]: data }));
+        setManualDemoUrls(prev => ({ ...prev, [mapIndex]: "" }));
+        setSelectedRadarRoundIndexes(prev => ({ ...prev, [mapIndex]: null }));
+        setShowAllMatchDeathsMap(prev => ({ ...prev, [mapIndex]: false }));
       } else {
         alert("Не удалось спарсить демку по этой ссылке. Пожалуйста, проверьте ссылку.");
       }
@@ -416,28 +428,32 @@ export default function Home() {
       console.error("Failed to load manual round history", err);
       alert("Произошла ошибка при загрузке демки.");
     } finally {
-      setIsSubmittingDemoUrl(false);
-      setIsLoadingRoundHistory(false);
+      setSubmittingDemoUrls(prev => ({ ...prev, [mapIndex]: false }));
+      setLoadingMapIndexes(prev => ({ ...prev, [mapIndex]: false }));
     }
   };
 
-  const getDeathsForRound = (roundNum: number) => {
-    if (!roundHistory || !roundHistory.deaths || !roundHistory.rounds) return [];
+  const getDeathsForRound = (mapIndex: number, roundNum: number) => {
+    const history = roundHistories[mapIndex];
+    if (!history || !history.deaths || !history.rounds) return [];
     
     const roundIndex = roundNum - 1;
-    const currentRound = roundHistory.rounds[roundIndex];
+    const currentRound = history.rounds[roundIndex];
     if (!currentRound) return [];
 
     const endTick = currentRound.tick;
-    const startTick = roundIndex > 0 ? roundHistory.rounds[roundIndex - 1].tick : 0;
+    const startTick = roundIndex > 0 ? history.rounds[roundIndex - 1].tick : 0;
 
-    return roundHistory.deaths.filter((d: any) => d.tick > startTick && d.tick <= endTick);
+    return history.deaths.filter((d: any) => d.tick > startTick && d.tick <= endTick);
   };
 
-  const renderRadarMap = () => {
-    if ((!selectedRadarRoundIndex && !showAllMatchDeaths) || !roundHistory) return null;
+  const renderRadarMap = (mapIndex: number, mapName: string) => {
+    const history = roundHistories[mapIndex];
+    const selectedRadarRoundIndex = selectedRadarRoundIndexes[mapIndex];
+    const showAllMatchDeaths = showAllMatchDeathsMap[mapIndex];
+
+    if ((!selectedRadarRoundIndex && !showAllMatchDeaths) || !history) return null;
     
-    const mapName = matchDetails && matchDetails.length > 0 ? matchDetails[0].round_stats.Map : "";
     const config = MAP_CONFIGS[mapName];
     if (!config) {
       return (
@@ -447,7 +463,7 @@ export default function Home() {
       );
     }
 
-    const roundDeaths = showAllMatchDeaths ? (roundHistory.deaths || []) : getDeathsForRound(selectedRadarRoundIndex!);
+    const roundDeaths = showAllMatchDeaths ? (history.deaths || []) : getDeathsForRound(mapIndex, selectedRadarRoundIndex!);
     const radarUrl = `https://raw.githubusercontent.com/MurkyYT/cs2-map-icons/main/images/radars/${mapName}_radar_psd.png`;
 
     return (
@@ -478,8 +494,8 @@ export default function Home() {
           </span>
           <button 
             onClick={() => {
-              setSelectedRadarRoundIndex(null);
-              setShowAllMatchDeaths(false);
+              setSelectedRadarRoundIndexes(prev => ({ ...prev, [mapIndex]: null }));
+              setShowAllMatchDeathsMap(prev => ({ ...prev, [mapIndex]: false }));
             }}
             style={{
               background: "none",
@@ -568,10 +584,10 @@ export default function Home() {
               <>
                 {/* Definitions for SVG markers (arrows) */}
                 <defs>
-                  <marker id="arrow-ct" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <marker id={`arrow-ct-${mapIndex}`} viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                     <path d="M 0 1 L 10 5 L 0 9 z" fill="rgba(0, 184, 212, 0.8)" />
                   </marker>
-                  <marker id="arrow-t" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <marker id={`arrow-t-${mapIndex}`} viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                     <path d="M 0 1 L 10 5 L 0 9 z" fill="rgba(255, 61, 0, 0.8)" />
                   </marker>
                 </defs>
@@ -587,7 +603,7 @@ export default function Home() {
 
                   const isAtkCT = d.attackerTeam === "CT";
                   const strokeColor = isAtkCT ? "rgba(0, 184, 212, 0.55)" : "rgba(255, 61, 0, 0.55)";
-                  const markerId = isAtkCT ? "url(#arrow-ct)" : "url(#arrow-t)";
+                  const markerId = isAtkCT ? `url(#arrow-ct-${mapIndex})` : `url(#arrow-t-${mapIndex})`;
 
                   return (
                     <g key={`line-${idx}`}>
@@ -2600,6 +2616,17 @@ export default function Home() {
                         const t1Name = t1Stats?.Team || "Команда 1";
                         const t2Name = t2Stats?.Team || "Команда 2";
 
+                        const originalMapIndex = matchDetails.length - 1 - rIndex;
+                        const roundHistory = roundHistories[originalMapIndex];
+                        const isLoadingRoundHistory = loadingMapIndexes[originalMapIndex] || false;
+                        const isSubmittingDemoUrl = submittingDemoUrls[originalMapIndex] || false;
+                        const manualDemoUrl = manualDemoUrls[originalMapIndex] || "";
+                        const setManualDemoUrl = (val: string) => setManualDemoUrls(prev => ({ ...prev, [originalMapIndex]: val }));
+                        const selectedRadarRoundIndex = selectedRadarRoundIndexes[originalMapIndex] || null;
+                        const setSelectedRadarRoundIndex = (val: number | null) => setSelectedRadarRoundIndexes(prev => ({ ...prev, [originalMapIndex]: val }));
+                        const showAllMatchDeaths = showAllMatchDeathsMap[originalMapIndex] || false;
+                        const setShowAllMatchDeaths = (val: boolean) => setShowAllMatchDeathsMap(prev => ({ ...prev, [originalMapIndex]: val }));
+
                         // Helper to get emoji/icon for win reason
                         const getReasonIcon = (reason: string) => {
                           let src = "/icons/elimination.webp";
@@ -2673,8 +2700,40 @@ export default function Home() {
                           }
                         };
 
-                        // Check if we have timeline data
+                        // Check if we attempted to load history yet
+                        const hasAttempted = !!roundHistory;
                         const hasRounds = roundHistory && roundHistory.rounds && roundHistory.rounds.length > 0;
+
+                        if (!hasAttempted && !isLoadingRoundHistory) {
+                          return (
+                            <div style={{
+                              padding: "1.25rem",
+                              background: "rgba(255, 255, 255, 0.01)",
+                              border: "1px solid var(--border-light)",
+                              borderRadius: "10px",
+                              marginBottom: "1.5rem",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center"
+                            }}>
+                              <button 
+                                onClick={() => loadRoundHistoryForMap(selectedMatchId!, originalMapIndex)}
+                                style={{
+                                  background: "linear-gradient(135deg, var(--accent-purple), var(--accent-cyan))",
+                                  border: "none",
+                                  borderRadius: "8px",
+                                  padding: "0.5rem 1.25rem",
+                                  color: "#fff",
+                                  fontSize: "0.75rem",
+                                  fontWeight: "600",
+                                  cursor: "pointer"
+                                }}
+                              >
+                                Анализировать ход игры по раундам
+                              </button>
+                            </div>
+                          );
+                        }
 
                         // Only show loading if we are fetching and have no cached data yet
                         if (isLoadingRoundHistory && !hasRounds) {
@@ -2768,7 +2827,7 @@ export default function Home() {
                                   }}
                                 />
                                 <button
-                                  onClick={() => submitManualDemoUrl(manualDemoUrl)}
+                                  onClick={() => submitManualDemoUrlForMap(originalMapIndex, manualDemoUrl)}
                                   disabled={isSubmittingDemoUrl || !manualDemoUrl.trim()}
                                   style={{
                                     background: "linear-gradient(135deg, var(--accent-purple), var(--accent-cyan))",
@@ -2968,7 +3027,7 @@ export default function Home() {
                               </div>
 
                               {/* Interactive Kill Map Radar */}
-                              {renderRadarMap()}
+                              {renderRadarMap(originalMapIndex, round.round_stats.Map)}
                             </div>
                           </div>
                         );

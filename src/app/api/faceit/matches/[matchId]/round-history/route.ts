@@ -45,12 +45,14 @@ export async function GET(
     // 2. Determine demo URL (either passed manually via query param or fetched from FACEIT)
     const { searchParams } = request.nextUrl;
     let demoUrl = searchParams.get("demoUrl");
+    const mapIndex = parseInt(searchParams.get("mapIndex") || "0", 10);
+    const cacheKey = `${matchId}_map${mapIndex}`;
 
-    // 1. Check cache (only if we're not manually specifying a demoUrl and have valid cached rounds)
+    // 1. Check cache (only if we're not manually specifying a demoUrl and have valid cached rounds & deaths)
     if (!demoUrl) {
       const cache = readCache();
-      if (cache[matchId] && cache[matchId].rounds && cache[matchId].rounds.length > 0) {
-        return NextResponse.json(cache[matchId]);
+      if (cache[cacheKey] && cache[cacheKey].rounds && cache[cacheKey].rounds.length > 0 && cache[cacheKey].deaths) {
+        return NextResponse.json(cache[cacheKey]);
       }
     }
 
@@ -69,11 +71,14 @@ export async function GET(
       if (!demoUrls || demoUrls.length === 0) {
         return NextResponse.json({ rounds: [], source: "none", message: "Демка матча отсутствует" });
       }
-      demoUrl = demoUrls[0]; // Use first map demo
+      demoUrl = demoUrls[mapIndex];
+      if (!demoUrl) {
+        return NextResponse.json({ rounds: [], source: "none", message: `Демка для карты с индексом ${mapIndex} не найдена` });
+      }
     }
     const tmpDir = path.join(process.cwd(), "tmp");
-    const compressedPath = path.join(tmpDir, `${matchId}.dem.zst`);
-    const decompressedPath = path.join(tmpDir, `${matchId}.dem`);
+    const compressedPath = path.join(tmpDir, `${cacheKey}.dem.zst`);
+    const decompressedPath = path.join(tmpDir, `${cacheKey}.dem`);
 
     // 3. Try to load parser and decompressor libraries
     let fzstd: any;
@@ -116,6 +121,14 @@ export async function GET(
     // Event "round_end" fields: winner, reason, message
     const events = demoparser.parseEvent(decompressedPath, "round_end");
 
+    // Parse "player_death" events with positions
+    let rawDeaths = [];
+    try {
+      rawDeaths = demoparser.parseEvent(decompressedPath, "player_death", ["X", "Y"]) || [];
+    } catch (e: any) {
+      console.warn("Failed to parse player_death events:", e.message);
+    }
+
     // Clean up files immediately to save space
     await fs.promises.unlink(compressedPath).catch(() => {});
     await fs.promises.unlink(decompressedPath).catch(() => {});
@@ -124,7 +137,7 @@ export async function GET(
       throw new Error("Неверный формат ответа от парсера демок");
     }
 
-    console.log(`Parsed ${events.length} raw round_end events.`);
+    console.log(`Parsed ${events.length} raw round_end events and ${rawDeaths.length} deaths.`);
     if (events.length > 0) {
       console.log("Sample raw events:", JSON.stringify(events.slice(0, 3), null, 2));
     }
@@ -175,17 +188,40 @@ export async function GET(
       };
     });
 
+    // Process and simplify player death events for frontend
+    const deaths = rawDeaths.map((d: any) => {
+      const atkX = d.attacker_X !== undefined ? d.attacker_X : (d.attacker_x !== undefined ? d.attacker_x : null);
+      const atkY = d.attacker_Y !== undefined ? d.attacker_Y : (d.attacker_y !== undefined ? d.attacker_y : null);
+      const vicX = d.user_X !== undefined ? d.user_X : (d.user_x !== undefined ? d.user_x : null);
+      const vicY = d.user_Y !== undefined ? d.user_Y : (d.user_y !== undefined ? d.user_y : null);
+
+      return {
+        tick: d.tick,
+        attackerName: d.attacker_name || null,
+        attackerTeam: d.attacker_team || null,
+        attackerX: atkX,
+        attackerY: atkY,
+        victimName: d.user_name || null,
+        victimTeam: d.user_team || null,
+        victimX: vicX,
+        victimY: vicY,
+        weapon: d.weapon || "unknown",
+        headshot: !!d.headshot
+      };
+    });
+
     const result = {
       rounds,
+      deaths,
       source: "parsed"
     };
 
     // 8. Save cache and return
     const currentCache = readCache();
-    currentCache[matchId] = result;
+    currentCache[cacheKey] = result;
     writeCache(currentCache);
 
-    console.log(`Successfully parsed ${rounds.length} rounds for match ${matchId}`);
+    console.log(`Successfully parsed ${rounds.length} rounds for match ${matchId} (map ${mapIndex})`);
     return NextResponse.json(result);
 
   } catch (error: any) {
