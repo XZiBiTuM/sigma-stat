@@ -98,7 +98,7 @@ export async function GET(
     
     const response = await fetch(demoUrl);
     if (!response.ok) {
-      throw new Error(`Не удалось скачать демку: ${response.statusText}`);
+      throw new Error(`Не удалось скачать демку: Код ${response.status} (${response.statusText || "Без описания"})`);
     }
     const arrayBuffer = await response.arrayBuffer();
     await fs.promises.writeFile(compressedPath, Buffer.from(arrayBuffer));
