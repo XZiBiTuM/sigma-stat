@@ -42,15 +42,17 @@ export async function GET(
       return NextResponse.json({ error: "Не указан ID матча" }, { status: 400 });
     }
 
-    // 1. Check cache
-    const cache = readCache();
-    if (cache[matchId]) {
-      return NextResponse.json(cache[matchId]);
-    }
-
     // 2. Determine demo URL (either passed manually via query param or fetched from FACEIT)
     const { searchParams } = request.nextUrl;
     let demoUrl = searchParams.get("demoUrl");
+
+    // 1. Check cache (only if we're not manually specifying a demoUrl and have valid cached rounds)
+    if (!demoUrl) {
+      const cache = readCache();
+      if (cache[matchId] && cache[matchId].rounds && cache[matchId].rounds.length > 0) {
+        return NextResponse.json(cache[matchId]);
+      }
+    }
 
     if (!demoUrl) {
       let matchDetails;
@@ -120,6 +122,11 @@ export async function GET(
 
     if (!Array.isArray(events)) {
       throw new Error("Неверный формат ответа от парсера демок");
+    }
+
+    console.log(`Parsed ${events.length} raw round_end events.`);
+    if (events.length > 0) {
+      console.log("Sample raw events:", JSON.stringify(events.slice(0, 3), null, 2));
     }
 
     // 7. Process events
