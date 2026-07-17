@@ -48,23 +48,27 @@ export async function GET(
       return NextResponse.json(cache[matchId]);
     }
 
-    // 2. Fetch match details from FACEIT to get demo_url
-    let matchDetails;
-    try {
-      matchDetails = await faceitFetch(`/matches/${matchId}`);
-    } catch (err: any) {
-      if (err.message === "API_KEY_MISSING") {
-        return NextResponse.json({ error: "API_KEY_MISSING" }, { status: 401 });
+    // 2. Determine demo URL (either passed manually via query param or fetched from FACEIT)
+    const { searchParams } = request.nextUrl;
+    let demoUrl = searchParams.get("demoUrl");
+
+    if (!demoUrl) {
+      let matchDetails;
+      try {
+        matchDetails = await faceitFetch(`/matches/${matchId}`);
+      } catch (err: any) {
+        if (err.message === "API_KEY_MISSING") {
+          return NextResponse.json({ error: "API_KEY_MISSING" }, { status: 401 });
+        }
+        throw err;
       }
-      throw err;
-    }
 
-    const demoUrls = matchDetails?.demo_url;
-    if (!demoUrls || demoUrls.length === 0) {
-      return NextResponse.json({ rounds: [], source: "none", message: "Демка матча отсутствует" });
+      const demoUrls = matchDetails?.demo_url;
+      if (!demoUrls || demoUrls.length === 0) {
+        return NextResponse.json({ rounds: [], source: "none", message: "Демка матча отсутствует" });
+      }
+      demoUrl = demoUrls[0]; // Use first map demo
     }
-
-    const demoUrl = demoUrls[0]; // Use first map demo
     const tmpDir = path.join(process.cwd(), "tmp");
     const compressedPath = path.join(tmpDir, `${matchId}.dem.zst`);
     const decompressedPath = path.join(tmpDir, `${matchId}.dem`);
@@ -82,6 +86,10 @@ export async function GET(
         source: "fallback",
         message: "Компоненты парсера недоступны на этом сервере (например, Vercel)"
       });
+    }
+
+    if (!demoUrl) {
+      return NextResponse.json({ error: "Ссылка на демку не найдена" }, { status: 400 });
     }
 
     // 4. Download demo file

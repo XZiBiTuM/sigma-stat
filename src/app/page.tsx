@@ -208,6 +208,8 @@ export default function Home() {
   const [isLoadingMatchDetails, setIsLoadingMatchDetails] = useState(false);
   const [roundHistory, setRoundHistory] = useState<any>(null);
   const [isLoadingRoundHistory, setIsLoadingRoundHistory] = useState(false);
+  const [manualDemoUrl, setManualDemoUrl] = useState("");
+  const [isSubmittingDemoUrl, setIsSubmittingDemoUrl] = useState(false);
 
   // Modal: Player details
   const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
@@ -350,6 +352,7 @@ export default function Home() {
     setMatchDetails(null);
     setRoundHistory(null);
     setIsLoadingRoundHistory(true);
+    setManualDemoUrl("");
     
     try {
       const res = await fetch(`/api/faceit/matches/${matchId}/stats`);
@@ -374,6 +377,29 @@ export default function Home() {
     } catch (err) {
       console.error("Failed to load round history", err);
     } finally {
+      setIsLoadingRoundHistory(false);
+    }
+  };
+
+  const submitManualDemoUrl = async (url: string) => {
+    if (!selectedMatchId || !url.trim()) return;
+    setIsSubmittingDemoUrl(true);
+    setRoundHistory(null);
+    setIsLoadingRoundHistory(true);
+    try {
+      const res = await fetch(`/api/faceit/matches/${selectedMatchId}/round-history?demoUrl=${encodeURIComponent(url.trim())}`);
+      if (res.ok) {
+        const data = await res.json();
+        setRoundHistory(data);
+        setManualDemoUrl("");
+      } else {
+        alert("Не удалось спарсить демку по этой ссылке. Пожалуйста, проверьте ссылку.");
+      }
+    } catch (err) {
+      console.error("Failed to load manual round history", err);
+      alert("Произошла ошибка при загрузке демки.");
+    } finally {
+      setIsSubmittingDemoUrl(false);
       setIsLoadingRoundHistory(false);
     }
   };
@@ -1819,12 +1845,22 @@ export default function Home() {
                                 {/* Row 2: Performance */}
                                 <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.4rem 0.5rem", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.04)" }}>
                                   <div style={{ fontSize: "0.55rem", color: "var(--text-muted)", textTransform: "uppercase" }}>MULTIKILLS</div>
-                                  <div style={{ display: "flex", gap: "0.2rem", marginTop: "0.1rem", flexWrap: "wrap" }}>
-                                    {doubleK > 0 && <span style={{ fontSize: "0.55rem", background: "rgba(255,255,255,0.06)", padding: "0.05rem 0.2rem", borderRadius: "3px", color: "#fff" }}>2K: {doubleK}</span>}
-                                    {tripleK > 0 && <span style={{ fontSize: "0.55rem", background: "rgba(255, 198, 25, 0.12)", padding: "0.05rem 0.2rem", borderRadius: "3px", color: "var(--accent-yellow)" }}>3K: {tripleK}</span>}
-                                    {quadK > 0 && <span style={{ fontSize: "0.55rem", background: "rgba(168, 85, 247, 0.15)", padding: "0.05rem 0.2rem", borderRadius: "3px", color: "var(--accent-purple)" }}>4K: {quadK}</span>}
-                                    {pentaK > 0 && <span style={{ fontSize: "0.55rem", background: "rgba(2, 225, 82, 0.15)", padding: "0.05rem 0.2rem", borderRadius: "3px", color: "#02e152", fontWeight: "bold" }}>ACE: {pentaK}</span>}
-                                    {doubleK === 0 && tripleK === 0 && quadK === 0 && pentaK === 0 && <span style={{ fontSize: "0.6rem", color: "var(--text-muted)" }}>Нет</span>}
+                                  <div style={{ fontWeight: "700", color: "#fff", fontSize: "0.85rem", marginTop: "0.1rem" }}>
+                                    {doubleK + tripleK + quadK + pentaK > 0 ? (
+                                      <span>{doubleK + tripleK + quadK + pentaK} раунд.</span>
+                                    ) : (
+                                      <span style={{ color: "var(--text-muted)", fontSize: "0.75rem" }}>Нет</span>
+                                    )}
+                                  </div>
+                                  <div style={{ fontSize: "0.55rem", color: "var(--text-secondary)" }}>
+                                    {(() => {
+                                      const list = [];
+                                      if (doubleK > 0) list.push(`2K: ${doubleK}`);
+                                      if (tripleK > 0) list.push(`3K: ${tripleK}`);
+                                      if (quadK > 0) list.push(`4K: ${quadK}`);
+                                      if (pentaK > 0) list.push(`ACE: ${pentaK}`);
+                                      return list.length > 0 ? list.join(" | ") : "0 мультикиллов";
+                                    })()}
                                   </div>
                                 </div>
                                 <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.4rem 0.5rem", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.04)" }}>
@@ -2317,7 +2353,70 @@ export default function Home() {
                           );
                         }
 
-                        if (!hasRounds) return null;
+                        if (!hasRounds) {
+                          return (
+                            <div className="glass-card" style={{
+                              padding: "1.25rem",
+                              background: "rgba(255, 255, 255, 0.01)",
+                              border: "1px solid var(--border-light)",
+                              borderRadius: "10px",
+                              marginBottom: "1.5rem",
+                              position: "relative",
+                              overflow: "hidden"
+                            }}>
+                              <div style={{
+                                position: "absolute",
+                                left: 0,
+                                top: 0,
+                                height: "100%",
+                                width: "3px",
+                                background: "var(--accent-purple)"
+                              }} />
+                              <div style={{ fontSize: "0.8rem", fontWeight: "700", color: "var(--text-primary)", marginBottom: "0.5rem" }}>
+                                🛡️ Ход матча по раундам недоступен автоматически
+                              </div>
+                              <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginBottom: "1rem", lineHeight: "1.4" }}>
+                                Faceit скрыл прямые ссылки на скачивание записей (они требуют временной подписи). Чтобы отобразить таймлайн раундов: кликни по кнопке «Скачать демо» на Faceit, скопируй ссылку из списка загрузок твоего браузера (Ctrl+J) и вставь её ниже:
+                              </div>
+                              <div style={{ display: "flex", gap: "0.5rem" }}>
+                                <input
+                                  type="text"
+                                  placeholder="Вставь ссылку на скачивание (.dem.zst / .dem.gz)..."
+                                  value={manualDemoUrl}
+                                  onChange={(e) => setManualDemoUrl(e.target.value)}
+                                  disabled={isSubmittingDemoUrl}
+                                  style={{
+                                    flex: 1,
+                                    background: "rgba(0, 0, 0, 0.3)",
+                                    border: "1px solid var(--border-light)",
+                                    borderRadius: "6px",
+                                    padding: "0.4rem 0.75rem",
+                                    color: "#fff",
+                                    fontSize: "0.75rem",
+                                    outline: "none"
+                                  }}
+                                />
+                                <button
+                                  onClick={() => submitManualDemoUrl(manualDemoUrl)}
+                                  disabled={isSubmittingDemoUrl || !manualDemoUrl.trim()}
+                                  style={{
+                                    background: "linear-gradient(135deg, var(--accent-purple), var(--accent-cyan))",
+                                    color: "#fff",
+                                    border: "none",
+                                    borderRadius: "6px",
+                                    padding: "0.4rem 1rem",
+                                    fontSize: "0.75rem",
+                                    fontWeight: "600",
+                                    cursor: "pointer",
+                                    transition: "opacity 0.2s"
+                                  }}
+                                >
+                                  {isSubmittingDemoUrl ? "Загрузка..." : "Анализировать"}
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        }
 
                         return (
                           <div className="glass-card" style={{
