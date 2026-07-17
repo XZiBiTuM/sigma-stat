@@ -75,6 +75,36 @@ export async function GET(
       if (!demoUrl) {
         return NextResponse.json({ rounds: [], source: "none", message: `Демка для карты с индексом ${mapIndex} не найдена` });
       }
+
+      // Try FACEIT Downloads API to exchange CDN URL for a signed direct download URL.
+      // This requires Downloads API permission on the key, but we try it regardless —
+      // if the key doesn't have permission we just fall back to the CDN URL directly.
+      const apiKey = process.env.FACEIT_API_KEY;
+      if (apiKey) {
+        try {
+          const dlRes = await fetch("https://open.faceit.com/download/v2/demos/download", {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${apiKey}`,
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            },
+            body: JSON.stringify({ resource_url: demoUrl })
+          });
+          if (dlRes.ok) {
+            const dlData = await dlRes.json();
+            const signedUrl = dlData?.payload?.download_url || dlData?.download_url || dlData?.url;
+            if (signedUrl) {
+              console.log(`Got signed download URL from FACEIT Downloads API`);
+              demoUrl = signedUrl;
+            }
+          } else {
+            console.log(`FACEIT Downloads API returned ${dlRes.status} — falling back to CDN URL`);
+          }
+        } catch (dlErr: any) {
+          console.log(`FACEIT Downloads API unavailable: ${dlErr.message} — falling back to CDN URL`);
+        }
+      }
     }
     const tmpDir = path.join(process.cwd(), "tmp");
     const compressedPath = path.join(tmpDir, `${cacheKey}.dem.zst`);
