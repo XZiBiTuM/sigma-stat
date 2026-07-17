@@ -66,27 +66,14 @@ const getLevelBadgeStyle = (level: number) => {
   }
 };
 
-const formatPercent = (val: any) => {
-  if (val === undefined || val === null) return "—";
-  const num = parseFloat(val);
-  if (isNaN(num)) return val;
-  if (num > 0 && num < 1) {
-    return Math.round(num * 100) + "%";
-  }
-  return Math.round(num) + "%";
-};
-
 export default function PlayerProfilePage() {
   const params = useParams();
   const playerId = params.playerId as string;
 
   const [isLoading, setIsLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
-  const [stats, setStats] = useState<any>(null);
+  const [hubStats, setHubStats] = useState<any>(null);
   const [leetify, setLeetify] = useState<any>(null);
-  
-  const [recentMatches, setRecentMatches] = useState<any[]>([]);
-  const [isLoadingMatches, setIsLoadingMatches] = useState(true);
   const [activeTab, setActiveTab] = useState<"general" | "tactical" | "maps">("general");
 
   useEffect(() => {
@@ -100,10 +87,10 @@ export default function PlayerProfilePage() {
         const profileData = await profileRes.json();
         setProfile(profileData);
 
-        const statsRes = await fetch(`/api/faceit/players/${playerId}/stats/cs2`);
-        if (statsRes.ok) {
-          const statsData = await statsRes.json();
-          setStats(statsData);
+        const hubStatsRes = await fetch(`/api/faceit/players/${playerId}/hub-stats`);
+        if (hubStatsRes.ok) {
+          const statsData = await hubStatsRes.json();
+          setHubStats(statsData);
         }
 
         try {
@@ -124,31 +111,15 @@ export default function PlayerProfilePage() {
       }
     };
 
-    const loadMatches = async () => {
-      setIsLoadingMatches(true);
-      try {
-        const matchesRes = await fetch(`/api/faceit/players/${playerId}/recent-stats`);
-        if (matchesRes.ok) {
-          const matchesData = await matchesRes.json();
-          setRecentMatches(matchesData.matches || []);
-        }
-      } catch (err) {
-        console.error("Failed to load recent matches", err);
-      } finally {
-        setIsLoadingMatches(false);
-      }
-    };
-
     loadData();
-    loadMatches();
   }, [playerId]);
 
   if (isLoading) {
     return (
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", backgroundColor: "var(--bg-primary)" }}>
         <div style={{ textAlign: "center" }}>
-          <div className="glow-text-cyan" style={{ fontSize: "1.5rem", fontWeight: "700" }}>Загрузка игровой аналитики...</div>
-          <div style={{ color: "var(--text-muted)", fontSize: "0.9rem", marginTop: "0.5rem" }}>Собираем данные с FACEIT и Leetify</div>
+          <div className="glow-text-cyan" style={{ fontSize: "1.5rem", fontWeight: "700" }}>Загрузка аналитики хаба...</div>
+          <div style={{ color: "var(--text-muted)", fontSize: "0.9rem", marginTop: "0.5rem" }}>Считываем локальную статистику матчей хаба и Leetify</div>
         </div>
       </div>
     );
@@ -168,25 +139,6 @@ export default function PlayerProfilePage() {
   }
 
   const cs2Info = profile.games?.cs2 || profile.games?.csgo;
-
-  // Aggregate multi-kills from segments
-  let totalTriples = 0;
-  let totalQuadros = 0;
-  let totalPentas = 0;
-  if (stats && Array.isArray(stats.segments)) {
-    stats.segments.forEach((seg: any) => {
-      if (seg.type === "Map" && seg.stats) {
-        totalTriples += parseInt(seg.stats["Triple Kills"] || "0");
-        totalQuadros += parseInt(seg.stats["Quadro Kills"] || "0");
-        totalPentas += parseInt(seg.stats["Penta Kills"] || "0");
-      }
-    });
-  }
-
-  // Calculate estimated career HLTV rating
-  const kdRatio = stats ? parseFloat(stats.lifetime["Average K/D Ratio"] || "1.0") : 1.0;
-  const winRate = stats ? parseFloat(stats.lifetime["Win Rate %"] || "50") / 100 : 0.5;
-  const careerHLTV = (kdRatio * 0.72) + (winRate * 0.45) + 0.15;
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg-primary)", color: "var(--text-primary)", padding: "2rem 1.5rem" }}>
@@ -239,7 +191,7 @@ export default function PlayerProfilePage() {
               <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "1rem", marginTop: "0.5rem" }}>
                 {profile.country && (
                   <span style={{ color: "var(--text-secondary)", fontSize: "0.9rem" }}>
-                    🌍 Страна: <strong style={{ color: "#fff" }}>{profile.country.toUpperCase()}</strong>
+                    Страна: <strong style={{ color: "#fff" }}>{profile.country.toUpperCase()}</strong>
                   </span>
                 )}
                 {(profile.steam_id_64 || profile.platforms?.steam) && (
@@ -247,18 +199,20 @@ export default function PlayerProfilePage() {
                     href={`https://steamcommunity.com/profiles/${profile.steam_id_64 || profile.platforms?.steam}`}
                     target="_blank" 
                     rel="noreferrer"
-                    style={{ color: "var(--accent-cyan)", fontSize: "0.9rem", textDecoration: "none", fontWeight: "600" }}
+                    style={{ color: "var(--accent-cyan)", fontSize: "0.9rem", textDecoration: "none", fontWeight: "600", display: "inline-flex", alignItems: "center", gap: "0.4rem" }}
                   >
-                    🎮 Steam Profile ↗
+                    <img src="/icons/steam.png" alt="" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
+                    <span>Steam Profile ↗</span>
                   </a>
                 )}
                 <a 
                   href={`https://www.faceit.com/ru/players/${profile.nickname}`}
                   target="_blank" 
                   rel="noreferrer"
-                  style={{ color: "var(--accent-purple)", fontSize: "0.9rem", textDecoration: "none", fontWeight: "600" }}
+                  style={{ color: "var(--accent-purple)", fontSize: "0.9rem", textDecoration: "none", fontWeight: "600", display: "inline-flex", alignItems: "center", gap: "0.4rem" }}
                 >
-                  🏆 FACEIT Profile ↗
+                  <img src="/icons/faceit.png" alt="" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
+                  <span>FACEIT Profile ↗</span>
                 </a>
               </div>
             </div>
@@ -289,9 +243,9 @@ export default function PlayerProfilePage() {
               {/* Tabs Navigation Card */}
               <div className="glass-card" style={{ padding: "0.5rem", borderRadius: "12px", border: "1px solid var(--border-light)", display: "flex", gap: "0.25rem" }}>
                 {[
-                  { id: "general", label: "Общая статистика" },
+                  { id: "general", label: "Статистика Хаба" },
                   { id: "tactical", label: "Тактика & Leetify" },
-                  { id: "maps", label: "Статистика карт" }
+                  { id: "maps", label: "Карты в Хабе" }
                 ].map((tab) => (
                   <button
                     key={tab.id}
@@ -315,17 +269,22 @@ export default function PlayerProfilePage() {
               </div>
 
               {/* General Tab Content */}
-              {activeTab === "general" && stats && (
+              {activeTab === "general" && hubStats && (
                 <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-                  <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", marginBottom: "0.25rem" }}>Lifetime показатели</h3>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff" }}>Результаты в Хабе</h3>
+                    <span style={{ fontSize: "0.72rem", padding: "0.2rem 0.5rem", background: "rgba(0, 212, 255, 0.1)", border: "1px solid rgba(0, 212, 255, 0.2)", borderRadius: "6px", color: "var(--accent-cyan)", fontWeight: "700" }}>
+                      Hub Scoped
+                    </span>
+                  </div>
                   
                   {/* Grid */}
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "1rem" }}>
                     {[
-                      { label: "Всего матчей", val: stats.lifetime.Matches, color: "#fff" },
-                      { label: "Процент побед", val: `${stats.lifetime["Win Rate %"]}%`, color: "var(--success)" },
-                      { label: "Средний K/D", val: parseFloat(stats.lifetime["Average K/D Ratio"]).toFixed(2), color: "var(--accent-cyan)" },
-                      { label: "Средний HS%", val: `${stats.lifetime["Average Headshots %"]}%`, color: "#fff" }
+                      { label: "Всего матчей", val: hubStats.matchesCount, color: "#fff" },
+                      { label: "Процент побед", val: `${hubStats.winrate}%`, color: "var(--success)" },
+                      { label: "Средний K/D", val: hubStats.kd.toFixed(2), color: "var(--accent-cyan)" },
+                      { label: "Средний HS%", val: `${hubStats.hsPct}%`, color: "#fff" }
                     ].map((item, idx) => (
                       <div key={idx} style={{ background: "rgba(0,0,0,0.2)", border: "1px solid var(--border-light)", borderRadius: "10px", padding: "1rem" }}>
                         <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)", display: "block" }}>{item.label}</span>
@@ -339,23 +298,23 @@ export default function PlayerProfilePage() {
                     <div style={{ flex: 1, background: "rgba(0,0,0,0.2)", border: "1px solid var(--border-light)", borderRadius: "10px", padding: "1rem", textAlign: "center" }}>
                       <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", display: "block" }}>Текущий стрик</span>
                       <span style={{ fontSize: "1.3rem", fontWeight: "800", color: "var(--success)", display: "block", marginTop: "0.25rem" }}>
-                        +{stats.lifetime["Current Win Streak"] || 0} побед
+                        +{hubStats.streaks?.current || 0} побед
                       </span>
                     </div>
                     <div style={{ flex: 1, background: "rgba(0,0,0,0.2)", border: "1px solid var(--border-light)", borderRadius: "10px", padding: "1rem", textAlign: "center" }}>
                       <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", display: "block" }}>Лучший стрик</span>
                       <span style={{ fontSize: "1.3rem", fontWeight: "800", color: "#fff", display: "block", marginTop: "0.25rem" }}>
-                        {stats.lifetime["Longest Win Streak"] || 0} побед
+                        {hubStats.streaks?.longest || 0} побед
                       </span>
                     </div>
                   </div>
 
                   {/* Form */}
-                  {Array.isArray(stats.lifetime["Recent Results"]) && (
+                  {Array.isArray(hubStats.recentResults) && hubStats.recentResults.length > 0 && (
                     <div style={{ background: "rgba(0,0,0,0.15)", borderRadius: "10px", padding: "1rem", border: "1px dashed var(--border-light)" }}>
-                      <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)", display: "block", marginBottom: "0.75rem" }}>Форма последних матчей</span>
+                      <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)", display: "block", marginBottom: "0.75rem" }}>Форма в Хабе</span>
                       <div style={{ display: "flex", gap: "0.75rem" }}>
-                        {stats.lifetime["Recent Results"].map((res: string, i: number) => {
+                        {hubStats.recentResults.map((res: string, i: number) => {
                           const isWin = res === "1";
                           return (
                             <div 
@@ -369,7 +328,7 @@ export default function PlayerProfilePage() {
                                 color: isWin ? "#4caf50" : "#f44336"
                               }}
                             >
-                              {isWin ? "WIN" : "LOSS"}
+                              {isWin ? "W" : "L"}
                             </div>
                           );
                         })}
@@ -380,7 +339,7 @@ export default function PlayerProfilePage() {
               )}
 
               {/* Tactical Tab Content */}
-              {activeTab === "tactical" && stats && (
+              {activeTab === "tactical" && hubStats && (
                 <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1.25rem" }}>
                   
                   {/* Leetify Card */}
@@ -441,28 +400,28 @@ export default function PlayerProfilePage() {
                       color: "var(--text-muted)",
                       lineHeight: "1.5"
                     }}>
-                      💡 <strong>Данные Leetify недоступны:</strong> этот игрок не зарегистрирован на Leetify. Ниже выводится альтернативная тактическая статистика FACEIT.
+                      Leetify: <strong>Этот игрок не зарегистрирован на Leetify. Ниже выводится детальная статистика по матчам хаба.</strong>
                     </div>
                   )}
 
-                  {/* FACEIT Tactical Stats */}
+                  {/* Hub Tactical Stats */}
                   <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "0.75rem" }}>
                     {[
-                      { title: "⚔ Бой и Атака", items: [
-                        { label: "Средний урон (ADR)", val: stats.lifetime["ADR"] || "—" },
-                        { label: "Убийств за раунд (KPR)", val: stats.lifetime["Average Kills"] ? (parseFloat(stats.lifetime["Average Kills"]) / 20).toFixed(2) : "—" }
+                      { title: "Бой и Атака в Хабе", items: [
+                        { label: "Средний урон (ADR)", val: hubStats.adr ? `${hubStats.adr} HP` : "—" },
+                        { label: "Убийств за раунд (KPR)", val: hubStats.matchesCount ? (hubStats.totalKills / hubStats.totalRounds).toFixed(2) : "—" }
                       ], color: "var(--accent-cyan)" },
-                      { title: "⚡ Первые дуэли (Entry)", items: [
-                        { label: "Участие в дуэлях (Entry Rate)", val: stats.lifetime["Entry Rate"] ? `${Math.round(parseFloat(stats.lifetime["Entry Rate"]) * 100)}%` : "—" },
-                        { label: "Выиграно дуэлей (Entry Success)", val: stats.lifetime["Entry Success Rate"] ? `${Math.round(parseFloat(stats.lifetime["Entry Success Rate"]) * 100)}%` : "—" }
+                      { title: "Первые дуэли (Entry) в Хабе", items: [
+                        { label: "Участие в дуэлях (Entry Rate)", val: hubStats.duels?.entryCount ? `${hubStats.duels.entryCount} раз` : "—" },
+                        { label: "Выиграно первых дуэлей", val: hubStats.duels?.entrySuccessRate ? `${hubStats.duels.entrySuccessRate}%` : "—" }
                       ], color: "var(--warning)" },
-                      { title: "🏆 Клачи", items: [
-                        { label: "Побед в 1v1 клачах", val: stats.lifetime["1v1 Win Rate"] ? `${Math.round(parseFloat(stats.lifetime["1v1 Win Rate"]) * 100)}%` : "—" },
-                        { label: "Побед в 1v2 клачах", val: stats.lifetime["1v2 Win Rate"] ? `${Math.round(parseFloat(stats.lifetime["1v2 Win Rate"]) * 100)}%` : "—" }
+                      { title: "Клатчи в Хабе", items: [
+                        { label: "Побед в 1v1 клачах", val: hubStats.duels?.clutch1v1Rate ? `${hubStats.duels.clutch1v1Rate}%` : "—" },
+                        { label: "Побед в 1v2 клачах", val: hubStats.duels?.clutch1v2Rate ? `${hubStats.duels.clutch1v2Rate}%` : "—" }
                       ], color: "#00d4ff" },
-                      { title: "💣 Использование гранат", items: [
-                        { label: "Урон гранатами / раунд", val: stats.lifetime["Utility Damage per Round"] ? `${stats.lifetime["Utility Damage per Round"]} HP` : "—" },
-                        { label: "Эффективность флешек", val: stats.lifetime["Flash Success Rate"] ? `${Math.round(parseFloat(stats.lifetime["Flash Success Rate"]) * 100)}%` : "—" }
+                      { title: "Использование гранат в Хабе", items: [
+                        { label: "Урон гранатами / раунд", val: hubStats.utility?.utilityDamagePerRound ? `${hubStats.utility.utilityDamagePerRound} HP` : "—" },
+                        { label: "Эффективность флешек", val: hubStats.utility?.flashSuccessRate ? `${hubStats.utility.flashSuccessRate}%` : "—" }
                       ], color: "var(--accent-purple)" }
                     ].map((section, idx) => (
                       <div key={idx} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "10px", padding: "1rem" }}>
@@ -483,18 +442,14 @@ export default function PlayerProfilePage() {
               )}
 
               {/* Maps Stats View in Left column fallback if tab chosen */}
-              {activeTab === "maps" && stats && (
+              {activeTab === "maps" && hubStats && (
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-                  {stats.segments
-                    ?.filter((seg: any) => seg.type === "Map")
-                    .map((seg: any, idx: number) => {
-                      const mapName = seg.label;
-                      const matches = parseInt(seg.stats.Matches || "0");
-                      const winRate = parseInt(seg.stats["Win Rate %"] || "0");
-                      const kd = parseFloat(seg.stats["Average K/D Ratio"] || "0").toFixed(2);
-                      const avgKills = parseFloat(seg.stats["Average Kills"] || "0").toFixed(1);
-                      const adr = seg.stats.ADR ? parseFloat(seg.stats.ADR).toFixed(1) : null;
-                      const bgImage = seg.img_small || seg.img_regular;
+                  {hubStats.maps?.map((seg: any, idx: number) => {
+                      const mapName = seg.map;
+                      const matches = seg.matches;
+                      const winRate = seg.winrate;
+                      const kd = seg.kd;
+                      const adr = seg.adr;
 
                       return (
                         <div 
@@ -512,20 +467,18 @@ export default function PlayerProfilePage() {
                           }}
                         >
                           {/* Background Map Image Overlay */}
-                          {bgImage && (
-                            <div 
-                              style={{
-                                position: "absolute",
-                                right: 0, top: 0, bottom: 0,
-                                width: "50%",
-                                backgroundImage: `linear-gradient(to left, rgba(20, 18, 30, 0.2) 0%, rgba(20, 18, 30, 0.95) 75%, rgba(20, 18, 30, 1) 100%), url(${getMapImageUrl(mapName)})`,
-                                backgroundSize: "cover",
-                                backgroundPosition: "center",
-                                opacity: 0.7,
-                                zIndex: 0
-                              }}
-                            />
-                          )}
+                          <div 
+                            style={{
+                              position: "absolute",
+                              right: 0, top: 0, bottom: 0,
+                              width: "50%",
+                              backgroundImage: `linear-gradient(to left, rgba(20, 18, 30, 0.2) 0%, rgba(20, 18, 30, 0.95) 75%, rgba(20, 18, 30, 1) 100%), url(${getMapImageUrl(mapName)})`,
+                              backgroundSize: "cover",
+                              backgroundPosition: "center",
+                              opacity: 0.7,
+                              zIndex: 0
+                            }}
+                          />
 
                           <div style={{ position: "relative", zIndex: 1, flex: 1, display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
                             <div>
@@ -537,16 +490,12 @@ export default function PlayerProfilePage() {
                             <div style={{ display: "flex", gap: "1.25rem", textAlign: "right" }}>
                               <div>
                                 <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block" }}>Avg K/D</span>
-                                <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "var(--accent-cyan)" }}>{kd}</span>
-                              </div>
-                              <div>
-                                <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block" }}>Avg Kills</span>
-                                <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff" }}>{avgKills}</span>
+                                <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "var(--accent-cyan)" }}>{kd.toFixed(2)}</span>
                               </div>
                               {adr && (
                                 <div>
                                   <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block" }}>ADR</span>
-                                  <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "var(--accent-yellow)" }}>{adr}</span>
+                                  <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "var(--accent-yellow)" }}>{adr.toFixed(1)}</span>
                                 </div>
                               )}
                             </div>
@@ -560,30 +509,31 @@ export default function PlayerProfilePage() {
             </div>
 
             {/* Right Panel: Advanced Tactical Breakdowns & Multi-Kills */}
-            {stats && (
+            {hubStats && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
                 
                 {/* Est HLTV Rating Prominent Card */}
                 <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", overflow: "hidden" }}>
                   <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "4px", background: "var(--accent-cyan)" }} />
                   <div>
-                    <h4 style={{ fontSize: "0.9rem", fontWeight: "800", color: "var(--text-secondary)", textTransform: "uppercase" }}>Карьерный HLTV-рейтинг</h4>
-                    <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block", marginTop: "0.15rem" }}>Рассчитано по формуле K/D и Win Rate</span>
+                    <h4 style={{ fontSize: "0.9rem", fontWeight: "800", color: "var(--text-secondary)", textTransform: "uppercase" }}>Рейтинг HLTV 2.0 в Хабе</h4>
+                    <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block", marginTop: "0.15rem" }}>Рассчитано по матчам внутри этого хаба</span>
                   </div>
                   <div style={{ textAlign: "right" }}>
-                    <span className="glow-text-cyan" style={{ fontSize: "2rem", fontWeight: "900", color: "var(--accent-cyan)" }}>{careerHLTV.toFixed(2)}</span>
+                    <span className="glow-text-cyan" style={{ fontSize: "2rem", fontWeight: "900", color: "var(--accent-cyan)" }}>{hubStats.hltvRating.toFixed(2)}</span>
                   </div>
                 </div>
 
                 {/* Multi-Kills Statistics */}
                 <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)" }}>
-                  <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", marginBottom: "1rem" }}>Мульти-киллы (За карьеру)</h3>
+                  <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", marginBottom: "1rem" }}>Мульти-киллы в Хабе</h3>
                   
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                     {[
-                      { type: "Тройные убийства (3K)", count: totalTriples, color: "var(--text-secondary)" },
-                      { type: "Квадро-убийства (4K)", count: totalQuadros, color: "var(--accent-yellow)" },
-                      { type: "Эйсы / Aces (5K)", count: totalPentas, color: "var(--danger)" }
+                      { type: "Двойные убийства (2K)", count: hubStats.multiKills?.doubles || 0, color: "var(--text-muted)" },
+                      { type: "Тройные убийства (3K)", count: hubStats.multiKills?.triples || 0, color: "var(--text-secondary)" },
+                      { type: "Квадро-убийства (4K)", count: hubStats.multiKills?.quadros || 0, color: "var(--accent-yellow)" },
+                      { type: "Эйсы / Aces (5K)", count: hubStats.multiKills?.pentas || 0, color: "var(--danger)" }
                     ].map((item, idx) => (
                       <div key={idx} style={{ background: "rgba(0,0,0,0.18)", borderRadius: "8px", padding: "0.75rem 1rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <span style={{ fontSize: "0.85rem", fontWeight: "700", color: "#fff" }}>{item.type}</span>
@@ -595,16 +545,17 @@ export default function PlayerProfilePage() {
 
                 {/* Opening Duels & Clutches */}
                 <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)" }}>
-                  <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", marginBottom: "1rem" }}>Показатели дуэлей и клатчей</h3>
+                  <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", marginBottom: "1rem" }}>Дуэли и Клатчи в Хабе</h3>
                   
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                     {[
-                      { label: "Дуэлей первого контакта", val: stats.lifetime["Total Entry Count"] || "—", suffix: "дуэлей" },
-                      { label: "Побед в первых дуэлях", val: stats.lifetime["Total Entry Wins"] || "—", suffix: `(${formatPercent(stats.lifetime["Entry Success Rate"])})` },
-                      { label: "Всего 1v1 дуэлей", val: stats.lifetime["Total 1v1 Count"] || "—", suffix: "клатчей" },
-                      { label: "Побед 1v1", val: stats.lifetime["Total 1v1 Wins"] || "—", suffix: `(${formatPercent(stats.lifetime["1v1 Win Rate"])})` },
-                      { label: "Всего 1v2 дуэлей", val: stats.lifetime["Total 1v2 Count"] || "—", suffix: "клатчей" },
-                      { label: "Побед 1v2", val: stats.lifetime["Total 1v2 Wins"] || "—", suffix: `(${formatPercent(stats.lifetime["1v2 Win Rate"])})` }
+                      { label: "Дуэлей первого контакта", val: hubStats.duels?.entryCount || "0", suffix: "дуэлей" },
+                      { label: "Побед в первых дуэлях", val: hubStats.duels?.entryWins || "0", suffix: `(${hubStats.duels?.entrySuccessRate || 0}%)` },
+                      { label: "Всего 1v1 дуэлей", val: hubStats.duels?.clutch1v1Count || "0", suffix: "клатчей" },
+                      { label: "Побед 1v1", val: hubStats.duels?.clutch1v1Wins || "0", suffix: `(${hubStats.duels?.clutch1v1Rate || 0}%)` },
+                      { label: "Всего 1v2 дуэлей", val: hubStats.duels?.clutch1v2Count || "0", suffix: "клатчей" },
+                      { label: "Побед 1v2", val: hubStats.duels?.clutch1v2Wins || "0", suffix: `(${hubStats.duels?.clutch1v2Rate || 0}%)` },
+                      { label: "Суммарно фрагов в клатчах", val: hubStats.duels?.clutchKills || "0", suffix: "убийств" }
                     ].map((item, idx) => (
                       <div key={idx} style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid rgba(255,255,255,0.03)", paddingBottom: "0.4rem", fontSize: "0.8rem" }}>
                         <span style={{ color: "var(--text-secondary)" }}>{item.label}</span>
@@ -616,16 +567,16 @@ export default function PlayerProfilePage() {
 
                 {/* Granades detailed performance */}
                 <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)" }}>
-                  <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", marginBottom: "1rem" }}>Гранатная статистика (Подробно)</h3>
+                  <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", marginBottom: "1rem" }}>Использование гранат в Хабе</h3>
                   
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                     {[
-                      { label: "Брошено гранат за карьеру", val: stats.lifetime["Total Utility Count"] || "—" },
-                      { label: "Эффективных гранат", val: stats.lifetime["Total Utility Successes"] || "—", suffix: `(${formatPercent(stats.lifetime["Utility Success Rate"])})` },
-                      { label: "Суммарный урон гранатами", val: stats.lifetime["Total Utility Damage"] ? `${stats.lifetime["Total Utility Damage"]} HP` : "—" },
-                      { label: "Брошено флешек за карьеру", val: stats.lifetime["Total Flash Count"] || "—" },
-                      { label: "Успешных ослеплений", val: stats.lifetime["Total Flash Successes"] || "—", suffix: `(${formatPercent(stats.lifetime["Flash Success Rate"])})` },
-                      { label: "Ослеплено врагов", val: stats.lifetime["Total Enemies Flashed"] || "—", suffix: `(${stats.lifetime["Enemies Flashed per Round"]} за раунд)` }
+                      { label: "Брошено гранат", val: hubStats.utility?.utilityCount || "0" },
+                      { label: "Эффективных гранат", val: hubStats.utility?.utilitySuccesses || "0", suffix: `(${hubStats.utility?.utilitySuccessRate || 0}%)` },
+                      { label: "Урон гранатами (Сумма)", val: hubStats.utility?.utilityDamage ? `${hubStats.utility.utilityDamage} HP` : "0 HP" },
+                      { label: "Брошено флешек", val: hubStats.utility?.flashCount || "0" },
+                      { label: "Успешных флешек", val: hubStats.utility?.flashSuccesses || "0", suffix: `(${hubStats.utility?.flashSuccessRate || 0}%)` },
+                      { label: "Ослеплено противников", val: hubStats.utility?.enemiesFlashed || "0", suffix: `(${hubStats.utility?.enemiesFlashedPerRound || 0} за раунд)` }
                     ].map((item, idx) => (
                       <div key={idx} style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid rgba(255,255,255,0.03)", paddingBottom: "0.4rem", fontSize: "0.8rem" }}>
                         <span style={{ color: "var(--text-secondary)" }}>{item.label}</span>
@@ -642,19 +593,15 @@ export default function PlayerProfilePage() {
 
           {/* Bottom Section: Recent Matches History */}
           <div className="glass-card" style={{ padding: "2rem", borderRadius: "16px", border: "1px solid var(--border-light)" }}>
-            <h3 style={{ fontSize: "1.2rem", fontWeight: "800", color: "#fff", marginBottom: "1.25rem" }}>История последних матчей на FACEIT</h3>
+            <h3 style={{ fontSize: "1.2rem", fontWeight: "800", color: "#fff", marginBottom: "1.25rem" }}>Последние игры в Хабе</h3>
             
-            {isLoadingMatches ? (
+            {hubStats && hubStats.recentMatches && hubStats.recentMatches.length === 0 ? (
               <div style={{ textAlign: "center", padding: "2rem", color: "var(--text-secondary)" }}>
-                Загрузка истории матчей...
+                Игрок еще не сыграл ни одной игры в этом хабе.
               </div>
-            ) : recentMatches.length === 0 ? (
-              <div style={{ textAlign: "center", padding: "2rem", color: "var(--text-secondary)" }}>
-                Не удалось найти последние матчи или статистика недоступна.
-              </div>
-            ) : (
+            ) : hubStats && hubStats.recentMatches ? (
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                {recentMatches.map((m: any, i: number) => (
+                {hubStats.recentMatches.map((m: any, i: number) => (
                   <div 
                     key={i} 
                     style={{
@@ -710,7 +657,7 @@ export default function PlayerProfilePage() {
 
                     {/* Middle: Score */}
                     <div style={{ position: "relative", zIndex: 1, textAlign: "center", minWidth: "80px" }}>
-                      <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", display: "block" }}>Счет матча</span>
+                      <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", display: "block" }}>Счет</span>
                       <span style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff" }}>{m.score}</span>
                     </div>
 
@@ -744,6 +691,10 @@ export default function PlayerProfilePage() {
 
                   </div>
                 ))}
+              </div>
+            ) : (
+              <div style={{ textAlign: "center", padding: "2rem", color: "var(--text-secondary)" }}>
+                Загрузка истории матчей...
               </div>
             )}
           </div>

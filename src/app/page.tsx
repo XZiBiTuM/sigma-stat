@@ -3214,9 +3214,10 @@ export default function Home() {
                           href={`https://steamcommunity.com/profiles/${playerProfile.steam_id_64 || playerProfile.platforms?.steam}`}
                           target="_blank"
                           rel="noreferrer"
-                          style={{ color: "var(--accent-cyan)", fontSize: "0.78rem", textDecoration: "none" }}
+                          style={{ color: "var(--accent-cyan)", fontSize: "0.78rem", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "0.25rem" }}
                         >
-                          • Steam Profile ↗
+                          <img src="/icons/steam.png" alt="" style={{ width: "12px", height: "12px", objectFit: "contain" }} />
+                          <span>Steam Profile ↗</span>
                         </a>
                       )}
                     </div>
@@ -3621,7 +3622,7 @@ export default function Home() {
                       textDecoration: "none"
                     }}
                   >
-                    <span>Аналитика на сайте 📊</span>
+                    <span>Аналитика на сайте</span>
                   </Link>
                   <a
                     href={`https://www.faceit.com/ru/players/${playerProfile.nickname}`}
