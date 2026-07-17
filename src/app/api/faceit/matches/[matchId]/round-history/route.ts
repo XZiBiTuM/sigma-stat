@@ -188,6 +188,11 @@ export async function GET(
       };
     });
 
+    if (rawDeaths.length > 0) {
+      console.log("DEBUG rawDeath sample keys:", Object.keys(rawDeaths[0]));
+      console.log("DEBUG rawDeath sample values:", rawDeaths[0]);
+    }
+
     // Process and simplify player death events for frontend
     const deaths = rawDeaths.map((d: any) => {
       const atkX = d.attacker_X !== undefined ? d.attacker_X : (d.attacker_x !== undefined ? d.attacker_x : null);
