@@ -99,11 +99,77 @@ export async function GET(
       return NextResponse.json({ error: "Ссылка на демку не найдена" }, { status: 400 });
     }
 
-    // 4. Download demo file
+    // 4. Download demo file with DNS fallback
     console.log(`Downloading demo from: ${demoUrl}`);
     await fs.promises.mkdir(tmpDir, { recursive: true });
-    
-    const response = await fetch(demoUrl);
+
+    /**
+     * Resilient fetch that handles:
+     * 1. Normal redirect-following fetch
+     * 2. DNS-over-HTTPS fallback when hostname can't be resolved
+     * 3. Alternative URL transformations (Backblaze CDN → direct S3)
+     */
+    async function resilientFetch(url: string): Promise<Response> {
+      // Attempt 1: Normal fetch (follows redirects automatically)
+      try {
+        const r = await fetch(url, { redirect: "follow" });
+        if (r.ok) return r;
+        console.warn(`Attempt 1 failed: HTTP ${r.status} for ${url}`);
+        // Fall through to try alternatives on non-ok responses too
+        if (r.status !== 401 && r.status !== 403) return r; // Only retry auth failures
+      } catch (err: any) {
+        const isNotFound = err?.cause?.code === "ENOTFOUND" || err?.cause?.code === "EAI_NONAME";
+        if (!isNotFound) throw err;
+        console.warn(`DNS resolution failed for ${url}, trying fallbacks...`);
+      }
+
+      const urlObj = new URL(url);
+      const hostname = urlObj.hostname;
+
+      // Attempt 2: DNS-over-HTTPS via Google (resolves real IP even if local DNS fails)
+      try {
+        console.log(`Resolving ${hostname} via Google DoH...`);
+        const dohRes = await fetch(`https://dns.google/resolve?name=${hostname}&type=A`, {
+          headers: { Accept: "application/dns-json" }
+        });
+        const dohData = await dohRes.json();
+        const aRecord = (dohData.Answer || []).find((a: any) => a.type === 1);
+        if (aRecord?.data) {
+          const resolvedIp = aRecord.data;
+          console.log(`Resolved ${hostname} → ${resolvedIp}, retrying download...`);
+          const ipUrl = url.replace(hostname, resolvedIp);
+          const r = await fetch(ipUrl, {
+            redirect: "follow",
+            headers: { Host: hostname }
+          });
+          if (r.ok) return r;
+          console.warn(`DoH attempt failed: HTTP ${r.status}`);
+        }
+      } catch (dohErr: any) {
+        console.warn("DoH lookup failed:", dohErr.message);
+      }
+
+      // Attempt 3: Try alternative Backblaze URL pattern
+      // CDN: demos-europe-central.backblaze.faceit-cdn.net/cs2/FILE
+      // S3:  demos-europe-central-faceit-cdn.s3.eu-central-003.backblazeb2.com/cs2/FILE
+      if (hostname.includes("faceit-cdn.net")) {
+        const region = hostname.split(".")[0]; // e.g. "demos-europe-central"
+        const s3Hostname = `${region}-faceit-cdn.s3.eu-central-003.backblazeb2.com`;
+        const altUrl = url.replace(hostname, s3Hostname);
+        console.log(`Trying alternative S3 URL: ${altUrl}`);
+        try {
+          const r = await fetch(altUrl, { redirect: "follow" });
+          if (r.ok) return r;
+          console.warn(`Alt S3 attempt failed: HTTP ${r.status}`);
+        } catch (altErr: any) {
+          console.warn("Alt S3 URL failed:", altErr.message);
+        }
+      }
+
+      throw new Error(`Не удалось скачать демку (исчерпаны все способы): ${url}`);
+    }
+
+    const response = await resilientFetch(demoUrl);
     if (!response.ok) {
       throw new Error(`Не удалось скачать демку: Код ${response.status} (${response.statusText || "Без описания"})`);
     }
