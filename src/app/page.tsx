@@ -461,7 +461,7 @@ export default function Home() {
     return history.deaths.filter((d: any) => d.tick > startTick && d.tick <= endTick);
   };
 
-  const renderRadarMap = (mapIndex: number, mapName: string) => {
+  const renderRadarMap = (mapIndex: number, mapName: string, t1Name: string, t2Name: string, isT1StartedCT: boolean) => {
     const history = roundHistories[mapIndex];
     const selectedRadarRoundIndex = selectedRadarRoundIndexes[mapIndex];
     const showAllMatchDeaths = showAllMatchDeathsMap[mapIndex];
@@ -480,295 +480,487 @@ export default function Home() {
     const roundDeaths = showAllMatchDeaths ? (history.deaths || []) : getDeathsForRound(mapIndex, selectedRadarRoundIndex!);
     const radarUrl = `https://raw.githubusercontent.com/MurkyYT/cs2-map-icons/main/images/radars/${mapName}_radar_psd.png`;
 
+    const getRoundWinnerTeam = (roundWinnerSide: string, roundIndex: number) => {
+      const isFirstHalf = roundIndex < 12;
+      if (isFirstHalf) {
+        if (roundWinnerSide === "CT") {
+          return isT1StartedCT ? 1 : 2;
+        } else {
+          return isT1StartedCT ? 2 : 1;
+        }
+      } else {
+        if (roundWinnerSide === "CT") {
+          return isT1StartedCT ? 2 : 1;
+        } else {
+          return isT1StartedCT ? 1 : 2;
+        }
+      }
+    };
+
+    const getReasonText = (reason: string) => {
+      switch (reason) {
+        case "bomb_exploded": return "Взрыв бомбы";
+        case "bomb_defused": return "Разминирование бомбы";
+        case "time_expired": return "Время раунда истекло";
+        default: return "Устранение соперников";
+      }
+    };
+
+    let currentRound: any = null;
+    let durationText = "";
+    let winnerName = "";
+    let winnerSide = "";
+    if (selectedRadarRoundIndex && history.rounds) {
+      const rIdx = selectedRadarRoundIndex - 1;
+      currentRound = history.rounds[rIdx];
+      if (currentRound) {
+        winnerSide = currentRound.winner;
+        const winnerTeamNum = getRoundWinnerTeam(winnerSide, rIdx);
+        winnerName = winnerTeamNum === 1 ? t1Name : t2Name;
+
+        const startTick = rIdx > 0 ? history.rounds[rIdx - 1].tick : 0;
+        const durationSec = Math.round((currentRound.tick - startTick) / 64);
+        if (durationSec > 0) {
+          const min = Math.floor(durationSec / 60);
+          const sec = durationSec % 60;
+          durationText = `${min}м ${sec}с`;
+        }
+      }
+    }
+
     return (
       <div style={{
         marginTop: "1.5rem",
         display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: "0.75rem",
-        background: "rgba(0,0,0,0.3)",
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "center",
+        gap: "1.5rem",
+        background: "rgba(10, 8, 20, 0.45)",
         border: "1px solid var(--border-light)",
-        borderRadius: "12px",
-        padding: "1.25rem",
-        position: "relative"
+        borderRadius: "16px",
+        padding: "1.5rem",
+        position: "relative",
+        width: "100%"
       }}>
-        {/* Header */}
+        {/* Close Button Top Right */}
+        <button 
+          onClick={() => {
+            setSelectedRadarRoundIndexes(prev => ({ ...prev, [mapIndex]: null }));
+            setShowAllMatchDeathsMap(prev => ({ ...prev, [mapIndex]: false }));
+          }}
+          style={{
+            position: "absolute",
+            top: "1rem",
+            right: "1rem",
+            background: "rgba(255,255,255,0.05)",
+            border: "1px solid var(--border-light)",
+            borderRadius: "8px",
+            color: "var(--text-secondary)",
+            cursor: "pointer",
+            fontSize: "0.75rem",
+            padding: "0.4rem 0.75rem",
+            fontWeight: "700",
+            transition: "all 0.2s",
+            zIndex: 100
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "rgba(255,255,255,0.1)";
+            e.currentTarget.style.color = "#fff";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "rgba(255,255,255,0.05)";
+            e.currentTarget.style.color = "var(--text-secondary)";
+          }}
+        >
+          Закрыть ✕
+        </button>
+
+        {/* Left Column: Radar View */}
         <div style={{
-          width: "100%",
           display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          borderBottom: "1px solid rgba(255,255,255,0.05)",
-          paddingBottom: "0.5rem",
-          marginBottom: "0.5rem"
-        }}>
-          <span style={{ fontSize: "0.8rem", fontWeight: "700", color: "#fff" }}>
-            {showAllMatchDeaths ? "Тепловая карта смертей (весь матч)" : `Карта убийств — Раунд ${selectedRadarRoundIndex}`}
-          </span>
-          <button 
-            onClick={() => {
-              setSelectedRadarRoundIndexes(prev => ({ ...prev, [mapIndex]: null }));
-              setShowAllMatchDeathsMap(prev => ({ ...prev, [mapIndex]: false }));
-            }}
-            style={{
-              background: "none",
-              border: "none",
-              color: "var(--text-muted)",
-              cursor: "pointer",
-              fontSize: "0.75rem"
-            }}
-          >
-            Закрыть ✕
-          </button>
-        </div>
-
-        {/* Map Container */}
-        <div style={{
-          position: "relative",
-          width: "100%",
+          flexDirection: "column",
+          gap: "0.75rem",
+          flex: "1 1 400px",
           maxWidth: "450px",
-          aspectRatio: "1/1",
-          borderRadius: "8px",
-          overflow: "hidden",
-          border: "1px solid rgba(255,255,255,0.1)",
-          background: "#0b0c10"
+          width: "100%"
         }}>
-          {/* SVG Map Overlay */}
-          <svg 
-            viewBox="0 0 1024 1024" 
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              zIndex: 10
-            }}
-          >
-            {/* Background Map Image */}
-            <image 
-              href={radarUrl} 
-              width="1024" 
-              height="1024" 
-              style={{ opacity: 0.85 }}
-            />
+          <h4 style={{ fontSize: "1rem", fontWeight: "800", color: "#fff", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <span style={{ display: "inline-block", width: "8px", height: "8px", borderRadius: "50%", background: "var(--accent-cyan)" }} />
+            {showAllMatchDeaths ? "Интерактивная тепловая карта смертей" : `Интерактивная карта убийств`}
+          </h4>
 
-            {showAllMatchDeaths ? (
-              // Heatmap Mode: Render glowing overlapping heat spots
-              roundDeaths.map((d: any, idx: number) => {
-                if (d.victimX === null) return null;
-                const vicX = (d.victimX - config.pos_x) / config.scale;
-                const vicY = (config.pos_y - d.victimY) / config.scale;
-                const isVicCT = d.victimTeam === "CT";
+          {/* Map Container */}
+          <div style={{
+            position: "relative",
+            width: "100%",
+            aspectRatio: "1/1",
+            borderRadius: "12px",
+            overflow: "hidden",
+            border: "1px solid rgba(255,255,255,0.1)",
+            background: "#0b0c10",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.4)"
+          }}>
+            {/* SVG Map Overlay */}
+            <svg 
+              viewBox="0 0 1024 1024" 
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                zIndex: 10
+              }}
+            >
+              {/* Background Map Image */}
+              <image 
+                href={radarUrl} 
+                width="1024" 
+                height="1024" 
+                style={{ opacity: 0.85 }}
+              />
 
-                return (
-                  <g key={`heat-${idx}`}>
-                    {/* Glowing outer aura */}
-                    <circle 
-                      cx={vicX} 
-                      cy={vicY} 
-                      r="35" 
-                      fill={isVicCT ? "rgba(0, 184, 212, 0.12)" : "rgba(255, 61, 0, 0.12)"} 
-                      style={{ mixBlendMode: "screen", filter: "blur(5px)" }}
-                    />
-                    {/* Inner intense glow */}
-                    <circle 
-                      cx={vicX} 
-                      cy={vicY} 
-                      r="16" 
-                      fill={isVicCT ? "rgba(0, 184, 212, 0.35)" : "rgba(255, 61, 0, 0.35)"} 
-                      style={{ mixBlendMode: "screen", filter: "blur(2px)" }}
-                    />
-                    {/* Solid tiny core */}
-                    <circle 
-                      cx={vicX} 
-                      cy={vicY} 
-                      r="4" 
-                      fill={isVicCT ? "#00b8d4" : "#ff3d00"} 
-                      stroke="#fff"
-                      strokeWidth="1.5"
-                    />
-                    <title>{`${d.victimName || "Игрок"} (${d.victimTeam || "?"}) погиб от ${d.weapon || "оружия"} от ${d.attackerName || "кого-то"}`}</title>
-                  </g>
-                );
-              })
-            ) : (
-              // Detailed Round Kill Map Mode
-              <>
-                {/* Definitions for SVG markers (arrows) */}
-                <defs>
-                  <marker id={`arrow-ct-${mapIndex}`} viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                    <path d="M 0 1 L 10 5 L 0 9 z" fill="rgba(0, 184, 212, 0.8)" />
-                  </marker>
-                  <marker id={`arrow-t-${mapIndex}`} viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                    <path d="M 0 1 L 10 5 L 0 9 z" fill="rgba(255, 61, 0, 0.8)" />
-                  </marker>
-                </defs>
-
-                {/* Kill Lines */}
-                {roundDeaths.map((d: any, idx: number) => {
-                  if (d.attackerX === null || d.victimX === null) return null;
-                  
-                  const atkX = (d.attackerX - config.pos_x) / config.scale;
-                  const atkY = (config.pos_y - d.attackerY) / config.scale;
+              {showAllMatchDeaths ? (
+                // Heatmap Mode: Render glowing overlapping heat spots
+                roundDeaths.map((d: any, idx: number) => {
+                  if (d.victimX === null) return null;
                   const vicX = (d.victimX - config.pos_x) / config.scale;
                   const vicY = (config.pos_y - d.victimY) / config.scale;
-
-                  const isAtkCT = d.attackerTeam === "CT";
-                  const strokeColor = isAtkCT ? "rgba(0, 184, 212, 0.55)" : "rgba(255, 61, 0, 0.55)";
-                  const markerId = isAtkCT ? `url(#arrow-ct-${mapIndex})` : `url(#arrow-t-${mapIndex})`;
+                  const isVicCT = d.victimTeam === "CT";
 
                   return (
-                    <g key={`line-${idx}`}>
-                      <line 
-                        x1={atkX} 
-                        y1={atkY} 
-                        x2={vicX} 
-                        y2={vicY} 
-                        stroke={strokeColor} 
-                        strokeWidth="4" 
-                        strokeDasharray="8,6"
-                        markerEnd={markerId}
+                    <g key={`heat-${idx}`}>
+                      {/* Glowing outer aura */}
+                      <circle 
+                        cx={vicX} 
+                        cy={vicY} 
+                        r="35" 
+                        fill={isVicCT ? "rgba(0, 184, 212, 0.12)" : "rgba(255, 61, 0, 0.12)"} 
+                        style={{ mixBlendMode: "screen", filter: "blur(5px)" }}
                       />
+                      {/* Inner intense glow */}
+                      <circle 
+                        cx={vicX} 
+                        cy={vicY} 
+                        r="16" 
+                        fill={isVicCT ? "rgba(0, 184, 212, 0.35)" : "rgba(255, 61, 0, 0.35)"} 
+                        style={{ mixBlendMode: "screen", filter: "blur(2px)" }}
+                      />
+                      {/* Solid tiny core */}
+                      <circle 
+                        cx={vicX} 
+                        cy={vicY} 
+                        r="4" 
+                        fill={isVicCT ? "#00b8d4" : "#ff3d00"} 
+                        stroke="#fff"
+                        strokeWidth="1.5"
+                      />
+                      <title>{`${d.victimName || "Игрок"} (${d.victimTeam || "?"}) погиб от ${d.weapon || "оружия"} от ${d.attackerName || "кого-то"}`}</title>
                     </g>
                   );
-                })}
+                })
+              ) : (
+                // Detailed Round Kill Map Mode
+                <>
+                  {/* Definitions for SVG markers (arrows) */}
+                  <defs>
+                    <marker id={`arrow-ct-${mapIndex}`} viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                      <path d="M 0 1 L 10 5 L 0 9 z" fill="rgba(0, 184, 212, 0.8)" />
+                    </marker>
+                    <marker id={`arrow-t-${mapIndex}`} viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                      <path d="M 0 1 L 10 5 L 0 9 z" fill="rgba(255, 61, 0, 0.8)" />
+                    </marker>
+                  </defs>
 
-                {/* Kill Dots */}
-                {roundDeaths.map((d: any, idx: number) => {
-                  if (d.victimX === null) return null;
-                  
-                  const vicX = (d.victimX - config.pos_x) / config.scale;
-                  const vicY = (config.pos_y - d.victimY) / config.scale;
+                  {/* Kill Lines */}
+                  {roundDeaths.map((d: any, idx: number) => {
+                    if (d.attackerX === null || d.victimX === null) return null;
+                    
+                    const atkX = (d.attackerX - config.pos_x) / config.scale;
+                    const atkY = (config.pos_y - d.attackerY) / config.scale;
+                    const vicX = (d.victimX - config.pos_x) / config.scale;
+                    const vicY = (config.pos_y - d.victimY) / config.scale;
 
-                  const isVicCT = d.victimTeam === "CT";
-                  const dotColor = isVicCT ? "rgba(0, 184, 212, 0.9)" : "rgba(255, 61, 0, 0.9)";
-                  const strokeColor = "#fff";
+                    const isAtkCT = d.attackerTeam === "CT";
+                    const strokeColor = isAtkCT ? "rgba(0, 184, 212, 0.55)" : "rgba(255, 61, 0, 0.55)";
+                    const markerId = isAtkCT ? `url(#arrow-ct-${mapIndex})` : `url(#arrow-t-${mapIndex})`;
 
-                  const atkX = d.attackerX !== null ? (d.attackerX - config.pos_x) / config.scale : null;
-                  const atkY = d.attackerY !== null ? (config.pos_y - d.attackerY) / config.scale : null;
+                    return (
+                      <g key={`line-${idx}`}>
+                        <line 
+                          x1={atkX} 
+                          y1={atkY} 
+                          x2={vicX} 
+                          y2={vicY} 
+                          stroke={strokeColor} 
+                          strokeWidth="4" 
+                          strokeDasharray="8,6"
+                          markerEnd={markerId}
+                        />
+                      </g>
+                    );
+                  })}
 
-                  return (
-                    <g key={`dots-${idx}`}>
-                      {/* Attacker Dot */}
-                      {atkX !== null && atkY !== null && (
+                  {/* Kill Dots */}
+                  {roundDeaths.map((d: any, idx: number) => {
+                    if (d.victimX === null) return null;
+                    
+                    const vicX = (d.victimX - config.pos_x) / config.scale;
+                    const vicY = (config.pos_y - d.victimY) / config.scale;
+
+                    const isVicCT = d.victimTeam === "CT";
+                    const dotColor = isVicCT ? "rgba(0, 184, 212, 0.9)" : "rgba(255, 61, 0, 0.9)";
+                    const strokeColor = "#fff";
+
+                    const atkX = d.attackerX !== null ? (d.attackerX - config.pos_x) / config.scale : null;
+                    const atkY = d.attackerY !== null ? (config.pos_y - d.attackerY) / config.scale : null;
+
+                    return (
+                      <g key={`dots-${idx}`}>
+                        {/* Attacker Dot */}
+                        {atkX !== null && atkY !== null && (
+                          <g>
+                            <circle 
+                              cx={atkX} 
+                              cy={atkY} 
+                              r="8" 
+                              fill={isVicCT ? "rgba(255, 61, 0, 0.95)" : "rgba(0, 184, 212, 0.95)"} 
+                              stroke="#fff" 
+                              strokeWidth="1.5" 
+                            />
+                            <title>{`${d.attackerName || "Игрок"} (${d.attackerTeam || "?"})`}</title>
+                          </g>
+                        )}
+
+                        {/* Victim Dot */}
                         <g>
                           <circle 
-                            cx={atkX} 
-                            cy={atkY} 
-                            r="8" 
-                            fill={isVicCT ? "rgba(255, 61, 0, 0.95)" : "rgba(0, 184, 212, 0.95)"} 
-                            stroke="#fff" 
-                            strokeWidth="1.5" 
+                            cx={vicX} 
+                            cy={vicY} 
+                            r="11" 
+                            fill={dotColor} 
+                            stroke={strokeColor} 
+                            strokeWidth="2" 
                           />
-                          <title>{`${d.attackerName || "Игрок"} (${d.attackerTeam || "?"})`}</title>
+                          <text 
+                            x={vicX} 
+                            y={vicY + 3.5} 
+                            fill="#fff" 
+                            fontSize="10" 
+                            fontWeight="bold" 
+                            textAnchor="middle"
+                          >
+                            ✕
+                          </text>
+                          <title>{`${d.victimName || "Игрок"} (${d.victimTeam || "?"}) умер от ${d.weapon || "оружия"} от ${d.attackerName || "кого-то"}${d.headshot ? " (В голову)" : ""}`}</title>
                         </g>
-                      )}
-
-                      {/* Victim Dot */}
-                      <g>
-                        <circle 
-                          cx={vicX} 
-                          cy={vicY} 
-                          r="11" 
-                          fill={dotColor} 
-                          stroke={strokeColor} 
-                          strokeWidth="2" 
-                        />
-                        <text 
-                          x={vicX} 
-                          y={vicY + 3.5} 
-                          fill="#fff" 
-                          fontSize="10" 
-                          fontWeight="bold" 
-                          textAnchor="middle"
-                        >
-                          ✕
-                        </text>
-                        <title>{`${d.victimName || "Игрок"} (${d.victimTeam || "?"}) умер от ${d.weapon || "оружия"} от ${d.attackerName || "кого-то"}${d.headshot ? " (В голову)" : ""}`}</title>
                       </g>
-                    </g>
-                  );
-                })}
-              </>
-            )}
-          </svg>
+                    );
+                  })}
+                </>
+              )}
+            </svg>
+          </div>
+
+          {showAllMatchDeaths && (
+            <div style={{
+              fontSize: "0.75rem",
+              color: "var(--text-muted)",
+              textAlign: "center",
+              lineHeight: "1.4",
+              background: "rgba(0,0,0,0.15)",
+              padding: "0.5rem",
+              borderRadius: "6px"
+            }}>
+              Плотность свечения показывает места наиболее частых смертей за весь матч.
+            </div>
+          )}
         </div>
 
-        {/* Kills Info / Help Text */}
-        {showAllMatchDeaths ? (
+        {/* Right Column: Detailed Stats Panel */}
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "1.25rem",
+          flex: "1 1 300px",
+          minWidth: "280px"
+        }}>
+          {/* Header Info */}
           <div style={{
-            fontSize: "0.75rem",
-            color: "var(--text-muted)",
-            textAlign: "center",
-            padding: "0.25rem 0",
-            lineHeight: "1.4"
+            background: "rgba(255,255,255,0.02)",
+            border: "1px solid var(--border-light)",
+            borderRadius: "12px",
+            padding: "1rem"
           }}>
-            Плотность свечения показывает места наиболее частых смертей за весь матч.<br />
-            <span style={{ color: "var(--text-secondary)" }}>
-              Кликни на любой раунд в таймлайне выше, чтобы посмотреть детальные траектории убийств.
-            </span>
-          </div>
-        ) : (
-          <div style={{
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
-            gap: "0.4rem",
-            maxHeight: "120px",
-            overflowY: "auto",
-            background: "rgba(0,0,0,0.15)",
-            padding: "0.5rem",
-            borderRadius: "6px"
-          }}>
-            {roundDeaths.map((d: any, idx: number) => {
-              const isAtkCT = d.attackerTeam === "CT";
-              const isVicCT = d.victimTeam === "CT";
-              const atkColor = isAtkCT ? "#00e5ff" : "#ff5252";
-              const vicColor = isVicCT ? "#00e5ff" : "#ff5252";
+            {showAllMatchDeaths ? (
+              <div>
+                <span style={{ fontSize: "1.2rem", fontWeight: "900", color: "#fff", display: "block" }}>
+                  Весь матч
+                </span>
+                <span style={{ fontSize: "0.78rem", color: "var(--text-secondary)", display: "block", marginTop: "0.35rem", lineHeight: "1.4" }}>
+                  Показываются все зафиксированные смерти за игру. Выберите конкретный раунд на временной шкале выше для пошагового анализа раундов.
+                </span>
+              </div>
+            ) : currentRound ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: "1.3rem", fontWeight: "950", color: "#fff", letterSpacing: "-0.02em" }}>
+                    Раунд {selectedRadarRoundIndex}
+                  </span>
+                  {durationText && (
+                    <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", background: "rgba(255,255,255,0.05)", padding: "0.25rem 0.5rem", borderRadius: "4px" }}>
+                      ⏳ {durationText}
+                    </span>
+                  )}
+                </div>
 
-              return (
-                <div key={idx} style={{
-                  fontSize: "0.7rem",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "0.2rem 0.35rem",
-                  background: "rgba(255,255,255,0.01)",
-                  borderRadius: "4px"
+                {/* Winner Info Banner */}
+                <div style={{
+                  background: winnerSide === "CT" 
+                    ? "linear-gradient(135deg, rgba(0, 184, 212, 0.15), rgba(0, 184, 212, 0.03))" 
+                    : "linear-gradient(135deg, rgba(255, 61, 0, 0.15), rgba(255, 61, 0, 0.03))",
+                  border: winnerSide === "CT" 
+                    ? "1px solid rgba(0, 184, 212, 0.35)" 
+                    : "1px solid rgba(255, 61, 0, 0.35)",
+                  borderRadius: "8px",
+                  padding: "0.75rem 1rem"
                 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
-                    <span style={{ color: atkColor, fontWeight: "600" }}>
-                      {d.attackerName || "Неизвестный"}
-                    </span>
-                    <span style={{ color: "var(--text-muted)", fontSize: "0.65rem" }}>
-                      ({d.attackerTeam || "?"})
-                    </span>
+                  <div style={{ fontSize: "0.7rem", color: "var(--text-secondary)", textTransform: "uppercase", fontWeight: "700", letterSpacing: "0.05em" }}>
+                    Победитель раунда
                   </div>
-                  
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", color: "var(--text-secondary)" }}>
-                    <span>[{d.weapon || "weapon"}]{d.headshot ? " (HS)" : ""} ➔</span>
-                  </div>
-
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
-                    <span style={{ color: vicColor, fontWeight: "600" }}>
-                      {d.victimName || "Неизвестный"}
-                    </span>
-                    <span style={{ color: "var(--text-muted)", fontSize: "0.65rem" }}>
-                      ({d.victimTeam || "?"})
-                    </span>
+                  <div style={{ 
+                    fontSize: "1.05rem", 
+                    fontWeight: "900", 
+                    color: winnerSide === "CT" ? "#00e5ff" : "#ff5252",
+                    marginTop: "0.15rem"
+                  }}>
+                    {winnerName} <span style={{ fontSize: "0.8rem", fontWeight: "bold", color: "var(--text-muted)" }}>({winnerSide})</span>
                   </div>
                 </div>
-              );
-            })}
-            {roundDeaths.length === 0 && (
-              <div style={{ fontSize: "0.7rem", color: "var(--text-muted)", textAlign: "center", padding: "0.5rem 0" }}>
-                В этом раунде нет зафиксированных смертей.
+
+                <div style={{ display: "flex", gap: "1rem", fontSize: "0.75rem" }}>
+                  <div>
+                    <span style={{ color: "var(--text-muted)" }}>Способ победы:</span>{" "}
+                    <strong style={{ color: "#fff" }}>{getReasonText(currentRound.reason)}</strong>
+                  </div>
+                </div>
               </div>
+            ) : (
+              <span style={{ color: "var(--text-muted)", fontSize: "0.78rem" }}>Загрузка статистики раунда...</span>
             )}
           </div>
-        )}
+
+          {/* Kill Feed Chronological Events List */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <span style={{ fontSize: "0.8rem", fontWeight: "800", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+              Хроника убийств (Kill Feed)
+            </span>
+
+            <div style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.5rem",
+              maxHeight: "260px",
+              overflowY: "auto",
+              background: "rgba(0,0,0,0.2)",
+              padding: "0.75rem",
+              borderRadius: "10px",
+              border: "1px solid var(--border-light)"
+            }}>
+              {roundDeaths.map((d: any, idx: number) => {
+                const isAtkCT = d.attackerTeam === "CT";
+                const isVicCT = d.victimTeam === "CT";
+                const atkColor = isAtkCT ? "#00e5ff" : "#ff5252";
+                const vicColor = isVicCT ? "#00e5ff" : "#ff5252";
+
+                return (
+                  <div 
+                    key={idx} 
+                    style={{
+                      fontSize: "0.78rem",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "0.4rem 0.6rem",
+                      background: "rgba(255,255,255,0.02)",
+                      border: "1px solid rgba(255,255,255,0.03)",
+                      borderRadius: "6px",
+                      transition: "background 0.2s"
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.05)"}
+                    onMouseLeave={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.02)"}
+                  >
+                    {/* Attacker */}
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.25rem", flex: 1, minWidth: "90px" }}>
+                      {d.attackerName ? (
+                        <>
+                          <span style={{ color: atkColor, fontWeight: "800", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "90px" }} title={d.attackerName}>
+                            {d.attackerName}
+                          </span>
+                          <span style={{ color: "var(--text-muted)", fontSize: "0.65rem", fontWeight: "bold" }}>
+                            {d.attackerTeam}
+                          </span>
+                        </>
+                      ) : (
+                        <span style={{ color: "var(--text-muted)", fontStyle: "italic" }}>
+                          Мир
+                        </span>
+                      )}
+                    </div>
+                    
+                    {/* Weapon / Action */}
+                    <div style={{ 
+                      display: "flex", 
+                      alignItems: "center", 
+                      gap: "0.35rem", 
+                      color: "var(--text-primary)",
+                      background: "rgba(0,0,0,0.3)",
+                      padding: "0.15rem 0.4rem",
+                      borderRadius: "4px",
+                      fontSize: "0.7rem",
+                      fontWeight: "700"
+                    }}>
+                      <span>{d.weapon || "suicide"}</span>
+                      {d.headshot && (
+                        <span 
+                          style={{ 
+                            color: "var(--danger)", 
+                            fontSize: "0.65rem", 
+                            fontWeight: "900", 
+                            background: "rgba(255,23,68,0.15)", 
+                            padding: "0.05rem 0.25rem", 
+                            borderRadius: "3px",
+                            border: "1px solid rgba(255,23,68,0.3)"
+                          }}
+                          title="Попадание в голову (Headshot)"
+                        >
+                          HS
+                        </span>
+                      )}
+                      <span style={{ color: "var(--text-muted)" }}>➔</span>
+                    </div>
+
+                    {/* Victim */}
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.25rem", flex: 1, minWidth: "90px", justifyContent: "flex-end", textAlign: "right" }}>
+                      <span style={{ color: vicColor, fontWeight: "800", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "90px" }} title={d.victimName}>
+                        {d.victimName}
+                      </span>
+                      <span style={{ color: "var(--text-muted)", fontSize: "0.65rem", fontWeight: "bold" }}>
+                        {d.victimTeam}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+              {roundDeaths.length === 0 && (
+                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", textAlign: "center", padding: "1rem 0" }}>
+                  В этом раунде нет зафиксированных смертей.
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     );
   };
@@ -3038,7 +3230,7 @@ export default function Home() {
                               </div>
 
                               {/* Interactive Kill Map Radar */}
-                              {renderRadarMap(originalMapIndex, round.round_stats.Map)}
+                              {renderRadarMap(originalMapIndex, round.round_stats.Map, t1Name, t2Name, isT1StartedCT)}
                             </div>
                           </div>
                         );

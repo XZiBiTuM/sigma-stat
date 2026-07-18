@@ -80,15 +80,43 @@ export async function GET(
       }
 
       // Try FACEIT Downloads API to exchange CDN URL for a signed direct download URL.
-      // This requires Downloads API permission on the key, but we try it regardless —
-      // if the key doesn't have permission we just fall back to the CDN URL directly.
-      const apiKey = process.env.FACEIT_API_KEY;
-      if (apiKey) {
+      // This supports both standard API key and Client ID / Client Secret OAuth token exchange.
+      let token = process.env.FACEIT_API_KEY;
+      const clientId = process.env.FACEIT_CLIENT_ID;
+      const clientSecret = process.env.FACEIT_CLIENT_SECRET;
+
+      if (clientId && clientSecret) {
+        try {
+          const authString = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
+          const tokenRes = await fetch("https://api.faceit.com/auth/v1/oauth/token", {
+            method: "POST",
+            headers: {
+              "Authorization": `Basic ${authString}`,
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            },
+            body: JSON.stringify({ grant_type: "client_credentials" })
+          });
+          if (tokenRes.ok) {
+            const tokenData = await tokenRes.json();
+            if (tokenData.access_token) {
+              console.log("Successfully obtained OAuth token for Downloads API");
+              token = tokenData.access_token;
+            }
+          } else {
+            console.warn(`OAuth token fetch failed: ${tokenRes.status}`);
+          }
+        } catch (authErr: any) {
+          console.warn(`OAuth flow failed: ${authErr.message}`);
+        }
+      }
+
+      if (token) {
         try {
           const dlRes = await fetch("https://open.faceit.com/download/v2/demos/download", {
             method: "POST",
             headers: {
-              "Authorization": `Bearer ${apiKey}`,
+              "Authorization": `Bearer ${token}`,
               "Content-Type": "application/json",
               "Accept": "application/json"
             },
