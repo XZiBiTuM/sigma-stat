@@ -75,7 +75,7 @@ export async function GET(
     }
 
     // 4. Extract Competitive Map Ranks
-    const activeCompetitiveMaps = ["de_mirage", "de_inferno", "de_nuke", "de_anubis", "de_ancient", "de_dust2", "de_vertigo"];
+    const activeCompetitiveMaps = ["de_dust2", "de_cache", "de_nuke", "de_mirage", "de_anubis", "de_ancient", "de_inferno"];
     const mapRanks = activeCompetitiveMaps.map(mapName => {
       // Find matching rank in csstatsgg
       const match = csstatsRanks.find((r: any) => r.mode?.type === "Matchmaking" && r.mode?.map === mapName);
@@ -90,14 +90,43 @@ export async function GET(
     // 5. Extract Ban Info
     const banInfo = data.ban_info || {};
 
+    // 6. Extract CSStats Career stats & recent matches
+    const csstatsStats = data.csstatsgg?.stats || {};
+    const totalMatchesPlayed = data.stats?.playerstats?.all_stats?.total_matches_played || csstatsStats.matches || 0;
+
+    // Find latest Premier season number
+    let latestPremierSeason = 5;
+    for (const r of csstatsRanks) {
+      if (r.mode?.type === "Premier" && r.mode?.season) {
+        latestPremierSeason = Math.max(latestPremierSeason, r.mode.season);
+      }
+    }
+
+    const recentMatches = (data.csstatsgg?.recent_matches || []).slice(0, 10).map((m: any) => {
+      let result = "L";
+      if (m.score_for > m.score_against) result = "W";
+      else if (m.score_for === m.score_against) result = "T";
+      return {
+        result,
+        score: `${m.score_for}:${m.score_against}`
+      };
+    });
+
     return NextResponse.json({
       steamId,
+      nickname: data.nickname || faceitProfile.nickname || "major winner",
+      avatarUrl: data.avatar_url || "",
       premierRating,
-      ranks: mapRanks, // return all map ranks
+      ranks: mapRanks,
       vacBanned: banInfo.vac_banned || false,
       gameBans: banInfo.number_of_game_bans || 0,
       level: data.level || 0,
-      totalPlayHours: data.total_time_played_hours || 0
+      totalPlayHours: Math.round(data.total_time_played_hours || 0),
+      steamMatches: totalMatchesPlayed,
+      kd: csstatsStats.kd !== undefined ? csstatsStats.kd : 1.00,
+      hs: csstatsStats.hs !== undefined ? csstatsStats.hs : 45,
+      recentMatches,
+      latestPremierSeason
     });
 
   } catch (error: any) {

@@ -549,7 +549,7 @@ export default function PlayerProfilePage() {
               <div className="glass-card" style={{ padding: "0.5rem", borderRadius: "12px", border: "1px solid var(--border-light)", display: "flex", gap: "0.25rem" }}>
                 {[
                   { id: "general", label: "Общая статистика" },
-                  { id: "tactical", label: "Leetify" },
+                  { id: "tactical", label: "Leetify & Premier" },
                   { id: "maps", label: "Статистика по картам" }
                 ].map((tab) => (
                   <button
@@ -640,9 +640,6 @@ export default function PlayerProfilePage() {
                       </div>
                     </div>
                   )}
-
-                  {/* Valve Matchmaking & Steam Stats */}
-                  {renderValveStats()}
 
                 </div>
               )}
@@ -760,6 +757,9 @@ export default function PlayerProfilePage() {
                       </div>
                     ))}
                   </div>
+
+                  {/* Valve Matchmaking & Steam Stats */}
+                  {renderValveStats()}
 
                 </div>
               )}
