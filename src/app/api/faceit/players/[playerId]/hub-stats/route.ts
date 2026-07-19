@@ -353,6 +353,7 @@ export async function GET(
       hltvRating: parseFloat(Math.max(0.1, careerHLTV).toFixed(2)),
       totalKills,
       totalRounds,
+      bestMatch,
       hubAverages: {
         kd: hubAvgKd,
         adr: hubAvgAdr,
