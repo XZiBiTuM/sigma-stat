@@ -1012,6 +1012,7 @@ export default function PlayerProfilePage() {
                       const winRate = seg.winrate;
                       const kd = seg.kd;
                       const adr = seg.adr;
+                      const hsPct = seg.hsPct ?? 0;
 
                       return (
                         <div 
@@ -1055,14 +1056,20 @@ export default function PlayerProfilePage() {
                             <div style={{ display: "flex", gap: "1.25rem", textAlign: "right" }}>
                               <div>
                                 <span style={{ fontSize: "0.68rem", color: "var(--accent-cyan)", display: "block" }}>Avg K/D</span>
-                                <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "var(--accent-cyan)" }}>
+                                <span style={{ fontSize: "0.9rem", fontWeight: "800", color: matches > 0 ? (kd >= 1.0 ? "var(--success)" : "var(--danger)") : "var(--text-muted)" }}>
                                   {matches > 0 ? kd.toFixed(2) : "—"}
                                 </span>
                               </div>
                               <div>
-                                <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block" }}>ADR</span>
-                                <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "var(--accent-yellow)" }}>
+                                <span style={{ fontSize: "0.68rem", color: "var(--accent-yellow)", display: "block" }}>ADR</span>
+                                <span style={{ fontSize: "0.9rem", fontWeight: "800", color: matches > 0 && adr ? (adr >= 80 ? "var(--success)" : "var(--danger)") : "var(--text-muted)" }}>
                                   {matches > 0 && adr ? adr.toFixed(1) : "—"}
+                                </span>
+                              </div>
+                              <div>
+                                <span style={{ fontSize: "0.68rem", color: "var(--accent-purple)", display: "block" }}>HS%</span>
+                                <span style={{ fontSize: "0.9rem", fontWeight: "800", color: matches > 0 ? (hsPct >= 50 ? "var(--success)" : "#fff") : "var(--text-muted)" }}>
+                                  {matches > 0 ? `${hsPct}%` : "—"}
                                 </span>
                               </div>
                             </div>
@@ -1070,8 +1077,43 @@ export default function PlayerProfilePage() {
                         </div>
                       );
                     })}
+
+                  {/* Winrate bars block to fill remaining space */}
+                  {hubStats.maps && hubStats.maps.some((m: any) => m.matches > 0) && (
+                    <div style={{
+                      marginTop: "0.5rem",
+                      background: "rgba(255,255,255,0.02)",
+                      border: "1px solid var(--border-light)",
+                      borderRadius: "12px",
+                      padding: "0.85rem 1rem"
+                    }}>
+                      <span style={{ fontSize: "0.8rem", fontWeight: "800", color: "var(--accent-purple)", display: "block", marginBottom: "0.6rem" }}>Win Rate по картам</span>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.45rem" }}>
+                        {hubStats.maps.filter((m: any) => m.matches > 0).map((m: any, i: number) => (
+                          <div key={i} style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.72rem" }}>
+                            <span style={{ color: "var(--text-secondary)", minWidth: "72px", textAlign: "right" }}>
+                              {m.map.replace("de_", "").replace("cs_", "").toUpperCase()}
+                            </span>
+                            <div style={{ flex: 1, height: "8px", background: "rgba(255,255,255,0.07)", borderRadius: "4px", overflow: "hidden" }}>
+                              <div style={{
+                                height: "100%",
+                                width: `${m.winrate}%`,
+                                borderRadius: "4px",
+                                background: m.winrate >= 60 ? "var(--success)" : m.winrate >= 50 ? "rgba(76,175,80,0.6)" : m.winrate >= 40 ? "rgba(255,152,0,0.7)" : "var(--danger)",
+                                transition: "width 0.6s ease"
+                              }} />
+                            </div>
+                            <span style={{ color: m.winrate >= 50 ? "var(--success)" : "var(--danger)", fontWeight: "700", minWidth: "34px" }}>
+                              {m.winrate}%
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
+
 
               {/* HLTV Rating 2.0 SVG Trend Chart */}
               {renderRatingChart()}
