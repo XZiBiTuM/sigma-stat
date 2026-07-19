@@ -201,11 +201,11 @@ export default function PlayerProfilePage() {
 
     const chartData = [...hubStats.recentMatches].slice(0, 10).reverse();
     const width = 500;
-    const height = 150;
+    const height = 260;
     const paddingLeft = 35;
     const paddingRight = 15;
-    const paddingTop = 25;
-    const paddingBottom = 20;
+    const paddingTop = 35;
+    const paddingBottom = 30;
 
     const ratings = chartData.map((m: any) => m.rating || 1.0);
     const minRating = Math.max(0.2, Math.min(...ratings) - 0.15);
@@ -238,7 +238,7 @@ export default function PlayerProfilePage() {
     }
 
     return (
-      <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "0.75rem", marginTop: "0rem" }}>
+      <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "0.75rem", marginTop: "0rem", height: "360px", justifyContent: "space-between", boxSizing: "border-box" }}>
         <div>
           <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff", display: "block" }}>Динамика перформанса (HLTV Rating 2.0)</span>
           <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", display: "block" }}>Последние {chartData.length} игр</span>
@@ -736,7 +736,7 @@ export default function PlayerProfilePage() {
                           const sniperKills = hubStats.sniper?.kills || 0;
                           const sniperRate = hubStats.sniper?.rate || 0;
                           const isSniper = sniperRate >= 30;
-                          const weaponName = isSniper ? "AWP" : "AK-47 / M4A4";
+                          const weaponName = isSniper ? "AWP" : "AK-47";
                           const weaponKills = isSniper ? sniperKills : (hubStats.totalKills - sniperKills);
                           return (
                             <>
