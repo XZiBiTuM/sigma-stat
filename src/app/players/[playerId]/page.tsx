@@ -329,7 +329,7 @@ export default function PlayerProfilePage() {
     return (
       <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1rem", marginTop: "auto" }}>
         <div>
-          <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff", display: "block" }}>Сравнение со средним по Хабу</span>
+          <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff", display: "block" }}>Сравнение со средним значением по Хабу</span>
           <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", display: "block", marginTop: "0.15rem" }}>Сопоставление ваших показателей со средней статистикой игроков хаба</span>
         </div>
 
@@ -745,7 +745,7 @@ export default function PlayerProfilePage() {
                                 <span style={{ fontWeight: "700", color: "#fff" }}>{weaponName}</span>
                               </div>
                               <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                <span style={{ color: "var(--text-secondary)" }}>Убийств снайпером:</span>
+                                <span style={{ color: "var(--text-secondary)" }}>Убийств со снайперской винтовки:</span>
                                 <span style={{ fontWeight: "700", color: "var(--accent-yellow)" }}>{sniperKills} ({sniperRate}%)</span>
                               </div>
                             </>
@@ -753,8 +753,13 @@ export default function PlayerProfilePage() {
                         })()}
                       </div>
                     </div>
-                    <div style={{ fontSize: "2.5rem", lineHeight: 1, opacity: 0.9, flexShrink: 0 }}>
-                      {(hubStats.sniper?.rate || 0) >= 30 ? "🔭" : "🔫"}
+                    <div style={{ fontSize: "2rem", lineHeight: 1, opacity: 0.95, flexShrink: 0, display: "flex", alignItems: "center" }}>
+                      <img
+                        src={`https://raw.githubusercontent.com/ChetdeJong/cs2-killfeed-generator/master/public/weapons/${(hubStats.sniper?.rate || 0) >= 30 ? "awp" : "ak47"}.svg`}
+                        alt={(hubStats.sniper?.rate || 0) >= 30 ? "AWP" : "AK-47"}
+                        style={{ width: "80px", height: "auto", filter: "drop-shadow(0 0 6px rgba(255,200,0,0.4))" }}
+                        onError={(e: any) => { e.target.style.display = "none"; }}
+                      />
                     </div>
                   </div>
 
@@ -1117,8 +1122,6 @@ export default function PlayerProfilePage() {
 
               {/* HLTV Rating 2.0 SVG Trend Chart */}
               {renderRatingChart()}
-              {/* Comparison with Pro-level benchmark */}
-              {renderComparisonCard()}
             </div>
 
             {/* Right Panel: Advanced Tactical Breakdowns & Multi-Kills */}
@@ -1206,6 +1209,8 @@ export default function PlayerProfilePage() {
                     ))}
                   </div>
                 </div>
+                {/* Comparison Card - moved from left panel */}
+                {renderComparisonCard()}
 
               </div>
             )}
