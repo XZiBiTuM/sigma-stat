@@ -238,14 +238,14 @@ export default function PlayerProfilePage() {
     }
 
     return (
-      <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "0.75rem", marginTop: "0rem", height: "360px", justifyContent: "space-between", boxSizing: "border-box" }}>
+      <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "0.75rem", marginTop: "0rem", flex: 1, minHeight: "280px", justifyContent: "space-between", boxSizing: "border-box" }}>
         <div>
           <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff", display: "block" }}>Динамика перформанса (HLTV Rating 2.0)</span>
           <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", display: "block" }}>Последние {chartData.length} игр</span>
         </div>
 
-        <div style={{ width: "100%", overflowX: "auto" }}>
-          <svg viewBox={`0 0 ${width} ${height}`} style={{ width: "100%", height: "auto", overflow: "visible" }}>
+        <div style={{ width: "100%", display: "flex", alignItems: "center", overflow: "hidden" }}>
+          <svg viewBox={`0 0 ${width} ${height}`} style={{ width: "100%", height: "100%", overflow: "visible" }}>
             <defs>
               <linearGradient id="chartAreaGrad" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="var(--accent-cyan)" stopOpacity="0.25" />
@@ -630,7 +630,7 @@ export default function PlayerProfilePage() {
 
               {/* General Tab Content */}
               {activeTab === "general" && hubStats && (
-                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1.25rem", height: "860px", overflow: "hidden", boxSizing: "border-box" }}>
+                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1.25rem", height: "830px", overflow: "hidden", boxSizing: "border-box" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff" }}>Статистика (хаб)</h3>
                     <span style={{ fontSize: "0.72rem", padding: "0.2rem 0.5rem", background: "rgba(0, 212, 255, 0.1)", border: "1px solid rgba(0, 212, 255, 0.2)", borderRadius: "6px", color: "var(--accent-cyan)", fontWeight: "700" }}>
@@ -820,7 +820,7 @@ export default function PlayerProfilePage() {
 
               {/* Tactical Tab Content */}
               {activeTab === "tactical" && hubStats && (
-                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1.25rem", height: "860px", overflow: "hidden", boxSizing: "border-box" }}>
+                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1.25rem", height: "830px", overflow: "hidden", boxSizing: "border-box" }}>
                   
                   {/* Leetify Card */}
                   {leetify ? (
@@ -914,7 +914,7 @@ export default function PlayerProfilePage() {
 
               {/* Maps Stats View in Left column fallback if tab chosen */}
               {activeTab === "maps" && hubStats && (
-                <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "0.5rem", height: "860px", overflow: "hidden", boxSizing: "border-box" }}>
+                <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "0.5rem", height: "830px", overflow: "hidden", boxSizing: "border-box" }}>
                   
                   {/* Maps Summary Box at the top */}
                   <div style={{
