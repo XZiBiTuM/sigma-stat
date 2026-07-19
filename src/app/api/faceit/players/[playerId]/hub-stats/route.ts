@@ -289,6 +289,45 @@ export async function GET(
       }
     }
 
+    // Calculate hub-wide averages from all matches in the cache
+    let hubTotalKills = 0;
+    let hubTotalDeaths = 0;
+    let hubTotalDamage = 0;
+    let hubTotalRounds = 0;
+    let hubTotalHeadshots = 0;
+    let hubTotalEntryCount = 0;
+    let hubTotalEntryWins = 0;
+
+    for (const mId in cacheData) {
+      const matchObj = cacheData[mId];
+      if (!matchObj || !Array.isArray(matchObj.rounds)) continue;
+
+      for (const rnd of matchObj.rounds) {
+        const rndStats = rnd.round_stats || {};
+        const rndsInMatch = parseInt(rndStats.Rounds || "22", 10);
+
+        if (Array.isArray(rnd.teams)) {
+          for (const team of rnd.teams) {
+            for (const p of team.players || []) {
+              const pStats = p.player_stats || {};
+              hubTotalKills += parseInt(pStats.Kills || "0", 10);
+              hubTotalDeaths += parseInt(pStats.Deaths || "0", 10);
+              hubTotalDamage += parseInt(pStats.Damage || "0", 10);
+              hubTotalRounds += rndsInMatch;
+              hubTotalHeadshots += parseInt(pStats.Headshots || "0", 10);
+              hubTotalEntryCount += parseInt(pStats["Entry Count"] || "0", 10);
+              hubTotalEntryWins += parseInt(pStats["Entry Wins"] || "0", 10);
+            }
+          }
+        }
+      }
+    }
+
+    const hubAvgKd = hubTotalDeaths > 0 ? parseFloat((hubTotalKills / hubTotalDeaths).toFixed(2)) : 1.05;
+    const hubAvgAdr = hubTotalRounds > 0 ? parseFloat((hubTotalDamage / hubTotalRounds).toFixed(1)) : 75.0;
+    const hubAvgHs = hubTotalKills > 0 ? Math.round((hubTotalHeadshots / hubTotalKills) * 100) : 40;
+    const hubAvgEntry = hubTotalEntryCount > 0 ? Math.round((hubTotalEntryWins / hubTotalEntryCount) * 100) : 50;
+
     return NextResponse.json({
       playerId,
       matchesCount,
@@ -298,6 +337,12 @@ export async function GET(
       hsPct: avgHs,
       adr: parseFloat(avgAdr.toFixed(1)),
       hltvRating: parseFloat(Math.max(0.1, careerHLTV).toFixed(2)),
+      hubAverages: {
+        kd: hubAvgKd,
+        adr: hubAvgAdr,
+        hsPct: hubAvgHs,
+        entrySuccessRate: hubAvgEntry
+      },
       streaks: {
         current: currentStreak,
         longest: longestStreak

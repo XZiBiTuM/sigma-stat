@@ -198,46 +198,48 @@ export default function PlayerProfilePage() {
   const renderComparisonCard = () => {
     if (!hubStats) return null;
 
+    const hubAvg = hubStats.hubAverages || { kd: 1.05, adr: 75.0, hsPct: 40, entrySuccessRate: 50 };
+
     const metrics = [
-      { name: "Средний K/D", player: hubStats.kd, pro: 1.05, format: (val: number) => val.toFixed(2), max: 2.0 },
-      { name: "Средний урон за раунд (ADR)", player: hubStats.adr || 0, pro: 78.0, format: (val: number) => `${val.toFixed(1)} HP`, max: 120 },
-      { name: "Попадания в голову (HS%)", player: hubStats.hsPct || 0, pro: 40, format: (val: number) => `${val}%`, max: 100 },
-      { name: "Успех первых дуэлей", player: hubStats.duels?.entrySuccessRate || 0, pro: 50, format: (val: number) => `${val}%`, max: 100 }
+      { name: "Средний K/D", player: hubStats.kd, avg: hubAvg.kd, format: (val: number) => val.toFixed(2), max: 2.0 },
+      { name: "Средний урон за раунд (ADR)", player: hubStats.adr || 0, avg: hubAvg.adr, format: (val: number) => `${val.toFixed(1)} HP`, max: 120 },
+      { name: "Попадания в голову (HS%)", player: hubStats.hsPct || 0, avg: hubAvg.hsPct, format: (val: number) => `${val}%`, max: 100 },
+      { name: "Успех первых дуэлей", player: hubStats.duels?.entrySuccessRate || 0, avg: hubAvg.entrySuccessRate, format: (val: number) => `${val}%`, max: 100 }
     ];
 
     return (
-      <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1rem", marginTop: "auto" }}>
         <div>
-          <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff", display: "block" }}>Сравнение с Pro-уровнем</span>
-          <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", display: "block", marginTop: "0.15rem" }}>Сопоставление ваших показателей со средней статистикой профессиональных игроков</span>
+          <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff", display: "block" }}>Сравнение со средним по Хабу</span>
+          <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", display: "block", marginTop: "0.15rem" }}>Сопоставление ваших показателей со средней статистикой игроков хаба</span>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
           {metrics.map((m, idx) => {
             const playerPct = Math.min(100, Math.max(10, (m.player / m.max) * 100));
-            const proPct = Math.min(100, Math.max(10, (m.pro / m.max) * 100));
-            const isBetter = m.player >= m.pro;
+            const avgPct = Math.min(100, Math.max(10, (m.avg / m.max) * 100));
+            const isBetter = m.player >= m.avg;
 
             return (
               <div key={idx} style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
                   <span style={{ fontWeight: "700", color: "var(--text-secondary)" }}>{m.name}</span>
                   <span style={{ color: isBetter ? "var(--success)" : "var(--danger)", fontWeight: "800" }}>
-                    {m.format(m.player)} <span style={{ color: "var(--text-muted)", fontWeight: "normal", fontSize: "0.7rem" }}>vs {m.format(m.pro)} Pro</span>
+                    {m.format(m.player)} <span style={{ color: "var(--text-muted)", fontWeight: "normal", fontSize: "0.7rem" }}>vs {m.format(m.avg)} Ср.</span>
                   </span>
                 </div>
                 {/* Visual Progress Bar */}
                 <div style={{ height: "6px", background: "rgba(255,255,255,0.05)", borderRadius: "3px", position: "relative", overflow: "hidden" }}>
-                  {/* Pro Marker Line */}
+                  {/* Avg Marker Line */}
                   <div style={{
                     position: "absolute",
-                    left: `${proPct}%`,
+                    left: `${avgPct}%`,
                     top: 0, bottom: 0,
                     width: "2px",
                     background: "#ffd54f",
                     zIndex: 2,
                     boxShadow: "0 0 4px #ffd54f"
-                  }} title="Pro Level" />
+                  }} title="Hub Average" />
                   
                   {/* Player Fill */}
                   <div style={{
@@ -417,10 +419,10 @@ export default function PlayerProfilePage() {
           </div>
 
           {/* Detailed Statistics Container */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "2rem", alignItems: "start" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "2rem", alignItems: "stretch" }}>
             
             {/* Left Panel: Tabs & Metrics */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", height: "100%" }}>
               
               {/* Tabs Navigation Card */}
               <div className="glass-card" style={{ padding: "0.5rem", borderRadius: "12px", border: "1px solid var(--border-light)", display: "flex", gap: "0.25rem" }}>
