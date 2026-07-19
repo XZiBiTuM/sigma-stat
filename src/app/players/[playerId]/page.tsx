@@ -80,6 +80,9 @@ export default function PlayerProfilePage() {
   const [visibleMatches, setVisibleMatches] = useState(10);
   const [steamStats, setSteamStats] = useState<any>(null);
   const [copied, setCopied] = useState(false);
+  const [steamHover, setSteamHover] = useState(false);
+  const [faceitHover, setFaceitHover] = useState(false);
+  const [copyHover, setCopyHover] = useState(false);
 
   const handleCopyProfile = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -509,7 +512,9 @@ export default function PlayerProfilePage() {
                     href={`https://steamcommunity.com/profiles/${profile.steam_id_64 || profile.platforms?.steam}`}
                     target="_blank" 
                     rel="noreferrer"
-                    style={{ color: "var(--accent-cyan)", fontSize: "0.9rem", textDecoration: "none", fontWeight: "600", display: "inline-flex", alignItems: "center", gap: "0.4rem" }}
+                    style={{ color: steamHover ? "#fff" : "var(--accent-cyan)", fontSize: "0.9rem", textDecoration: "none", fontWeight: "600", display: "inline-flex", alignItems: "center", gap: "0.4rem", transition: "color 0.2s" }}
+                    onMouseEnter={() => setSteamHover(true)}
+                    onMouseLeave={() => setSteamHover(false)}
                   >
                     <img src="/icons/steam.png" alt="" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
                     <span>Steam Profile ↗</span>
@@ -519,17 +524,21 @@ export default function PlayerProfilePage() {
                   href={`https://www.faceit.com/ru/players/${profile.nickname}`}
                   target="_blank" 
                   rel="noreferrer"
-                  style={{ color: "var(--accent-purple)", fontSize: "0.9rem", textDecoration: "none", fontWeight: "600", display: "inline-flex", alignItems: "center", gap: "0.4rem" }}
+                  style={{ color: faceitHover ? "#fff" : "var(--accent-purple)", fontSize: "0.9rem", textDecoration: "none", fontWeight: "600", display: "inline-flex", alignItems: "center", gap: "0.4rem", transition: "color 0.2s" }}
+                  onMouseEnter={() => setFaceitHover(true)}
+                  onMouseLeave={() => setFaceitHover(false)}
                 >
                   <img src="/icons/faceit.png" alt="" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
                   <span>FACEIT Profile ↗</span>
                 </a>
                 <button
                   onClick={handleCopyProfile}
+                  onMouseEnter={() => setCopyHover(true)}
+                  onMouseLeave={() => setCopyHover(false)}
                   style={{
                     background: "transparent",
                     border: "none",
-                    color: copied ? "var(--success)" : "var(--accent-yellow)",
+                    color: copied ? "#4caf50" : (copyHover ? "#fff" : "rgba(255, 255, 255, 0.7)"),
                     fontSize: "0.9rem",
                     fontWeight: "600",
                     display: "inline-flex",
@@ -540,7 +549,7 @@ export default function PlayerProfilePage() {
                     transition: "color 0.2s"
                   }}
                 >
-                  <svg viewBox="0 0 24 24" style={{ width: "16px", height: "16px", fill: copied ? "var(--success)" : "var(--accent-yellow)" }}>
+                  <svg viewBox="0 0 24 24" style={{ width: "16px", height: "16px", fill: copied ? "#4caf50" : (copyHover ? "#fff" : "rgba(255, 255, 255, 0.7)"), transition: "fill 0.2s" }}>
                     <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
                   </svg>
                   <span>{copied ? "Ссылка скопирована!" : "Скопировать ссылку профиля"}</span>
