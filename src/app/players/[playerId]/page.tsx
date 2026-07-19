@@ -548,8 +548,8 @@ export default function PlayerProfilePage() {
               {/* Tabs Navigation Card */}
               <div className="glass-card" style={{ padding: "0.5rem", borderRadius: "12px", border: "1px solid var(--border-light)", display: "flex", gap: "0.25rem" }}>
                 {[
-                  { id: "general", label: "Общая статистика (хаб)" },
-                  { id: "tactical", label: "Общая статистика (все игры)" },
+                  { id: "general", label: "Статистика (хаб)" },
+                  { id: "tactical", label: "Статистика (все игры)" },
                   { id: "maps", label: "Статистика по картам" }
                 ].map((tab) => (
                   <button
@@ -577,7 +577,7 @@ export default function PlayerProfilePage() {
               {activeTab === "general" && hubStats && (
                 <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1.25rem", minHeight: "680px", boxSizing: "border-box" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff" }}>Общая статистика (хаб)</h3>
+                    <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff" }}>Статистика (хаб)</h3>
                     <span style={{ fontSize: "0.72rem", padding: "0.2rem 0.5rem", background: "rgba(0, 212, 255, 0.1)", border: "1px solid rgba(0, 212, 255, 0.2)", borderRadius: "6px", color: "var(--accent-cyan)", fontWeight: "700" }}>
                       Hub Scoped
                     </span>
@@ -647,22 +647,7 @@ export default function PlayerProfilePage() {
                       { title: "Атака", items: [
                         { label: "Средний урон (ADR)", val: hubStats.adr ? `${hubStats.adr} HP` : "—" },
                         { label: "Убийств за раунд (KPR)", val: hubStats.totalRounds > 0 ? (hubStats.totalKills / hubStats.totalRounds).toFixed(2) : "—" }
-                      ], color: "var(--accent-cyan)" },
-                      { title: "Первые дуэли", items: [
-                        { label: "Участие в дуэлях (Entry Rate)", val: hubStats.duels?.entryCount ? `${hubStats.duels.entryCount} раз` : "—" },
-                        { label: "Выиграно первых дуэлей", val: hubStats.duels?.entrySuccessRate ? `${hubStats.duels.entrySuccessRate}%` : "—" }
-                      ], color: "var(--warning)" },
-                      { title: "Клатчи", items: [
-                        { label: "Побед в 1v1 клачах", val: hubStats.duels?.clutch1v1Rate ? `${hubStats.duels.clutch1v1Rate}%` : "—" },
-                        { label: "Побед в 1v2 клачах", val: hubStats.duels?.clutch1v2Rate ? `${hubStats.duels.clutch1v2Rate}%` : "—" },
-                        { label: "Побед в 1v3 клачах", val: hubStats.duels?.clutch1v3Wins ? `${hubStats.duels.clutch1v3Wins} раз` : "—" },
-                        { label: "Побед в 1v4 клачах", val: hubStats.duels?.clutch1v4Wins ? `${hubStats.duels.clutch1v4Wins} раз` : "—" },
-                        { label: "Побед в 1v5 клачах", val: hubStats.duels?.clutch1v5Wins ? `${hubStats.duels.clutch1v5Wins} раз` : "—" }
-                      ], color: "#00d4ff" },
-                      { title: "Гранаты", items: [
-                        { label: "Урон гранатами / раунд", val: hubStats.utility?.utilityDamagePerRound ? `${hubStats.utility.utilityDamagePerRound} HP` : "—" },
-                        { label: "Эффективность флешек", val: hubStats.utility?.flashSuccessRate ? `${hubStats.utility.flashSuccessRate}%` : "—" }
-                      ], color: "var(--accent-purple)" }
+                      ], color: "var(--accent-cyan)" }
                     ].map((section, idx) => (
                       <div key={idx} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "10px", padding: "1rem" }}>
                         <span style={{ fontSize: "0.82rem", fontWeight: "800", color: section.color, display: "block", marginBottom: "0.5rem" }}>{section.title}</span>
@@ -735,7 +720,7 @@ export default function PlayerProfilePage() {
                       </div>
 
                       {/* Detailed overall indicators */}
-                      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "x.75rem", marginTop: "1rem" }}>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "0.75rem 2.5rem", marginTop: "1rem" }}>
                         {[
                           { label: "Ошибка прицела (Preaim)", val: leetify.stats.preaim !== undefined ? `${parseFloat(leetify.stats.preaim).toFixed(1)}°` : "—" },
                           { label: "Время реакции", val: leetify.stats.reaction_time_ms !== undefined ? `${Math.round(leetify.stats.reaction_time_ms)} ms` : "—" },
@@ -918,7 +903,7 @@ export default function PlayerProfilePage() {
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                     {[
                       { label: "Использовано гранат", val: hubStats.utility?.utilityCount || "0", suffix: "" },
-                      { label: "Процент эффективности использования гранат", val: `${hubStats.utility?.utilitySuccesses || "0"}` + (hubStats.utility?.utilitySuccessRate ? ` (${hubStats.utility.utilitySuccessRate}%)` : ""), suffix: "" },
+                      { label: "Процент эффективности использован", val: hubStats.utility?.utilitySuccessRate ? `${hubStats.utility.utilitySuccessRate}%` : "0%", suffix: "" },
                       { label: "Общий урон гранатами", val: hubStats.utility?.utilityDamage ? `${hubStats.utility.utilityDamage} HP` : "0 HP", suffix: "" },
                       { 
                         label: "Флешки", 
