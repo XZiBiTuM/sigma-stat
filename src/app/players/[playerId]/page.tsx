@@ -756,10 +756,14 @@ export default function PlayerProfilePage() {
                               </span>
                             </div>
                             <div style={{ display: "flex", justifyContent: "space-between" }}>
-                              <span style={{ color: "var(--text-secondary)" }}>Лучшая карта по винрейту:</span>
-                              <span style={{ fontWeight: "700", color: "var(--success)" }}>
-                                {bestMap.replace("de_", "").replace("cs_", "").toUpperCase()} {maxWinrate >= 0 ? `(${maxWinrate}%)` : ""}
-                              </span>
+                              <span style={{ color: "var(--text-secondary)" }}>Лучшая игра в Хабе:</span>
+                              {hubStats.bestMatch ? (
+                                <span style={{ fontWeight: "700", color: "var(--accent-yellow)" }}>
+                                  {hubStats.bestMatch.map.replace("de_", "").replace("cs_", "").toUpperCase()} ({hubStats.bestMatch.score}) • {hubStats.bestMatch.kills}K/{hubStats.bestMatch.deaths}D
+                                </span>
+                              ) : (
+                                <span style={{ fontWeight: "700", color: "#fff" }}>—</span>
+                              )}
                             </div>
                           </>
                         );
@@ -915,10 +919,14 @@ export default function PlayerProfilePage() {
                               </span>
                             </div>
                             <div style={{ display: "flex", justifyContent: "space-between" }}>
-                              <span style={{ color: "var(--text-secondary)" }}>Лучшая по винрейту:</span>
-                              <span style={{ fontWeight: "700", color: "var(--success)" }}>
-                                {bestMap.replace("de_", "").replace("cs_", "").toUpperCase()} {maxWinrate >= 0 ? `(${maxWinrate}%)` : ""}
-                              </span>
+                              <span style={{ color: "var(--text-secondary)" }}>Лучшая игра в Хабе:</span>
+                              {hubStats.bestMatch ? (
+                                <span style={{ fontWeight: "700", color: "var(--accent-yellow)" }}>
+                                  {hubStats.bestMatch.map.replace("de_", "").replace("cs_", "").toUpperCase()} ({hubStats.bestMatch.score}) • {hubStats.bestMatch.kills}K/{hubStats.bestMatch.deaths}D
+                                </span>
+                              ) : (
+                                <span style={{ fontWeight: "700", color: "#fff" }}>—</span>
+                              )}
                             </div>
                           </>
                         );

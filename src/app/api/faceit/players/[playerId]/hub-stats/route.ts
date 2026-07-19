@@ -332,6 +332,16 @@ export async function GET(
     const hubAvgHs = hubTotalKills > 0 ? Math.round((hubTotalHeadshots / hubTotalKills) * 100) : 40;
     const hubAvgEntry = hubTotalEntryCount > 0 ? Math.round((hubTotalEntryWins / hubTotalEntryCount) * 100) : 50;
 
+    // Find best match (highest rating)
+    let bestMatch = null;
+    let maxMatchRating = -1;
+    playerMatchesList.forEach((m: any) => {
+      if (m.rating > maxMatchRating) {
+        maxMatchRating = m.rating;
+        bestMatch = m;
+      }
+    });
+
     return NextResponse.json({
       playerId,
       matchesCount,
