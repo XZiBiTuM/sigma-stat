@@ -128,12 +128,44 @@ export default function PlayerProfilePage() {
 
           {/* Map Ranks */}
           {Array.isArray(ranks) && ranks.length > 0 ? (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.5rem" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "0.4rem" }}>
               {ranks.map((r: any, idx: number) => (
-                <div key={idx} style={{ background: "rgba(0,0,0,0.25)", border: "1px solid var(--border-light)", borderRadius: "8px", padding: "0.6rem", textAlign: "center" }}>
-                  <span style={{ fontSize: "0.65rem", color: "var(--text-secondary)", display: "block" }}>{r.map}</span>
-                  <span style={{ fontSize: "0.72rem", fontWeight: "800", color: "#fff", display: "block", marginTop: "0.15rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {r.rank}
+                <div key={idx} style={{
+                  background: "rgba(0,0,0,0.25)",
+                  border: "1px solid var(--border-light)",
+                  borderRadius: "8px",
+                  padding: "0.5rem 0.25rem",
+                  textAlign: "center",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "0.25rem"
+                }}>
+                  <span style={{ fontSize: "0.65rem", color: "var(--text-secondary)", textTransform: "uppercase", fontWeight: "800" }}>
+                    {r.map.replace("de_", "").replace("cs_", "")}
+                  </span>
+                  <img
+                    src={`/icons/skillgroup${r.value || 0}.svg`}
+                    alt={r.rank}
+                    style={{
+                      height: "22px",
+                      width: "auto",
+                      maxWidth: "100%",
+                      objectFit: "contain",
+                      filter: r.value === 0 ? "grayscale(1) opacity(0.4)" : "none"
+                    }}
+                  />
+                  <span style={{
+                    fontSize: "0.55rem",
+                    color: "var(--text-muted)",
+                    fontWeight: "700",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    maxWidth: "100%"
+                  }} title={r.rank}>
+                    {r.rank === "Unranked" ? "No Rank" : r.rank}
                   </span>
                 </div>
               ))}
@@ -146,8 +178,8 @@ export default function PlayerProfilePage() {
 
           {/* Steam Ban Status */}
           <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.72rem", color: "var(--text-muted)", background: "rgba(0,0,0,0.15)", padding: "0.5rem 0.75rem", borderRadius: "6px" }}>
-            <span>VAC статус: <strong style={{ color: vacBanned ? "var(--danger)" : "var(--success)" }}>{vacBanned ? "Banned" : "Clean"}</strong></span>
-            <span>Игровые баны: <strong style={{ color: gameBans > 0 ? "var(--danger)" : "var(--success)" }}>{gameBans > 0 ? `${gameBans} банов` : "Clean"}</strong></span>
+            <span>VAC статус: <strong style={{ color: vacBanned ? "var(--danger)" : "var(--success)" }}>{vacBanned ? "Заблокирован" : "Чисто"}</strong></span>
+            <span>Игровые баны: <strong style={{ color: gameBans > 0 ? "var(--danger)" : "var(--success)" }}>{gameBans > 0 ? `${gameBans} бан(ов)` : "Чисто"}</strong></span>
           </div>
         </div>
       </div>
@@ -543,7 +575,7 @@ export default function PlayerProfilePage() {
 
               {/* General Tab Content */}
               {activeTab === "general" && hubStats && (
-                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1.25rem", height: "600px", boxSizing: "border-box" }}>
+                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1.25rem", minHeight: "680px", boxSizing: "border-box" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff" }}>Общая статистика</h3>
                     <span style={{ fontSize: "0.72rem", padding: "0.2rem 0.5rem", background: "rgba(0, 212, 255, 0.1)", border: "1px solid rgba(0, 212, 255, 0.2)", borderRadius: "6px", color: "var(--accent-cyan)", fontWeight: "700" }}>
@@ -617,7 +649,7 @@ export default function PlayerProfilePage() {
 
               {/* Tactical Tab Content */}
               {activeTab === "tactical" && hubStats && (
-                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1.25rem", height: "600px", boxSizing: "border-box" }}>
+                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1.25rem", minHeight: "680px", boxSizing: "border-box" }}>
                   
                   {/* Leetify Card */}
                   {leetify ? (
@@ -633,32 +665,43 @@ export default function PlayerProfilePage() {
                           <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", display: "block" }}>Сравнительный тактический показатель</span>
                         </div>
                         {(() => {
-                          const val = parseFloat(leetify.stats.leetify_rating);
-                          const isPos = val >= 0;
-                          return (
-                            <div style={{
-                              background: isPos ? "rgba(76,175,80,0.18)" : "rgba(244,67,54,0.18)",
-                              border: isPos ? "1px solid rgba(76,175,80,0.4)" : "1px solid rgba(244,67,54,0.4)",
-                              color: isPos ? "#4caf50" : "#f44336",
-                              padding: "0.4rem 1rem",
-                              borderRadius: "8px",
-                              fontWeight: "900",
-                              fontSize: "1.2rem"
-                            }}>
-                              {isPos ? `+${val.toFixed(2)}` : val.toFixed(2)}
-                            </div>
-                          );
-                        })()}
+                           const val = parseFloat(leetify.ranks?.leetify);
+                           const isPos = val >= 0;
+                           if (isNaN(val)) return <div style={{ color: "var(--text-secondary)", fontWeight: "800", fontSize: "1.1rem" }}>—</div>;
+                           return (
+                             <div style={{
+                               background: isPos ? "rgba(76,175,80,0.18)" : "rgba(244,67,54,0.18)",
+                               border: isPos ? "1px solid rgba(76,175,80,0.4)" : "1px solid rgba(244,67,54,0.4)",
+                               color: isPos ? "#4caf50" : "#f44336",
+                               padding: "0.4rem 1rem",
+                               borderRadius: "8px",
+                               fontWeight: "900",
+                               fontSize: "1.2rem"
+                             }}>
+                               {isPos ? `+${val.toFixed(2)}` : val.toFixed(2)}
+                             </div>
+                           );
+                         })()}
                       </div>
 
                       <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "0.75rem" }}>
                         {[
-                          { label: "Preaim Accuracy", val: `${Math.round(leetify.stats.preaim * 100)}%` },
-                          { label: "Reaction Time", val: `${Math.round(leetify.stats.reaction_time)} ms` },
-                          { label: "Aim Accuracy", val: `${Math.round(leetify.stats.accuracy * 100)}%` },
-                          { label: "Counter-Strafing", val: `${Math.round(leetify.stats.counter_strafing_shots_good_ratio * 100)}%` },
-                          { label: "Spray Accuracy", val: `${Math.round(leetify.stats.spray_accuracy * 100)}%` },
-                          { label: "Leetify T / CT", val: `${parseFloat(leetify.stats.t_leetify_rating).toFixed(1)} / ${parseFloat(leetify.stats.ct_leetify_rating).toFixed(1)}` }
+                          { label: "Ошибка прицеливания (Preaim)", val: leetify.stats.preaim !== undefined ? `${parseFloat(leetify.stats.preaim).toFixed(1)}°` : "—" },
+                          { label: "Время реакции", val: leetify.stats.reaction_time_ms !== undefined ? `${Math.round(leetify.stats.reaction_time_ms)} ms` : "—" },
+                          { label: "Точность прицеливания (Aim)", val: leetify.stats.accuracy_enemy_spotted !== undefined ? `${Math.round(leetify.stats.accuracy_enemy_spotted)}%` : "—" },
+                          { label: "Контр-стрейф", val: leetify.stats.counter_strafing_good_shots_ratio !== undefined ? `${Math.round(leetify.stats.counter_strafing_good_shots_ratio)}%` : "—" },
+                          { label: "Точность спрея", val: leetify.stats.spray_accuracy !== undefined ? `${Math.round(leetify.stats.spray_accuracy)}%` : "—" },
+                          { 
+                            label: "Рейтинг T / CT", 
+                            val: (() => {
+                              const formatRating = (v: any) => {
+                                const num = parseFloat(v);
+                                if (isNaN(num)) return "—";
+                                return num >= 0 ? `+${num.toFixed(2)}` : num.toFixed(2);
+                              };
+                              return `${formatRating(leetify.rating?.t_leetify)} / ${formatRating(leetify.rating?.ct_leetify)}`;
+                            })()
+                          }
                         ].map((item, idx) => (
                           <div key={idx} style={{ background: "rgba(0,0,0,0.25)", borderRadius: "8px", padding: "0.6rem 0.85rem", border: "1px solid var(--border-light)" }}>
                             <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block" }}>{item.label}</span>
@@ -723,7 +766,7 @@ export default function PlayerProfilePage() {
 
               {/* Maps Stats View in Left column fallback if tab chosen */}
               {activeTab === "maps" && hubStats && (
-                <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "0.5rem", height: "600px", boxSizing: "border-box" }}>
+                <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "0.5rem", minHeight: "680px", boxSizing: "border-box" }}>
                   {hubStats.maps?.map((seg: any, idx: number) => {
                       const mapName = seg.map;
                       const matches = seg.matches;

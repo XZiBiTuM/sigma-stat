@@ -75,25 +75,17 @@ export async function GET(
     }
 
     // 4. Extract Competitive Map Ranks
-    const mapRanks: Array<{ map: string; rank: string; value: number }> = [];
-    const activeCompetitiveMaps = ["de_mirage", "de_inferno", "de_nuke", "de_anubis", "de_ancient", "de_dust2"];
-
-    for (const r of csstatsRanks) {
-      if (r.mode?.type === "Matchmaking" && r.mode?.map) {
-        const mapName = r.mode.map;
-        if (activeCompetitiveMaps.includes(mapName) || mapRanks.length < 3) {
-          const rankVal = r.rank || 0;
-          mapRanks.push({
-            map: mapName,
-            rank: mmRanksMap[rankVal] || "Unranked",
-            value: rankVal
-          });
-        }
-      }
-    }
-
-    // Sort map ranks so that ranked maps appear first
-    mapRanks.sort((a, b) => b.value - a.value);
+    const activeCompetitiveMaps = ["de_mirage", "de_inferno", "de_nuke", "de_anubis", "de_ancient", "de_dust2", "de_vertigo"];
+    const mapRanks = activeCompetitiveMaps.map(mapName => {
+      // Find matching rank in csstatsgg
+      const match = csstatsRanks.find((r: any) => r.mode?.type === "Matchmaking" && r.mode?.map === mapName);
+      const rankVal = match ? (match.rank || 0) : 0;
+      return {
+        map: mapName,
+        rank: mmRanksMap[rankVal] || "Unranked",
+        value: rankVal
+      };
+    });
 
     // 5. Extract Ban Info
     const banInfo = data.ban_info || {};
@@ -101,7 +93,7 @@ export async function GET(
     return NextResponse.json({
       steamId,
       premierRating,
-      ranks: mapRanks.slice(0, 3), // return top 3 map ranks
+      ranks: mapRanks, // return all map ranks
       vacBanned: banInfo.vac_banned || false,
       gameBans: banInfo.number_of_game_bans || 0,
       level: data.level || 0,

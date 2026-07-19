@@ -337,6 +337,8 @@ export async function GET(
       hsPct: avgHs,
       adr: parseFloat(avgAdr.toFixed(1)),
       hltvRating: parseFloat(Math.max(0.1, careerHLTV).toFixed(2)),
+      totalKills,
+      totalRounds,
       hubAverages: {
         kd: hubAvgKd,
         adr: hubAvgAdr,
