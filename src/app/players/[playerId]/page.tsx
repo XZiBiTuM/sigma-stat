@@ -241,7 +241,7 @@ export default function PlayerProfilePage() {
       <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "0.75rem", marginTop: "0rem" }}>
         <div>
           <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff", display: "block" }}>Динамика перформанса (HLTV Rating 2.0)</span>
-          <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", display: "block" }}>Последние {chartData.length} игр в хабе</span>
+          <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", display: "block" }}>Последние {chartData.length} игр</span>
         </div>
 
         <div style={{ width: "100%", overflowX: "auto" }}>
@@ -672,7 +672,7 @@ export default function PlayerProfilePage() {
                   {/* Form */}
                   {Array.isArray(hubStats.recentResults) && hubStats.recentResults.length > 0 && (
                     <div style={{ background: "rgba(0,0,0,0.15)", borderRadius: "10px", padding: "1rem", border: "1px dashed var(--border-light)" }}>
-                      <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)", display: "block", marginBottom: "0.75rem" }}>Форма в Хабе</span>
+                      <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)", display: "block", marginBottom: "0.75rem" }}>Последние 5 игр</span>
                       <div style={{ display: "flex", gap: "0.75rem" }}>
                         {hubStats.recentResults.map((res: string, i: number) => {
                           const isWin = res === "1";
@@ -697,16 +697,16 @@ export default function PlayerProfilePage() {
                   )}
 
                   {/* Hub Tactical Stats */}
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "0.75rem", marginTop: "0.5rem" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "0.4rem", marginTop: "0.25rem" }}>
                     {[
                       { title: "Атака", items: [
                         { label: "Средний урон (ADR)", val: hubStats.adr ? `${hubStats.adr} HP` : "—" },
                         { label: "Убийств за раунд (KPR)", val: hubStats.totalRounds > 0 ? (hubStats.totalKills / hubStats.totalRounds).toFixed(2) : "—" }
                       ], color: "var(--accent-cyan)" }
                     ].map((section, idx) => (
-                      <div key={idx} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "10px", padding: "1rem" }}>
-                        <span style={{ fontSize: "0.82rem", fontWeight: "800", color: section.color, display: "block", marginBottom: "0.5rem" }}>{section.title}</span>
-                        <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+                      <div key={idx} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "10px", padding: "0.75rem 1rem" }}>
+                        <span style={{ fontSize: "0.82rem", fontWeight: "800", color: section.color, display: "block", marginBottom: "0.4rem" }}>{section.title}</span>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
                           {section.items.map((item, i) => (
                             <div key={i} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
                               <span style={{ color: "var(--text-secondary)" }}>{item.label}:</span>
@@ -718,16 +718,56 @@ export default function PlayerProfilePage() {
                     ))}
                   </div>
 
-                  {/* Hub Maps Summary Info to balance height */}
+                  {/* Best Weapon */}
                   <div style={{
-                    marginTop: "0.5rem",
+                    marginTop: "0.25rem",
                     background: "rgba(255,255,255,0.02)",
                     border: "1px solid var(--border-light)",
                     borderRadius: "10px",
-                    padding: "1rem"
+                    padding: "0.75rem 1rem",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "1rem"
                   }}>
-                    <span style={{ fontSize: "0.82rem", fontWeight: "800", color: "var(--accent-cyan)", display: "block", marginBottom: "0.5rem" }}>Карты в Хабе</span>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", fontSize: "0.78rem" }}>
+                    <div style={{ flex: 1 }}>
+                      <span style={{ fontSize: "0.82rem", fontWeight: "800", color: "var(--accent-yellow)", display: "block", marginBottom: "0.4rem" }}>Лучшее оружие</span>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem", fontSize: "0.78rem" }}>
+                        {(() => {
+                          const sniperKills = hubStats.sniper?.kills || 0;
+                          const sniperRate = hubStats.sniper?.rate || 0;
+                          const isSniper = sniperRate >= 30;
+                          const weaponName = isSniper ? "AWP" : "AK-47 / M4A4";
+                          const weaponKills = isSniper ? sniperKills : (hubStats.totalKills - sniperKills);
+                          return (
+                            <>
+                              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                <span style={{ color: "var(--text-secondary)" }}>Топ оружие:</span>
+                                <span style={{ fontWeight: "700", color: "#fff" }}>{weaponName}</span>
+                              </div>
+                              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                <span style={{ color: "var(--text-secondary)" }}>Убийств снайпером:</span>
+                                <span style={{ fontWeight: "700", color: "var(--accent-yellow)" }}>{sniperKills} ({sniperRate}%)</span>
+                              </div>
+                            </>
+                          );
+                        })()}
+                      </div>
+                    </div>
+                    <div style={{ fontSize: "2.5rem", lineHeight: 1, opacity: 0.9, flexShrink: 0 }}>
+                      {(hubStats.sniper?.rate || 0) >= 30 ? "🔭" : "🔫"}
+                    </div>
+                  </div>
+
+                  {/* Hub Maps Summary Info to balance height */}
+                  <div style={{
+                    marginTop: "0.25rem",
+                    background: "rgba(255,255,255,0.02)",
+                    border: "1px solid var(--border-light)",
+                    borderRadius: "10px",
+                    padding: "0.75rem 1rem"
+                  }}>
+                    <span style={{ fontSize: "0.82rem", fontWeight: "800", color: "var(--accent-cyan)", display: "block", marginBottom: "0.4rem" }}>Карты</span>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem", fontSize: "0.78rem" }}>
                       {(() => {
                         const mapsList = hubStats.maps || [];
                         const totalMapGames = mapsList.reduce((sum: number, m: any) => sum + (m.matches || 0), 0);
@@ -739,16 +779,6 @@ export default function PlayerProfilePage() {
                           if ((m.matches || 0) > maxPlayed) {
                             maxPlayed = m.matches;
                             mostPlayedMap = m.map;
-                          }
-                        });
-
-                        // Best map
-                        let bestMap = "—";
-                        let maxWinrate = -1;
-                        mapsList.forEach((m: any) => {
-                          if (m.matches > 0 && m.winrate > maxWinrate) {
-                            maxWinrate = m.winrate;
-                            bestMap = m.map;
                           }
                         });
 
@@ -765,7 +795,7 @@ export default function PlayerProfilePage() {
                               </span>
                             </div>
                             <div style={{ display: "flex", justifyContent: "space-between" }}>
-                              <span style={{ color: "var(--text-secondary)" }}>Лучшая игра в Хабе:</span>
+                              <span style={{ color: "var(--text-secondary)" }}>Лучшая игра:</span>
                               {hubStats.bestMatch ? (
                                 <span style={{ fontWeight: "700", color: "var(--accent-yellow)" }}>
                                   {hubStats.bestMatch.map.replace("de_", "").replace("cs_", "").toUpperCase()} ({hubStats.bestMatch.score}) • {hubStats.bestMatch.kills}K/{hubStats.bestMatch.deaths}D
@@ -848,7 +878,7 @@ export default function PlayerProfilePage() {
                           { label: "Время ослепления флешкой", val: leetify.stats.flashbang_hit_foe_avg_duration !== undefined ? `${leetify.stats.flashbang_hit_foe_avg_duration.toFixed(1)} сек` : "—" },
                           { label: "Флешки под убийство", val: leetify.stats.flashbang_leading_to_kill !== undefined ? `${Math.round(leetify.stats.flashbang_leading_to_kill)}%` : "—" },
                           { label: "Успешные размены", val: leetify.stats.trade_kills_success_percentage !== undefined ? `${Math.round(leetify.stats.trade_kills_success_percentage)}%` : "—" },
-                          { label: "Разменяли меня после смерти", val: leetify.stats.traded_deaths_success_percentage !== undefined ? `${Math.round(leetify.stats.traded_deaths_success_percentage)}%` : "—" }
+                          { label: "Размен игрока после его смерти", val: leetify.stats.traded_deaths_success_percentage !== undefined ? `${Math.round(leetify.stats.traded_deaths_success_percentage)}%` : "—" }
                         ].map((item, idx) => (
                           <div key={idx} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem", borderBottom: "1px solid rgba(255,255,255,0.03)", paddingBottom: "0.3rem" }}>
                             <span style={{ color: "var(--text-secondary)" }}>{item.label}</span>
@@ -889,11 +919,14 @@ export default function PlayerProfilePage() {
                     padding: "0.85rem 1rem",
                     marginBottom: "0.5rem"
                   }}>
-                    <span style={{ fontSize: "0.8rem", fontWeight: "800", color: "var(--accent-cyan)", display: "block", marginBottom: "0.4rem" }}>Суммарная инфо по картам хаба</span>
+                    <span style={{ fontSize: "0.8rem", fontWeight: "800", color: "var(--accent-cyan)", display: "block", marginBottom: "0.4rem" }}>Общая статистика по картам</span>
                     <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem", fontSize: "0.75rem" }}>
                       {(() => {
                         const mapsList = hubStats.maps || [];
                         const totalMapGames = mapsList.reduce((sum: number, m: any) => sum + (m.matches || 0), 0);
+                        const totalWins = mapsList.reduce((sum: number, m: any) => sum + (m.wins || 0), 0);
+                        const overallWr = totalMapGames > 0 ? Math.round((totalWins / totalMapGames) * 100) : 0;
+                        const avgKd = hubStats.kd ?? 0;
                         
                         // Most played map
                         let mostPlayedMap = "—";
@@ -905,30 +938,60 @@ export default function PlayerProfilePage() {
                           }
                         });
 
-                        // Best map
+                        // Best map by winrate
                         let bestMap = "—";
+                        let bestMapWr = 0;
                         let maxWinrate = -1;
                         mapsList.forEach((m: any) => {
                           if (m.matches > 0 && m.winrate > maxWinrate) {
                             maxWinrate = m.winrate;
                             bestMap = m.map;
+                            bestMapWr = m.winrate;
+                          }
+                        });
+
+                        // Worst map by winrate
+                        let worstMap = "—";
+                        let worstMapWr = 0;
+                        let minWinrate = 101;
+                        mapsList.forEach((m: any) => {
+                          if (m.matches > 1 && m.winrate < minWinrate) {
+                            minWinrate = m.winrate;
+                            worstMap = m.map;
+                            worstMapWr = m.winrate;
                           }
                         });
 
                         return (
                           <>
                             <div style={{ display: "flex", justifyContent: "space-between" }}>
-                              <span style={{ color: "var(--text-secondary)" }}>Всего игр на картах:</span>
+                              <span style={{ color: "var(--text-secondary)" }}>Всего игр:</span>
                               <span style={{ fontWeight: "700", color: "#fff" }}>{totalMapGames}</span>
                             </div>
                             <div style={{ display: "flex", justifyContent: "space-between" }}>
-                              <span style={{ color: "var(--text-secondary)" }}>Самая популярная:</span>
+                              <span style={{ color: "var(--text-secondary)" }}>Общий WR:</span>
+                              <span style={{ fontWeight: "700", color: overallWr >= 50 ? "var(--success)" : "var(--danger)" }}>{overallWr}%</span>
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "space-between" }}>
+                              <span style={{ color: "var(--text-secondary)" }}>Самая популярная карта:</span>
                               <span style={{ fontWeight: "700", color: "#fff" }}>
-                                {mostPlayedMap.replace("de_", "").replace("cs_", "").toUpperCase()} {maxPlayed > 0 ? `(${maxPlayed} игр)` : ""}
+                                {mostPlayedMap.replace("de_", "").replace("cs_", "").toUpperCase()} ({maxPlayed} игр)
                               </span>
                             </div>
                             <div style={{ display: "flex", justifyContent: "space-between" }}>
-                              <span style={{ color: "var(--text-secondary)" }}>Лучшая игра в Хабе:</span>
+                              <span style={{ color: "var(--text-secondary)" }}>Лучшая карта (WR):</span>
+                              <span style={{ fontWeight: "700", color: "var(--success)" }}>
+                                {bestMap.replace("de_", "").replace("cs_", "").toUpperCase()} ({bestMapWr}%)
+                              </span>
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "space-between" }}>
+                              <span style={{ color: "var(--text-secondary)" }}>Худшая карта (WR):</span>
+                              <span style={{ fontWeight: "700", color: "var(--danger)" }}>
+                                {worstMap.replace("de_", "").replace("cs_", "").toUpperCase()} ({worstMapWr}%)
+                              </span>
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "space-between" }}>
+                              <span style={{ color: "var(--text-secondary)" }}>Лучшая игра:</span>
                               {hubStats.bestMatch ? (
                                 <span style={{ fontWeight: "700", color: "var(--accent-yellow)" }}>
                                   {hubStats.bestMatch.map.replace("de_", "").replace("cs_", "").toUpperCase()} ({hubStats.bestMatch.score}) • {hubStats.bestMatch.kills}K/{hubStats.bestMatch.deaths}D
@@ -991,7 +1054,7 @@ export default function PlayerProfilePage() {
                             </div>
                             <div style={{ display: "flex", gap: "1.25rem", textAlign: "right" }}>
                               <div>
-                                <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block" }}>Avg K/D</span>
+                                <span style={{ fontSize: "0.68rem", color: "var(--accent-cyan)", display: "block" }}>Avg K/D</span>
                                 <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "var(--accent-cyan)" }}>
                                   {matches > 0 ? kd.toFixed(2) : "—"}
                                 </span>
@@ -1066,7 +1129,7 @@ export default function PlayerProfilePage() {
                       { label: "Побед 1v3", val: hubStats.duels?.clutch1v3Wins || "0", suffix: "раз" },
                       { label: "Побед 1v4", val: hubStats.duels?.clutch1v4Wins || "0", suffix: "раз" },
                       { label: "Побед 1v5", val: hubStats.duels?.clutch1v5Wins || "0", suffix: "раз" },
-                      { label: "Суммарно фрагов в клатчах", val: hubStats.duels?.clutchKills || "0", suffix: "убийств" }
+                      { label: "Суммарно убийств в клатчах", val: hubStats.duels?.clutchKills || "0", suffix: "убийств" }
                     ].map((item, idx) => (
                       <div key={idx} style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid rgba(255,255,255,0.03)", paddingBottom: "0.4rem", fontSize: "0.8rem" }}>
                         <span style={{ color: "var(--text-secondary)" }}>{item.label}</span>
@@ -1198,7 +1261,7 @@ export default function PlayerProfilePage() {
                         <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff" }}>{m.hsPct}%</span>
                       </div>
                       <div>
-                        <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block" }}>MVPs</span>
+                        <span style={{ fontSize: "0.68rem", color: "var(--accent-yellow)", display: "block" }}>MVPs</span>
                         <span style={{ fontSize: "0.9rem", fontWeight: "800", color: m.mvps > 0 ? "var(--accent-yellow)" : "var(--text-secondary)" }}>
                           {m.mvps > 0 ? `★ ${m.mvps}` : "—"}
                         </span>
