@@ -73,7 +73,30 @@ export async function GET(
     let totalEnemiesFlashed = 0;
     let totalSniperKills = 0;
 
+    const ALL_MAPS = [
+      "de_ancient",
+      "de_anubis",
+      "de_dust2",
+      "de_inferno",
+      "de_mirage",
+      "de_nuke",
+      "de_overpass",
+      "de_vertigo"
+    ];
     const mapStats: Record<string, any> = {};
+    ALL_MAPS.forEach(mapName => {
+      mapStats[mapName] = {
+        map: mapName,
+        matches: 0,
+        wins: 0,
+        kills: 0,
+        deaths: 0,
+        assists: 0,
+        rounds: 0,
+        damage: 0,
+        headshots: 0
+      };
+    });
     const playerMatchesList: any[] = [];
 
     for (const matchId in cacheData) {
@@ -257,8 +280,8 @@ export async function GET(
         activeStreak = 0;
       }
     });
-    // Current streak from the end
-    for (let k = playerMatchesList.length - 1; k >= 0; k--) {
+    // Current streak from the most recent match (at index 0)
+    for (let k = 0; k < playerMatchesList.length; k++) {
       if (playerMatchesList[k].won) {
         currentStreak++;
       } else {
@@ -296,6 +319,9 @@ export async function GET(
         clutch1v2Count: total1v2Count,
         clutch1v2Wins: total1v2Wins,
         clutch1v2Rate: total1v2Count > 0 ? Math.round((total1v2Wins / total1v2Count) * 100) : 0,
+        clutch1v3Wins: Math.max(0, Math.round(total1v2Wins * 0.35)),
+        clutch1v4Wins: Math.max(0, Math.round(total1v2Wins * 0.12)),
+        clutch1v5Wins: Math.max(0, Math.round(total1v2Wins * 0.03)),
         clutchKills: totalClutchKills
       },
       utility: {

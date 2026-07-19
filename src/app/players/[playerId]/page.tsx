@@ -76,6 +76,124 @@ export default function PlayerProfilePage() {
   const [leetify, setLeetify] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<"general" | "tactical" | "maps">("general");
 
+  const renderRatingChart = () => {
+    if (!hubStats || !Array.isArray(hubStats.recentMatches) || hubStats.recentMatches.length === 0) return null;
+
+    const chartData = [...hubStats.recentMatches].slice(0, 10).reverse();
+    const width = 500;
+    const height = 150;
+    const paddingLeft = 35;
+    const paddingRight = 15;
+    const paddingTop = 25;
+    const paddingBottom = 20;
+
+    const ratings = chartData.map((m: any) => m.rating || 1.0);
+    const minRating = Math.max(0.2, Math.min(...ratings) - 0.15);
+    const maxRating = Math.min(3.0, Math.max(...ratings) + 0.15);
+    const ratingRange = maxRating - minRating;
+
+    const getX = (idx: number) => {
+      if (chartData.length <= 1) return paddingLeft;
+      return paddingLeft + (idx / (chartData.length - 1)) * (width - paddingLeft - paddingRight);
+    };
+
+    const getY = (val: number) => {
+      return height - paddingBottom - ((val - minRating) / ratingRange) * (height - paddingTop - paddingBottom);
+    };
+
+    // Construct path coordinates
+    const points = chartData.map((m: any, idx: number) => ({
+      x: getX(idx),
+      y: getY(m.rating || 1.0),
+      rating: m.rating,
+      won: m.won,
+      mapName: m.map
+    }));
+
+    let linePath = "";
+    let areaPath = "";
+    if (points.length > 0) {
+      linePath = `M ${points[0].x} ${points[0].y} ` + points.slice(1).map(p => `L ${p.x} ${p.y}`).join(" ");
+      areaPath = `${linePath} L ${points[points.length - 1].x} ${height - paddingBottom} L ${points[0].x} ${height - paddingBottom} Z`;
+    }
+
+    return (
+      <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "0.75rem", marginTop: "0rem" }}>
+        <div>
+          <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff", display: "block" }}>Динамика перформанса (HLTV Rating 2.0)</span>
+          <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", display: "block" }}>Последние {chartData.length} игр в хабе</span>
+        </div>
+
+        <div style={{ width: "100%", overflowX: "auto" }}>
+          <svg viewBox={`0 0 ${width} ${height}`} style={{ width: "100%", height: "auto", overflow: "visible" }}>
+            <defs>
+              <linearGradient id="chartAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="var(--accent-cyan)" stopOpacity="0.25" />
+                <stop offset="100%" stopColor="var(--accent-cyan)" stopOpacity="0.0" />
+              </linearGradient>
+              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+            </defs>
+
+            {/* Horizontal Grid lines */}
+            {[0, 0.25, 0.5, 0.75, 1.0].map((t, idx) => {
+              const yVal = minRating + t * ratingRange;
+              const y = getY(yVal);
+              return (
+                <g key={idx}>
+                  <line x1={paddingLeft} y1={y} x2={width - paddingRight} y2={y} stroke="rgba(255,255,255,0.05)" strokeWidth="1" strokeDasharray="4,4" />
+                  <text x={paddingLeft - 8} y={y + 3} fill="var(--text-muted)" fontSize="8" fontWeight="600" textAnchor="end">
+                    {yVal.toFixed(2)}
+                  </text>
+                </g>
+              );
+            })}
+
+            {/* Area Path */}
+            {points.length > 0 && (
+              <path d={areaPath} fill="url(#chartAreaGrad)" />
+            )}
+
+            {/* Line Path */}
+            {points.length > 0 && (
+              <path d={linePath} fill="none" stroke="var(--accent-cyan)" strokeWidth="2.5" filter="url(#glow)" strokeLinecap="round" strokeLinejoin="round" />
+            )}
+
+            {/* Dots */}
+            {points.map((p, idx) => (
+              <g key={idx}>
+                <circle 
+                  cx={p.x} 
+                  cy={p.y} 
+                  r="4.5" 
+                  fill={p.won ? "var(--success)" : "var(--danger)"} 
+                  stroke="#fff" 
+                  strokeWidth="1.5" 
+                  style={{ cursor: "pointer" }}
+                />
+                <circle 
+                  cx={p.x} 
+                  cy={p.y} 
+                  r="9" 
+                  fill="transparent" 
+                  style={{ cursor: "pointer" }}
+                >
+                  <title>{`${p.mapName}\nРейтинг: ${p.rating.toFixed(2)}\nРезультат: ${p.won ? "Победа" : "Поражение"}`}</title>
+                </circle>
+                {/* Rating labels above dots */}
+                <text x={p.x} y={p.y - 8} fill="#fff" fontSize="8" fontWeight="800" textAnchor="middle">
+                  {p.rating.toFixed(2)}
+                </text>
+              </g>
+            ))}
+          </svg>
+        </div>
+      </div>
+    );
+  };
+
   useEffect(() => {
     if (!playerId) return;
 
@@ -226,9 +344,11 @@ export default function PlayerProfilePage() {
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.15rem" }}>
                   <span style={{ fontSize: "0.65rem", color: "var(--text-muted)", fontWeight: "700" }}>LEVEL</span>
-                  <div style={getLevelBadgeStyle(cs2Info.skill_level)}>
-                    {cs2Info.skill_level}
-                  </div>
+                  <img 
+                    src={`/icons/faceit_level_${cs2Info.skill_level}.svg`} 
+                    alt={`Level ${cs2Info.skill_level}`} 
+                    style={{ width: "32px", height: "32px", objectFit: "contain", display: "block", marginTop: "0.15rem" }} 
+                  />
                 </div>
               </div>
             )}
@@ -243,9 +363,9 @@ export default function PlayerProfilePage() {
               {/* Tabs Navigation Card */}
               <div className="glass-card" style={{ padding: "0.5rem", borderRadius: "12px", border: "1px solid var(--border-light)", display: "flex", gap: "0.25rem" }}>
                 {[
-                  { id: "general", label: "Статистика Хаба" },
-                  { id: "tactical", label: "Тактика & Leetify" },
-                  { id: "maps", label: "Карты в Хабе" }
+                  { id: "general", label: "Общая статистика" },
+                  { id: "tactical", label: "Leetify" },
+                  { id: "maps", label: "Статистика по картам" }
                 ].map((tab) => (
                   <button
                     key={tab.id}
@@ -272,7 +392,7 @@ export default function PlayerProfilePage() {
               {activeTab === "general" && hubStats && (
                 <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1.25rem" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff" }}>Результаты в Хабе</h3>
+                    <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff" }}>Общая статистика</h3>
                     <span style={{ fontSize: "0.72rem", padding: "0.2rem 0.5rem", background: "rgba(0, 212, 255, 0.1)", border: "1px solid rgba(0, 212, 255, 0.2)", borderRadius: "6px", color: "var(--accent-cyan)", fontWeight: "700" }}>
                       Hub Scoped
                     </span>
@@ -407,19 +527,19 @@ export default function PlayerProfilePage() {
                   {/* Hub Tactical Stats */}
                   <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "0.75rem" }}>
                     {[
-                      { title: "Бой и Атака в Хабе", items: [
+                      { title: "Атака", items: [
                         { label: "Средний урон (ADR)", val: hubStats.adr ? `${hubStats.adr} HP` : "—" },
                         { label: "Убийств за раунд (KPR)", val: hubStats.matchesCount ? (hubStats.totalKills / hubStats.totalRounds).toFixed(2) : "—" }
                       ], color: "var(--accent-cyan)" },
-                      { title: "Первые дуэли (Entry) в Хабе", items: [
+                      { title: "Первые дуэли", items: [
                         { label: "Участие в дуэлях (Entry Rate)", val: hubStats.duels?.entryCount ? `${hubStats.duels.entryCount} раз` : "—" },
                         { label: "Выиграно первых дуэлей", val: hubStats.duels?.entrySuccessRate ? `${hubStats.duels.entrySuccessRate}%` : "—" }
                       ], color: "var(--warning)" },
-                      { title: "Клатчи в Хабе", items: [
+                      { title: "Клатчи", items: [
                         { label: "Побед в 1v1 клачах", val: hubStats.duels?.clutch1v1Rate ? `${hubStats.duels.clutch1v1Rate}%` : "—" },
                         { label: "Побед в 1v2 клачах", val: hubStats.duels?.clutch1v2Rate ? `${hubStats.duels.clutch1v2Rate}%` : "—" }
                       ], color: "#00d4ff" },
-                      { title: "Использование гранат в Хабе", items: [
+                      { title: "Гранаты", items: [
                         { label: "Урон гранатами / раунд", val: hubStats.utility?.utilityDamagePerRound ? `${hubStats.utility.utilityDamagePerRound} HP` : "—" },
                         { label: "Эффективность флешек", val: hubStats.utility?.flashSuccessRate ? `${hubStats.utility.flashSuccessRate}%` : "—" }
                       ], color: "var(--accent-purple)" }
@@ -479,25 +599,30 @@ export default function PlayerProfilePage() {
                               zIndex: 0
                             }}
                           />
-
                           <div style={{ position: "relative", zIndex: 1, flex: 1, display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
                             <div>
                               <span style={{ fontSize: "0.95rem", fontWeight: "800", color: "#fff", display: "block" }}>{mapName}</span>
                               <span style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
-                                Матчей: <strong>{matches}</strong> • Win Rate: <strong style={{ color: winRate >= 50 ? "var(--success)" : "var(--danger)" }}>{winRate}%</strong>
+                                Матчей: <strong>{matches}</strong> • Win Rate: {matches > 0 ? (
+                                  <strong style={{ color: winRate >= 50 ? "var(--success)" : "var(--danger)" }}>{winRate}%</strong>
+                                ) : (
+                                  <strong>—</strong>
+                                )}
                               </span>
                             </div>
                             <div style={{ display: "flex", gap: "1.25rem", textAlign: "right" }}>
                               <div>
                                 <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block" }}>Avg K/D</span>
-                                <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "var(--accent-cyan)" }}>{kd.toFixed(2)}</span>
+                                <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "var(--accent-cyan)" }}>
+                                  {matches > 0 ? kd.toFixed(2) : "—"}
+                                </span>
                               </div>
-                              {adr && (
-                                <div>
-                                  <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block" }}>ADR</span>
-                                  <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "var(--accent-yellow)" }}>{adr.toFixed(1)}</span>
-                                </div>
-                              )}
+                              <div>
+                                <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block" }}>ADR</span>
+                                <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "var(--accent-yellow)" }}>
+                                  {matches > 0 && adr ? adr.toFixed(1) : "—"}
+                                </span>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -506,6 +631,8 @@ export default function PlayerProfilePage() {
                 </div>
               )}
 
+              {/* HLTV Rating 2.0 SVG Trend Chart */}
+              {renderRatingChart()}
             </div>
 
             {/* Right Panel: Advanced Tactical Breakdowns & Multi-Kills */}
@@ -516,7 +643,7 @@ export default function PlayerProfilePage() {
                 <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", overflow: "hidden" }}>
                   <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "4px", background: "var(--accent-cyan)" }} />
                   <div>
-                    <h4 style={{ fontSize: "0.9rem", fontWeight: "800", color: "var(--text-secondary)", textTransform: "uppercase" }}>Рейтинг HLTV 2.0 в Хабе</h4>
+                    <h4 style={{ fontSize: "0.9rem", fontWeight: "800", color: "var(--text-secondary)", textTransform: "uppercase" }}>Рейтинг HLTV 2.0</h4>
                     <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block", marginTop: "0.15rem" }}>Рассчитано по матчам внутри этого хаба</span>
                   </div>
                   <div style={{ textAlign: "right" }}>
@@ -526,14 +653,14 @@ export default function PlayerProfilePage() {
 
                 {/* Multi-Kills Statistics */}
                 <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)" }}>
-                  <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", marginBottom: "1rem" }}>Мульти-киллы в Хабе</h3>
+                  <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", marginBottom: "1rem" }}>Мульти-киллы</h3>
                   
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                     {[
                       { type: "Двойные убийства (2K)", count: hubStats.multiKills?.doubles || 0, color: "var(--text-muted)" },
                       { type: "Тройные убийства (3K)", count: hubStats.multiKills?.triples || 0, color: "var(--text-secondary)" },
                       { type: "Квадро-убийства (4K)", count: hubStats.multiKills?.quadros || 0, color: "var(--accent-yellow)" },
-                      { type: "Эйсы / Aces (5K)", count: hubStats.multiKills?.pentas || 0, color: "var(--danger)" }
+                      { type: "Эйсы (5K)", count: hubStats.multiKills?.pentas || 0, color: "var(--danger)" }
                     ].map((item, idx) => (
                       <div key={idx} style={{ background: "rgba(0,0,0,0.18)", borderRadius: "8px", padding: "0.75rem 1rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <span style={{ fontSize: "0.85rem", fontWeight: "700", color: "#fff" }}>{item.type}</span>
@@ -545,7 +672,7 @@ export default function PlayerProfilePage() {
 
                 {/* Opening Duels & Clutches */}
                 <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)" }}>
-                  <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", marginBottom: "1rem" }}>Дуэли и Клатчи в Хабе</h3>
+                  <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", marginBottom: "1rem" }}>Дуэли и Клатчи</h3>
                   
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                     {[
@@ -555,6 +682,9 @@ export default function PlayerProfilePage() {
                       { label: "Побед 1v1", val: hubStats.duels?.clutch1v1Wins || "0", suffix: `(${hubStats.duels?.clutch1v1Rate || 0}%)` },
                       { label: "Всего 1v2 дуэлей", val: hubStats.duels?.clutch1v2Count || "0", suffix: "клатчей" },
                       { label: "Побед 1v2", val: hubStats.duels?.clutch1v2Wins || "0", suffix: `(${hubStats.duels?.clutch1v2Rate || 0}%)` },
+                      { label: "Побед 1v3", val: hubStats.duels?.clutch1v3Wins || "0", suffix: "раз" },
+                      { label: "Побед 1v4", val: hubStats.duels?.clutch1v4Wins || "0", suffix: "раз" },
+                      { label: "Побед 1v5", val: hubStats.duels?.clutch1v5Wins || "0", suffix: "раз" },
                       { label: "Суммарно фрагов в клатчах", val: hubStats.duels?.clutchKills || "0", suffix: "убийств" }
                     ].map((item, idx) => (
                       <div key={idx} style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid rgba(255,255,255,0.03)", paddingBottom: "0.4rem", fontSize: "0.8rem" }}>
@@ -567,20 +697,22 @@ export default function PlayerProfilePage() {
 
                 {/* Granades detailed performance */}
                 <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)" }}>
-                  <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", marginBottom: "1rem" }}>Использование гранат в Хабе</h3>
+                  <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", marginBottom: "1rem" }}>Гранаты</h3>
                   
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                     {[
-                      { label: "Брошено гранат", val: hubStats.utility?.utilityCount || "0" },
-                      { label: "Эффективных гранат", val: hubStats.utility?.utilitySuccesses || "0", suffix: `(${hubStats.utility?.utilitySuccessRate || 0}%)` },
-                      { label: "Урон гранатами (Сумма)", val: hubStats.utility?.utilityDamage ? `${hubStats.utility.utilityDamage} HP` : "0 HP" },
-                      { label: "Брошено флешек", val: hubStats.utility?.flashCount || "0" },
-                      { label: "Успешных флешек", val: hubStats.utility?.flashSuccesses || "0", suffix: `(${hubStats.utility?.flashSuccessRate || 0}%)` },
-                      { label: "Ослеплено противников", val: hubStats.utility?.enemiesFlashed || "0", suffix: `(${hubStats.utility?.enemiesFlashedPerRound || 0} за раунд)` }
+                      { label: "Использовано гранат", val: hubStats.utility?.utilityCount || "0" },
+                      { label: "Процент эффективности использования гранат", val: hubStats.utility?.utilitySuccesses || "0", suffix: `(${hubStats.utility?.utilitySuccessRate || 0}%)` },
+                      { label: "Общий урон гранатами", val: hubStats.utility?.utilityDamage ? `${hubStats.utility.utilityDamage} HP` : "0 HP" },
+                      { 
+                        label: "Флешки", 
+                        val: `${hubStats.utility?.flashCount || 0} брошено / ${hubStats.utility?.flashSuccesses || 0} успешных (${hubStats.utility?.flashSuccessRate || 0}%)`, 
+                        suffix: `[ослеплено: ${hubStats.utility?.enemiesFlashed || 0}] (${hubStats.utility?.enemiesFlashedPerRound || 0} за раунд)` 
+                      }
                     ].map((item, idx) => (
                       <div key={idx} style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid rgba(255,255,255,0.03)", paddingBottom: "0.4rem", fontSize: "0.8rem" }}>
                         <span style={{ color: "var(--text-secondary)" }}>{item.label}</span>
-                        <span style={{ fontWeight: "700", color: "#fff" }}>{item.val} <span style={{ color: "var(--text-muted)", fontSize: "0.72rem", fontWeight: "normal" }}>{item.suffix}</span></span>
+                        <span style={{ fontWeight: "700", color: "#fff", textAlign: "right" }}>{item.val} <span style={{ color: "var(--text-muted)", fontSize: "0.72rem", fontWeight: "normal", display: "block" }}>{item.suffix}</span></span>
                       </div>
                     ))}
                   </div>
@@ -593,7 +725,7 @@ export default function PlayerProfilePage() {
 
           {/* Bottom Section: Recent Matches History */}
           <div className="glass-card" style={{ padding: "2rem", borderRadius: "16px", border: "1px solid var(--border-light)" }}>
-            <h3 style={{ fontSize: "1.2rem", fontWeight: "800", color: "#fff", marginBottom: "1.25rem" }}>Последние игры в Хабе</h3>
+            <h3 style={{ fontSize: "1.2rem", fontWeight: "800", color: "#fff", marginBottom: "1.25rem" }}>Последние игры</h3>
             
             {hubStats && hubStats.recentMatches && hubStats.recentMatches.length === 0 ? (
               <div style={{ textAlign: "center", padding: "2rem", color: "var(--text-secondary)" }}>
@@ -644,10 +776,10 @@ export default function PlayerProfilePage() {
                           fontSize: "0.8rem",
                           fontWeight: "800",
                           textAlign: "center",
-                          minWidth: "65px"
+                          minWidth: "75px"
                         }}
                       >
-                        {m.won ? "POBEDA" : "PORAZH"}
+                        {m.won ? "ПОБЕДА" : "ПОРАЖЕНИЕ"}
                       </div>
                       <div>
                         <span style={{ fontSize: "0.95rem", fontWeight: "800", color: "#fff", display: "block" }}>{m.map}</span>

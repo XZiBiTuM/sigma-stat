@@ -3426,9 +3426,11 @@ export default function Home() {
                           <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", display: "block" }}>ELO</span>
                           <span style={{ fontWeight: "700", color: "#fff", fontSize: "0.95rem" }}>{gameInfo.faceit_elo}</span>
                         </div>
-                        <div style={getLevelBadgeStyle(gameInfo.skill_level)}>
-                          {gameInfo.skill_level}
-                        </div>
+                        <img 
+                          src={`/icons/faceit_level_${gameInfo.skill_level}.svg`} 
+                          alt={`Level ${gameInfo.skill_level}`} 
+                          style={{ width: "28px", height: "28px", objectFit: "contain", display: "block" }} 
+                        />
                       </div>
                     );
                   })()}
@@ -3443,8 +3445,8 @@ export default function Home() {
                 }}>
                   {[
                     { id: "general", label: "Общая статистика" },
-                    { id: "tactical", label: "Тактика & Leetify" },
-                    { id: "maps", label: "Статистика карт" }
+                    { id: "tactical", label: "Leetify" },
+                    { id: "maps", label: "Статистика по картам" }
                   ].map((tab) => (
                     <button
                       key={tab.id}
