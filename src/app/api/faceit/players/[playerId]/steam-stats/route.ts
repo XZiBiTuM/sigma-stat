@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { faceitFetch } from "@/lib/faceit";
+import { faceitFetch, getPlayerProfile } from "@/lib/faceit";
 
 const mmRanksMap = [
   "Unranked",
@@ -34,7 +34,7 @@ export async function GET(
     }
 
     // 1. Fetch FACEIT player profile to get steam ID
-    const faceitProfile = await faceitFetch(`/players/${playerId}`);
+    const faceitProfile = await getPlayerProfile(playerId);
     const steamId = faceitProfile.steam_id_64 || faceitProfile.platforms?.steam;
 
     if (!steamId) {

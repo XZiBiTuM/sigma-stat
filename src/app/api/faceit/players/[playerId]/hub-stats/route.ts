@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
-import { faceitFetch } from "@/lib/faceit";
+import { faceitFetch, getPlayerProfile } from "@/lib/faceit";
 
 const cacheFilePath = path.join(process.cwd(), "src", "lib", "match_stats_cache.json");
 
@@ -15,6 +15,10 @@ export async function GET(
       return NextResponse.json({ error: "Не указан ID игрока" }, { status: 400 });
     }
 
+    // Resolve player profile to get actual UUID
+    const playerProfile = await getPlayerProfile(playerId);
+    const uuid = playerProfile.player_id;
+
     // 1. Read match stats cache
     let cacheData: Record<string, any> = {};
     try {
@@ -27,7 +31,7 @@ export async function GET(
     // 2. Fetch player history from FACEIT to get match timestamps
     let playerHistory: any[] = [];
     try {
-      const historyRes = await faceitFetch(`/players/${playerId}/history?game=cs2&limit=100`);
+      const historyRes = await faceitFetch(`/players/${uuid}/history?game=cs2&limit=100`);
       playerHistory = historyRes.items || [];
     } catch (e) {
       console.warn("Failed to fetch player history for timestamps:", e);
@@ -115,7 +119,7 @@ export async function GET(
         
         if (Array.isArray(round.teams)) {
           for (const team of round.teams) {
-            const foundPlayer = (team.players || []).find((p: any) => p.player_id === playerId);
+            const foundPlayer = (team.players || []).find((p: any) => p.player_id === uuid);
             if (foundPlayer) {
               playerStats = foundPlayer.player_stats || {};
               isWin = team.team_stats?.TeamWin === "1" || team.team_stats?.["Team Win"] === "1" || playerStats.Result === "1";

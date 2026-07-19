@@ -41,3 +41,13 @@ export async function faceitFetch(endpoint: string, searchParams?: Record<string
 
   return response.json();
 }
+
+const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+
+export async function getPlayerProfile(playerId: string) {
+  if (uuidRegex.test(playerId)) {
+    return faceitFetch(`/players/${playerId}`);
+  } else {
+    return faceitFetch("/players", { nickname: playerId });
+  }
+}

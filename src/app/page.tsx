@@ -3798,7 +3798,7 @@ export default function Home() {
 
                 <div style={{ marginTop: "0.5rem", display: "flex", gap: "0.5rem" }}>
                   <Link
-                    href={`/players/${playerProfile.player_id}`}
+                    href={`/players/${playerProfile.nickname}`}
                     target="_blank"
                     style={{
                       flex: 1,

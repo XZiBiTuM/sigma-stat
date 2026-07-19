@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { faceitFetch } from "@/lib/faceit";
+import { getPlayerProfile } from "@/lib/faceit";
 
 export async function GET(
   request: NextRequest,
@@ -12,7 +12,7 @@ export async function GET(
     }
 
     // 1. Get player profile from FACEIT to get their Steam ID 64
-    const playerProfile = await faceitFetch(`/players/${playerId}`);
+    const playerProfile = await getPlayerProfile(playerId);
     const steamId = playerProfile.steam_id_64 || playerProfile.platforms?.steam;
 
     if (!steamId) {

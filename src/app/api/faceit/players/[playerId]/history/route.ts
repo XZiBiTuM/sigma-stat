@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { faceitFetch } from "@/lib/faceit";
+import { faceitFetch, getPlayerProfile } from "@/lib/faceit";
 
 export async function GET(
   request: NextRequest,
@@ -11,8 +11,12 @@ export async function GET(
       return NextResponse.json({ error: "Не указан ID игрока" }, { status: 400 });
     }
 
+    // Resolve player profile to get actual UUID
+    const playerProfile = await getPlayerProfile(playerId);
+    const uuid = playerProfile.player_id;
+
     // Fetch the last 10 matches of the player on CS2
-    const data = await faceitFetch(`/players/${playerId}/history?game=cs2&limit=10`);
+    const data = await faceitFetch(`/players/${uuid}/history?game=cs2&limit=10`);
     return NextResponse.json(data);
   } catch (error: any) {
     if (error.message === "API_KEY_MISSING") {

@@ -79,6 +79,13 @@ export default function PlayerProfilePage() {
   const [activeTab, setActiveTab] = useState<"general" | "tactical" | "maps">("general");
   const [visibleMatches, setVisibleMatches] = useState(10);
   const [steamStats, setSteamStats] = useState<any>(null);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyProfile = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const renderValveStats = () => {
     if (!steamStats) {
@@ -517,6 +524,27 @@ export default function PlayerProfilePage() {
                   <img src="/icons/faceit.png" alt="" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
                   <span>FACEIT Profile ↗</span>
                 </a>
+                <button
+                  onClick={handleCopyProfile}
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    color: copied ? "var(--success)" : "var(--accent-yellow)",
+                    fontSize: "0.9rem",
+                    fontWeight: "600",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.4rem",
+                    cursor: "pointer",
+                    padding: 0,
+                    transition: "color 0.2s"
+                  }}
+                >
+                  <svg viewBox="0 0 24 24" style={{ width: "16px", height: "16px", fill: copied ? "var(--success)" : "var(--accent-yellow)" }}>
+                    <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                  </svg>
+                  <span>{copied ? "Ссылка скопирована!" : "Скопировать ссылку профиля"}</span>
+                </button>
               </div>
             </div>
 
@@ -545,6 +573,24 @@ export default function PlayerProfilePage() {
             {/* Left Panel: Tabs & Metrics */}
             <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", height: "100%" }}>
               
+              {/* Disclaimer */}
+              <div style={{
+                padding: "0.75rem 1rem",
+                background: "rgba(0, 212, 255, 0.05)",
+                border: "1px solid rgba(0, 212, 255, 0.15)",
+                borderRadius: "10px",
+                fontSize: "0.78rem",
+                color: "var(--text-secondary)",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.6rem"
+              }}>
+                <svg viewBox="0 0 24 24" style={{ width: "16px", height: "16px", fill: "var(--accent-cyan)", flexShrink: 0 }}>
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                </svg>
+                <span>Вся статистика собрана по матчам Хаба, за исключением вкладки <strong>«Статистика (все игры)»</strong>.</span>
+              </div>
+
               {/* Tabs Navigation Card */}
               <div className="glass-card" style={{ padding: "0.5rem", borderRadius: "12px", border: "1px solid var(--border-light)", display: "flex", gap: "0.25rem" }}>
                 {[
@@ -663,6 +709,64 @@ export default function PlayerProfilePage() {
                     ))}
                   </div>
 
+                  {/* Hub Maps Summary Info to balance height */}
+                  <div style={{
+                    marginTop: "0.5rem",
+                    background: "rgba(255,255,255,0.02)",
+                    border: "1px solid var(--border-light)",
+                    borderRadius: "10px",
+                    padding: "1rem"
+                  }}>
+                    <span style={{ fontSize: "0.82rem", fontWeight: "800", color: "var(--accent-cyan)", display: "block", marginBottom: "0.5rem" }}>Карты в Хабе</span>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", fontSize: "0.78rem" }}>
+                      {(() => {
+                        const mapsList = hubStats.maps || [];
+                        const totalMapGames = mapsList.reduce((sum: number, m: any) => sum + (m.matches || 0), 0);
+                        
+                        // Most played map
+                        let mostPlayedMap = "—";
+                        let maxPlayed = 0;
+                        mapsList.forEach((m: any) => {
+                          if ((m.matches || 0) > maxPlayed) {
+                            maxPlayed = m.matches;
+                            mostPlayedMap = m.map;
+                          }
+                        });
+
+                        // Best map
+                        let bestMap = "—";
+                        let maxWinrate = -1;
+                        mapsList.forEach((m: any) => {
+                          if (m.matches > 0 && m.winrate > maxWinrate) {
+                            maxWinrate = m.winrate;
+                            bestMap = m.map;
+                          }
+                        });
+
+                        return (
+                          <>
+                            <div style={{ display: "flex", justifyContent: "space-between" }}>
+                              <span style={{ color: "var(--text-secondary)" }}>Всего сыграно игр на картах:</span>
+                              <span style={{ fontWeight: "700", color: "#fff" }}>{totalMapGames}</span>
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "space-between" }}>
+                              <span style={{ color: "var(--text-secondary)" }}>Самая популярная карта:</span>
+                              <span style={{ fontWeight: "700", color: "#fff" }}>
+                                {mostPlayedMap.replace("de_", "").replace("cs_", "").toUpperCase()} {maxPlayed > 0 ? `(${maxPlayed} игр)` : ""}
+                              </span>
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "space-between" }}>
+                              <span style={{ color: "var(--text-secondary)" }}>Лучшая карта по винрейту:</span>
+                              <span style={{ fontWeight: "700", color: "var(--success)" }}>
+                                {bestMap.replace("de_", "").replace("cs_", "").toUpperCase()} {maxWinrate >= 0 ? `(${maxWinrate}%)` : ""}
+                              </span>
+                            </div>
+                          </>
+                        );
+                      })()}
+                    </div>
+                  </div>
+
                 </div>
               )}
 
@@ -763,6 +867,65 @@ export default function PlayerProfilePage() {
               {/* Maps Stats View in Left column fallback if tab chosen */}
               {activeTab === "maps" && hubStats && (
                 <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "0.5rem", minHeight: "680px", boxSizing: "border-box" }}>
+                  
+                  {/* Maps Summary Box at the top */}
+                  <div style={{
+                    background: "rgba(255,255,255,0.02)",
+                    border: "1px solid var(--border-light)",
+                    borderRadius: "12px",
+                    padding: "0.85rem 1rem",
+                    marginBottom: "0.5rem"
+                  }}>
+                    <span style={{ fontSize: "0.8rem", fontWeight: "800", color: "var(--accent-cyan)", display: "block", marginBottom: "0.4rem" }}>Суммарная инфо по картам хаба</span>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem", fontSize: "0.75rem" }}>
+                      {(() => {
+                        const mapsList = hubStats.maps || [];
+                        const totalMapGames = mapsList.reduce((sum: number, m: any) => sum + (m.matches || 0), 0);
+                        
+                        // Most played map
+                        let mostPlayedMap = "—";
+                        let maxPlayed = 0;
+                        mapsList.forEach((m: any) => {
+                          if ((m.matches || 0) > maxPlayed) {
+                            maxPlayed = m.matches;
+                            mostPlayedMap = m.map;
+                          }
+                        });
+
+                        // Best map
+                        let bestMap = "—";
+                        let maxWinrate = -1;
+                        mapsList.forEach((m: any) => {
+                          if (m.matches > 0 && m.winrate > maxWinrate) {
+                            maxWinrate = m.winrate;
+                            bestMap = m.map;
+                          }
+                        });
+
+                        return (
+                          <>
+                            <div style={{ display: "flex", justifyContent: "space-between" }}>
+                              <span style={{ color: "var(--text-secondary)" }}>Всего игр на картах:</span>
+                              <span style={{ fontWeight: "700", color: "#fff" }}>{totalMapGames}</span>
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "space-between" }}>
+                              <span style={{ color: "var(--text-secondary)" }}>Самая популярная:</span>
+                              <span style={{ fontWeight: "700", color: "#fff" }}>
+                                {mostPlayedMap.replace("de_", "").replace("cs_", "").toUpperCase()} {maxPlayed > 0 ? `(${maxPlayed} игр)` : ""}
+                              </span>
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "space-between" }}>
+                              <span style={{ color: "var(--text-secondary)" }}>Лучшая по винрейту:</span>
+                              <span style={{ fontWeight: "700", color: "var(--success)" }}>
+                                {bestMap.replace("de_", "").replace("cs_", "").toUpperCase()} {maxWinrate >= 0 ? `(${maxWinrate}%)` : ""}
+                              </span>
+                            </div>
+                          </>
+                        );
+                      })()}
+                    </div>
+                  </div>
+
                   {hubStats.maps?.map((seg: any, idx: number) => {
                       const mapName = seg.map;
                       const matches = seg.matches;
@@ -903,7 +1066,7 @@ export default function PlayerProfilePage() {
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                     {[
                       { label: "Использовано гранат", val: hubStats.utility?.utilityCount || "0", suffix: "" },
-                      { label: "Процент эффективности использован", val: hubStats.utility?.utilitySuccessRate ? `${hubStats.utility.utilitySuccessRate}%` : "0%", suffix: "" },
+                      { label: "Процент эффективности использования гранат", val: hubStats.utility?.utilitySuccessRate ? `${hubStats.utility.utilitySuccessRate}%` : "0%", suffix: "" },
                       { label: "Общий урон гранатами", val: hubStats.utility?.utilityDamage ? `${hubStats.utility.utilityDamage} HP` : "0 HP", suffix: "" },
                       { 
                         label: "Флешки", 
