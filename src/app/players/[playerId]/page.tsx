@@ -630,7 +630,7 @@ export default function PlayerProfilePage() {
 
               {/* General Tab Content */}
               {activeTab === "general" && hubStats && (
-                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1.25rem", height: "750px", overflow: "hidden", boxSizing: "border-box" }}>
+                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1.25rem", height: "960px", overflow: "hidden", boxSizing: "border-box" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff" }}>Статистика (хаб)</h3>
                     <span style={{ fontSize: "0.72rem", padding: "0.2rem 0.5rem", background: "rgba(0, 212, 255, 0.1)", border: "1px solid rgba(0, 212, 255, 0.2)", borderRadius: "6px", color: "var(--accent-cyan)", fontWeight: "700" }}>
@@ -785,7 +785,7 @@ export default function PlayerProfilePage() {
 
               {/* Tactical Tab Content */}
               {activeTab === "tactical" && hubStats && (
-                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1.25rem", height: "750px", overflow: "hidden", boxSizing: "border-box" }}>
+                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1.25rem", height: "960px", overflow: "hidden", boxSizing: "border-box" }}>
                   
                   {/* Leetify Card */}
                   {leetify ? (
@@ -879,7 +879,7 @@ export default function PlayerProfilePage() {
 
               {/* Maps Stats View in Left column fallback if tab chosen */}
               {activeTab === "maps" && hubStats && (
-                <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "0.5rem", height: "750px", overflow: "hidden", boxSizing: "border-box" }}>
+                <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "0.5rem", height: "960px", overflow: "hidden", boxSizing: "border-box" }}>
                   
                   {/* Maps Summary Box at the top */}
                   <div style={{
