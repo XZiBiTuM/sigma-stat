@@ -75,6 +75,7 @@ export default function PlayerProfilePage() {
   const [hubStats, setHubStats] = useState<any>(null);
   const [leetify, setLeetify] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<"general" | "tactical" | "maps">("general");
+  const [visibleMatches, setVisibleMatches] = useState(10);
 
   const renderRatingChart = () => {
     if (!hubStats || !Array.isArray(hubStats.recentMatches) || hubStats.recentMatches.length === 0) return null;
@@ -189,6 +190,67 @@ export default function PlayerProfilePage() {
               </g>
             ))}
           </svg>
+        </div>
+      </div>
+    );
+  };
+
+  const renderComparisonCard = () => {
+    if (!hubStats) return null;
+
+    const metrics = [
+      { name: "Средний K/D", player: hubStats.kd, pro: 1.05, format: (val: number) => val.toFixed(2), max: 2.0 },
+      { name: "Средний урон за раунд (ADR)", player: hubStats.adr || 0, pro: 78.0, format: (val: number) => `${val.toFixed(1)} HP`, max: 120 },
+      { name: "Попадания в голову (HS%)", player: hubStats.hsPct || 0, pro: 40, format: (val: number) => `${val}%`, max: 100 },
+      { name: "Успех первых дуэлей", player: hubStats.duels?.entrySuccessRate || 0, pro: 50, format: (val: number) => `${val}%`, max: 100 }
+    ];
+
+    return (
+      <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <div>
+          <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff", display: "block" }}>Сравнение с Pro-уровнем</span>
+          <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", display: "block", marginTop: "0.15rem" }}>Сопоставление ваших показателей со средней статистикой профессиональных игроков</span>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+          {metrics.map((m, idx) => {
+            const playerPct = Math.min(100, Math.max(10, (m.player / m.max) * 100));
+            const proPct = Math.min(100, Math.max(10, (m.pro / m.max) * 100));
+            const isBetter = m.player >= m.pro;
+
+            return (
+              <div key={idx} style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
+                  <span style={{ fontWeight: "700", color: "var(--text-secondary)" }}>{m.name}</span>
+                  <span style={{ color: isBetter ? "var(--success)" : "var(--danger)", fontWeight: "800" }}>
+                    {m.format(m.player)} <span style={{ color: "var(--text-muted)", fontWeight: "normal", fontSize: "0.7rem" }}>vs {m.format(m.pro)} Pro</span>
+                  </span>
+                </div>
+                {/* Visual Progress Bar */}
+                <div style={{ height: "6px", background: "rgba(255,255,255,0.05)", borderRadius: "3px", position: "relative", overflow: "hidden" }}>
+                  {/* Pro Marker Line */}
+                  <div style={{
+                    position: "absolute",
+                    left: `${proPct}%`,
+                    top: 0, bottom: 0,
+                    width: "2px",
+                    background: "#ffd54f",
+                    zIndex: 2,
+                    boxShadow: "0 0 4px #ffd54f"
+                  }} title="Pro Level" />
+                  
+                  {/* Player Fill */}
+                  <div style={{
+                    height: "100%",
+                    width: `${playerPct}%`,
+                    background: isBetter ? "linear-gradient(90deg, var(--accent-purple), var(--accent-cyan))" : "linear-gradient(90deg, var(--accent-purple), var(--danger))",
+                    borderRadius: "3px",
+                    zIndex: 1
+                  }} />
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     );
@@ -537,7 +599,10 @@ export default function PlayerProfilePage() {
                       ], color: "var(--warning)" },
                       { title: "Клатчи", items: [
                         { label: "Побед в 1v1 клачах", val: hubStats.duels?.clutch1v1Rate ? `${hubStats.duels.clutch1v1Rate}%` : "—" },
-                        { label: "Побед в 1v2 клачах", val: hubStats.duels?.clutch1v2Rate ? `${hubStats.duels.clutch1v2Rate}%` : "—" }
+                        { label: "Побед в 1v2 клачах", val: hubStats.duels?.clutch1v2Rate ? `${hubStats.duels.clutch1v2Rate}%` : "—" },
+                        { label: "Побед в 1v3 клачах", val: hubStats.duels?.clutch1v3Wins ? `${hubStats.duels.clutch1v3Wins} раз` : "—" },
+                        { label: "Побед в 1v4 клачах", val: hubStats.duels?.clutch1v4Wins ? `${hubStats.duels.clutch1v4Wins} раз` : "—" },
+                        { label: "Побед в 1v5 клачах", val: hubStats.duels?.clutch1v5Wins ? `${hubStats.duels.clutch1v5Wins} раз` : "—" }
                       ], color: "#00d4ff" },
                       { title: "Гранаты", items: [
                         { label: "Урон гранатами / раунд", val: hubStats.utility?.utilityDamagePerRound ? `${hubStats.utility.utilityDamagePerRound} HP` : "—" },
@@ -633,6 +698,9 @@ export default function PlayerProfilePage() {
 
               {/* HLTV Rating 2.0 SVG Trend Chart */}
               {renderRatingChart()}
+
+              {/* Comparison with Pro-level benchmark */}
+              {renderComparisonCard()}
             </div>
 
             {/* Right Panel: Advanced Tactical Breakdowns & Multi-Kills */}
@@ -701,18 +769,21 @@ export default function PlayerProfilePage() {
                   
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                     {[
-                      { label: "Использовано гранат", val: hubStats.utility?.utilityCount || "0" },
-                      { label: "Процент эффективности использования гранат", val: hubStats.utility?.utilitySuccesses || "0", suffix: `(${hubStats.utility?.utilitySuccessRate || 0}%)` },
-                      { label: "Общий урон гранатами", val: hubStats.utility?.utilityDamage ? `${hubStats.utility.utilityDamage} HP` : "0 HP" },
+                      { label: "Использовано гранат", val: hubStats.utility?.utilityCount || "0", suffix: "" },
+                      { label: "Процент эффективности использования гранат", val: `${hubStats.utility?.utilitySuccesses || "0"}` + (hubStats.utility?.utilitySuccessRate ? ` (${hubStats.utility.utilitySuccessRate}%)` : ""), suffix: "" },
+                      { label: "Общий урон гранатами", val: hubStats.utility?.utilityDamage ? `${hubStats.utility.utilityDamage} HP` : "0 HP", suffix: "" },
                       { 
                         label: "Флешки", 
-                        val: `${hubStats.utility?.flashCount || 0} брошено / ${hubStats.utility?.flashSuccesses || 0} успешных (${hubStats.utility?.flashSuccessRate || 0}%)`, 
-                        suffix: `[ослеплено: ${hubStats.utility?.enemiesFlashed || 0}] (${hubStats.utility?.enemiesFlashedPerRound || 0} за раунд)` 
+                        val: `${hubStats.utility?.flashCount || 0} бр / ${hubStats.utility?.flashSuccesses || 0} усп (${hubStats.utility?.flashSuccessRate || 0}%)`, 
+                        suffix: `[ослеплено: ${hubStats.utility?.enemiesFlashed || 0}]` 
                       }
                     ].map((item, idx) => (
-                      <div key={idx} style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid rgba(255,255,255,0.03)", paddingBottom: "0.4rem", fontSize: "0.8rem" }}>
+                      <div key={idx} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.03)", paddingBottom: "0.4rem", fontSize: "0.8rem", minHeight: "28px" }}>
                         <span style={{ color: "var(--text-secondary)" }}>{item.label}</span>
-                        <span style={{ fontWeight: "700", color: "#fff", textAlign: "right" }}>{item.val} <span style={{ color: "var(--text-muted)", fontSize: "0.72rem", fontWeight: "normal", display: "block" }}>{item.suffix}</span></span>
+                        <span style={{ fontWeight: "700", color: "#fff", textAlign: "right", display: "flex", alignItems: "center", gap: "0.35rem" }}>
+                          {item.val} 
+                          {item.suffix && <span style={{ color: "var(--text-muted)", fontSize: "0.72rem", fontWeight: "normal" }}>{item.suffix}</span>}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -733,7 +804,7 @@ export default function PlayerProfilePage() {
               </div>
             ) : hubStats && hubStats.recentMatches ? (
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                {hubStats.recentMatches.map((m: any, i: number) => (
+                {hubStats.recentMatches.slice(0, visibleMatches).map((m: any, i: number) => (
                   <div 
                     key={i} 
                     style={{
@@ -823,6 +894,28 @@ export default function PlayerProfilePage() {
 
                   </div>
                 ))}
+                
+                {hubStats && hubStats.recentMatches && hubStats.recentMatches.length > visibleMatches && (
+                  <div style={{ display: "flex", justifyContent: "center", marginTop: "0.5rem" }}>
+                    <button 
+                      onClick={() => setVisibleMatches(prev => prev + 10)}
+                      style={{
+                        background: "linear-gradient(135deg, var(--accent-purple), var(--accent-cyan))",
+                        border: "none",
+                        color: "#fff",
+                        padding: "0.6rem 2rem",
+                        borderRadius: "10px",
+                        fontWeight: "700",
+                        fontSize: "0.85rem",
+                        cursor: "pointer",
+                        boxShadow: "0 0 10px rgba(0, 242, 254, 0.2)",
+                        transition: "all 0.2s"
+                      }}
+                    >
+                      Показать еще
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <div style={{ textAlign: "center", padding: "2rem", color: "var(--text-secondary)" }}>

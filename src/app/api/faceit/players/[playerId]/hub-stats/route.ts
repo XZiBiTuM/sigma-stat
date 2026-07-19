@@ -341,7 +341,7 @@ export async function GET(
         rate: totalKills > 0 ? Math.round((totalSniperKills / totalKills) * 100) : 0
       },
       maps: mapStatsList,
-      recentMatches: playerMatchesList.slice(0, 10)
+      recentMatches: playerMatchesList
     });
 
   } catch (error: any) {
