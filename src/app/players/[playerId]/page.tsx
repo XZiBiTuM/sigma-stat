@@ -66,30 +66,7 @@ const getLevelBadgeStyle = (level: number) => {
   }
 };
 
-const getMockValveStats = (skillLevel: number) => {
-  const faceitLevel = skillLevel || 1;
-  const premierRating = Math.round(3000 + (faceitLevel - 1) * 2000 + (faceitLevel === 10 ? 3000 : 0));
-  
-  const ranks = [
-    { map: "de_mirage", rank: faceitLevel >= 9 ? "Global Elite" : faceitLevel >= 7 ? "Legendary Eagle" : faceitLevel >= 4 ? "Master Guardian II" : "Gold Nova II" },
-    { map: "de_inferno", rank: faceitLevel >= 9 ? "Supreme Master First Class" : faceitLevel >= 7 ? "Legendary Eagle Master" : faceitLevel >= 4 ? "Master Guardian I" : "Gold Nova I" },
-    { map: "de_nuke", rank: faceitLevel >= 9 ? "Legendary Eagle" : faceitLevel >= 7 ? "Distinguished Master Guardian" : faceitLevel >= 4 ? "Gold Nova Master" : "Silver Elite Master" }
-  ];
-  
-  let tierColor = "#cbd5e1";
-  if (premierRating >= 20000) tierColor = "#ffd700";
-  else if (premierRating >= 15000) tierColor = "#eb4899";
-  else if (premierRating >= 10000) tierColor = "#8b5cf6";
-  else if (premierRating >= 5000) tierColor = "#3b82f6";
 
-  return {
-    premierRating,
-    tierColor,
-    ranks,
-    vacBans: "Clean",
-    gameBans: "Clean"
-  };
-};
 
 export default function PlayerProfilePage() {
   const params = useParams();
@@ -101,6 +78,81 @@ export default function PlayerProfilePage() {
   const [leetify, setLeetify] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<"general" | "tactical" | "maps">("general");
   const [visibleMatches, setVisibleMatches] = useState(10);
+  const [steamStats, setSteamStats] = useState<any>(null);
+
+  const renderValveStats = () => {
+    if (!steamStats) {
+      return (
+        <div style={{ marginTop: "1rem", borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "1rem" }}>
+          <span style={{ fontSize: "0.85rem", fontWeight: "800", color: "var(--accent-cyan)", display: "block", marginBottom: "0.75rem" }}>Статистика Valve Matchmaking & Steam</span>
+          <div style={{ padding: "1.5rem", textAlign: "center", color: "var(--text-secondary)", fontSize: "0.8rem", background: "rgba(0,0,0,0.15)", borderRadius: "10px" }}>
+            Загрузка официального рейтинга Valve...
+          </div>
+        </div>
+      );
+    }
+
+    const { premierRating, ranks, vacBanned, gameBans } = steamStats;
+
+    // Premier rating tier color (CS2 colors)
+    let tierColor = "#cbd5e1";
+    if (premierRating >= 25000) tierColor = "#f59e0b";
+    else if (premierRating >= 20000) tierColor = "#eb4899";
+    else if (premierRating >= 15000) tierColor = "#8b5cf6";
+    else if (premierRating >= 10000) tierColor = "#3b82f6";
+    else if (premierRating >= 5000) tierColor = "#10b981";
+
+    return (
+      <div style={{ marginTop: "1rem", borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "1rem" }}>
+        <span style={{ fontSize: "0.85rem", fontWeight: "800", color: "var(--accent-cyan)", display: "block", marginBottom: "0.75rem" }}>Статистика Valve Matchmaking & Steam</span>
+        
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+          {/* Premier rating banner */}
+          <div style={{
+            background: premierRating ? `linear-gradient(135deg, ${tierColor}15 0%, rgba(20, 20, 30, 0.4) 100%)` : "rgba(0,0,0,0.15)",
+            border: premierRating ? `1px solid ${tierColor}40` : "1px solid var(--border-light)",
+            borderRadius: "10px",
+            padding: "0.85rem 1rem",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center"
+          }}>
+            <div>
+              <span style={{ fontSize: "0.8rem", fontWeight: "800", color: "#fff" }}>CS2 Premier Rating</span>
+              <span style={{ fontSize: "0.65rem", color: "var(--text-muted)", display: "block" }}>Официальный рейтинг Valve</span>
+            </div>
+            <span style={{ fontSize: "1.25rem", fontWeight: "900", color: premierRating ? tierColor : "var(--text-secondary)", textShadow: premierRating ? `0 0 10px ${tierColor}30` : "none" }}>
+              {premierRating ? `${premierRating.toLocaleString()} PTS` : "Без рейтинга"}
+            </span>
+          </div>
+
+          {/* Map Ranks */}
+          {Array.isArray(ranks) && ranks.length > 0 ? (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.5rem" }}>
+              {ranks.map((r: any, idx: number) => (
+                <div key={idx} style={{ background: "rgba(0,0,0,0.25)", border: "1px solid var(--border-light)", borderRadius: "8px", padding: "0.6rem", textAlign: "center" }}>
+                  <span style={{ fontSize: "0.65rem", color: "var(--text-secondary)", display: "block" }}>{r.map}</span>
+                  <span style={{ fontSize: "0.72rem", fontWeight: "800", color: "#fff", display: "block", marginTop: "0.15rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {r.rank}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div style={{ padding: "0.75rem", textAlign: "center", color: "var(--text-muted)", fontSize: "0.7rem", background: "rgba(0,0,0,0.15)", borderRadius: "8px", border: "1px dashed var(--border-light)" }}>
+              Нет данных о званиях соревновательного режима
+            </div>
+          )}
+
+          {/* Steam Ban Status */}
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.72rem", color: "var(--text-muted)", background: "rgba(0,0,0,0.15)", padding: "0.5rem 0.75rem", borderRadius: "6px" }}>
+            <span>VAC статус: <strong style={{ color: vacBanned ? "var(--danger)" : "var(--success)" }}>{vacBanned ? "Banned" : "Clean"}</strong></span>
+            <span>Игровые баны: <strong style={{ color: gameBans > 0 ? "var(--danger)" : "var(--success)" }}>{gameBans > 0 ? `${gameBans} банов` : "Clean"}</strong></span>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   const renderRatingChart = () => {
     if (!hubStats || !Array.isArray(hubStats.recentMatches) || hubStats.recentMatches.length === 0) return null;
@@ -311,6 +363,18 @@ export default function PlayerProfilePage() {
         } catch (e) {
           console.warn("Leetify stats load failed", e);
         }
+
+        try {
+          const steamStatsRes = await fetch(`/api/faceit/players/${playerId}/steam-stats`);
+          if (steamStatsRes.ok) {
+            const steamData = await steamStatsRes.json();
+            if (steamData && !steamData.error) {
+              setSteamStats(steamData);
+            }
+          }
+        } catch (e) {
+          console.warn("Steam stats load failed", e);
+        }
       } catch (err) {
         console.error(err);
       } finally {
@@ -346,7 +410,6 @@ export default function PlayerProfilePage() {
   }
 
   const cs2Info = profile.games?.cs2 || profile.games?.csgo;
-  const valveStats = getMockValveStats(cs2Info?.skill_level || 5);
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg-primary)", color: "var(--text-primary)", padding: "2rem 1.5rem" }}>
@@ -480,7 +543,7 @@ export default function PlayerProfilePage() {
 
               {/* General Tab Content */}
               {activeTab === "general" && hubStats && (
-                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1.25rem", height: "450px", boxSizing: "border-box", overflowY: "auto" }}>
+                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1.25rem", height: "600px", boxSizing: "border-box" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff" }}>Общая статистика</h3>
                     <span style={{ fontSize: "0.72rem", padding: "0.2rem 0.5rem", background: "rgba(0, 212, 255, 0.1)", border: "1px solid rgba(0, 212, 255, 0.2)", borderRadius: "6px", color: "var(--accent-cyan)", fontWeight: "700" }}>
@@ -547,55 +610,14 @@ export default function PlayerProfilePage() {
                   )}
 
                   {/* Valve Matchmaking & Steam Stats */}
-                  <div style={{ marginTop: "1rem", borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "1rem" }}>
-                    <span style={{ fontSize: "0.85rem", fontWeight: "800", color: "var(--accent-cyan)", display: "block", marginBottom: "0.75rem" }}>Статистика Valve Matchmaking & Steam</span>
-                    
-                    <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-                      {/* Premier rating banner */}
-                      <div style={{
-                        background: `linear-gradient(135deg, ${valveStats.tierColor}15 0%, rgba(20, 20, 30, 0.4) 100%)`,
-                        border: `1px solid ${valveStats.tierColor}40`,
-                        borderRadius: "10px",
-                        padding: "0.85rem 1rem",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center"
-                      }}>
-                        <div>
-                          <span style={{ fontSize: "0.8rem", fontWeight: "800", color: "#fff" }}>CS2 Premier Rating</span>
-                          <span style={{ fontSize: "0.65rem", color: "var(--text-muted)", display: "block" }}>Официальный рейтинг Valve</span>
-                        </div>
-                        <span style={{ fontSize: "1.25rem", fontWeight: "900", color: valveStats.tierColor, textShadow: `0 0 10px ${valveStats.tierColor}30` }}>
-                          {valveStats.premierRating.toLocaleString()} PTS
-                        </span>
-                      </div>
-
-                      {/* Map Ranks */}
-                      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.5rem" }}>
-                        {valveStats.ranks.map((r, idx) => (
-                          <div key={idx} style={{ background: "rgba(0,0,0,0.25)", border: "1px solid var(--border-light)", borderRadius: "8px", padding: "0.6rem", textAlign: "center" }}>
-                            <span style={{ fontSize: "0.65rem", color: "var(--text-secondary)", display: "block" }}>{r.map}</span>
-                            <span style={{ fontSize: "0.72rem", fontWeight: "800", color: "#fff", display: "block", marginTop: "0.15rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                              {r.rank}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Steam Ban Status */}
-                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.72rem", color: "var(--text-muted)", background: "rgba(0,0,0,0.15)", padding: "0.5rem 0.75rem", borderRadius: "6px" }}>
-                        <span>VAC статус: <strong style={{ color: "var(--success)" }}>Clean</strong></span>
-                        <span>Игровые баны: <strong style={{ color: "var(--success)" }}>Clean</strong></span>
-                      </div>
-                    </div>
-                  </div>
+                  {renderValveStats()}
 
                 </div>
               )}
 
               {/* Tactical Tab Content */}
               {activeTab === "tactical" && hubStats && (
-                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1.25rem", height: "450px", boxSizing: "border-box", overflowY: "auto" }}>
+                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1.25rem", height: "600px", boxSizing: "border-box" }}>
                   
                   {/* Leetify Card */}
                   {leetify ? (
@@ -701,7 +723,7 @@ export default function PlayerProfilePage() {
 
               {/* Maps Stats View in Left column fallback if tab chosen */}
               {activeTab === "maps" && hubStats && (
-                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "0.75rem", height: "450px", boxSizing: "border-box", overflowY: "auto" }}>
+                <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "0.5rem", height: "600px", boxSizing: "border-box" }}>
                   {hubStats.maps?.map((seg: any, idx: number) => {
                       const mapName = seg.map;
                       const matches = seg.matches;
@@ -720,8 +742,8 @@ export default function PlayerProfilePage() {
                             border: "1px solid var(--border-light)",
                             display: "flex",
                             alignItems: "center",
-                            padding: "1rem 1.25rem",
-                            minHeight: "75px"
+                            padding: "0.5rem 1rem",
+                            minHeight: "56px"
                           }}
                         >
                           {/* Background Map Image Overlay */}
@@ -771,14 +793,13 @@ export default function PlayerProfilePage() {
 
               {/* HLTV Rating 2.0 SVG Trend Chart */}
               {renderRatingChart()}
-
               {/* Comparison with Pro-level benchmark */}
               {renderComparisonCard()}
             </div>
 
             {/* Right Panel: Advanced Tactical Breakdowns & Multi-Kills */}
             {hubStats && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", height: "100%" }}>
                 
                 {/* Est HLTV Rating Prominent Card */}
                 <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", overflow: "hidden" }}>
@@ -837,7 +858,7 @@ export default function PlayerProfilePage() {
                 </div>
 
                 {/* Granades detailed performance */}
-                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)" }}>
+                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", marginTop: "auto" }}>
                   <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", marginBottom: "1rem" }}>Гранаты</h3>
                   
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
