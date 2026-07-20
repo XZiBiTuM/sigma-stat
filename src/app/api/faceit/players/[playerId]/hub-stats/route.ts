@@ -84,8 +84,7 @@ export async function GET(
       "de_inferno",
       "de_mirage",
       "de_nuke",
-      "de_overpass",
-      "de_vertigo"
+      "de_cache"
     ];
     const mapStats: Record<string, any> = {};
     ALL_MAPS.forEach(mapName => {

@@ -239,6 +239,7 @@ export default function Home() {
   const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
   const [playerProfile, setPlayerProfile] = useState<PlayerProfile | null>(null);
   const [playerGameStats, setPlayerGameStats] = useState<PlayerGameStats | null>(null);
+  const [playerHubStats, setPlayerHubStats] = useState<any | null>(null);
   const [leetifyStats, setLeetifyStats] = useState<any | null>(null);
   const [playerModalTab, setPlayerModalTab] = useState<"general" | "tactical" | "maps">("general");
   const [isLoadingPlayer, setIsLoadingPlayer] = useState(false);
@@ -971,6 +972,7 @@ export default function Home() {
     setIsLoadingPlayer(true);
     setPlayerProfile(null);
     setPlayerGameStats(null);
+    setPlayerHubStats(null);
     setLeetifyStats(null);
     setPlayerModalTab("general");
     try {
@@ -988,7 +990,20 @@ export default function Home() {
         setPlayerGameStats(statsData);
       }
 
-      // 3. Fetch Leetify statistics via proxy endpoint
+      // 3. Fetch Hub statistics (HLTV 2.0, streaks, recent results, map stats)
+      try {
+        const hubStatsRes = await fetch(`/api/faceit/players/${playerId}/hub-stats`);
+        if (hubStatsRes.ok) {
+          const hubStatsData = await hubStatsRes.json();
+          if (hubStatsData && !hubStatsData.error) {
+            setPlayerHubStats(hubStatsData);
+          }
+        }
+      } catch (e) {
+        console.warn("Hub stats fetch failed:", e);
+      }
+
+      // 4. Fetch Leetify statistics via proxy endpoint
       try {
         const leetifyRes = await fetch(`/api/faceit/players/${playerId}/leetify`);
         if (leetifyRes.ok) {
@@ -1058,6 +1073,7 @@ export default function Home() {
     if (clean === "anubis") return "de_anubis";
     if (clean === "overpass") return "de_overpass";
     if (clean === "vertigo") return "de_vertigo";
+    if (clean === "cache") return "de_cache";
     return clean;
   };
   const getMapImageUrl = (mapNameStr: string) => {
@@ -1069,8 +1085,7 @@ export default function Home() {
       de_inferno: "https://assets.faceit-cdn.net/third_party/games/ce652bd4-0abb-4c90-9936-1133965ca38b/assets/votables/993380de-bb5b-4aa1-ada9-a0c1741dc475_1695819220797.jpeg",
       de_ancient: "https://assets.faceit-cdn.net/third_party/games/ce652bd4-0abb-4c90-9936-1133965ca38b/assets/votables/5b844241-5b15-45bf-a304-ad6df63b5ce5_1695819190976.jpeg",
       de_anubis: "https://assets.faceit-cdn.net/third_party/games/ce652bd4-0abb-4c90-9936-1133965ca38b/assets/votables/31f01daf-e531-43cf-b949-c094ebc9b3ea_1695819235255.jpeg",
-      de_overpass: "https://assets.faceit-cdn.net/third_party/games/ce652bd4-0abb-4c90-9936-1133965ca38b/assets/votables/058c4eb3-dac4-441c-a810-70afa0f3022c_1695819170133.jpeg",
-      de_vertigo: "https://assets.faceit-cdn.net/third_party/games/ce652bd4-0abb-4c90-9936-1133965ca38b/assets/votables/84a2ca0d-9b57-4148-be85-a7b69c4cd662_1695819208035.jpeg"
+      de_cache: "https://assets.faceit-cdn.net/third_party/games/ce652bd4-0abb-4c90-9936-1133965ca38b/assets/votables/058c4eb3-dac4-441c-a810-70afa0f3022c_1695819170133.jpeg"
     };
     return mapping[filename] || `/maps/${filename}.webp`;
   };
@@ -3415,13 +3430,21 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* Level and Elo display */}
+                  {/* Level, Elo & HLTV 2.0 display */}
                   {(() => {
                     const gameId = hubDetails?.game_id || "cs2";
                     const gameInfo = playerProfile.games?.[gameId];
                     if (!gameInfo) return null;
                     return (
-                      <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                      <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "1rem" }}>
+                        {playerHubStats?.hltvRating !== undefined && (
+                          <div style={{ textAlign: "right", paddingRight: "0.75rem", borderRight: "1px solid var(--border-light)" }}>
+                            <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block" }}>HLTV 2.0</span>
+                            <span className="glow-text-cyan" style={{ fontWeight: "900", color: "var(--accent-cyan)", fontSize: "1rem" }}>
+                              {playerHubStats.hltvRating.toFixed(2)}
+                            </span>
+                          </div>
+                        )}
                         <div style={{ textAlign: "right" }}>
                           <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", display: "block" }}>ELO</span>
                           <span style={{ fontWeight: "700", color: "#fff", fontSize: "0.95rem" }}>{gameInfo.faceit_elo}</span>
@@ -3444,8 +3467,8 @@ export default function Home() {
                   paddingBottom: "2px"
                 }}>
                   {[
-                    { id: "general", label: "Общая статистика" },
-                    { id: "tactical", label: "Leetify" },
+                    { id: "general", label: "Статистика (хаб)" },
+                    { id: "tactical", label: "Статистика (все игры)" },
                     { id: "maps", label: "Статистика по картам" }
                   ].map((tab) => (
                     <button
@@ -3468,10 +3491,10 @@ export default function Home() {
                   ))}
                 </div>
 
-                {/* TAB CONTENT: GENERAL */}
+                {/* TAB CONTENT: GENERAL (HUB STATS) */}
                 {playerModalTab === "general" && (
                   <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-                    {!playerGameStats ? (
+                    {!playerGameStats && !playerHubStats ? (
                       <div style={{
                         padding: "2rem",
                         textAlign: "center",
@@ -3492,10 +3515,10 @@ export default function Home() {
                           gap: "0.75rem"
                         }}>
                           {[
-                            { label: "Всего матчей", val: playerGameStats.lifetime.Matches, color: "#fff" },
-                            { label: "Процент побед", val: `${playerGameStats.lifetime["Win Rate %"]}%`, color: "var(--success)" },
-                            { label: "Средний K/D", val: parseFloat(playerGameStats.lifetime["Average K/D Ratio"]).toFixed(2), color: "var(--accent-cyan)" },
-                            { label: "Средний HS%", val: `${playerGameStats.lifetime["Average Headshots %"]}%`, color: "#fff" }
+                            { label: "Всего матчей", val: playerHubStats?.matchesCount ?? playerGameStats?.lifetime.Matches ?? 0, color: "#fff" },
+                            { label: "Процент побед", val: `${playerHubStats?.winrate ?? playerGameStats?.lifetime["Win Rate %"] ?? 0}%`, color: "var(--success)" },
+                            { label: "Средний K/D", val: (playerHubStats?.kd ?? parseFloat(playerGameStats?.lifetime["Average K/D Ratio"] || "0")).toFixed(2), color: "var(--accent-cyan)" },
+                            { label: "Средний HS%", val: `${playerHubStats?.hsPct ?? playerGameStats?.lifetime["Average Headshots %"] ?? 0}%`, color: "#fff" }
                           ].map((item, idx) => (
                             <div key={idx} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "8px", padding: "0.6rem 0.85rem" }}>
                               <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block" }}>{item.label}</span>
@@ -3511,54 +3534,64 @@ export default function Home() {
                           <div style={{ flex: 1, background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "8px", padding: "0.75rem 1rem" }}>
                             <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", display: "block", marginBottom: "0.5rem" }}>Текущая форма (Последние 5 матчей)</span>
                             <div style={{ display: "flex", gap: "0.5rem" }}>
-                              {Array.isArray(playerGameStats.lifetime["Recent Results"]) && playerGameStats.lifetime["Recent Results"].map((res: string, i: number) => {
-                                const isWin = res === "1";
-                                return (
-                                  <div 
-                                    key={i} 
-                                    style={{
-                                      width: "24px", height: "24px",
-                                      borderRadius: "50%",
-                                      display: "flex", alignItems: "center", justifyContent: "center",
-                                      fontSize: "0.7rem", fontWeight: "800",
-                                      background: isWin ? "rgba(76, 175, 80, 0.15)" : "rgba(244, 67, 54, 0.15)",
-                                      border: isWin ? "1px solid rgba(76, 175, 80, 0.3)" : "1px solid rgba(244, 67, 54, 0.3)",
-                                      color: isWin ? "#4caf50" : "#f44336"
-                                    }}
-                                  >
-                                    {isWin ? "W" : "L"}
-                                  </div>
-                                );
-                              })}
+                              {(() => {
+                                const recentList = playerHubStats?.recentResults || playerGameStats?.lifetime["Recent Results"] || [];
+                                if (!Array.isArray(recentList) || recentList.length === 0) {
+                                  return <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>—</span>;
+                                }
+                                return recentList.map((res: string, i: number) => {
+                                  const isWin = res === "1";
+                                  return (
+                                    <div 
+                                      key={i} 
+                                      style={{
+                                        width: "24px", height: "24px",
+                                        borderRadius: "50%",
+                                        display: "flex", alignItems: "center", justifyContent: "center",
+                                        fontSize: "0.7rem", fontWeight: "800",
+                                        background: isWin ? "rgba(76, 175, 80, 0.15)" : "rgba(244, 67, 54, 0.15)",
+                                        border: isWin ? "1px solid rgba(76, 175, 80, 0.3)" : "1px solid rgba(244, 67, 54, 0.3)",
+                                        color: isWin ? "#4caf50" : "#f44336"
+                                      }}
+                                    >
+                                      {isWin ? "W" : "L"}
+                                    </div>
+                                  );
+                                });
+                              })()}
                             </div>
                           </div>
 
                           <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "8px", padding: "0.75rem 1rem", minWidth: "180px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
                             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.72rem", color: "var(--text-secondary)" }}>
                               <span>Текущий стрик:</span>
-                              <span style={{ fontWeight: "700", color: "var(--success)" }}>+{playerGameStats.lifetime["Current Win Streak"] || 0} побед</span>
+                              <span style={{ fontWeight: "700", color: "var(--success)" }}>
+                                +{playerHubStats?.streaks?.current ?? playerGameStats?.lifetime["Current Win Streak"] ?? 0} побед
+                              </span>
                             </div>
                             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.72rem", color: "var(--text-secondary)", marginTop: "0.35rem" }}>
                               <span>Макс. стрик:</span>
-                              <span style={{ fontWeight: "700", color: "#fff" }}>{playerGameStats.lifetime["Longest Win Streak"] || 0} побед</span>
+                              <span style={{ fontWeight: "700", color: "#fff" }}>
+                                {playerHubStats?.streaks?.longest ?? playerGameStats?.lifetime["Longest Win Streak"] ?? 0} побед
+                              </span>
                             </div>
                           </div>
                         </div>
 
                         {/* Sniper / Weapon Info */}
-                        {playerGameStats.lifetime["Total Sniper Kills"] && parseInt(playerGameStats.lifetime["Total Sniper Kills"]) > 0 && (
+                        {((playerHubStats?.sniper?.kills || 0) > 0 || (playerGameStats?.lifetime["Total Sniper Kills"] && parseInt(playerGameStats?.lifetime["Total Sniper Kills"]) > 0)) && (
                           <div style={{ background: "rgba(255,255,255,0.01)", border: "1px dashed var(--border-light)", borderRadius: "8px", padding: "0.75rem 1rem" }}>
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                               <div>
                                 <span style={{ fontSize: "0.78rem", fontWeight: "600", color: "#fff", display: "block" }}>Снайперская роль (AWP)</span>
-                                <span style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>Убийств со снайперских винтовок за все время</span>
+                                <span style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>Убийств со снайперских винтовок</span>
                               </div>
                               <div style={{ textAlign: "right" }}>
                                 <span style={{ fontSize: "1.1rem", fontWeight: "700", color: "var(--accent-yellow)", display: "block" }}>
-                                  {playerGameStats.lifetime["Total Sniper Kills"]}
+                                  {playerHubStats?.sniper?.kills ?? playerGameStats?.lifetime["Total Sniper Kills"]}
                                 </span>
                                 <span style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>
-                                  {Math.round(parseFloat(playerGameStats.lifetime["Sniper Kill Rate"]) * 100)}% от всех убийств
+                                  {playerHubStats?.sniper?.rate ?? Math.round(parseFloat(playerGameStats?.lifetime["Sniper Kill Rate"] || "0") * 100)}% от всех убийств
                                 </span>
                               </div>
                             </div>
@@ -3569,7 +3602,7 @@ export default function Home() {
                   </div>
                 )}
 
-                {/* TAB CONTENT: TACTICAL */}
+                {/* TAB CONTENT: TACTICAL (ALL GAMES STATS & LEETIFY) */}
                 {playerModalTab === "tactical" && (
                   <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
                     
@@ -3587,7 +3620,7 @@ export default function Home() {
                             <span style={{ fontSize: "0.65rem", color: "var(--text-muted)", display: "block" }}>Комплексная оценка полезности игрока</span>
                           </div>
                           {(() => {
-                            const val = parseFloat(leetifyStats.stats.leetify_rating);
+                            const val = parseFloat(leetifyStats.ranks?.leetify ?? leetifyStats.rating?.leetify ?? leetifyStats.stats?.leetify_rating ?? 0);
                             const isPos = val >= 0;
                             return (
                               <div style={{
@@ -3608,12 +3641,12 @@ export default function Home() {
                         {/* Leetify metrics grid */}
                         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.5rem", marginTop: "0.75rem" }}>
                           {[
-                            { label: "Preaim Accuracy", val: `${Math.round(leetifyStats.stats.preaim * 100)}%` },
-                            { label: "Reaction Time", val: `${Math.round(leetifyStats.stats.reaction_time)} ms` },
-                            { label: "Aim Accuracy", val: `${Math.round(leetifyStats.stats.accuracy * 100)}%` },
-                            { label: "Counter-Strafing", val: `${Math.round(leetifyStats.stats.counter_strafing_shots_good_ratio * 100)}%` },
-                            { label: "Spray Accuracy", val: `${Math.round(leetifyStats.stats.spray_accuracy * 100)}%` },
-                            { label: "Leetify T / CT", val: `${parseFloat(leetifyStats.stats.t_leetify_rating).toFixed(1)} / ${parseFloat(leetifyStats.stats.ct_leetify_rating).toFixed(1)}` }
+                            { label: "Preaim Accuracy", val: leetifyStats.stats?.preaim !== undefined ? `${parseFloat(leetifyStats.stats.preaim).toFixed(1)}°` : (leetifyStats.stats?.preaim_accuracy !== undefined ? `${Math.round(leetifyStats.stats.preaim_accuracy * 100)}%` : "—") },
+                            { label: "Reaction Time", val: leetifyStats.stats?.reaction_time_ms !== undefined ? `${Math.round(leetifyStats.stats.reaction_time_ms)} ms` : (leetifyStats.stats?.reaction_time !== undefined ? `${Math.round(leetifyStats.stats.reaction_time)} ms` : "—") },
+                            { label: "Aim Accuracy", val: leetifyStats.stats?.accuracy_enemy_spotted !== undefined ? `${Math.round(leetifyStats.stats.accuracy_enemy_spotted)}%` : (leetifyStats.stats?.accuracy !== undefined ? `${Math.round(leetifyStats.stats.accuracy * 100)}%` : "—") },
+                            { label: "Counter-Strafing", val: leetifyStats.stats?.counter_strafing_good_shots_ratio !== undefined ? `${Math.round(leetifyStats.stats.counter_strafing_good_shots_ratio)}%` : (leetifyStats.stats?.counter_strafing_shots_good_ratio !== undefined ? `${Math.round(leetifyStats.stats.counter_strafing_shots_good_ratio * 100)}%` : "—") },
+                            { label: "Spray Accuracy", val: leetifyStats.stats?.spray_accuracy !== undefined ? `${Math.round(leetifyStats.stats.spray_accuracy * (leetifyStats.stats.spray_accuracy <= 1 ? 100 : 1))}%` : "—" },
+                            { label: "Leetify T / CT", val: `${parseFloat(leetifyStats.rating?.t_leetify || leetifyStats.stats?.t_leetify_rating || 0).toFixed(1)} / ${parseFloat(leetifyStats.rating?.ct_leetify || leetifyStats.stats?.ct_leetify_rating || 0).toFixed(1)}` }
                           ].map((item, idx) => (
                             <div key={idx} style={{ background: "rgba(0,0,0,0.2)", borderRadius: "6px", padding: "0.5rem", border: "1px solid var(--border-light)" }}>
                               <span style={{ fontSize: "0.62rem", color: "var(--text-muted)", display: "block" }}>{item.label}</span>
@@ -3632,7 +3665,7 @@ export default function Home() {
                         color: "var(--text-muted)",
                         lineHeight: "1.4"
                       }}>
-                        💡 <strong>Данные Leetify недоступны:</strong> этот игрок не зарегистрирован на leetify.com или не настроена интеграция Leetify API. Ниже показаны альтернативные тактические показатели FACEIT.
+                        <strong>Данные Leetify недоступны:</strong> этот игрок не зарегистрирован на leetify.com или не настроена интеграция Leetify API. Ниже показаны альтернативные тактические показатели FACEIT.
                       </div>
                     )}
 
@@ -3642,7 +3675,7 @@ export default function Home() {
                         
                         {/* Aim & Combat */}
                         <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "8px", padding: "0.75rem 1rem" }}>
-                          <span style={{ fontSize: "0.75rem", fontWeight: "700", color: "var(--accent-cyan)", display: "block", marginBottom: "0.5rem" }}>⚔ Бой и Атака</span>
+                          <span style={{ fontSize: "0.75rem", fontWeight: "700", color: "var(--accent-cyan)", display: "block", marginBottom: "0.5rem" }}>Бой и Атака</span>
                           <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
                             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.72rem" }}>
                               <span style={{ color: "var(--text-secondary)" }}>Средний урон (ADR):</span>
@@ -3657,7 +3690,7 @@ export default function Home() {
 
                         {/* Opening Duels */}
                         <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "8px", padding: "0.75rem 1rem" }}>
-                          <span style={{ fontSize: "0.75rem", fontWeight: "700", color: "var(--accent-yellow)", display: "block", marginBottom: "0.5rem" }}>⚡ Первые дуэли (Entry)</span>
+                          <span style={{ fontSize: "0.75rem", fontWeight: "700", color: "var(--accent-yellow)", display: "block", marginBottom: "0.5rem" }}>Первые дуэли (Entry)</span>
                           <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
                             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.72rem" }}>
                               <span style={{ color: "var(--text-secondary)" }}>Участие в дуэлях:</span>
@@ -3676,7 +3709,7 @@ export default function Home() {
 
                         {/* Utility usage */}
                         <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "8px", padding: "0.75rem 1rem" }}>
-                          <span style={{ fontSize: "0.75rem", fontWeight: "700", color: "var(--accent-purple)", display: "block", marginBottom: "0.5rem" }}>💣 Использование гранат</span>
+                          <span style={{ fontSize: "0.75rem", fontWeight: "700", color: "var(--accent-purple)", display: "block", marginBottom: "0.5rem" }}>Использование гранат</span>
                           <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
                             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.72rem" }}>
                               <span style={{ color: "var(--text-secondary)" }}>Урон гранатами/раунд:</span>
@@ -3693,7 +3726,7 @@ export default function Home() {
 
                         {/* Clutches */}
                         <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "8px", padding: "0.75rem 1rem" }}>
-                          <span style={{ fontSize: "0.75rem", fontWeight: "700", color: "#00d4ff", display: "block", marginBottom: "0.5rem" }}>🏆 Клачи (Clutches)</span>
+                          <span style={{ fontSize: "0.75rem", fontWeight: "700", color: "#00d4ff", display: "block", marginBottom: "0.5rem" }}>Клачи (Clutches)</span>
                           <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
                             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.72rem" }}>
                               <span style={{ color: "var(--text-secondary)" }}>Побед в 1v1 клачах:</span>
@@ -3718,81 +3751,110 @@ export default function Home() {
                 {/* TAB CONTENT: MAPS */}
                 {playerModalTab === "maps" && (
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", maxHeight: "360px", overflowY: "auto", paddingRight: "0.25rem" }}>
-                    {!playerGameStats || !Array.isArray(playerGameStats.segments) ? (
-                      <div style={{ textAlign: "center", padding: "2rem", color: "var(--text-muted)" }}>
-                        Нет подробных данных по картам.
-                      </div>
-                    ) : (
-                      playerGameStats.segments
-                        .filter((seg: any) => seg.type === "Map")
-                        .map((seg: any, idx: number) => {
-                          const mapName = seg.label;
-                          const matches = parseInt(seg.stats.Matches || "0");
-                          const winRate = parseInt(seg.stats["Win Rate %"] || "0");
-                          const kd = parseFloat(seg.stats["Average K/D Ratio"] || "0").toFixed(2);
-                          const avgKills = parseFloat(seg.stats["Average Kills"] || "0").toFixed(1);
-                          const adr = seg.stats.ADR ? parseFloat(seg.stats.ADR).toFixed(1) : null;
-                          const bgImage = seg.img_small || seg.img_regular;
+                    {(() => {
+                      // Determine maps list to render: from hubStats or gameStats
+                      let mapItems: any[] = [];
+                      if (playerHubStats && Array.isArray(playerHubStats.maps)) {
+                        mapItems = playerHubStats.maps;
+                      } else if (playerGameStats && Array.isArray(playerGameStats.segments)) {
+                        mapItems = playerGameStats.segments
+                          .filter((seg: any) => seg.type === "Map")
+                          .map((seg: any) => ({
+                            map: seg.label,
+                            matches: parseInt(seg.stats.Matches || "0"),
+                            winrate: parseInt(seg.stats["Win Rate %"] || "0"),
+                            kd: parseFloat(seg.stats["Average K/D Ratio"] || "0"),
+                            adr: seg.stats.ADR ? parseFloat(seg.stats.ADR) : null,
+                            hsPct: seg.stats["Average Headshots %"] ? parseInt(seg.stats["Average Headshots %"]) : 0,
+                            img: seg.img_regular || seg.img_small
+                          }));
+                      }
 
-                          return (
+                      // Filter out vertigo
+                      mapItems = mapItems.filter((item: any) => {
+                        const mName = (item.map || "").toLowerCase();
+                        return !mName.includes("vertigo");
+                      });
+
+                      if (mapItems.length === 0) {
+                        return (
+                          <div style={{ textAlign: "center", padding: "2rem", color: "var(--text-muted)" }}>
+                            Нет подробных данных по картам.
+                          </div>
+                        );
+                      }
+
+                      return mapItems.map((seg: any, idx: number) => {
+                        const rawMapName = seg.map || "";
+                        const mapName = rawMapName.replace("de_", "").replace("cs_", "").toUpperCase();
+                        const matches = seg.matches || 0;
+                        const winRate = seg.winrate || 0;
+                        const kd = seg.kd || 0;
+                        const adr = seg.adr || 0;
+                        const hsPct = seg.hsPct || 0;
+                        const mapBgUrl = seg.img || getMapImageUrl(rawMapName);
+
+                        return (
+                          <div 
+                            key={idx} 
+                            style={{
+                              position: "relative",
+                              borderRadius: "8px",
+                              overflow: "hidden",
+                              background: "rgba(20, 18, 30, 0.8)",
+                              border: "1px solid var(--border-light)",
+                              display: "flex",
+                              alignItems: "center",
+                              padding: "0.75rem 1rem",
+                              minHeight: "65px"
+                            }}
+                          >
+                            {/* Background Map Image Overlay */}
                             <div 
-                              key={idx} 
                               style={{
-                                position: "relative",
-                                borderRadius: "8px",
-                                overflow: "hidden",
-                                background: "rgba(20, 18, 30, 0.8)",
-                                border: "1px solid var(--border-light)",
-                                display: "flex",
-                                alignItems: "center",
-                                padding: "0.75rem 1rem",
-                                minHeight: "65px"
+                                position: "absolute",
+                                right: 0, top: 0, bottom: 0,
+                                width: "50%",
+                                backgroundImage: `linear-gradient(to left, rgba(20, 18, 30, 0.2) 0%, rgba(20, 18, 30, 0.95) 75%, rgba(20, 18, 30, 1) 100%), url(${mapBgUrl})`,
+                                backgroundSize: "cover",
+                                backgroundPosition: "center",
+                                opacity: 0.7,
+                                zIndex: 0
                               }}
-                            >
-                              {/* Background Map Image Overlay */}
-                              {bgImage && (
-                                <div 
-                                  style={{
-                                    position: "absolute",
-                                    right: 0, top: 0, bottom: 0,
-                                    width: "45%",
-                                    backgroundImage: `linear-gradient(to left, rgba(20, 18, 30, 0.2) 0%, rgba(20, 18, 30, 0.95) 75%, rgba(20, 18, 30, 1) 100%), url(${bgImage})`,
-                                    backgroundSize: "cover",
-                                    backgroundPosition: "center",
-                                    opacity: 0.7,
-                                    zIndex: 0
-                                  }}
-                                />
-                              )}
+                            />
 
-                              <div style={{ position: "relative", zIndex: 1, flex: 1, display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+                            <div style={{ position: "relative", zIndex: 1, flex: 1, display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+                              <div>
+                                <span style={{ fontSize: "0.85rem", fontWeight: "700", color: "#fff", display: "block" }}>{mapName}</span>
+                                <span style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>
+                                  Матчей: <strong>{matches}</strong> • Win Rate: <strong style={{ color: winRate >= 50 ? "var(--success)" : "var(--danger)" }}>{winRate}%</strong>
+                                </span>
+                              </div>
+                              <div style={{ display: "flex", gap: "1.25rem", textAlign: "right" }}>
                                 <div>
-                                  <span style={{ fontSize: "0.85rem", fontWeight: "700", color: "#fff", display: "block" }}>{mapName}</span>
-                                  <span style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>
-                                    Матчей: <strong>{matches}</strong> • Win Rate: <strong style={{ color: winRate >= 50 ? "var(--success)" : "var(--danger)" }}>{winRate}%</strong>
+                                  <span style={{ fontSize: "0.65rem", color: "var(--accent-cyan)", display: "block" }}>Avg K/D</span>
+                                  <span style={{ fontSize: "0.82rem", fontWeight: "700", color: matches > 0 ? (kd >= 1.0 ? "var(--success)" : "var(--danger)") : "var(--text-muted)" }}>
+                                    {matches > 0 ? kd.toFixed(2) : "—"}
                                   </span>
                                 </div>
-                                <div style={{ display: "flex", gap: "1.25rem", textAlign: "right" }}>
-                                  <div>
-                                    <span style={{ fontSize: "0.65rem", color: "var(--text-muted)", display: "block" }}>Avg K/D</span>
-                                    <span style={{ fontSize: "0.82rem", fontWeight: "700", color: "var(--accent-cyan)" }}>{kd}</span>
-                                  </div>
-                                  <div>
-                                    <span style={{ fontSize: "0.65rem", color: "var(--text-muted)", display: "block" }}>Avg Kills</span>
-                                    <span style={{ fontSize: "0.82rem", fontWeight: "700", color: "#fff" }}>{avgKills}</span>
-                                  </div>
-                                  {adr && (
-                                    <div>
-                                      <span style={{ fontSize: "0.65rem", color: "var(--text-muted)", display: "block" }}>ADR</span>
-                                      <span style={{ fontSize: "0.82rem", fontWeight: "700", color: "var(--accent-yellow)" }}>{adr}</span>
-                                    </div>
-                                  )}
+                                <div>
+                                  <span style={{ fontSize: "0.65rem", color: "var(--accent-yellow)", display: "block" }}>ADR</span>
+                                  <span style={{ fontSize: "0.82rem", fontWeight: "700", color: matches > 0 && adr ? (adr >= 80 ? "var(--success)" : "var(--danger)") : "var(--text-muted)" }}>
+                                    {matches > 0 && adr ? adr.toFixed(1) : "—"}
+                                  </span>
+                                </div>
+                                <div>
+                                  <span style={{ fontSize: "0.65rem", color: "var(--accent-purple)", display: "block" }}>HS%</span>
+                                  <span style={{ fontSize: "0.82rem", fontWeight: "700", color: matches > 0 ? (hsPct >= 40 ? "var(--success)" : "var(--danger)") : "var(--text-muted)" }}>
+                                    {matches > 0 ? `${hsPct}%` : "—"}
+                                  </span>
                                 </div>
                               </div>
                             </div>
-                          );
-                        })
-                    )}
+                          </div>
+                        );
+                      });
+                    })()}
                   </div>
                 )}
 
