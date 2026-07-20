@@ -235,6 +235,7 @@ export default function Home() {
   const [selectedRadarRoundIndexes, setSelectedRadarRoundIndexes] = useState<Record<number, number | null>>({});
   const [showAllMatchDeathsMap, setShowAllMatchDeathsMap] = useState<Record<number, boolean>>({});
   const [hoveredKillIdx, setHoveredKillIdx] = useState<number | null>(null);
+  const [selectedKillIdx, setSelectedKillIdx] = useState<number | null>(null);
 
   // Modal: Player details
   const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
@@ -560,6 +561,8 @@ export default function Home() {
             onClick={() => {
               setSelectedRadarRoundIndexes(prev => ({ ...prev, [mapIndex]: null }));
               setShowAllMatchDeathsMap(prev => ({ ...prev, [mapIndex]: false }));
+              setHoveredKillIdx(null);
+              setSelectedKillIdx(null);
             }}
             style={{
               background: "rgba(255,255,255,0.06)",
@@ -701,24 +704,31 @@ export default function Home() {
                     const vicY = (config.pos_y - d.victimY) / config.scale;
 
                     const isAtkCT = isCTSide(d.attackerTeam);
-                    const isHoverActive = hoveredKillIdx !== null;
-                    const isThisHovered = hoveredKillIdx === idx;
-                    const opacity = isHoverActive ? (isThisHovered ? 1.0 : 0.15) : 1.0;
-                    const strokeColor = isThisHovered 
+                    const activeKillIdx = hoveredKillIdx !== null ? hoveredKillIdx : selectedKillIdx;
+                    const isKillActive = activeKillIdx !== null;
+                    const isThisKillActive = activeKillIdx === idx;
+                    const opacity = isKillActive ? (isThisKillActive ? 1.0 : 0.15) : 1.0;
+                    const strokeColor = isThisKillActive 
                       ? (isAtkCT ? "#00ffff" : "#ff1744") 
                       : (isAtkCT ? "rgba(0, 184, 212, 0.65)" : "rgba(255, 61, 0, 0.65)");
                     const markerId = isAtkCT ? `url(#arrow-ct-${mapIndex})` : `url(#arrow-t-${mapIndex})`;
 
                     return (
-                      <g key={`line-${idx}`} style={{ opacity: opacity, transition: "opacity 0.2s" }}>
+                      <g 
+                        key={`line-${idx}`} 
+                        style={{ opacity: opacity, transition: "all 0.2s ease", cursor: "pointer" }}
+                        onMouseEnter={() => setHoveredKillIdx(idx)}
+                        onMouseLeave={() => setHoveredKillIdx(null)}
+                        onClick={() => setSelectedKillIdx(selectedKillIdx === idx ? null : idx)}
+                      >
                         <line 
                           x1={atkX} 
                           y1={atkY} 
                           x2={vicX} 
                           y2={vicY} 
                           stroke={strokeColor} 
-                          strokeWidth={isThisHovered ? "6" : "4"} 
-                          strokeDasharray={isThisHovered ? "none" : "8,6"}
+                          strokeWidth={isThisKillActive ? "7" : "4"} 
+                          strokeDasharray={isThisKillActive ? "none" : "8,6"}
                           markerEnd={markerId}
                         />
                       </g>
@@ -734,28 +744,44 @@ export default function Home() {
 
                     const isVicCT = isCTSide(d.victimTeam);
                     const isAtkCT = isCTSide(d.attackerTeam);
-                    const isHoverActive = hoveredKillIdx !== null;
-                    const isThisHovered = hoveredKillIdx === idx;
-                    const opacity = isHoverActive ? (isThisHovered ? 1.0 : 0.15) : 1.0;
+                    const activeKillIdx = hoveredKillIdx !== null ? hoveredKillIdx : selectedKillIdx;
+                    const isKillActive = activeKillIdx !== null;
+                    const isThisKillActive = activeKillIdx === idx;
+                    const opacity = isKillActive ? (isThisKillActive ? 1.0 : 0.15) : 1.0;
 
-                    const dotColor = isVicCT ? "rgba(0, 184, 212, 0.9)" : "rgba(255, 61, 0, 0.9)";
+                    const dotColor = isVicCT ? "rgba(0, 184, 212, 0.95)" : "rgba(255, 61, 0, 0.95)";
                     const strokeColor = "#fff";
 
                     const atkX = d.attackerX !== null ? (d.attackerX - config.pos_x) / config.scale : null;
                     const atkY = d.attackerY !== null ? (config.pos_y - d.attackerY) / config.scale : null;
 
                     return (
-                      <g key={`dots-${idx}`} style={{ opacity: opacity, transition: "opacity 0.2s" }}>
+                      <g 
+                        key={`dots-${idx}`} 
+                        style={{ opacity: opacity, transition: "all 0.2s ease", cursor: "pointer" }}
+                        onMouseEnter={() => setHoveredKillIdx(idx)}
+                        onMouseLeave={() => setHoveredKillIdx(null)}
+                        onClick={() => setSelectedKillIdx(selectedKillIdx === idx ? null : idx)}
+                      >
                         {/* Attacker Dot */}
                         {atkX !== null && atkY !== null && (
                           <g>
+                            {isThisKillActive && (
+                              <circle 
+                                cx={atkX} 
+                                cy={atkY} 
+                                r="18" 
+                                fill={isAtkCT ? "rgba(0, 229, 255, 0.3)" : "rgba(255, 61, 0, 0.3)"} 
+                                className="animate-pulse"
+                              />
+                            )}
                             <circle 
                               cx={atkX} 
                               cy={atkY} 
-                              r={isThisHovered ? 11 : 8} 
+                              r={isThisKillActive ? 12 : 8} 
                               fill={isAtkCT ? "rgba(0, 184, 212, 0.95)" : "rgba(255, 61, 0, 0.95)"} 
-                              stroke="#fff" 
-                              strokeWidth={isThisHovered ? "2.5" : "1.5"} 
+                              stroke={strokeColor} 
+                              strokeWidth={isThisKillActive ? "3" : "1.5"} 
                             />
                             <title>{`${d.attackerName || "Игрок"} (${isAtkCT ? "CT" : "T"})`}</title>
                           </g>
@@ -763,19 +789,28 @@ export default function Home() {
 
                         {/* Victim Dot */}
                         <g>
+                          {isThisKillActive && (
+                            <circle 
+                              cx={vicX} 
+                              cy={vicY} 
+                              r="22" 
+                              fill={isVicCT ? "rgba(0, 229, 255, 0.3)" : "rgba(255, 61, 0, 0.3)"} 
+                              className="animate-pulse"
+                            />
+                          )}
                           <circle 
                             cx={vicX} 
                             cy={vicY} 
-                            r={isThisHovered ? 14 : 11} 
+                            r={isThisKillActive ? 15 : 11} 
                             fill={dotColor} 
                             stroke={strokeColor} 
-                            strokeWidth={isThisHovered ? "3" : "2"} 
+                            strokeWidth={isThisKillActive ? "3.5" : "2"} 
                           />
                           <text 
                             x={vicX} 
-                            y={vicY + (isThisHovered ? 4 : 3.5)} 
+                            y={vicY + (isThisKillActive ? 4.5 : 3.5)} 
                             fill="#fff" 
-                            fontSize={isThisHovered ? "12" : "10"} 
+                            fontSize={isThisKillActive ? "13" : "10"} 
                             fontWeight="bold" 
                             textAnchor="middle"
                           >
@@ -899,10 +934,11 @@ export default function Home() {
               {roundDeaths.map((d: any, idx: number) => {
                 const isAtkCT = isCTSide(d.attackerTeam);
                 const isVicCT = isCTSide(d.victimTeam);
-                const atkColor = isAtkCT ? "#00b8d4" : "#ff5252";
-                const vicColor = isVicCT ? "#00b8d4" : "#ff5252";
+                const atkColor = isAtkCT ? "#00e5ff" : "#ff5252";
+                const vicColor = isVicCT ? "#00e5ff" : "#ff5252";
                 const weaponIconUrl = getWeaponIconUrl(d.weapon);
-                const isHovered = hoveredKillIdx === idx;
+                const activeKillIdx = hoveredKillIdx !== null ? hoveredKillIdx : selectedKillIdx;
+                const isItemActive = activeKillIdx === idx;
 
                 return (
                   <div 
@@ -912,27 +948,36 @@ export default function Home() {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-between",
-                      padding: "0.4rem 0.6rem",
-                      background: isHovered ? "rgba(0, 229, 255, 0.15)" : "rgba(255,255,255,0.02)",
-                      border: isHovered ? "1px solid rgba(0, 229, 255, 0.45)" : "1px solid rgba(255,255,255,0.03)",
+                      padding: "0.45rem 0.65rem",
+                      background: isItemActive ? "rgba(0, 229, 255, 0.18)" : "rgba(255,255,255,0.02)",
+                      border: isItemActive ? "1px solid #00e5ff" : "1px solid rgba(255,255,255,0.03)",
                       borderRadius: "6px",
                       cursor: "pointer",
-                      boxShadow: isHovered ? "0 0 10px rgba(0, 229, 255, 0.2)" : "none",
-                      transform: isHovered ? "translateX(2px)" : "none",
+                      boxShadow: isItemActive ? "0 0 12px rgba(0, 229, 255, 0.3)" : "none",
+                      transform: isItemActive ? "scale(1.02) translateX(3px)" : "scale(1)",
                       transition: "all 0.15s ease"
                     }}
                     onMouseEnter={() => setHoveredKillIdx(idx)}
                     onMouseLeave={() => setHoveredKillIdx(null)}
+                    onClick={() => setSelectedKillIdx(selectedKillIdx === idx ? null : idx)}
                   >
                     {/* Attacker */}
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.25rem", flex: 1, minWidth: "90px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", flex: 1, minWidth: "95px" }}>
                       {d.attackerName ? (
                         <>
                           <span style={{ color: atkColor, fontWeight: "800", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "90px" }} title={`${d.attackerName} (${isAtkCT ? "CT" : "T"})`}>
                             {d.attackerName}
                           </span>
-                          <span style={{ color: atkColor, fontSize: "0.6rem", fontWeight: "bold", opacity: 0.7 }}>
-                            ({isAtkCT ? "CT" : "T"})
+                          <span style={{ 
+                            color: atkColor, 
+                            fontSize: "0.55rem", 
+                            fontWeight: "900", 
+                            background: isAtkCT ? "rgba(0, 229, 255, 0.12)" : "rgba(255, 61, 0, 0.12)",
+                            border: isAtkCT ? "1px solid rgba(0, 229, 255, 0.3)" : "1px solid rgba(255, 61, 0, 0.3)",
+                            padding: "0.05rem 0.25rem",
+                            borderRadius: "3px"
+                          }}>
+                            {isAtkCT ? "CT" : "T"}
                           </span>
                         </>
                       ) : (
@@ -948,7 +993,8 @@ export default function Home() {
                       alignItems: "center", 
                       gap: "0.4rem", 
                       color: "var(--text-primary)",
-                      background: "rgba(0,0,0,0.35)",
+                      background: "rgba(0,0,0,0.45)",
+                      border: "1px solid rgba(255,255,255,0.06)",
                       padding: "0.2rem 0.5rem",
                       borderRadius: "4px",
                       fontSize: "0.7rem",
@@ -993,12 +1039,20 @@ export default function Home() {
                     </div>
 
                     {/* Victim */}
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.25rem", flex: 1, minWidth: "90px", justifyContent: "flex-end", textAlign: "right" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", flex: 1, minWidth: "95px", justifyContent: "flex-end", textAlign: "right" }}>
                       <span style={{ color: vicColor, fontWeight: "800", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "90px" }} title={`${d.victimName} (${isVicCT ? "CT" : "T"})`}>
                         {d.victimName}
                       </span>
-                      <span style={{ color: vicColor, fontSize: "0.6rem", fontWeight: "bold", opacity: 0.7 }}>
-                        ({isVicCT ? "CT" : "T"})
+                      <span style={{ 
+                        color: vicColor, 
+                        fontSize: "0.55rem", 
+                        fontWeight: "900", 
+                        background: isVicCT ? "rgba(0, 229, 255, 0.12)" : "rgba(255, 61, 0, 0.12)",
+                        border: isVicCT ? "1px solid rgba(0, 229, 255, 0.3)" : "1px solid rgba(255, 61, 0, 0.3)",
+                        padding: "0.05rem 0.25rem",
+                        borderRadius: "3px"
+                      }}>
+                        {isVicCT ? "CT" : "T"}
                       </span>
                     </div>
                   </div>
@@ -2950,9 +3004,21 @@ export default function Home() {
                         const manualDemoUrl = manualDemoUrls[originalMapIndex] || "";
                         const setManualDemoUrl = (val: string) => setManualDemoUrls(prev => ({ ...prev, [originalMapIndex]: val }));
                         const selectedRadarRoundIndex = selectedRadarRoundIndexes[originalMapIndex] || null;
-                        const setSelectedRadarRoundIndex = (val: number | null) => setSelectedRadarRoundIndexes(prev => ({ ...prev, [originalMapIndex]: val }));
+                        const setSelectedRadarRoundIndex = (val: number | null) => {
+                          setSelectedRadarRoundIndexes(prev => ({ ...prev, [originalMapIndex]: val }));
+                          setShowAllMatchDeathsMap(prev => ({ ...prev, [originalMapIndex]: false }));
+                          setHoveredKillIdx(null);
+                          setSelectedKillIdx(null);
+                        };
                         const showAllMatchDeaths = showAllMatchDeathsMap[originalMapIndex] || false;
-                        const setShowAllMatchDeaths = (val: boolean) => setShowAllMatchDeathsMap(prev => ({ ...prev, [originalMapIndex]: val }));
+                        const setShowAllMatchDeaths = (val: boolean) => {
+                          setShowAllMatchDeathsMap(prev => ({ ...prev, [originalMapIndex]: val }));
+                          if (val) {
+                            setSelectedRadarRoundIndexes(prev => ({ ...prev, [originalMapIndex]: null }));
+                          }
+                          setHoveredKillIdx(null);
+                          setSelectedKillIdx(null);
+                        };
 
                         // Helper to get emoji/icon for win reason
                         const getReasonIcon = (reason: string) => {
