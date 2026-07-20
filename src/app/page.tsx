@@ -464,7 +464,7 @@ export default function Home() {
     return history.deaths.filter((d: any) => d.tick > startTick && d.tick <= endTick);
   };
 
-  const renderRadarMap = (mapIndex: number, mapName: string, t1Name: string, t2Name: string, isT1StartedCT: boolean) => {
+  const renderRadarMap = (mapIndex: number, mapName: string, t1Name: string, t2Name: string, isT1StartedCT: boolean, roundTeams?: any[]) => {
     const history = roundHistories[mapIndex];
     const selectedRadarRoundIndex = selectedRadarRoundIndexes[mapIndex];
     const showAllMatchDeaths = showAllMatchDeathsMap[mapIndex];
@@ -499,6 +499,26 @@ export default function Home() {
           return isT1StartedCT ? 1 : 2;
         }
       }
+    };
+
+    const getPlayerSideInRound = (playerName: string, rawTeam: any) => {
+      if (rawTeam) {
+        const str = String(rawTeam).toUpperCase().trim();
+        if (str === "CT" || str === "3" || str.includes("COUNTER")) return "CT";
+        if (str === "T" || str === "TERRORIST" || str === "2") return "T";
+      }
+      
+      if (selectedRadarRoundIndex && history && history.rounds) {
+        const rIdx = selectedRadarRoundIndex - 1;
+        const isFirstHalf = rIdx < 12;
+        const isT1 = roundTeams?.[0]?.players?.some((p: any) => p.nickname === playerName);
+        if (isT1) {
+          return (isFirstHalf ? isT1StartedCT : !isT1StartedCT) ? "CT" : "T";
+        } else {
+          return (isFirstHalf ? isT1StartedCT : !isT1StartedCT) ? "T" : "CT";
+        }
+      }
+      return "T";
     };
 
     const getReasonText = (reason: string) => {
@@ -703,7 +723,7 @@ export default function Home() {
                     const vicX = (d.victimX - config.pos_x) / config.scale;
                     const vicY = (config.pos_y - d.victimY) / config.scale;
 
-                    const isAtkCT = isCTSide(d.attackerTeam);
+                    const isAtkCT = getPlayerSideInRound(d.attackerName, d.attackerTeam) === "CT";
                     const activeKillIdx = hoveredKillIdx !== null ? hoveredKillIdx : selectedKillIdx;
                     const isKillActive = activeKillIdx !== null;
                     const isThisKillActive = activeKillIdx === idx;
@@ -742,8 +762,8 @@ export default function Home() {
                     const vicX = (d.victimX - config.pos_x) / config.scale;
                     const vicY = (config.pos_y - d.victimY) / config.scale;
 
-                    const isVicCT = isCTSide(d.victimTeam);
-                    const isAtkCT = isCTSide(d.attackerTeam);
+                    const isVicCT = getPlayerSideInRound(d.victimName, d.victimTeam) === "CT";
+                    const isAtkCT = getPlayerSideInRound(d.attackerName, d.attackerTeam) === "CT";
                     const activeKillIdx = hoveredKillIdx !== null ? hoveredKillIdx : selectedKillIdx;
                     const isKillActive = activeKillIdx !== null;
                     const isThisKillActive = activeKillIdx === idx;
@@ -932,8 +952,8 @@ export default function Home() {
               border: "1px solid var(--border-light)"
             }}>
               {roundDeaths.map((d: any, idx: number) => {
-                const isAtkCT = isCTSide(d.attackerTeam);
-                const isVicCT = isCTSide(d.victimTeam);
+                const isAtkCT = getPlayerSideInRound(d.attackerName, d.attackerTeam) === "CT";
+                const isVicCT = getPlayerSideInRound(d.victimName, d.victimTeam) === "CT";
                 const atkColor = isAtkCT ? "#00e5ff" : "#ff5252";
                 const vicColor = isVicCT ? "#00e5ff" : "#ff5252";
                 const weaponIconUrl = getWeaponIconUrl(d.weapon);
@@ -1009,7 +1029,7 @@ export default function Home() {
                             height: "16px",
                             maxHeight: "16px",
                             maxWidth: "42px",
-                            filter: "invert(1) drop-shadow(0 1px 2px rgba(0,0,0,0.6))",
+                            filter: "brightness(0) invert(1) drop-shadow(0 1px 2px rgba(0,0,0,0.8))",
                             objectFit: "contain"
                           }}
                           onError={(e) => {
