@@ -2249,7 +2249,7 @@ export default function Home() {
       {/* MODAL: MATCH DETAILS STATS */}
       {selectedMatchId && (
         <div className="modal-overlay" onClick={() => setSelectedMatchId(null)}>
-          <div className="modal-content glass-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: "1000px", width: "100%", padding: "2rem" }}>
+          <div className="modal-content glass-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: "1000px", width: "100%", padding: "2.5rem 2rem 2rem 2rem", position: "relative" }}>
             <span className="modal-close-btn" onClick={() => setSelectedMatchId(null)}>✕</span>
             <ErrorBoundary>
 
@@ -2438,21 +2438,26 @@ export default function Home() {
                                 </div>
                                 <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.4rem 0.5rem", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.04)" }}>
                                   <div style={{ fontSize: "0.55rem", color: "var(--text-muted)", textTransform: "uppercase" }}>ADR</div>
-                                  <div style={{ fontWeight: "700", color: "#fff", fontSize: "0.9rem" }}>{mvpAdr} СУ/Р</div>
+                                  <div style={{ fontWeight: "700", color: "#fff", fontSize: "0.9rem" }}>{mvpAdr}</div>
                                   <div style={{ fontSize: "0.6rem", color: "var(--text-secondary)" }}>Всего: {mvpPlayer.player_stats?.Damage || "0"}</div>
                                 </div>
                                 <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.4rem 0.5rem", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.04)" }}>
                                   <div style={{ fontSize: "0.55rem", color: "var(--text-muted)", textTransform: "uppercase" }}>HS</div>
                                   <div style={{ fontWeight: "700", color: "var(--accent-cyan)", fontSize: "0.9rem" }}>{mvpHsPercent}%</div>
-                                  <div style={{ fontSize: "0.6rem", color: "var(--text-secondary)" }}>Кол-во: {mvpPlayer.player_stats?.Headshots || "0"}</div>
+                                  <div style={{ fontSize: "0.6rem", color: "var(--text-secondary)" }}>Количество: {mvpPlayer.player_stats?.Headshots || "0"}</div>
                                 </div>
 
                                 {/* Row 2: Performance */}
                                 <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.4rem 0.5rem", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.04)" }}>
-                                  <div style={{ fontSize: "0.55rem", color: "var(--text-muted)", textTransform: "uppercase" }}>MULTIKILLS</div>
+                                  <div style={{ fontSize: "0.55rem", color: "var(--text-muted)", textTransform: "uppercase" }}>МУЛЬТИ-КИЛЛЫ</div>
                                   <div style={{ fontWeight: "700", color: "#fff", fontSize: "0.85rem", marginTop: "0.1rem" }}>
                                     {doubleK + tripleK + quadK + pentaK > 0 ? (
-                                      <span>{doubleK + tripleK + quadK + pentaK} раунд.</span>
+                                      <span>{doubleK + tripleK + quadK + pentaK} {(() => {
+                                        const cnt = doubleK + tripleK + quadK + pentaK;
+                                        if (cnt === 1) return "раунд";
+                                        if (cnt >= 2 && cnt <= 4) return "раунда";
+                                        return "раундов";
+                                      })()}</span>
                                     ) : (
                                       <span style={{ color: "var(--text-muted)", fontSize: "0.75rem" }}>Нет</span>
                                     )}
@@ -2485,7 +2490,7 @@ export default function Home() {
                                 </div>
                                 <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.4rem 0.5rem", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.04)" }}>
                                   <div style={{ fontSize: "0.55rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Первые убийства</div>
-                                  <div style={{ fontWeight: "700", color: "#fff", fontSize: "0.9rem" }}>{entryKills} entry</div>
+                                  <div style={{ fontWeight: "700", color: "#fff", fontSize: "0.9rem" }}>{entryKills}</div>
                                   <div style={{ fontSize: "0.55rem", color: "var(--text-muted)" }}>Попыток: {mvpPlayer.player_stats?.["Entry Count"] || "0"}</div>
                                 </div>
 
@@ -2497,13 +2502,13 @@ export default function Home() {
                                 </div>
                                 <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.4rem 0.5rem", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.04)" }}>
                                   <div style={{ fontSize: "0.55rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Ослеплено врагов</div>
-                                  <div style={{ fontWeight: "700", color: "#fff", fontSize: "0.9rem" }}>{flashedEnemies} чел.</div>
+                                  <div style={{ fontWeight: "700", color: "#fff", fontSize: "0.9rem" }}>{flashedEnemies} человек</div>
                                   <div style={{ fontSize: "0.55rem", color: "var(--text-muted)" }}>Флешек: {mvpPlayer.player_stats?.["Flash Count"] || "0"}</div>
                                 </div>
                                 <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.4rem 0.5rem", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.04)" }}>
                                   <div style={{ fontSize: "0.55rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Из снайперских винтовок</div>
                                   <div style={{ fontWeight: "700", color: "#fff", fontSize: "0.9rem" }}>{sniperKills} убийств</div>
-                                  <div style={{ fontSize: "0.55rem", color: "var(--text-muted)" }}>Снайп-рейт: {Math.round(parseFloat(mvpPlayer.player_stats?.["Sniper Kill Rate per Match"] || "0") * 100)}%</div>
+                                  <div style={{ fontSize: "0.55rem", color: "var(--text-muted)" }}>Процент: {Math.round(parseFloat(mvpPlayer.player_stats?.["Sniper Kill Rate per Match"] || "0") * 100)}%</div>
                                 </div>
                               </div>
                             </div>
@@ -3283,7 +3288,7 @@ export default function Home() {
                                     <th style={{ textAlign: "center" }}>D</th>
                                     <th style={{ textAlign: "center" }}>A</th>
                                     <th style={{ textAlign: "center" }}>K/D</th>
-                                    <th style={{ textAlign: "center" }}>СУ/Р</th>
+                                    <th style={{ textAlign: "center" }}>ADR</th>
                                     <th style={{ textAlign: "center" }}>HS%</th>
                                     <th style={{ textAlign: "center" }}>Rating</th>
                                     <th style={{ textAlign: "center" }}>MVP</th>
