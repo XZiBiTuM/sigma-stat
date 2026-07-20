@@ -533,51 +533,66 @@ export default function Home() {
       <div style={{
         marginTop: "1.5rem",
         display: "flex",
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "center",
-        gap: "1.5rem",
+        flexDirection: "column",
+        gap: "1.25rem",
         background: "rgba(10, 8, 20, 0.45)",
         border: "1px solid var(--border-light)",
         borderRadius: "16px",
-        padding: "1.5rem",
+        padding: "1.25rem 1.5rem",
         position: "relative",
         width: "100%"
       }}>
-        {/* Close Button Top Right */}
-        <button 
-          onClick={() => {
-            setSelectedRadarRoundIndexes(prev => ({ ...prev, [mapIndex]: null }));
-            setShowAllMatchDeathsMap(prev => ({ ...prev, [mapIndex]: false }));
-          }}
-          style={{
-            position: "absolute",
-            top: "1rem",
-            right: "1rem",
-            background: "rgba(255,255,255,0.05)",
-            border: "1px solid var(--border-light)",
-            borderRadius: "8px",
-            color: "var(--text-secondary)",
-            cursor: "pointer",
-            fontSize: "0.75rem",
-            padding: "0.4rem 0.75rem",
-            fontWeight: "700",
-            transition: "all 0.2s",
-            zIndex: 100
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "rgba(255,255,255,0.1)";
-            e.currentTarget.style.color = "#fff";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "rgba(255,255,255,0.05)";
-            e.currentTarget.style.color = "var(--text-secondary)";
-          }}
-        >
-          Закрыть ✕
-        </button>
+        {/* Dedicated Header Bar with Close Button */}
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          width: "100%",
+          borderBottom: "1px solid rgba(255,255,255,0.06)",
+          paddingBottom: "0.75rem"
+        }}>
+          <span style={{ fontSize: "0.85rem", fontWeight: "800", color: "#fff", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+            {showAllMatchDeaths ? "Интерактивный разбор: Тепловая карта всего матча" : `Интерактивный разбор: Раунд ${selectedRadarRoundIndex}`}
+          </span>
+          <button 
+            onClick={() => {
+              setSelectedRadarRoundIndexes(prev => ({ ...prev, [mapIndex]: null }));
+              setShowAllMatchDeathsMap(prev => ({ ...prev, [mapIndex]: false }));
+            }}
+            style={{
+              background: "rgba(255,255,255,0.06)",
+              border: "1px solid var(--border-light)",
+              borderRadius: "6px",
+              color: "var(--text-secondary)",
+              cursor: "pointer",
+              fontSize: "0.75rem",
+              padding: "0.35rem 0.75rem",
+              fontWeight: "700",
+              transition: "all 0.2s"
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "rgba(255,255,255,0.12)";
+              e.currentTarget.style.color = "#fff";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "rgba(255,255,255,0.06)";
+              e.currentTarget.style.color = "var(--text-secondary)";
+            }}
+          >
+            Закрыть ✕
+          </button>
+        </div>
 
-        {/* Left Column: Radar View */}
+        {/* Main 2-Column Content Layout */}
+        <div style={{
+          display: "flex",
+          flexDirection: "row",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          gap: "1.5rem",
+          width: "100%"
+        }}>
+          {/* Left Column: Radar View */}
         <div style={{
           display: "flex",
           flexDirection: "column",
@@ -870,10 +885,11 @@ export default function Home() {
               border: "1px solid var(--border-light)"
             }}>
               {roundDeaths.map((d: any, idx: number) => {
-                const isAtkCT = d.attackerTeam === "CT";
-                const isVicCT = d.victimTeam === "CT";
-                const atkColor = isAtkCT ? "#00e5ff" : "#ff5252";
-                const vicColor = isVicCT ? "#00e5ff" : "#ff5252";
+                const isAtkCT = isCTSide(d.attackerTeam);
+                const isVicCT = isCTSide(d.victimTeam);
+                const atkColor = isAtkCT ? "#00b8d4" : "#ff5252";
+                const vicColor = isVicCT ? "#00b8d4" : "#ff5252";
+                const weaponIconUrl = getWeaponIconUrl(d.weapon);
 
                 return (
                   <div 
@@ -896,11 +912,11 @@ export default function Home() {
                     <div style={{ display: "flex", alignItems: "center", gap: "0.25rem", flex: 1, minWidth: "90px" }}>
                       {d.attackerName ? (
                         <>
-                          <span style={{ color: atkColor, fontWeight: "800", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "90px" }} title={d.attackerName}>
+                          <span style={{ color: atkColor, fontWeight: "800", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "90px" }} title={`${d.attackerName} (${isAtkCT ? "CT" : "T"})`}>
                             {d.attackerName}
                           </span>
-                          <span style={{ color: "var(--text-muted)", fontSize: "0.65rem", fontWeight: "bold" }}>
-                            {d.attackerTeam}
+                          <span style={{ color: atkColor, fontSize: "0.6rem", fontWeight: "bold", opacity: 0.7 }}>
+                            ({isAtkCT ? "CT" : "T"})
                           </span>
                         </>
                       ) : (
@@ -914,41 +930,68 @@ export default function Home() {
                     <div style={{ 
                       display: "flex", 
                       alignItems: "center", 
-                      gap: "0.35rem", 
+                      gap: "0.4rem", 
                       color: "var(--text-primary)",
-                      background: "rgba(0,0,0,0.3)",
-                      padding: "0.15rem 0.4rem",
+                      background: "rgba(0,0,0,0.35)",
+                      padding: "0.2rem 0.5rem",
                       borderRadius: "4px",
                       fontSize: "0.7rem",
                       fontWeight: "700"
                     }}>
-                      <span>{d.weapon || "suicide"}</span>
-                      {d.headshot && (
-                        <span 
-                          style={{ 
-                            color: "var(--danger)", 
-                            fontSize: "0.65rem", 
-                            fontWeight: "900", 
-                            background: "rgba(255,23,68,0.15)", 
-                            padding: "0.05rem 0.25rem", 
-                            borderRadius: "3px",
-                            border: "1px solid rgba(255,23,68,0.3)"
+                      {weaponIconUrl ? (
+                        <img 
+                          src={weaponIconUrl} 
+                          alt={d.weapon || "weapon"} 
+                          title={d.weapon || "weapon"}
+                          style={{
+                            height: "16px",
+                            maxHeight: "16px",
+                            maxWidth: "42px",
+                            filter: "invert(1) drop-shadow(0 1px 2px rgba(0,0,0,0.6))",
+                            objectFit: "contain"
                           }}
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                            const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                            if (fallback) fallback.style.display = "inline";
+                          }}
+                        />
+                      ) : null}
+                      <span style={{ display: weaponIconUrl ? "none" : "inline", fontSize: "0.7rem" }}>
+                        {d.weapon || "suicide"}
+                      </span>
+
+                      {d.headshot && (
+                        <img 
+                          src="https://raw.githubusercontent.com/ChetdeJong/cs2-killfeed-generator/main/public/headshot.svg" 
+                          alt="Headshot" 
                           title="Попадание в голову (Headshot)"
-                        >
-                          HS
-                        </span>
+                          style={{
+                            height: "14px",
+                            filter: "brightness(0) saturate(100%) invert(27%) sepia(91%) saturate(5411%) hue-rotate(352deg) brightness(98%) contrast(96%)",
+                            verticalAlign: "middle"
+                          }}
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                            const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                            if (fallback) fallback.style.display = "inline";
+                          }}
+                        />
                       )}
-                      <span style={{ color: "var(--text-muted)" }}>➔</span>
+                      {d.headshot && (
+                        <span style={{ display: "none", color: "#ff1744", fontWeight: "bold" }}>HS</span>
+                      )}
+
+                      <span style={{ color: "var(--text-muted)", marginLeft: "0.1rem" }}>➔</span>
                     </div>
 
                     {/* Victim */}
                     <div style={{ display: "flex", alignItems: "center", gap: "0.25rem", flex: 1, minWidth: "90px", justifyContent: "flex-end", textAlign: "right" }}>
-                      <span style={{ color: vicColor, fontWeight: "800", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "90px" }} title={d.victimName}>
+                      <span style={{ color: vicColor, fontWeight: "800", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "90px" }} title={`${d.victimName} (${isVicCT ? "CT" : "T"})`}>
                         {d.victimName}
                       </span>
-                      <span style={{ color: "var(--text-muted)", fontSize: "0.65rem", fontWeight: "bold" }}>
-                        {d.victimTeam}
+                      <span style={{ color: vicColor, fontSize: "0.6rem", fontWeight: "bold", opacity: 0.7 }}>
+                        ({isVicCT ? "CT" : "T"})
                       </span>
                     </div>
                   </div>
@@ -963,8 +1006,9 @@ export default function Home() {
           </div>
         </div>
       </div>
-    );
-  };
+    </div>
+  );
+};
 
   // Fetch player details modal stats
   const loadPlayerDetails = async (playerId: string) => {
@@ -1089,6 +1133,26 @@ export default function Home() {
     };
     return mapping[filename] || `/maps/${filename}.webp`;
   };
+  const isCTSide = (team: any) => {
+    if (!team) return false;
+    const str = String(team).toUpperCase().trim();
+    return str === "CT" || str === "3" || str === "COUNTER-TERRORIST" || str === "COUNTERTERRORIST";
+  };
+
+  const getWeaponIconUrl = (rawWeapon: string) => {
+    if (!rawWeapon) return null;
+    let w = rawWeapon.toLowerCase().trim().replace(/^weapon_/, "");
+    if (w === "m4a1_silencer" || w === "m4a1-s") w = "m4a1_s";
+    if (w === "usp_silencer" || w === "usp-s") w = "usp_s";
+    if (w === "galil" || w === "galilar") w = "galilar";
+    if (w === "scout") w = "ssg08";
+    if (w === "sg553") w = "sg556";
+    if (w === "cz75-auto") w = "cz75a";
+    if (w === "incgrenade" || w === "molotov") w = "inferno";
+    
+    return `https://raw.githubusercontent.com/ChetdeJong/cs2-killfeed-generator/main/public/weapons/${w}.svg`;
+  };
+
   const getInitial = (name: string) => {
     if (!name) return "";
     return name.charAt(0).toUpperCase();
