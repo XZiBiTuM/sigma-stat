@@ -927,7 +927,7 @@ export default function PlayerProfilePage() {
                     <span style={{ fontSize: "0.8rem", fontWeight: "800", color: "var(--accent-cyan)", display: "block", marginBottom: "0.4rem" }}>Общая статистика по картам</span>
                     <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem", fontSize: "0.75rem" }}>
                       {(() => {
-                        const mapsList = hubStats.maps || [];
+                        const mapsList = (hubStats.maps || []).filter((m: any) => !m.map.toLowerCase().includes("overpass") && !m.map.toLowerCase().includes("vertigo"));
                         const totalMapGames = mapsList.reduce((sum: number, m: any) => sum + (m.matches || 0), 0);
                         const totalWins = mapsList.reduce((sum: number, m: any) => sum + (m.wins || 0), 0);
                         const overallWr = totalMapGames > 0 ? Math.round((totalWins / totalMapGames) * 100) : 0;
@@ -1011,7 +1011,7 @@ export default function PlayerProfilePage() {
                     </div>
                   </div>
 
-                  {hubStats.maps?.map((seg: any, idx: number) => {
+                  {hubStats.maps?.filter((seg: any) => !seg.map.toLowerCase().includes("overpass") && !seg.map.toLowerCase().includes("vertigo")).map((seg: any, idx: number) => {
                       const mapName = seg.map;
                       const matches = seg.matches;
                       const winRate = seg.winrate;

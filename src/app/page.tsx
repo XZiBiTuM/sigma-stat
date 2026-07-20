@@ -3770,10 +3770,10 @@ export default function Home() {
                           }));
                       }
 
-                      // Filter out vertigo
+                      // Filter out vertigo & overpass
                       mapItems = mapItems.filter((item: any) => {
                         const mName = (item.map || "").toLowerCase();
-                        return !mName.includes("vertigo");
+                        return !mName.includes("vertigo") && !mName.includes("overpass");
                       });
 
                       if (mapItems.length === 0) {

@@ -234,21 +234,23 @@ export async function GET(
     playerMatchesList.sort((a, b) => b.timestamp - a.timestamp);
 
     // Calculate map final stats
-    const mapStatsList = Object.values(mapStats).map((m: any) => {
-      const kd = m.deaths > 0 ? m.kills / m.deaths : m.kills;
-      const winrate = m.matches > 0 ? Math.round((m.wins / m.matches) * 100) : 0;
-      const adr = m.rounds > 0 ? m.damage / m.rounds : 0;
-      const hsPct = m.kills > 0 ? Math.round((m.headshots / m.kills) * 100) : 0;
-      return {
-        map: m.map,
-        matches: m.matches,
-        wins: m.wins,
-        winrate,
-        kd: parseFloat(kd.toFixed(2)),
-        adr: parseFloat(adr.toFixed(1)),
-        hsPct
-      };
-    });
+    const mapStatsList = Object.values(mapStats)
+      .filter((m: any) => !m.map.toLowerCase().includes("overpass") && !m.map.toLowerCase().includes("vertigo"))
+      .map((m: any) => {
+        const kd = m.deaths > 0 ? m.kills / m.deaths : m.kills;
+        const winrate = m.matches > 0 ? Math.round((m.wins / m.matches) * 100) : 0;
+        const adr = m.rounds > 0 ? m.damage / m.rounds : 0;
+        const hsPct = m.kills > 0 ? Math.round((m.headshots / m.kills) * 100) : 0;
+        return {
+          map: m.map,
+          matches: m.matches,
+          wins: m.wins,
+          winrate,
+          kd: parseFloat(kd.toFixed(2)),
+          adr: parseFloat(adr.toFixed(1)),
+          hsPct
+        };
+      });
 
     // Sort maps by matches desc, then winrate desc
     mapStatsList.sort((a, b) => b.matches - a.matches || b.winrate - a.winrate);
