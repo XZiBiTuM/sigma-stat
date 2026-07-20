@@ -234,6 +234,7 @@ export default function Home() {
   const [submittingDemoUrls, setSubmittingDemoUrls] = useState<Record<number, boolean>>({});
   const [selectedRadarRoundIndexes, setSelectedRadarRoundIndexes] = useState<Record<number, number | null>>({});
   const [showAllMatchDeathsMap, setShowAllMatchDeathsMap] = useState<Record<number, boolean>>({});
+  const [hoveredKillIdx, setHoveredKillIdx] = useState<number | null>(null);
 
   // Modal: Player details
   const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
@@ -469,7 +470,8 @@ export default function Home() {
 
     if ((!selectedRadarRoundIndex && !showAllMatchDeaths) || !history) return null;
     
-    const config = MAP_CONFIGS[mapName];
+    const cleanMapName = getMapFileName(mapName);
+    const config = MAP_CONFIGS[cleanMapName] || MAP_CONFIGS[mapName];
     if (!config) {
       return (
         <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "1rem", textAlign: "center" }}>
@@ -698,20 +700,25 @@ export default function Home() {
                     const vicX = (d.victimX - config.pos_x) / config.scale;
                     const vicY = (config.pos_y - d.victimY) / config.scale;
 
-                    const isAtkCT = d.attackerTeam === "CT";
-                    const strokeColor = isAtkCT ? "rgba(0, 184, 212, 0.55)" : "rgba(255, 61, 0, 0.55)";
+                    const isAtkCT = isCTSide(d.attackerTeam);
+                    const isHoverActive = hoveredKillIdx !== null;
+                    const isThisHovered = hoveredKillIdx === idx;
+                    const opacity = isHoverActive ? (isThisHovered ? 1.0 : 0.15) : 1.0;
+                    const strokeColor = isThisHovered 
+                      ? (isAtkCT ? "#00ffff" : "#ff1744") 
+                      : (isAtkCT ? "rgba(0, 184, 212, 0.65)" : "rgba(255, 61, 0, 0.65)");
                     const markerId = isAtkCT ? `url(#arrow-ct-${mapIndex})` : `url(#arrow-t-${mapIndex})`;
 
                     return (
-                      <g key={`line-${idx}`}>
+                      <g key={`line-${idx}`} style={{ opacity: opacity, transition: "opacity 0.2s" }}>
                         <line 
                           x1={atkX} 
                           y1={atkY} 
                           x2={vicX} 
                           y2={vicY} 
                           stroke={strokeColor} 
-                          strokeWidth="4" 
-                          strokeDasharray="8,6"
+                          strokeWidth={isThisHovered ? "6" : "4"} 
+                          strokeDasharray={isThisHovered ? "none" : "8,6"}
                           markerEnd={markerId}
                         />
                       </g>
@@ -725,7 +732,12 @@ export default function Home() {
                     const vicX = (d.victimX - config.pos_x) / config.scale;
                     const vicY = (config.pos_y - d.victimY) / config.scale;
 
-                    const isVicCT = d.victimTeam === "CT";
+                    const isVicCT = isCTSide(d.victimTeam);
+                    const isAtkCT = isCTSide(d.attackerTeam);
+                    const isHoverActive = hoveredKillIdx !== null;
+                    const isThisHovered = hoveredKillIdx === idx;
+                    const opacity = isHoverActive ? (isThisHovered ? 1.0 : 0.15) : 1.0;
+
                     const dotColor = isVicCT ? "rgba(0, 184, 212, 0.9)" : "rgba(255, 61, 0, 0.9)";
                     const strokeColor = "#fff";
 
@@ -733,19 +745,19 @@ export default function Home() {
                     const atkY = d.attackerY !== null ? (config.pos_y - d.attackerY) / config.scale : null;
 
                     return (
-                      <g key={`dots-${idx}`}>
+                      <g key={`dots-${idx}`} style={{ opacity: opacity, transition: "opacity 0.2s" }}>
                         {/* Attacker Dot */}
                         {atkX !== null && atkY !== null && (
                           <g>
                             <circle 
                               cx={atkX} 
                               cy={atkY} 
-                              r="8" 
-                              fill={isVicCT ? "rgba(255, 61, 0, 0.95)" : "rgba(0, 184, 212, 0.95)"} 
+                              r={isThisHovered ? 11 : 8} 
+                              fill={isAtkCT ? "rgba(0, 184, 212, 0.95)" : "rgba(255, 61, 0, 0.95)"} 
                               stroke="#fff" 
-                              strokeWidth="1.5" 
+                              strokeWidth={isThisHovered ? "2.5" : "1.5"} 
                             />
-                            <title>{`${d.attackerName || "Игрок"} (${d.attackerTeam || "?"})`}</title>
+                            <title>{`${d.attackerName || "Игрок"} (${isAtkCT ? "CT" : "T"})`}</title>
                           </g>
                         )}
 
@@ -754,22 +766,22 @@ export default function Home() {
                           <circle 
                             cx={vicX} 
                             cy={vicY} 
-                            r="11" 
+                            r={isThisHovered ? 14 : 11} 
                             fill={dotColor} 
                             stroke={strokeColor} 
-                            strokeWidth="2" 
+                            strokeWidth={isThisHovered ? "3" : "2"} 
                           />
                           <text 
                             x={vicX} 
-                            y={vicY + 3.5} 
+                            y={vicY + (isThisHovered ? 4 : 3.5)} 
                             fill="#fff" 
-                            fontSize="10" 
+                            fontSize={isThisHovered ? "12" : "10"} 
                             fontWeight="bold" 
                             textAnchor="middle"
                           >
                             ✕
                           </text>
-                          <title>{`${d.victimName || "Игрок"} (${d.victimTeam || "?"}) умер от ${d.weapon || "оружия"} от ${d.attackerName || "кого-то"}${d.headshot ? " (В голову)" : ""}`}</title>
+                          <title>{`${d.victimName || "Игрок"} (${isVicCT ? "CT" : "T"}) умер от ${d.weapon || "оружия"}`}</title>
                         </g>
                       </g>
                     );
@@ -890,6 +902,7 @@ export default function Home() {
                 const atkColor = isAtkCT ? "#00b8d4" : "#ff5252";
                 const vicColor = isVicCT ? "#00b8d4" : "#ff5252";
                 const weaponIconUrl = getWeaponIconUrl(d.weapon);
+                const isHovered = hoveredKillIdx === idx;
 
                 return (
                   <div 
@@ -900,13 +913,16 @@ export default function Home() {
                       alignItems: "center",
                       justifyContent: "space-between",
                       padding: "0.4rem 0.6rem",
-                      background: "rgba(255,255,255,0.02)",
-                      border: "1px solid rgba(255,255,255,0.03)",
+                      background: isHovered ? "rgba(0, 229, 255, 0.15)" : "rgba(255,255,255,0.02)",
+                      border: isHovered ? "1px solid rgba(0, 229, 255, 0.45)" : "1px solid rgba(255,255,255,0.03)",
                       borderRadius: "6px",
-                      transition: "background 0.2s"
+                      cursor: "pointer",
+                      boxShadow: isHovered ? "0 0 10px rgba(0, 229, 255, 0.2)" : "none",
+                      transform: isHovered ? "translateX(2px)" : "none",
+                      transition: "all 0.15s ease"
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.05)"}
-                    onMouseLeave={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.02)"}
+                    onMouseEnter={() => setHoveredKillIdx(idx)}
+                    onMouseLeave={() => setHoveredKillIdx(null)}
                   >
                     {/* Attacker */}
                     <div style={{ display: "flex", alignItems: "center", gap: "0.25rem", flex: 1, minWidth: "90px" }}>
@@ -963,23 +979,14 @@ export default function Home() {
 
                       {d.headshot && (
                         <img 
-                          src="https://raw.githubusercontent.com/ChetdeJong/cs2-killfeed-generator/main/public/headshot.svg" 
+                          src="/icons/headshot.svg" 
                           alt="Headshot" 
                           title="Попадание в голову (Headshot)"
                           style={{
-                            height: "14px",
-                            filter: "brightness(0) saturate(100%) invert(27%) sepia(91%) saturate(5411%) hue-rotate(352deg) brightness(98%) contrast(96%)",
+                            height: "15px",
                             verticalAlign: "middle"
                           }}
-                          onError={(e) => {
-                            e.currentTarget.style.display = "none";
-                            const fallback = e.currentTarget.nextElementSibling as HTMLElement;
-                            if (fallback) fallback.style.display = "inline";
-                          }}
                         />
-                      )}
-                      {d.headshot && (
-                        <span style={{ display: "none", color: "#ff1744", fontWeight: "bold" }}>HS</span>
                       )}
 
                       <span style={{ color: "var(--text-muted)", marginLeft: "0.1rem" }}>➔</span>
@@ -1142,15 +1149,16 @@ export default function Home() {
   const getWeaponIconUrl = (rawWeapon: string) => {
     if (!rawWeapon) return null;
     let w = rawWeapon.toLowerCase().trim().replace(/^weapon_/, "");
-    if (w === "m4a1_silencer" || w === "m4a1-s") w = "m4a1_s";
-    if (w === "usp_silencer" || w === "usp-s") w = "usp_s";
+    if (w === "m4a1_s" || w === "m4a1-s") w = "m4a1_silencer";
+    if (w === "usp_s" || w === "usp-s") w = "usp_silencer";
     if (w === "galil" || w === "galilar") w = "galilar";
     if (w === "scout") w = "ssg08";
     if (w === "sg553") w = "sg556";
     if (w === "cz75-auto") w = "cz75a";
     if (w === "incgrenade" || w === "molotov") w = "inferno";
+    if (w.startsWith("knife") || w.startsWith("bayonet")) w = "knife";
     
-    return `https://raw.githubusercontent.com/ChetdeJong/cs2-killfeed-generator/main/public/weapons/${w}.svg`;
+    return `https://raw.githubusercontent.com/ChetdeJong/cs2-killfeed-generator/master/public/weapons/${w}.svg`;
   };
 
   const getInitial = (name: string) => {
