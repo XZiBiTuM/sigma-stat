@@ -270,7 +270,33 @@ export default function Home() {
     }
   }, []);
 
-  const startDraftSetup = () => {
+  // Synchronize draft state from server API
+  const fetchDraftState = async () => {
+    try {
+      const res = await fetch("/api/faceit/draft");
+      if (res.ok) {
+        const data = await res.json();
+        if (data.step) setDraftStep(data.step);
+        if (data.captains) setDraftCaptains(data.captains);
+        if (data.poolInput !== undefined) setDraftPoolInput(data.poolInput);
+        if (data.availablePlayers) setDraftAvailablePlayers(data.availablePlayers);
+        if (data.teams) setDraftTeams(data.teams);
+        if (data.turnSequence) setDraftTurnSequence(data.turnSequence);
+        if (data.currentStepIndex !== undefined) setDraftCurrentStepIndex(data.currentStepIndex);
+      }
+    } catch (err) {
+      console.error("Failed to sync draft state", err);
+    }
+  };
+
+  // Poll server draft state every 2 seconds for real-time multi-user sync & persistence
+  useEffect(() => {
+    fetchDraftState();
+    const interval = setInterval(fetchDraftState, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const startDraftSetup = async () => {
     let names: string[] = [];
     if (draftPoolInput.trim()) {
       names = draftPoolInput.split("\n").map(n => n.trim()).filter(Boolean);
@@ -295,30 +321,72 @@ export default function Home() {
     }
     const finalSeq = seq.slice(0, initialAvailable.length);
 
-    setDraftAvailablePlayers(initialAvailable);
-    setDraftTeams([[draftCaptains[0]], [draftCaptains[1]], [draftCaptains[2]], [draftCaptains[3]]]);
-    setDraftTurnSequence(finalSeq);
-    setDraftCurrentStepIndex(0);
-    setDraftStep("picking");
+    try {
+      const res = await fetch("/api/faceit/draft", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "setup",
+          captains: draftCaptains,
+          poolInput: draftPoolInput,
+          availablePlayers: initialAvailable,
+          turnSequence: finalSeq
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setDraftAvailablePlayers(data.availablePlayers);
+        setDraftTeams(data.teams);
+        setDraftTurnSequence(data.turnSequence);
+        setDraftCurrentStepIndex(data.currentStepIndex);
+        setDraftStep(data.step);
+      }
+    } catch (err) {
+      console.error("Draft setup failed", err);
+    }
   };
 
-  const handlePickPlayer = (playerPick: string) => {
-    if (draftCurrentStepIndex >= draftTurnSequence.length) return;
-    const currentCapIdx = draftTurnSequence[draftCurrentStepIndex];
+  const handlePickPlayer = async (playerPick: string) => {
+    try {
+      const res = await fetch("/api/faceit/draft", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "pick",
+          playerPick
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setDraftAvailablePlayers(data.availablePlayers);
+        setDraftTeams(data.teams);
+        setDraftTurnSequence(data.turnSequence);
+        setDraftCurrentStepIndex(data.currentStepIndex);
+        setDraftStep(data.step);
+      }
+    } catch (err) {
+      console.error("Draft pick failed", err);
+    }
+  };
 
-    setDraftTeams(prev => {
-      const nextTeams = [...prev] as [string[], string[], string[], string[]];
-      nextTeams[currentCapIdx] = [...nextTeams[currentCapIdx], playerPick];
-      return nextTeams;
-    });
-
-    const nextAvailable = draftAvailablePlayers.filter(p => p !== playerPick);
-    setDraftAvailablePlayers(nextAvailable);
-
-    if (nextAvailable.length === 0 || draftCurrentStepIndex + 1 >= draftTurnSequence.length) {
-      setDraftStep("finished");
-    } else {
-      setDraftCurrentStepIndex(prev => prev + 1);
+  const handleResetDraft = async () => {
+    try {
+      const res = await fetch("/api/faceit/draft", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "reset" })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setDraftStep(data.step);
+        setDraftCaptains(data.captains);
+        setDraftPoolInput(data.poolInput);
+        setDraftAvailablePlayers(data.availablePlayers);
+        setDraftTeams(data.teams);
+        setDraftCurrentStepIndex(data.currentStepIndex);
+      }
+    } catch (err) {
+      console.error("Draft reset failed", err);
     }
   };
 
@@ -1527,7 +1595,7 @@ export default function Home() {
               transition: "all 0.2s"
             }}
           >
-            🎯 Драфт 4 Капитанов
+            Драфт 4 Капитанов
           </button>
 
           <button 
@@ -1547,7 +1615,7 @@ export default function Home() {
               transition: "all 0.2s"
             }}
           >
-            ✨ О сервисе
+            О сервисе
           </button>
         </div>
       </header>
@@ -2367,7 +2435,7 @@ export default function Home() {
                                     letterSpacing: "0.05em",
                                     textTransform: "uppercase"
                                   }}>
-                                    🗺 САМАЯ ПОПУЛЯРНАЯ КАРТА
+                                     САМАЯ ПОПУЛЯРНАЯ КАРТА
                                   </span>
                                   <div style={{ fontSize: "1.35rem", fontWeight: "800", color: "#fff", marginTop: "0.15rem" }}>
                                     {mapNameClean}
@@ -4283,16 +4351,18 @@ export default function Home() {
           right: 0,
           bottom: 0,
           background: "rgba(0, 0, 0, 0.85)",
-          backdropFilter: "blur(8px)",
+          backdropFilter: "blur(10px)",
           zIndex: 10000,
           display: "flex",
-          alignItems: "center",
+          alignItems: "flex-start",
           justifyContent: "center",
-          padding: "1rem"
+          padding: "2.5rem 1rem",
+          overflowY: "auto"
         }}>
           <div className="glass-card animate-fade-in" style={{
-            maxWidth: "600px",
+            maxWidth: "650px",
             width: "100%",
+            margin: "0 auto",
             padding: "2rem",
             borderRadius: "20px",
             border: "1px solid var(--accent-cyan)",
@@ -4301,48 +4371,60 @@ export default function Home() {
           }}>
             {tourStep === 0 && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center" }}>
-                <div style={{ fontSize: "2.5rem" }}>🔥</div>
                 <h3 style={{ fontSize: "1.5rem", color: "#fff", fontWeight: "900" }}>
-                  Добро пожаловать в СИГМА КИБЕР КЛУБ!
+                  Добро пожаловать в СИГМА КИБЕР КЛУБ
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", lineHeight: "1.6" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "0.88rem", lineHeight: "1.6" }}>
                   Здесь собрана вся главная статистика хаба, таблица лидеров, подробные разборы матчей и аналитика ИИ Leetify.
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.03)", padding: "1rem", borderRadius: "12px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "0.82rem", color: "var(--text-primary)" }}>
-                  🏆 <strong>Таблица лидеров:</strong> отслеживайте очки, Win Rate, текущие серии побед/поражений и переключайтесь между сезонами!
+                <div style={{ background: "rgba(255,255,255,0.03)", padding: "0.85rem 1rem", borderRadius: "12px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "0.82rem", color: "var(--text-primary)" }}>
+                  <strong>Таблица лидеров:</strong> отслеживайте очки, Win Rate, текущие серии побед/поражений и переключайтесь между сезонами!
                 </div>
+                <img 
+                  src="/tour/slide1.jpg" 
+                  alt="Таблица лидеров" 
+                  style={{ width: "100%", borderRadius: "12px", border: "1px solid var(--border-light)", marginTop: "0.5rem", maxHeight: "230px", objectFit: "cover" }} 
+                />
               </div>
             )}
 
             {tourStep === 1 && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center" }}>
-                <div style={{ fontSize: "2.5rem" }}>🎯</div>
                 <h3 style={{ fontSize: "1.5rem", color: "#fff", fontWeight: "900" }}>
                   Интерактивный разбор матчей CS2 (HUD)
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", lineHeight: "1.6" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "0.88rem", lineHeight: "1.6" }}>
                   Вкладка «История игр» содержит пошаговый разбор раундов на 2D-карте арены!
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.03)", padding: "1rem", borderRadius: "12px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "0.82rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                  <div>💥 <strong>2D Heatmap & Киллфилд:</strong> отслеживайте позиции выстрелов, трассеры и вектор каждого убийства.</div>
-                  <div>🔫 <strong>SVG Иконки оружия:</strong> отображение чистого белого силуэта оружия и хедшотов.</div>
+                <div style={{ background: "rgba(255,255,255,0.03)", padding: "0.85rem 1rem", borderRadius: "12px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "0.82rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                  <div><strong>2D Heatmap & Киллфилд:</strong> отслеживайте позиции выстрелов, трассеры и вектор каждого убийства.</div>
+                  <div><strong>SVG Иконки оружия:</strong> отображение чистого белого силуэта оружия и хедшотов.</div>
                 </div>
+                <img 
+                  src="/tour/slide2.jpg" 
+                  alt="Интерактивный разбор раундов" 
+                  style={{ width: "100%", borderRadius: "12px", border: "1px solid var(--border-light)", marginTop: "0.5rem", maxHeight: "230px", objectFit: "cover" }} 
+                />
               </div>
             )}
 
             {tourStep === 2 && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center" }}>
-                <div style={{ fontSize: "2.5rem" }}>🤖</div>
                 <h3 style={{ fontSize: "1.5rem", color: "#fff", fontWeight: "900" }}>
-                  Профили игроков & Leetify ИИ
+                  Профили игроков & Аналитика Leetify
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", lineHeight: "1.6" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "0.88rem", lineHeight: "1.6" }}>
                   Нажмите на никнейм любого игрока, чтобы открыть расширенный дашборд статистики!
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.03)", padding: "1rem", borderRadius: "12px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "0.82rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                  <div>📈 <strong>Статистика FACEIT:</strong> динамика Elo, КД, ADR, процент хедшотов и винрейт на картах.</div>
-                  <div>🧠 <strong>Leetify AI:</strong> оценка AIM, позиционирования и эффективности использования гранат.</div>
+                <div style={{ background: "rgba(255,255,255,0.03)", padding: "0.85rem 1rem", borderRadius: "12px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "0.82rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                  <div><strong>Статистика FACEIT:</strong> динамика Elo, КД, ADR, процент хедшотов и винрейт на картах.</div>
+                  <div><strong>Leetify AI:</strong> оценка AIM, позиционирования и эффективности использования гранат.</div>
                 </div>
+                <img 
+                  src="/tour/slide3.jpg" 
+                  alt="Профиль игрока и Leetify" 
+                  style={{ width: "100%", borderRadius: "12px", border: "1px solid var(--border-light)", marginTop: "0.5rem", maxHeight: "230px", objectFit: "cover" }} 
+                />
               </div>
             )}
 
@@ -4350,7 +4432,7 @@ export default function Home() {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              marginTop: "2rem",
+              marginTop: "1.75rem",
               borderTop: "1px solid var(--border-light)",
               paddingTop: "1.25rem"
             }}>
@@ -4403,7 +4485,7 @@ export default function Home() {
                       cursor: "pointer"
                     }}
                   >
-                    Далее ➔
+                    Далее
                   </button>
                 ) : (
                   <button 
@@ -4423,7 +4505,7 @@ export default function Home() {
                       boxShadow: "0 0 15px rgba(0, 229, 255, 0.4)"
                     }}
                   >
-                    Начать работу! 🚀
+                    Начать работу
                   </button>
                 )}
               </div>
@@ -4444,31 +4526,28 @@ export default function Home() {
           backdropFilter: "blur(10px)",
           zIndex: 10000,
           display: "flex",
-          alignItems: "center",
+          alignItems: "flex-start",
           justifyContent: "center",
-          padding: "1rem"
+          padding: "2.5rem 1rem",
+          overflowY: "auto"
         }}>
           <div className="glass-card animate-fade-in" style={{
             maxWidth: "950px",
             width: "100%",
-            maxHeight: "90vh",
-            overflowY: "auto",
+            margin: "0 auto",
             padding: "1.75rem",
             borderRadius: "20px",
             border: "1px solid var(--accent-cyan)",
             boxShadow: "0 0 40px rgba(0, 229, 255, 0.2)"
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--border-light)", paddingBottom: "1rem", marginBottom: "1.25rem" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                <span style={{ fontSize: "1.5rem" }}>🎯</span>
-                <div>
-                  <h3 style={{ fontSize: "1.3rem", color: "#fff", fontWeight: "900" }}>
-                    Капитанский Драфт (4 Капитана)
-                  </h3>
-                  <span style={{ fontSize: "0.78rem", color: "var(--text-secondary)" }}>
-                    Пошаговый выбор игроков в реальном времени с экспортом в файл
-                  </span>
-                </div>
+              <div>
+                <h3 style={{ fontSize: "1.3rem", color: "#fff", fontWeight: "900" }}>
+                  Капитанский Драфт (4 Капитана)
+                </h3>
+                <span style={{ fontSize: "0.78rem", color: "var(--text-secondary)" }}>
+                  Пошаговый выбор игроков в реальном времени с синхронизацией между ПК
+                </span>
               </div>
               <button 
                 onClick={() => setShowDraftModal(false)}
@@ -4569,7 +4648,7 @@ export default function Home() {
                     marginTop: "0.5rem"
                   }}
                 >
-                  Начать Драфт! 🚀
+                  Начать Драфт
                 </button>
               </div>
             )}
@@ -4589,7 +4668,7 @@ export default function Home() {
                   }}>
                     <div>
                       <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", textTransform: "uppercase", fontWeight: "700", letterSpacing: "0.05em" }}>
-                        Текущий ход (Snake Draft #{draftCurrentStepIndex + 1})
+                        Текущий ход (Snake Draft #${draftCurrentStepIndex + 1})
                       </span>
                       <div style={{ fontSize: "1.2rem", fontWeight: "900", color: "#fff", marginTop: "0.1rem" }}>
                         Выбирает: <span style={{ color: "var(--accent-cyan)" }}>{draftCaptains[draftTurnSequence[draftCurrentStepIndex]]}</span>
@@ -4614,7 +4693,7 @@ export default function Home() {
                   }}>
                     <div>
                       <span style={{ fontSize: "0.75rem", color: "var(--success)", fontWeight: "800", textTransform: "uppercase" }}>
-                        ✓ Драфт успешно завершен!
+                        Драфт успешно завершен!
                       </span>
                       <div style={{ fontSize: "1.1rem", fontWeight: "900", color: "#fff", marginTop: "0.1rem" }}>
                         Все игроки распределены по 4 командам
@@ -4635,7 +4714,7 @@ export default function Home() {
                         boxShadow: "0 0 15px rgba(0, 230, 118, 0.4)"
                       }}
                     >
-                      📥 Скачать файл команд (.txt)
+                      Скачать файл команд (.txt)
                     </button>
                   </div>
                 )}
@@ -4686,7 +4765,7 @@ export default function Home() {
                               }}
                             >
                               <span>{pIdx + 1}. {player}</span>
-                              {pIdx === 0 && <span style={{ fontSize: "0.6rem", opacity: 0.8 }}>👑 САР</span>}
+                              {pIdx === 0 && <span style={{ fontSize: "0.6rem", opacity: 0.85, fontWeight: "700" }}>[КАПИТАН]</span>}
                             </div>
                           ))}
                         </div>
@@ -4734,7 +4813,7 @@ export default function Home() {
                                 cursor: "pointer"
                               }}
                             >
-                              Пикнуть ➔
+                              Пикнуть
                             </button>
                           </div>
                         ))}
@@ -4745,7 +4824,7 @@ export default function Home() {
 
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid var(--border-light)", paddingTop: "1rem", marginTop: "1rem" }}>
                   <button 
-                    onClick={() => setDraftStep("setup")}
+                    onClick={handleResetDraft}
                     style={{
                       background: "rgba(255,255,255,0.05)",
                       border: "1px solid var(--border-light)",
@@ -4756,7 +4835,7 @@ export default function Home() {
                       cursor: "pointer"
                     }}
                   >
-                    🔄 Сбросить драфт
+                    Сбросить драфт
                   </button>
 
                   <button 
@@ -4775,7 +4854,7 @@ export default function Home() {
                       gap: "0.4rem"
                     }}
                   >
-                    📥 Скачать файл (.txt)
+                    Скачать файл (.txt)
                   </button>
                 </div>
 
