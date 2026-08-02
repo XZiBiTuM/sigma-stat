@@ -373,9 +373,31 @@ export async function GET(
       };
     });
 
+    // Filter out knife round if Round 1 was a knife round
+    let finalRounds = rounds;
+    let finalDeaths = deaths;
+
+    if (rounds.length > 1) {
+      const firstRoundTick = rounds[0].tick;
+      const firstRoundDeaths = deaths.filter((d: any) => d.tick <= firstRoundTick);
+      const isKnifeRound = firstRoundDeaths.length > 0 && firstRoundDeaths.every((d: any) => {
+        const w = (d.weapon || "").toLowerCase();
+        return w.includes("knife") || w.includes("bayonet") || w.includes("karambit") || w.includes("blade");
+      });
+
+      if (isKnifeRound || (rounds.length > 24 && firstRoundDeaths.length > 0)) {
+        console.log(`Detected knife round at index 0 (tick ${firstRoundTick}). Removing knife round from history.`);
+        finalRounds = rounds.slice(1).map((r: any, idx: number) => ({
+          ...r,
+          round: idx + 1
+        }));
+        finalDeaths = deaths.filter((d: any) => d.tick > firstRoundTick);
+      }
+    }
+
     const result = {
-      rounds,
-      deaths,
+      rounds: finalRounds,
+      deaths: finalDeaths,
       source: "parsed"
     };
 

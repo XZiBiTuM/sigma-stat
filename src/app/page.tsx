@@ -246,6 +246,113 @@ export default function Home() {
   const [playerModalTab, setPlayerModalTab] = useState<"general" | "tactical" | "maps">("general");
   const [isLoadingPlayer, setIsLoadingPlayer] = useState(false);
 
+  // Onboarding Tour state
+  const [showTourModal, setShowTourModal] = useState(false);
+  const [tourStep, setTourStep] = useState(0);
+
+  // Hidden players toggle state
+  const [showHiddenPlayers, setShowHiddenPlayers] = useState(false);
+
+  // 4-Captain Draft System state
+  const [showDraftModal, setShowDraftModal] = useState(false);
+  const [draftStep, setDraftStep] = useState<"setup" | "picking" | "finished">("setup");
+  const [draftCaptains, setDraftCaptains] = useState<[string, string, string, string]>(["Капитан 1", "Капитан 2", "Капитан 3", "Капитан 4"]);
+  const [draftPoolInput, setDraftPoolInput] = useState("");
+  const [draftAvailablePlayers, setDraftAvailablePlayers] = useState<string[]>([]);
+  const [draftTeams, setDraftTeams] = useState<[string[], string[], string[], string[]]>([[], [], [], []]);
+  const [draftTurnSequence, setDraftTurnSequence] = useState<number[]>([]);
+  const [draftCurrentStepIndex, setDraftCurrentStepIndex] = useState(0);
+
+  // Trigger Onboarding Tour on first load
+  useEffect(() => {
+    if (typeof window !== "undefined" && !localStorage.getItem("hasSeenSigmaTour")) {
+      setShowTourModal(true);
+    }
+  }, []);
+
+  const startDraftSetup = () => {
+    let names: string[] = [];
+    if (draftPoolInput.trim()) {
+      names = draftPoolInput.split("\n").map(n => n.trim()).filter(Boolean);
+    } else if (members && members.length > 0) {
+      names = members.map(m => m.nickname).filter(Boolean);
+    }
+
+    if (names.length < 4) {
+      alert("В пуле должно быть минимум 4 игрока для проведения драфта!");
+      return;
+    }
+
+    const captainsSet = new Set(draftCaptains.map(c => c.trim().toLowerCase()));
+    const initialAvailable = names.filter(n => !captainsSet.has(n.toLowerCase()));
+
+    const seq: number[] = [];
+    let r = 0;
+    while (seq.length < initialAvailable.length) {
+      if (r % 2 === 0) seq.push(0, 1, 2, 3);
+      else seq.push(3, 2, 1, 0);
+      r++;
+    }
+    const finalSeq = seq.slice(0, initialAvailable.length);
+
+    setDraftAvailablePlayers(initialAvailable);
+    setDraftTeams([[draftCaptains[0]], [draftCaptains[1]], [draftCaptains[2]], [draftCaptains[3]]]);
+    setDraftTurnSequence(finalSeq);
+    setDraftCurrentStepIndex(0);
+    setDraftStep("picking");
+  };
+
+  const handlePickPlayer = (playerPick: string) => {
+    if (draftCurrentStepIndex >= draftTurnSequence.length) return;
+    const currentCapIdx = draftTurnSequence[draftCurrentStepIndex];
+
+    setDraftTeams(prev => {
+      const nextTeams = [...prev] as [string[], string[], string[], string[]];
+      nextTeams[currentCapIdx] = [...nextTeams[currentCapIdx], playerPick];
+      return nextTeams;
+    });
+
+    const nextAvailable = draftAvailablePlayers.filter(p => p !== playerPick);
+    setDraftAvailablePlayers(nextAvailable);
+
+    if (nextAvailable.length === 0 || draftCurrentStepIndex + 1 >= draftTurnSequence.length) {
+      setDraftStep("finished");
+    } else {
+      setDraftCurrentStepIndex(prev => prev + 1);
+    }
+  };
+
+  const downloadDraftResultsFile = () => {
+    const dateStr = new Date().toLocaleString("ru-RU");
+    let content = `=================================================\n`;
+    content += `   РЕЗУЛЬТАТЫ КАПИТАНСКОГО ДРАФТА (СИГМА КИБЕР КЛУБ)\n`;
+    content += `   Дата: ${dateStr}\n`;
+    content += `=================================================\n\n`;
+
+    draftCaptains.forEach((cap, idx) => {
+      content += `--- КОМАНДА ${idx + 1} (Капитан: ${cap}) ---\n`;
+      const roster = draftTeams[idx] || [];
+      roster.forEach((member, i) => {
+        content += `  ${i + 1}. ${member}${i === 0 ? " (Капитан)" : ""}\n`;
+      });
+      content += `\n`;
+    });
+
+    content += `-------------------------------------------------\n`;
+    content += `Сформировано на сайте СИГМА КИБЕР КЛУБ\n`;
+    content += `Powered by XZiBiTuM\n`;
+
+    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `sigma_teams_draft_${new Date().toISOString().slice(0, 10)}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   // Load hub data when hubId changes
   useEffect(() => {
     if (!hubId) {
@@ -502,22 +609,36 @@ export default function Home() {
     };
 
     const getPlayerSideInRound = (playerName: string, rawTeam: any) => {
-      if (rawTeam) {
-        const str = String(rawTeam).toUpperCase().trim();
-        if (str === "CT" || str === "3" || str.includes("COUNTER")) return "CT";
-        if (str === "T" || str === "TERRORIST" || str === "2") return "T";
-      }
-      
       if (selectedRadarRoundIndex && history && history.rounds) {
         const rIdx = selectedRadarRoundIndex - 1;
         const isFirstHalf = rIdx < 12;
-        const isT1 = roundTeams?.[0]?.players?.some((p: any) => p.nickname === playerName);
+        const team1 = roundTeams?.[0];
+        const team2 = roundTeams?.[1];
+
+        const pClean = (playerName || "").toLowerCase().trim();
+        const isT1 = team1?.players?.some((p: any) => {
+          const nick = (p.nickname || "").toLowerCase().trim();
+          return nick === pClean || (pClean && nick.includes(pClean)) || (nick && pClean.includes(nick));
+        });
+        const isT2 = team2?.players?.some((p: any) => {
+          const nick = (p.nickname || "").toLowerCase().trim();
+          return nick === pClean || (pClean && nick.includes(pClean)) || (nick && pClean.includes(nick));
+        });
+
         if (isT1) {
           return (isFirstHalf ? isT1StartedCT : !isT1StartedCT) ? "CT" : "T";
-        } else {
+        }
+        if (isT2) {
           return (isFirstHalf ? isT1StartedCT : !isT1StartedCT) ? "T" : "CT";
         }
       }
+
+      if (rawTeam !== null && rawTeam !== undefined) {
+        const str = String(rawTeam).toUpperCase().trim();
+        if (str === "CT" || str === "3" || str.includes("COUNTER") || str.includes("CT")) return "CT";
+        if (str === "T" || str === "2" || str.includes("TERROR")) return "T";
+      }
+
       return "T";
     };
 
@@ -1175,8 +1296,14 @@ export default function Home() {
   // Filters for client-side lists
   const filteredRankings = rankings.filter((item) => {
     const playerInfo = item.player || (item as any).user;
-    const nickname = playerInfo?.nickname || "";
-    return nickname.toLowerCase().includes(playerSearchQuery.toLowerCase());
+    const nickname = (playerInfo?.nickname || "").toLowerCase();
+
+    // Hide player Lynxick unless showHiddenPlayers is toggled on
+    if (nickname === "lynxick" && !showHiddenPlayers) {
+      return false;
+    }
+
+    return nickname.includes(playerSearchQuery.toLowerCase());
   });
 
   const filteredMatches = matches.filter((match) => {
@@ -1371,17 +1498,58 @@ export default function Home() {
               WebkitTextFillColor: "transparent",
               textTransform: "uppercase",
               letterSpacing: "0.05em",
-              fontWeight: "800"
+              fontWeight: "900"
             }}>
-              Сигма Кибер Арена
+              СИГМА КИБЕР КЛУБ
             </span>
           </h1>
-          <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem", marginTop: "0.25rem", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: "600" }}>
-            Дорога в киберспорт закрыта!
+          <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem", marginTop: "0.25rem", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: "700" }}>
+            GG WP
           </p>
         </div>
 
+        <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
+          <button 
+            onClick={() => setShowDraftModal(true)}
+            style={{
+              background: "linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(124, 77, 255, 0.15))",
+              border: "1px solid var(--accent-cyan)",
+              borderRadius: "8px",
+              padding: "0.55rem 1rem",
+              color: "#fff",
+              fontSize: "0.82rem",
+              fontWeight: "700",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.4rem",
+              boxShadow: "0 0 12px rgba(0, 229, 255, 0.2)",
+              transition: "all 0.2s"
+            }}
+          >
+            🎯 Драфт 4 Капитанов
+          </button>
 
+          <button 
+            onClick={() => setShowTourModal(true)}
+            style={{
+              background: "rgba(255, 255, 255, 0.05)",
+              border: "1px solid var(--border-light)",
+              borderRadius: "8px",
+              padding: "0.55rem 0.9rem",
+              color: "var(--text-secondary)",
+              fontSize: "0.82rem",
+              fontWeight: "600",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.35rem",
+              transition: "all 0.2s"
+            }}
+          >
+            ✨ О сервисе
+          </button>
+        </div>
       </header>
 
       {/* HUB SELECTION SCREEN / LOADER */}
@@ -1511,7 +1679,7 @@ export default function Home() {
                   {hubDetails.name}
                 </h2>
                 <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginTop: "0.5rem", lineHeight: "1.4", maxWidth: "800px" }}>
-                  {hubDetails.description || "Димасику вход запрещен"}
+                  {hubDetails.description || "CS 2"}
                 </p>
               </div>
 
@@ -1585,8 +1753,26 @@ export default function Home() {
                         onChange={(e) => setPlayerSearchQuery(e.target.value)}
                       />
                     </div>
-                    <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
-                      Показано игроков: {filteredRankings.length}
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                      <button
+                        onClick={() => setShowHiddenPlayers(!showHiddenPlayers)}
+                        style={{
+                          background: showHiddenPlayers ? "rgba(255, 61, 0, 0.15)" : "rgba(255, 255, 255, 0.05)",
+                          border: showHiddenPlayers ? "1px solid rgba(255, 61, 0, 0.4)" : "1px solid var(--border-light)",
+                          borderRadius: "8px",
+                          padding: "0.45rem 0.8rem",
+                          color: showHiddenPlayers ? "#ff5252" : "var(--text-secondary)",
+                          fontSize: "0.78rem",
+                          fontWeight: "600",
+                          cursor: "pointer",
+                          transition: "all 0.2s"
+                        }}
+                      >
+                        {showHiddenPlayers ? "Скрыть скрытых игроков" : "Показать скрытых игроков"}
+                      </button>
+                      <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
+                        Показано игроков: {filteredRankings.length}
+                      </div>
                     </div>
                   </div>
 
@@ -1652,6 +1838,11 @@ export default function Home() {
                                     <span style={{ fontWeight: "600", color: "var(--accent-cyan)" }} className="hover-underline">
                                       {nickname}
                                     </span>
+                                    {nickname.toLowerCase() === "lynxick" && (
+                                      <span style={{ fontSize: "0.6rem", background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", padding: "0.1rem 0.35rem", borderRadius: "3px", color: "var(--text-muted)" }}>
+                                        Скрытый
+                                      </span>
+                                    )}
                                     {country && (
                                       <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
                                         [{country.toUpperCase()}]
@@ -1981,7 +2172,7 @@ export default function Home() {
                               </span>
                               <div style={{ display: "flex", gap: "0.25rem" }}>
                                 {member.nickname === "XZiBiTuM" ? (
-                                  <span className="badge badge-danger" style={{ fontSize: "0.6rem", padding: "0.05rem 0.3rem", background: "rgba(255, 23, 68, 0.15)", border: "1px solid var(--danger)", color: "var(--danger)" }}>Не игрок</span>
+                                  <span className="badge" style={{ fontSize: "0.6rem", padding: "0.05rem 0.35rem", background: "rgba(0, 229, 255, 0.15)", border: "1px solid var(--accent-cyan)", color: "var(--accent-cyan)", fontWeight: "800" }}>Разработчик</span>
                                 ) : (
                                   <>
                                     {isOwner && <span className="badge badge-warning" style={{ fontSize: "0.6rem", padding: "0.05rem 0.3rem" }}>Создатель</span>}
@@ -2390,7 +2581,6 @@ export default function Home() {
 
         </div>
       )}
-    </div>
 
       {/* MODAL: MATCH DETAILS STATS */}
       {selectedMatchId && (
@@ -3408,7 +3598,7 @@ export default function Home() {
                               </div>
 
                               {/* Interactive Kill Map Radar */}
-                              {renderRadarMap(originalMapIndex, round.round_stats.Map, t1Name, t2Name, isT1StartedCT)}
+                              {renderRadarMap(originalMapIndex, round.round_stats.Map, t1Name, t2Name, isT1StartedCT, round.teams)}
                             </div>
                           </div>
                         );
@@ -4061,6 +4251,540 @@ export default function Home() {
         </div>
       )}
 
+      {/* BASE FOOTER */}
+      <footer style={{
+        marginTop: "4rem",
+        borderTop: "1px solid var(--border-light)",
+        padding: "2rem 1.5rem",
+        textAlign: "center",
+        background: "rgba(10, 8, 20, 0.6)",
+        backdropFilter: "blur(12px)",
+        color: "var(--text-muted)",
+        fontSize: "0.85rem",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "0.5rem"
+      }}>
+        <div style={{ fontWeight: "900", color: "#fff", letterSpacing: "0.05em" }}>
+          СИГМА КИБЕР КЛУБ &copy; {new Date().getFullYear()}
+        </div>
+        <div style={{ fontSize: "0.78rem", color: "var(--text-secondary)" }}>
+          Powered by <span style={{ color: "var(--accent-cyan)", fontWeight: "800" }}>XZiBiTuM</span>
+        </div>
+      </footer>
+
+      {/* ONBOARDING TOUR MODAL */}
+      {showTourModal && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "rgba(0, 0, 0, 0.85)",
+          backdropFilter: "blur(8px)",
+          zIndex: 10000,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "1rem"
+        }}>
+          <div className="glass-card animate-fade-in" style={{
+            maxWidth: "600px",
+            width: "100%",
+            padding: "2rem",
+            borderRadius: "20px",
+            border: "1px solid var(--accent-cyan)",
+            boxShadow: "0 0 40px rgba(0, 229, 255, 0.25)",
+            position: "relative"
+          }}>
+            {tourStep === 0 && (
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center" }}>
+                <div style={{ fontSize: "2.5rem" }}>🔥</div>
+                <h3 style={{ fontSize: "1.5rem", color: "#fff", fontWeight: "900" }}>
+                  Добро пожаловать в СИГМА КИБЕР КЛУБ!
+                </h3>
+                <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", lineHeight: "1.6" }}>
+                  Здесь собрана вся главная статистика хаба, таблица лидеров, подробные разборы матчей и аналитика ИИ Leetify.
+                </p>
+                <div style={{ background: "rgba(255,255,255,0.03)", padding: "1rem", borderRadius: "12px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "0.82rem", color: "var(--text-primary)" }}>
+                  🏆 <strong>Таблица лидеров:</strong> отслеживайте очки, Win Rate, текущие серии побед/поражений и переключайтесь между сезонами!
+                </div>
+              </div>
+            )}
+
+            {tourStep === 1 && (
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center" }}>
+                <div style={{ fontSize: "2.5rem" }}>🎯</div>
+                <h3 style={{ fontSize: "1.5rem", color: "#fff", fontWeight: "900" }}>
+                  Интерактивный разбор матчей CS2 (HUD)
+                </h3>
+                <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", lineHeight: "1.6" }}>
+                  Вкладка «История игр» содержит пошаговый разбор раундов на 2D-карте арены!
+                </p>
+                <div style={{ background: "rgba(255,255,255,0.03)", padding: "1rem", borderRadius: "12px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "0.82rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                  <div>💥 <strong>2D Heatmap & Киллфилд:</strong> отслеживайте позиции выстрелов, трассеры и вектор каждого убийства.</div>
+                  <div>🔫 <strong>SVG Иконки оружия:</strong> отображение чистого белого силуэта оружия и хедшотов.</div>
+                </div>
+              </div>
+            )}
+
+            {tourStep === 2 && (
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center" }}>
+                <div style={{ fontSize: "2.5rem" }}>🤖</div>
+                <h3 style={{ fontSize: "1.5rem", color: "#fff", fontWeight: "900" }}>
+                  Профили игроков & Leetify ИИ
+                </h3>
+                <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", lineHeight: "1.6" }}>
+                  Нажмите на никнейм любого игрока, чтобы открыть расширенный дашборд статистики!
+                </p>
+                <div style={{ background: "rgba(255,255,255,0.03)", padding: "1rem", borderRadius: "12px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "0.82rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                  <div>📈 <strong>Статистика FACEIT:</strong> динамика Elo, КД, ADR, процент хедшотов и винрейт на картах.</div>
+                  <div>🧠 <strong>Leetify AI:</strong> оценка AIM, позиционирования и эффективности использования гранат.</div>
+                </div>
+              </div>
+            )}
+
+            <div style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginTop: "2rem",
+              borderTop: "1px solid var(--border-light)",
+              paddingTop: "1.25rem"
+            }}>
+              <div style={{ display: "flex", gap: "0.4rem" }}>
+                {[0, 1, 2].map((idx) => (
+                  <span 
+                    key={idx}
+                    onClick={() => setTourStep(idx)}
+                    style={{
+                      width: idx === tourStep ? "24px" : "8px",
+                      height: "8px",
+                      borderRadius: "4px",
+                      background: idx === tourStep ? "var(--accent-cyan)" : "rgba(255,255,255,0.2)",
+                      cursor: "pointer",
+                      transition: "all 0.2s"
+                    }}
+                  />
+                ))}
+              </div>
+
+              <div style={{ display: "flex", gap: "0.5rem" }}>
+                {tourStep > 0 && (
+                  <button 
+                    onClick={() => setTourStep(prev => prev - 1)}
+                    style={{
+                      background: "rgba(255,255,255,0.05)",
+                      border: "1px solid var(--border-light)",
+                      borderRadius: "8px",
+                      padding: "0.5rem 1rem",
+                      color: "#fff",
+                      fontSize: "0.82rem",
+                      cursor: "pointer"
+                    }}
+                  >
+                    Назад
+                  </button>
+                )}
+
+                {tourStep < 2 ? (
+                  <button 
+                    onClick={() => setTourStep(prev => prev + 1)}
+                    style={{
+                      background: "var(--accent-cyan)",
+                      border: "none",
+                      borderRadius: "8px",
+                      padding: "0.5rem 1.25rem",
+                      color: "#000",
+                      fontSize: "0.82rem",
+                      fontWeight: "800",
+                      cursor: "pointer"
+                    }}
+                  >
+                    Далее ➔
+                  </button>
+                ) : (
+                  <button 
+                    onClick={() => {
+                      localStorage.setItem("hasSeenSigmaTour", "true");
+                      setShowTourModal(false);
+                    }}
+                    style={{
+                      background: "linear-gradient(135deg, var(--accent-cyan), var(--accent-purple))",
+                      border: "none",
+                      borderRadius: "8px",
+                      padding: "0.5rem 1.5rem",
+                      color: "#fff",
+                      fontSize: "0.85rem",
+                      fontWeight: "900",
+                      cursor: "pointer",
+                      boxShadow: "0 0 15px rgba(0, 229, 255, 0.4)"
+                    }}
+                  >
+                    Начать работу! 🚀
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 4-CAPTAIN DRAFT SYSTEM MODAL */}
+      {showDraftModal && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "rgba(0, 0, 0, 0.85)",
+          backdropFilter: "blur(10px)",
+          zIndex: 10000,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "1rem"
+        }}>
+          <div className="glass-card animate-fade-in" style={{
+            maxWidth: "950px",
+            width: "100%",
+            maxHeight: "90vh",
+            overflowY: "auto",
+            padding: "1.75rem",
+            borderRadius: "20px",
+            border: "1px solid var(--accent-cyan)",
+            boxShadow: "0 0 40px rgba(0, 229, 255, 0.2)"
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--border-light)", paddingBottom: "1rem", marginBottom: "1.25rem" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                <span style={{ fontSize: "1.5rem" }}>🎯</span>
+                <div>
+                  <h3 style={{ fontSize: "1.3rem", color: "#fff", fontWeight: "900" }}>
+                    Капитанский Драфт (4 Капитана)
+                  </h3>
+                  <span style={{ fontSize: "0.78rem", color: "var(--text-secondary)" }}>
+                    Пошаговый выбор игроков в реальном времени с экспортом в файл
+                  </span>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowDraftModal(false)}
+                style={{
+                  background: "rgba(255,255,255,0.06)",
+                  border: "1px solid var(--border-light)",
+                  borderRadius: "8px",
+                  color: "#fff",
+                  padding: "0.4rem 0.8rem",
+                  cursor: "pointer",
+                  fontSize: "0.8rem"
+                }}
+              >
+                Закрыть ✕
+              </button>
+            </div>
+
+            {draftStep === "setup" && (
+              <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+                <div>
+                  <h4 style={{ color: "var(--accent-cyan)", fontSize: "0.95rem", marginBottom: "0.75rem", fontWeight: "800" }}>
+                    1. Укажите никнеймы 4 Капитанов:
+                  </h4>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "0.75rem" }}>
+                    {[0, 1, 2, 3].map((idx) => (
+                      <div key={idx} className="input-group">
+                        <label style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginBottom: "0.25rem", display: "block" }}>
+                          Капитан {idx + 1}
+                        </label>
+                        <input 
+                          type="text"
+                          className="input-field"
+                          value={draftCaptains[idx]}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setDraftCaptains(prev => {
+                              const next = [...prev] as [string, string, string, string];
+                              next[idx] = val;
+                              return next;
+                            });
+                          }}
+                          placeholder={`Капитан ${idx + 1}`}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+                    <h4 style={{ color: "var(--accent-cyan)", fontSize: "0.95rem", fontWeight: "800" }}>
+                      2. Пул доступных игроков:
+                    </h4>
+                    {members.length > 0 && (
+                      <button
+                        onClick={() => {
+                          setDraftPoolInput(members.map(m => m.nickname).join("\n"));
+                        }}
+                        style={{
+                          background: "rgba(0, 229, 255, 0.1)",
+                          border: "1px solid rgba(0, 229, 255, 0.3)",
+                          borderRadius: "6px",
+                          color: "var(--accent-cyan)",
+                          padding: "0.25rem 0.6rem",
+                          fontSize: "0.75rem",
+                          cursor: "pointer"
+                        }}
+                      >
+                        Загрузить из участников хаба ({members.length})
+                      </button>
+                    )}
+                  </div>
+                  <textarea 
+                    rows={6}
+                    className="input-field"
+                    style={{ width: "100%", fontFamily: "monospace", fontSize: "0.85rem", resize: "vertical" }}
+                    placeholder="Вставьте никнеймы игроков по одному на строку..."
+                    value={draftPoolInput}
+                    onChange={(e) => setDraftPoolInput(e.target.value)}
+                  />
+                  <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "0.25rem", display: "block" }}>
+                    Капитаны исключаются из общего пула выбора автоматически.
+                  </span>
+                </div>
+
+                <button 
+                  onClick={startDraftSetup}
+                  style={{
+                    background: "linear-gradient(135deg, var(--accent-cyan), var(--accent-purple))",
+                    border: "none",
+                    borderRadius: "10px",
+                    padding: "0.85rem",
+                    color: "#fff",
+                    fontSize: "0.95rem",
+                    fontWeight: "900",
+                    cursor: "pointer",
+                    boxShadow: "0 0 20px rgba(0, 229, 255, 0.3)",
+                    marginTop: "0.5rem"
+                  }}
+                >
+                  Начать Драфт! 🚀
+                </button>
+              </div>
+            )}
+
+            {(draftStep === "picking" || draftStep === "finished") && (
+              <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+                {draftStep === "picking" && (
+                  <div style={{
+                    background: "linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(124, 77, 255, 0.15))",
+                    border: "1.5px solid var(--accent-cyan)",
+                    borderRadius: "12px",
+                    padding: "1rem 1.25rem",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    boxShadow: "0 0 20px rgba(0, 229, 255, 0.2)"
+                  }}>
+                    <div>
+                      <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", textTransform: "uppercase", fontWeight: "700", letterSpacing: "0.05em" }}>
+                        Текущий ход (Snake Draft #{draftCurrentStepIndex + 1})
+                      </span>
+                      <div style={{ fontSize: "1.2rem", fontWeight: "900", color: "#fff", marginTop: "0.1rem" }}>
+                        Выбирает: <span style={{ color: "var(--accent-cyan)" }}>{draftCaptains[draftTurnSequence[draftCurrentStepIndex]]}</span>
+                      </div>
+                    </div>
+
+                    <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", background: "rgba(0,0,0,0.3)", padding: "0.4rem 0.8rem", borderRadius: "8px" }}>
+                      Осталось в пуле: <strong style={{ color: "#fff" }}>{draftAvailablePlayers.length}</strong> игроков
+                    </div>
+                  </div>
+                )}
+
+                {draftStep === "finished" && (
+                  <div style={{
+                    background: "rgba(0, 230, 118, 0.12)",
+                    border: "1.5px solid var(--success)",
+                    borderRadius: "12px",
+                    padding: "1rem 1.25rem",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center"
+                  }}>
+                    <div>
+                      <span style={{ fontSize: "0.75rem", color: "var(--success)", fontWeight: "800", textTransform: "uppercase" }}>
+                        ✓ Драфт успешно завершен!
+                      </span>
+                      <div style={{ fontSize: "1.1rem", fontWeight: "900", color: "#fff", marginTop: "0.1rem" }}>
+                        Все игроки распределены по 4 командам
+                      </div>
+                    </div>
+
+                    <button 
+                      onClick={downloadDraftResultsFile}
+                      style={{
+                        background: "var(--success)",
+                        border: "none",
+                        borderRadius: "8px",
+                        padding: "0.6rem 1.2rem",
+                        color: "#000",
+                        fontWeight: "900",
+                        fontSize: "0.85rem",
+                        cursor: "pointer",
+                        boxShadow: "0 0 15px rgba(0, 230, 118, 0.4)"
+                      }}
+                    >
+                      📥 Скачать файл команд (.txt)
+                    </button>
+                  </div>
+                )}
+
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
+                  {draftCaptains.map((cap, cIdx) => {
+                    const isMyTurn = draftStep === "picking" && draftTurnSequence[draftCurrentStepIndex] === cIdx;
+                    const roster = draftTeams[cIdx] || [];
+
+                    return (
+                      <div 
+                        key={cIdx} 
+                        style={{
+                          background: isMyTurn ? "rgba(0, 229, 255, 0.08)" : "rgba(255,255,255,0.02)",
+                          border: isMyTurn ? "2px solid var(--accent-cyan)" : "1px solid var(--border-light)",
+                          borderRadius: "12px",
+                          padding: "1rem",
+                          boxShadow: isMyTurn ? "0 0 15px rgba(0, 229, 255, 0.25)" : "none",
+                          transition: "all 0.2s"
+                        }}
+                      >
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--border-light)", paddingBottom: "0.5rem", marginBottom: "0.75rem" }}>
+                          <span style={{ fontWeight: "900", fontSize: "0.9rem", color: isMyTurn ? "var(--accent-cyan)" : "#fff" }}>
+                            Команда {cIdx + 1}
+                          </span>
+                          {isMyTurn && <span style={{ fontSize: "0.6rem", background: "var(--accent-cyan)", color: "#000", padding: "0.1rem 0.4rem", borderRadius: "3px", fontWeight: "900" }}>ХОД</span>}
+                        </div>
+
+                        <div style={{ fontSize: "0.78rem", color: "var(--text-muted)", marginBottom: "0.5rem" }}>
+                          Капитан: <strong style={{ color: "#fff" }}>{cap}</strong>
+                        </div>
+
+                        <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", minHeight: "120px" }}>
+                          {roster.map((player, pIdx) => (
+                            <div 
+                              key={pIdx} 
+                              style={{
+                                padding: "0.35rem 0.6rem",
+                                background: pIdx === 0 ? "rgba(255, 213, 79, 0.12)" : "rgba(255,255,255,0.04)",
+                                border: pIdx === 0 ? "1px solid rgba(255, 213, 79, 0.3)" : "1px solid rgba(255,255,255,0.05)",
+                                borderRadius: "6px",
+                                fontSize: "0.8rem",
+                                color: pIdx === 0 ? "#ffd54f" : "#fff",
+                                fontWeight: pIdx === 0 ? "700" : "500",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center"
+                              }}
+                            >
+                              <span>{pIdx + 1}. {player}</span>
+                              {pIdx === 0 && <span style={{ fontSize: "0.6rem", opacity: 0.8 }}>👑 САР</span>}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {draftStep === "picking" && (
+                  <div style={{ marginTop: "1rem" }}>
+                    <h4 style={{ color: "#fff", fontSize: "0.95rem", fontWeight: "800", marginBottom: "0.75rem" }}>
+                      Доступные игроки для выбора:
+                    </h4>
+
+                    {draftAvailablePlayers.length === 0 ? (
+                      <div style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>Все игроки выбраны.</div>
+                    ) : (
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(170px, 1fr))", gap: "0.6rem", maxHeight: "250px", overflowY: "auto", padding: "0.25rem" }}>
+                        {draftAvailablePlayers.map((pName) => (
+                          <div 
+                            key={pName} 
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              background: "rgba(255,255,255,0.03)",
+                              border: "1px solid var(--border-light)",
+                              borderRadius: "8px",
+                              padding: "0.5rem 0.75rem"
+                            }}
+                          >
+                            <span style={{ fontSize: "0.82rem", fontWeight: "600", color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100px" }}>
+                              {pName}
+                            </span>
+                            <button 
+                              onClick={() => handlePickPlayer(pName)}
+                              style={{
+                                background: "var(--accent-cyan)",
+                                border: "none",
+                                borderRadius: "6px",
+                                padding: "0.25rem 0.55rem",
+                                color: "#000",
+                                fontSize: "0.72rem",
+                                fontWeight: "800",
+                                cursor: "pointer"
+                              }}
+                            >
+                              Пикнуть ➔
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid var(--border-light)", paddingTop: "1rem", marginTop: "1rem" }}>
+                  <button 
+                    onClick={() => setDraftStep("setup")}
+                    style={{
+                      background: "rgba(255,255,255,0.05)",
+                      border: "1px solid var(--border-light)",
+                      borderRadius: "8px",
+                      padding: "0.45rem 0.9rem",
+                      color: "var(--text-secondary)",
+                      fontSize: "0.8rem",
+                      cursor: "pointer"
+                    }}
+                  >
+                    🔄 Сбросить драфт
+                  </button>
+
+                  <button 
+                    onClick={downloadDraftResultsFile}
+                    style={{
+                      background: "rgba(0, 229, 255, 0.15)",
+                      border: "1px solid var(--accent-cyan)",
+                      borderRadius: "8px",
+                      padding: "0.45rem 1rem",
+                      color: "#fff",
+                      fontSize: "0.82rem",
+                      fontWeight: "700",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.4rem"
+                    }}
+                  >
+                    📥 Скачать файл (.txt)
+                  </button>
+                </div>
+
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Pulse Animation Keyframes */}
       <style jsx global>{`
         @keyframes pulse {
@@ -4075,6 +4799,7 @@ export default function Home() {
         }
       `}</style>
 
+      </div>
     </>
   );
 }
