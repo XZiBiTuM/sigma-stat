@@ -4352,25 +4352,26 @@ export default function Home() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: "rgba(0, 0, 0, 0.88)",
-          backdropFilter: "blur(14px)",
-          WebkitBackdropFilter: "blur(14px)",
+          background: "rgba(0, 0, 0, 0.9)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
           zIndex: 100000,
           display: "flex",
           alignItems: "flex-start",
           justifyContent: "center",
-          padding: "3rem 1.5rem",
+          padding: "2.5rem 1.5rem",
           overflowY: "auto"
         }}>
           <div className="glass-card animate-fade-in" style={{
-            maxWidth: "1150px",
-            width: "94vw",
+            maxWidth: "1380px",
+            width: "95vw",
             margin: "0 auto",
             padding: "2.5rem 3rem",
-            borderRadius: "26px",
-            border: "1.5px solid var(--accent-cyan)",
-            boxShadow: "0 0 60px rgba(0, 229, 255, 0.35)",
-            position: "relative"
+            borderRadius: "28px",
+            border: "1px solid var(--border-light)",
+            boxShadow: "0 20px 70px rgba(0, 0, 0, 0.9), 0 0 40px rgba(0, 229, 255, 0.2)",
+            position: "relative",
+            background: "#0c0a17"
           }}>
             <span 
               className="modal-close-btn" 
@@ -4378,20 +4379,20 @@ export default function Home() {
                 localStorage.setItem("hasSeenSigmaTour", "true");
                 setTourStep(0); setShowTourModal(false);
               }}
-              style={{ top: "1.5rem", right: "1.5rem" }}
+              style={{ top: "1.75rem", right: "1.75rem" }}
             >
               ✕
             </span>
 
             {tourStep === 0 && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center" }}>
-                <h3 style={{ fontSize: "2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.03em" }}>
+                <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
                   Добро пожаловать в СИГМА КИБЕР КЛУБ
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "1.05rem", lineHeight: "1.7" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7" }}>
                   Здесь собрана вся главная статистика хаба, таблица лидеров, подробные разборы матчей и аналитика ИИ Leetify.
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.03)", padding: "1.1rem 1.4rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "0.95rem", color: "var(--text-primary)" }}>
+                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "1rem", color: "var(--text-primary)" }}>
                   <strong>Таблица лидеров:</strong> отслеживайте очки, Win Rate, текущие серии побед/поражений и переключайтесь между сезонами!
                 </div>
               </div>
@@ -4399,13 +4400,13 @@ export default function Home() {
 
             {tourStep === 1 && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center" }}>
-                <h3 style={{ fontSize: "2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.03em" }}>
+                <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
                   Интерактивный разбор матчей CS2 (HUD)
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "1.05rem", lineHeight: "1.7" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7" }}>
                   Вкладка «История игр» содержит пошаговый разбор раундов на 2D-карте арены!
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.03)", padding: "1.1rem 1.4rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "0.95rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
                   <div><strong>2D Heatmap & Киллфилд:</strong> отслеживайте позиции выстрелов, трассеры и вектор каждого убийства.</div>
                   <div><strong>SVG Иконки оружия:</strong> отображение чистого белого силуэта оружия и хедшотов.</div>
                 </div>
@@ -4414,13 +4415,13 @@ export default function Home() {
 
             {tourStep === 2 && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center" }}>
-                <h3 style={{ fontSize: "2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.03em" }}>
+                <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
                   Профили игроков & Аналитика Leetify
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "1.05rem", lineHeight: "1.7" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7" }}>
                   Нажмите на никнейм любого игрока, чтобы открыть расширенный дашборд статистики!
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.03)", padding: "1.1rem 1.4rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "0.95rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
                   <div><strong>Статистика FACEIT:</strong> динамика Elo, КД, ADR, процент хедшотов и винрейт на картах.</div>
                   <div><strong>Leetify AI:</strong> оценка AIM, позиционирования и эффективности использования гранат.</div>
                 </div>
@@ -4429,13 +4430,13 @@ export default function Home() {
 
             {tourStep === 3 && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center" }}>
-                <h3 style={{ fontSize: "2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.03em" }}>
+                <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
                   Капитанский Драфт (4 Капитана)
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "1.05rem", lineHeight: "1.7" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7" }}>
                   Проводите живые турнирные драфты в реальном времени с синхронизацией между компьютерами капитанов!
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.03)", padding: "1.1rem 1.4rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "0.95rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
                   <div><strong>Snake Draft System:</strong> автоматическая очередность пиков и подсветка текущего хода.</div>
                   <div><strong>Сохранение & Экспорт:</strong> прогресс сохраняется при F5, результаты скачиваются в .txt файл.</div>
                 </div>
@@ -4444,13 +4445,13 @@ export default function Home() {
 
             {tourStep === 4 && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center" }}>
-                <h3 style={{ fontSize: "2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.03em" }}>
+                <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
                   Умный поиск & Скрытые игроки
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "1.05rem", lineHeight: "1.7" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7" }}>
                   Быстрый поиск участников по никнеймам и переключение отображения скрытых профилей!
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.03)", padding: "1.1rem 1.4rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "0.95rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
                   <div><strong>Мгновенная фильтрация:</strong> введите фрагмент ника для мгновенного поиска по таблице.</div>
                   <div><strong>Скрытые профили:</strong> тумблер «Показать скрытых игроков» для отображения особых участников.</div>
                 </div>
@@ -4459,35 +4460,36 @@ export default function Home() {
 
             {/* 3D COVERFLOW PERSPECTIVE FOLDER CAROUSEL */}
             <div style={{
-              perspective: "1200px",
+              perspective: "1400px",
               position: "relative",
-              height: "380px",
+              height: "520px",
               width: "100%",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              margin: "1.5rem 0",
+              margin: "2rem 0",
               overflow: "hidden",
-              borderRadius: "18px",
-              background: "rgba(0,0,0,0.3)"
+              borderRadius: "22px",
+              background: "rgba(8, 7, 13, 0.6)",
+              border: "1px solid var(--border-light)"
             }}>
               {[0, 1, 2, 3, 4].map((idx) => {
                 const offset = idx - tourStep;
                 const absOffset = Math.abs(offset);
 
                 let rotateY = 0;
-                let translateX = offset * 220;
-                let translateZ = -absOffset * 180;
-                let scale = 1 - absOffset * 0.18;
+                let translateX = offset * 280;
+                let translateZ = -absOffset * 220;
+                let scale = 1 - absOffset * 0.16;
                 let opacity = 1 - absOffset * 0.45;
                 let zIndex = 10 - absOffset;
 
                 if (offset < 0) {
-                  rotateY = 38;
-                  translateX = offset * 200 - 60;
+                  rotateY = 36;
+                  translateX = offset * 260 - 80;
                 } else if (offset > 0) {
-                  rotateY = -38;
-                  translateX = offset * 200 + 60;
+                  rotateY = -36;
+                  translateX = offset * 260 + 80;
                 }
 
                 if (absOffset > 2) opacity = 0;
@@ -4498,18 +4500,18 @@ export default function Home() {
                     onClick={() => setTourStep(idx)}
                     style={{
                       position: "absolute",
-                      width: "680px",
-                      height: "340px",
-                      borderRadius: "18px",
+                      width: "920px",
+                      height: "480px",
+                      borderRadius: "20px",
                       overflow: "hidden",
-                      border: idx === tourStep ? "2.5px solid var(--accent-cyan)" : "1px solid rgba(255, 255, 255, 0.15)",
-                      boxShadow: idx === tourStep ? "0 15px 50px rgba(0, 229, 255, 0.4)" : "0 10px 30px rgba(0, 0, 0, 0.7)",
+                      border: idx === tourStep ? "2.5px solid var(--accent-cyan)" : "1px solid rgba(255, 255, 255, 0.12)",
+                      boxShadow: idx === tourStep ? "0 20px 60px rgba(0, 229, 255, 0.4)" : "0 15px 40px rgba(0, 0, 0, 0.8)",
                       transform: `translateX(${translateX}px) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`,
                       transition: "all 0.5s cubic-bezier(0.25, 1, 0.5, 1)",
                       opacity: opacity,
                       zIndex: zIndex,
                       cursor: "pointer",
-                      background: "#0c0a17"
+                      background: "#080612"
                     }}
                   >
                     <img
@@ -4518,8 +4520,8 @@ export default function Home() {
                       style={{
                         width: "100%",
                         height: "100%",
-                        objectFit: "cover",
-                        filter: idx === tourStep ? "brightness(1.0) contrast(1.05)" : "brightness(0.45) contrast(1.1)"
+                        objectFit: "contain",
+                        filter: idx === tourStep ? "brightness(1.0) contrast(1.05)" : "brightness(0.4) contrast(1.1)"
                       }}
                     />
                   </div>
@@ -4531,42 +4533,34 @@ export default function Home() {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              marginTop: "1.5rem",
+              marginTop: "1.75rem",
               borderTop: "1px solid var(--border-light)",
-              paddingTop: "1.5rem"
+              paddingTop: "1.75rem"
             }}>
-              <div style={{ display: "flex", gap: "0.6rem" }}>
+              <div style={{ display: "flex", gap: "0.65rem" }}>
                 {[0, 1, 2, 3, 4].map((idx) => (
                   <span 
                     key={idx}
                     onClick={() => setTourStep(idx)}
                     style={{
-                      width: idx === tourStep ? "32px" : "12px",
+                      width: idx === tourStep ? "36px" : "12px",
                       height: "12px",
                       borderRadius: "6px",
                       background: idx === tourStep ? "var(--accent-cyan)" : "rgba(255,255,255,0.2)",
                       cursor: "pointer",
                       transition: "all 0.3s cubic-bezier(0.25, 1, 0.5, 1)",
-                      boxShadow: idx === tourStep ? "0 0 10px rgba(0, 229, 255, 0.6)" : "none"
+                      boxShadow: idx === tourStep ? "0 0 12px rgba(0, 229, 255, 0.6)" : "none"
                     }}
                   />
                 ))}
               </div>
 
-              <div style={{ display: "flex", gap: "0.75rem" }}>
+              <div style={{ display: "flex", gap: "1rem" }}>
                 {tourStep > 0 && (
                   <button 
                     onClick={() => setTourStep(prev => prev - 1)}
-                    style={{
-                      background: "rgba(255,255,255,0.05)",
-                      border: "1px solid var(--border-light)",
-                      borderRadius: "12px",
-                      padding: "0.65rem 1.5rem",
-                      color: "#fff",
-                      fontSize: "0.95rem",
-                      fontWeight: "700",
-                      cursor: "pointer"
-                    }}
+                    className="btn btn-secondary"
+                    style={{ padding: "0.75rem 1.75rem", fontSize: "1rem", borderRadius: "12px" }}
                   >
                     Назад
                   </button>
@@ -4575,17 +4569,8 @@ export default function Home() {
                 {tourStep < 4 ? (
                   <button 
                     onClick={() => setTourStep(prev => prev + 1)}
-                    style={{
-                      background: "var(--accent-cyan)",
-                      border: "none",
-                      borderRadius: "12px",
-                      padding: "0.65rem 1.75rem",
-                      color: "#000",
-                      fontSize: "0.95rem",
-                      fontWeight: "900",
-                      cursor: "pointer",
-                      boxShadow: "0 0 15px rgba(0, 229, 255, 0.4)"
-                    }}
+                    className="btn btn-glow-cyan"
+                    style={{ padding: "0.75rem 2.25rem", fontSize: "1rem", fontWeight: "800", borderRadius: "12px" }}
                   >
                     Далее
                   </button>
@@ -4595,16 +4580,14 @@ export default function Home() {
                       localStorage.setItem("hasSeenSigmaTour", "true");
                       setTourStep(0); setShowTourModal(false);
                     }}
+                    className="btn btn-primary"
                     style={{
                       background: "linear-gradient(135deg, var(--accent-cyan), var(--accent-purple))",
-                      border: "none",
-                      borderRadius: "12px",
-                      padding: "0.65rem 2rem",
-                      color: "#fff",
-                      fontSize: "1rem",
+                      padding: "0.75rem 2.5rem",
+                      fontSize: "1.05rem",
                       fontWeight: "900",
-                      cursor: "pointer",
-                      boxShadow: "0 0 25px rgba(0, 229, 255, 0.5)"
+                      borderRadius: "12px",
+                      boxShadow: "0 0 30px rgba(0, 229, 255, 0.5)"
                     }}
                   >
                     Начать работу
