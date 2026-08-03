@@ -1650,6 +1650,61 @@ export default function Home() {
           >
             О сервисе
           </button>
+
+          {userRole !== "GUEST" ? (
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <span className="badge badge-info" style={{ 
+                background: userRole === "EVENT_MAKER" ? "linear-gradient(135deg, #7c4dff, #00e5ff)" : "linear-gradient(135deg, #ff9100, #ff1744)", 
+                color: "#fff", 
+                fontWeight: "800",
+                padding: "0.45rem 0.85rem",
+                borderRadius: "8px",
+                fontSize: "0.82rem"
+              }}>
+                {userRole === "EVENT_MAKER" ? "⭐ EVENT MAKER: Mr.Chillout" : "👑 ADMIN"}
+              </span>
+              <button 
+                onClick={() => {
+                  localStorage.removeItem("sigma_user_role");
+                  localStorage.removeItem("sigma_user_name");
+                  setUserRole("GUEST");
+                  setUserName("");
+                }}
+                style={{
+                  background: "rgba(255, 73, 73, 0.15)",
+                  border: "1px solid rgba(255, 73, 73, 0.3)",
+                  borderRadius: "8px",
+                  padding: "0.55rem 0.85rem",
+                  color: "#ff7b7b",
+                  fontSize: "0.82rem",
+                  fontWeight: "700",
+                  cursor: "pointer"
+                }}
+              >
+                Выйти
+              </button>
+            </div>
+          ) : (
+            <button 
+              onClick={() => { setAuthError(""); setAuthPasscode(""); setShowAuthModal(true); }}
+              style={{
+                background: "linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(124, 77, 255, 0.15))",
+                border: "1px solid var(--accent-cyan)",
+                borderRadius: "8px",
+                padding: "0.55rem 0.95rem",
+                color: "#fff",
+                fontSize: "0.82rem",
+                fontWeight: "700",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.35rem",
+                boxShadow: "0 0 10px rgba(0, 229, 255, 0.25)"
+              }}
+            >
+              🔐 Войти
+            </button>
+          )}
         </div>
       </header>
 
