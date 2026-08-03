@@ -4513,7 +4513,7 @@ export default function Home() {
                     }}
                   >
                     <img
-                      src={`/tour/slide${idx + 1}.png`}
+                      src={`/tour/slide${idx + 1}.webp`}
                       alt={`Слайд ${idx + 1}`}
                       style={{
                         width: "100%",
