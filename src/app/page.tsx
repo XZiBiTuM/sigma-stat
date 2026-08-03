@@ -263,6 +263,37 @@ export default function Home() {
   const [draftTurnSequence, setDraftTurnSequence] = useState<number[]>([]);
   const [draftCurrentStepIndex, setDraftCurrentStepIndex] = useState(0);
 
+  // Auth & Event of Mr.Chillout States
+  const [userRole, setUserRole] = useState<"GUEST" | "EVENT_MAKER" | "ADMIN">("GUEST");
+  const [userName, setUserName] = useState<string>("");
+  const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
+  const [authPasscode, setAuthPasscode] = useState<string>("");
+  const [authError, setAuthError] = useState<string>("");
+  const [eventQuery, setEventQuery] = useState<string>("knife");
+  const [eventLoading, setEventLoading] = useState<boolean>(false);
+  const [eventResult, setEventResult] = useState<any>(null);
+
+  async function handleRunEventQuery(promptToRun?: string) {
+    const q = promptToRun !== undefined ? promptToRun : eventQuery;
+    if (!q) return;
+    setEventLoading(true);
+    try {
+      const res = await fetch("/api/events/query", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: q, role: userRole })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setEventResult(data);
+      }
+    } catch (err) {
+      console.error("Failed to run event query:", err);
+    } finally {
+      setEventLoading(false);
+    }
+  }
+
   // Trigger Onboarding Tour on first load
   useEffect(() => {
     if (typeof window !== "undefined" && !localStorage.getItem("hasSeenSigmaTour")) {
@@ -1597,7 +1628,7 @@ export default function Home() {
               transition: "all 0.2s"
             }}
           >
-            Драфт 4 Капитанов
+            Captain's Draft
           </button>
 
           <button 
@@ -4344,6 +4375,120 @@ export default function Home() {
         </div>
       </footer>
 
+      {/* AUTHENTICATION MODAL */}
+      {showAuthModal && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "rgba(0, 0, 0, 0.88)",
+          backdropFilter: "blur(14px)",
+          WebkitBackdropFilter: "blur(14px)",
+          zIndex: 100000,
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "center",
+          padding: "3rem 1.5rem",
+          overflowY: "auto"
+        }}>
+          <div className="glass-card animate-fade-in" style={{
+            maxWidth: "500px",
+            width: "90vw",
+            margin: "0 auto",
+            padding: "2.25rem",
+            borderRadius: "24px",
+            border: "1.5px solid var(--accent-cyan)",
+            boxShadow: "0 0 50px rgba(0, 229, 255, 0.3)",
+            position: "relative",
+            background: "#0c0a17"
+          }}>
+            <span 
+              className="modal-close-btn" 
+              onClick={() => setShowAuthModal(false)}
+              style={{ top: "1.25rem", right: "1.25rem" }}
+            >
+              ✕
+            </span>
+
+            <h3 className="glow-text-cyan" style={{ fontSize: "1.6rem", margin: "0 0 0.5rem 0", fontWeight: "900", textAlign: "center" }}>
+              🔐 Авторизация Доступа
+            </h3>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", textAlign: "center", marginBottom: "1.5rem" }}>
+              Введите пароль доступа для роли Event Maker (Mr.Chillout) или Администратора
+            </p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              <div>
+                <label style={{ display: "block", marginBottom: "0.4rem", fontSize: "0.85rem", color: "var(--text-secondary)" }}>
+                  Пароль доступа (PIN / Passcode):
+                </label>
+                <input 
+                  type="password" 
+                  className="input-field" 
+                  value={authPasscode} 
+                  onChange={(e) => { setAuthPasscode(e.target.value); setAuthError(""); }}
+                  placeholder="Введите пароль..."
+                  style={{ width: "100%", padding: "0.75rem 1rem", borderRadius: "12px", background: "#06050c" }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      const p = authPasscode.trim().toLowerCase();
+                      if (p === "chillout" || p === "mrchillout") {
+                        setUserRole("EVENT_MAKER");
+                        setUserName("Mr.Chillout");
+                        localStorage.setItem("sigma_user_role", "EVENT_MAKER");
+                        localStorage.setItem("sigma_user_name", "Mr.Chillout");
+                        setShowAuthModal(false);
+                      } else if (p === "admin" || p === "sigmaadmin") {
+                        setUserRole("ADMIN");
+                        setUserName("Admin");
+                        localStorage.setItem("sigma_user_role", "ADMIN");
+                        localStorage.setItem("sigma_user_name", "Admin");
+                        setShowAuthModal(false);
+                      } else {
+                        setAuthError("Неверный пароль доступа! Для Event Maker: chillout, для Admin: admin");
+                      }
+                    }
+                  }}
+                />
+              </div>
+
+              {authError && (
+                <div style={{ color: "#ff4949", fontSize: "0.85rem", background: "rgba(255,73,73,0.1)", padding: "0.6rem 0.8rem", borderRadius: "8px", border: "1px solid rgba(255,73,73,0.2)" }}>
+                  {authError}
+                </div>
+              )}
+
+              <button 
+                className="btn btn-glow-cyan" 
+                onClick={() => {
+                  const p = authPasscode.trim().toLowerCase();
+                  if (p === "chillout" || p === "mrchillout") {
+                    setUserRole("EVENT_MAKER");
+                    setUserName("Mr.Chillout");
+                    localStorage.setItem("sigma_user_role", "EVENT_MAKER");
+                    localStorage.setItem("sigma_user_name", "Mr.Chillout");
+                    setShowAuthModal(false);
+                  } else if (p === "admin" || p === "sigmaadmin") {
+                    setUserRole("ADMIN");
+                    setUserName("Admin");
+                    localStorage.setItem("sigma_user_role", "ADMIN");
+                    localStorage.setItem("sigma_user_name", "Admin");
+                    setShowAuthModal(false);
+                  } else {
+                    setAuthError("Неверный пароль доступа! Для Event Maker: chillout, для Admin: admin");
+                  }
+                }}
+                style={{ padding: "0.75rem", fontSize: "1rem", borderRadius: "12px", marginTop: "0.5rem" }}
+              >
+                Войти в систему
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ONBOARDING TOUR MODAL */}
       {showTourModal && (
         <div style={{
@@ -4431,7 +4576,7 @@ export default function Home() {
             {tourStep === 3 && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center" }}>
                 <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
-                  Капитанский Драфт (4 Капитана)
+                  Captain's Draft
                 </h3>
                 <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7" }}>
                   Проводите живые турнирные драфты в реальном времени с синхронизацией между компьютерами капитанов!
@@ -4629,7 +4774,7 @@ export default function Home() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--border-light)", paddingBottom: "1rem", marginBottom: "1.25rem" }}>
               <div>
                 <h3 style={{ fontSize: "1.3rem", color: "#fff", fontWeight: "900" }}>
-                  Капитанский Драфт (4 Капитана)
+                  Captain's Draft
                 </h3>
                 <span style={{ fontSize: "0.78rem", color: "var(--text-secondary)" }}>
                   Пошаговый выбор игроков в реальном времени с синхронизацией между ПК
