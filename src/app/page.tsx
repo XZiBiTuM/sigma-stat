@@ -4353,143 +4353,200 @@ export default function Home() {
           right: 0,
           bottom: 0,
           background: "rgba(0, 0, 0, 0.88)",
-          backdropFilter: "blur(12px)",
+          backdropFilter: "blur(14px)",
           zIndex: 10000,
           display: "flex",
-          alignItems: "flex-start",
+          alignItems: "center",
           justifyContent: "center",
-          padding: "2.5rem 1rem",
+          padding: "2rem 1rem",
           overflowY: "auto"
         }}>
           <div className="glass-card animate-fade-in" style={{
-            maxWidth: "1050px",
-            width: "92vw",
-            margin: "0 auto",
-            padding: "2.5rem",
-            borderRadius: "24px",
-            border: "1px solid var(--accent-cyan)",
-            boxShadow: "0 0 50px rgba(0, 229, 255, 0.3)",
+            maxWidth: "1150px",
+            width: "94vw",
+            margin: "auto",
+            padding: "2.5rem 3rem",
+            borderRadius: "26px",
+            border: "1.5px solid var(--accent-cyan)",
+            boxShadow: "0 0 60px rgba(0, 229, 255, 0.35)",
             position: "relative"
           }}>
+            <span 
+              className="modal-close-btn" 
+              onClick={() => {
+                localStorage.setItem("hasSeenSigmaTour", "true");
+                setShowTourModal(false);
+              }}
+              style={{ top: "1.5rem", right: "1.5rem" }}
+            >
+              ✕
+            </span>
+
             {tourStep === 0 && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", textAlign: "center" }}>
-                <h3 style={{ fontSize: "1.75rem", color: "#fff", fontWeight: "900", letterSpacing: "0.02em" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center" }}>
+                <h3 style={{ fontSize: "2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.03em" }}>
                   Добро пожаловать в СИГМА КИБЕР КЛУБ
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: "1.6" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "1.05rem", lineHeight: "1.7" }}>
                   Здесь собрана вся главная статистика хаба, таблица лидеров, подробные разборы матчей и аналитика ИИ Leetify.
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.03)", padding: "1rem 1.25rem", borderRadius: "14px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "0.88rem", color: "var(--text-primary)" }}>
+                <div style={{ background: "rgba(255,255,255,0.03)", padding: "1.1rem 1.4rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "0.95rem", color: "var(--text-primary)" }}>
                   <strong>Таблица лидеров:</strong> отслеживайте очки, Win Rate, текущие серии побед/поражений и переключайтесь между сезонами!
                 </div>
-                <img 
-                  src="/tour/slide1.png" 
-                  alt="Таблица лидеров" 
-                  style={{ width: "100%", borderRadius: "14px", border: "1px solid var(--border-light)", marginTop: "0.5rem", maxHeight: "420px", objectFit: "cover" }} 
-                />
               </div>
             )}
 
             {tourStep === 1 && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", textAlign: "center" }}>
-                <h3 style={{ fontSize: "1.75rem", color: "#fff", fontWeight: "900", letterSpacing: "0.02em" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center" }}>
+                <h3 style={{ fontSize: "2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.03em" }}>
                   Интерактивный разбор матчей CS2 (HUD)
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: "1.6" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "1.05rem", lineHeight: "1.7" }}>
                   Вкладка «История игр» содержит пошаговый разбор раундов на 2D-карте арены!
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.03)", padding: "1rem 1.25rem", borderRadius: "14px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "0.88rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                <div style={{ background: "rgba(255,255,255,0.03)", padding: "1.1rem 1.4rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "0.95rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
                   <div><strong>2D Heatmap & Киллфилд:</strong> отслеживайте позиции выстрелов, трассеры и вектор каждого убийства.</div>
                   <div><strong>SVG Иконки оружия:</strong> отображение чистого белого силуэта оружия и хедшотов.</div>
                 </div>
-                <img 
-                  src="/tour/slide2.png" 
-                  alt="Интерактивный разбор раундов" 
-                  style={{ width: "100%", borderRadius: "14px", border: "1px solid var(--border-light)", marginTop: "0.5rem", maxHeight: "420px", objectFit: "cover" }} 
-                />
               </div>
             )}
 
             {tourStep === 2 && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", textAlign: "center" }}>
-                <h3 style={{ fontSize: "1.75rem", color: "#fff", fontWeight: "900", letterSpacing: "0.02em" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center" }}>
+                <h3 style={{ fontSize: "2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.03em" }}>
                   Профили игроков & Аналитика Leetify
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: "1.6" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "1.05rem", lineHeight: "1.7" }}>
                   Нажмите на никнейм любого игрока, чтобы открыть расширенный дашборд статистики!
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.03)", padding: "1rem 1.25rem", borderRadius: "14px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "0.88rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                <div style={{ background: "rgba(255,255,255,0.03)", padding: "1.1rem 1.4rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "0.95rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
                   <div><strong>Статистика FACEIT:</strong> динамика Elo, КД, ADR, процент хедшотов и винрейт на картах.</div>
                   <div><strong>Leetify AI:</strong> оценка AIM, позиционирования и эффективности использования гранат.</div>
                 </div>
-                <img 
-                  src="/tour/slide3.png" 
-                  alt="Профиль игрока и Leetify" 
-                  style={{ width: "100%", borderRadius: "14px", border: "1px solid var(--border-light)", marginTop: "0.5rem", maxHeight: "420px", objectFit: "cover" }} 
-                />
               </div>
             )}
 
             {tourStep === 3 && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", textAlign: "center" }}>
-                <h3 style={{ fontSize: "1.75rem", color: "#fff", fontWeight: "900", letterSpacing: "0.02em" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center" }}>
+                <h3 style={{ fontSize: "2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.03em" }}>
                   Капитанский Драфт (4 Капитана)
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: "1.6" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "1.05rem", lineHeight: "1.7" }}>
                   Проводите живые турнирные драфты в реальном времени с синхронизацией между компьютерами капитанов!
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.03)", padding: "1rem 1.25rem", borderRadius: "14px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "0.88rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                <div style={{ background: "rgba(255,255,255,0.03)", padding: "1.1rem 1.4rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "0.95rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
                   <div><strong>Snake Draft System:</strong> автоматическая очередность пиков и подсветка текущего хода.</div>
                   <div><strong>Сохранение & Экспорт:</strong> прогресс сохраняется при F5, результаты скачиваются в .txt файл.</div>
                 </div>
-                <img 
-                  src="/tour/slide4.png" 
-                  alt="Капитанский Драфт" 
-                  style={{ width: "100%", borderRadius: "14px", border: "1px solid var(--border-light)", marginTop: "0.5rem", maxHeight: "420px", objectFit: "cover" }} 
-                />
               </div>
             )}
 
             {tourStep === 4 && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", textAlign: "center" }}>
-                <h3 style={{ fontSize: "1.75rem", color: "#fff", fontWeight: "900", letterSpacing: "0.02em" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center" }}>
+                <h3 style={{ fontSize: "2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.03em" }}>
                   Умный поиск & Скрытые игроки
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: "1.6" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "1.05rem", lineHeight: "1.7" }}>
                   Быстрый поиск участников по никнеймам и переключение отображения скрытых профилей!
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.03)", padding: "1rem 1.25rem", borderRadius: "14px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "0.88rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                <div style={{ background: "rgba(255,255,255,0.03)", padding: "1.1rem 1.4rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "0.95rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
                   <div><strong>Мгновенная фильтрация:</strong> введите фрагмент ника для мгновенного поиска по таблице.</div>
                   <div><strong>Скрытые профили:</strong> тумблер «Показать скрытых игроков» для отображения особых участников.</div>
                 </div>
-                <img 
-                  src="/tour/slide5.png" 
-                  alt="Поиск и фильтры" 
-                  style={{ width: "100%", borderRadius: "14px", border: "1px solid var(--border-light)", marginTop: "0.5rem", maxHeight: "420px", objectFit: "cover" }} 
-                />
               </div>
             )}
+
+            {/* 3D COVERFLOW PERSPECTIVE FOLDER CAROUSEL */}
+            <div style={{
+              perspective: "1200px",
+              position: "relative",
+              height: "380px",
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "1.5rem 0",
+              overflow: "hidden",
+              borderRadius: "18px",
+              background: "rgba(0,0,0,0.3)"
+            }}>
+              {[0, 1, 2, 3, 4].map((idx) => {
+                const offset = idx - tourStep;
+                const absOffset = Math.abs(offset);
+
+                let rotateY = 0;
+                let translateX = offset * 220;
+                let translateZ = -absOffset * 180;
+                let scale = 1 - absOffset * 0.18;
+                let opacity = 1 - absOffset * 0.45;
+                let zIndex = 10 - absOffset;
+
+                if (offset < 0) {
+                  rotateY = 38;
+                  translateX = offset * 200 - 60;
+                } else if (offset > 0) {
+                  rotateY = -38;
+                  translateX = offset * 200 + 60;
+                }
+
+                if (absOffset > 2) opacity = 0;
+
+                return (
+                  <div
+                    key={idx}
+                    onClick={() => setTourStep(idx)}
+                    style={{
+                      position: "absolute",
+                      width: "680px",
+                      height: "340px",
+                      borderRadius: "18px",
+                      overflow: "hidden",
+                      border: idx === tourStep ? "2.5px solid var(--accent-cyan)" : "1px solid rgba(255, 255, 255, 0.15)",
+                      boxShadow: idx === tourStep ? "0 15px 50px rgba(0, 229, 255, 0.4)" : "0 10px 30px rgba(0, 0, 0, 0.7)",
+                      transform: `translateX(${translateX}px) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`,
+                      transition: "all 0.5s cubic-bezier(0.25, 1, 0.5, 1)",
+                      opacity: opacity,
+                      zIndex: zIndex,
+                      cursor: "pointer",
+                      background: "#0c0a17"
+                    }}
+                  >
+                    <img
+                      src={`/tour/slide${idx + 1}.png`}
+                      alt={`Слайд ${idx + 1}`}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        filter: idx === tourStep ? "brightness(1.0) contrast(1.05)" : "brightness(0.45) contrast(1.1)"
+                      }}
+                    />
+                  </div>
+                );
+              })}
+            </div>
 
             <div style={{
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              marginTop: "2rem",
+              marginTop: "1.5rem",
               borderTop: "1px solid var(--border-light)",
               paddingTop: "1.5rem"
             }}>
-              <div style={{ display: "flex", gap: "0.5rem" }}>
+              <div style={{ display: "flex", gap: "0.6rem" }}>
                 {[0, 1, 2, 3, 4].map((idx) => (
                   <span 
                     key={idx}
                     onClick={() => setTourStep(idx)}
                     style={{
-                      width: idx === tourStep ? "28px" : "10px",
-                      height: "10px",
-                      borderRadius: "5px",
+                      width: idx === tourStep ? "32px" : "12px",
+                      height: "12px",
+                      borderRadius: "6px",
                       background: idx === tourStep ? "var(--accent-cyan)" : "rgba(255,255,255,0.2)",
                       cursor: "pointer",
-                      transition: "all 0.2s"
+                      transition: "all 0.3s cubic-bezier(0.25, 1, 0.5, 1)",
+                      boxShadow: idx === tourStep ? "0 0 10px rgba(0, 229, 255, 0.6)" : "none"
                     }}
                   />
                 ))}
@@ -4502,10 +4559,11 @@ export default function Home() {
                     style={{
                       background: "rgba(255,255,255,0.05)",
                       border: "1px solid var(--border-light)",
-                      borderRadius: "10px",
-                      padding: "0.6rem 1.25rem",
+                      borderRadius: "12px",
+                      padding: "0.65rem 1.5rem",
                       color: "#fff",
-                      fontSize: "0.88rem",
+                      fontSize: "0.95rem",
+                      fontWeight: "700",
                       cursor: "pointer"
                     }}
                   >
@@ -4519,12 +4577,13 @@ export default function Home() {
                     style={{
                       background: "var(--accent-cyan)",
                       border: "none",
-                      borderRadius: "10px",
-                      padding: "0.6rem 1.5rem",
+                      borderRadius: "12px",
+                      padding: "0.65rem 1.75rem",
                       color: "#000",
-                      fontSize: "0.88rem",
-                      fontWeight: "800",
-                      cursor: "pointer"
+                      fontSize: "0.95rem",
+                      fontWeight: "900",
+                      cursor: "pointer",
+                      boxShadow: "0 0 15px rgba(0, 229, 255, 0.4)"
                     }}
                   >
                     Далее
@@ -4538,13 +4597,13 @@ export default function Home() {
                     style={{
                       background: "linear-gradient(135deg, var(--accent-cyan), var(--accent-purple))",
                       border: "none",
-                      borderRadius: "10px",
-                      padding: "0.6rem 1.75rem",
+                      borderRadius: "12px",
+                      padding: "0.65rem 2rem",
                       color: "#fff",
-                      fontSize: "0.92rem",
+                      fontSize: "1rem",
                       fontWeight: "900",
                       cursor: "pointer",
-                      boxShadow: "0 0 20px rgba(0, 229, 255, 0.4)"
+                      boxShadow: "0 0 25px rgba(0, 229, 255, 0.5)"
                     }}
                   >
                     Начать работу
