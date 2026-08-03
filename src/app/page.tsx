@@ -1548,7 +1548,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="container animate-fade-in">
+      <div className="container animate-fade-in" style={{ minHeight: "100vh", display: "flex", flexDirection: "column", boxSizing: "border-box" }}>
       {/* HEADER SECTION */}
       <header style={{
         display: "flex",
@@ -4350,20 +4350,23 @@ export default function Home() {
           position: "fixed",
           top: 0,
           left: 0,
-          right: 0,
-          bottom: 0,
+          width: "100vw",
+          height: "100vh",
           background: "rgba(0, 0, 0, 0.88)",
           backdropFilter: "blur(14px)",
-          zIndex: 10000,
+          WebkitBackdropFilter: "blur(14px)",
+          zIndex: 100000,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          padding: "2rem 1rem",
-          overflowY: "auto"
+          padding: "1.5rem",
+          overflow: "hidden"
         }}>
           <div className="glass-card animate-fade-in" style={{
             maxWidth: "1150px",
             width: "94vw",
+            maxHeight: "90vh",
+            overflowY: "auto",
             margin: "auto",
             padding: "2.5rem 3rem",
             borderRadius: "26px",
