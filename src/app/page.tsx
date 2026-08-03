@@ -1601,7 +1601,7 @@ export default function Home() {
           </button>
 
           <button 
-            onClick={() => setShowTourModal(true)}
+            onClick={() => { setTourStep(0); setShowTourModal(true); }}
             style={{
               background: "rgba(255, 255, 255, 0.05)",
               border: "1px solid var(--border-light)",
@@ -4375,7 +4375,7 @@ export default function Home() {
               className="modal-close-btn" 
               onClick={() => {
                 localStorage.setItem("hasSeenSigmaTour", "true");
-                setShowTourModal(false);
+                setTourStep(0); setShowTourModal(false);
               }}
               style={{ top: "1.5rem", right: "1.5rem" }}
             >
@@ -4592,7 +4592,7 @@ export default function Home() {
                   <button 
                     onClick={() => {
                       localStorage.setItem("hasSeenSigmaTour", "true");
-                      setShowTourModal(false);
+                      setTourStep(0); setShowTourModal(false);
                     }}
                     style={{
                       background: "linear-gradient(135deg, var(--accent-cyan), var(--accent-purple))",
