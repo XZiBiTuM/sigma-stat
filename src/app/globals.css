@@ -382,18 +382,16 @@ html, body {
   -webkit-backdrop-filter: blur(14px);
   display: flex;
   justify-content: center;
-  align-items: center;
-  z-index: 10000;
-  padding: 1.5rem;
-  overflow: hidden;
+  align-items: flex-start;
+  z-index: 100000;
+  padding: 3rem 1.5rem;
+  overflow-y: auto;
 }
 
 .modal-content {
   width: 100%;
   max-width: 850px;
-  max-height: 88vh;
-  overflow-y: auto;
-  margin: auto;
+  margin: 0 auto;
   background: #0f0d1a;
   border: 1px solid var(--border-light);
   border-radius: 20px;

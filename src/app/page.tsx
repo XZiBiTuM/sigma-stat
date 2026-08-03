@@ -4357,17 +4357,15 @@ export default function Home() {
           WebkitBackdropFilter: "blur(14px)",
           zIndex: 100000,
           display: "flex",
-          alignItems: "center",
+          alignItems: "flex-start",
           justifyContent: "center",
-          padding: "1.5rem",
-          overflow: "hidden"
+          padding: "3rem 1.5rem",
+          overflowY: "auto"
         }}>
           <div className="glass-card animate-fade-in" style={{
             maxWidth: "1150px",
             width: "94vw",
-            maxHeight: "90vh",
-            overflowY: "auto",
-            margin: "auto",
+            margin: "0 auto",
             padding: "2.5rem 3rem",
             borderRadius: "26px",
             border: "1.5px solid var(--accent-cyan)",
