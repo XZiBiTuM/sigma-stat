@@ -368,20 +368,20 @@ h1, h2, h3, h4, h5, h6 {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(10px);
   display: flex;
   justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  padding: 1.5rem;
+  align-items: flex-start;
+  z-index: 10000;
+  padding: 2.5rem 1rem;
+  overflow-y: auto;
 }
 
 .modal-content {
   width: 100%;
   max-width: 850px;
-  max-height: 85vh;
-  overflow-y: auto;
+  margin: 0 auto;
   background: #0f0d1a;
   border: 1px solid var(--border-light);
   border-radius: 20px;
