@@ -137,15 +137,21 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 0 15px var(--border-glow);
 }
 
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
 /* Common Layout Components */
 .container {
   max-width: 1400px;
   margin: 0 auto;
   padding: 2rem 1.5rem;
   width: 100%;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  box-sizing: border-box;
 }
 
 /* Glassmorphism Card styling */
@@ -369,8 +375,8 @@ h1, h2, h3, h4, h5, h6 {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  right: 0;
+  bottom: 0;
   background: rgba(0, 0, 0, 0.88);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);

@@ -4350,8 +4350,8 @@ export default function Home() {
           position: "fixed",
           top: 0,
           left: 0,
-          width: "100vw",
-          height: "100vh",
+          right: 0,
+          bottom: 0,
           background: "rgba(0, 0, 0, 0.88)",
           backdropFilter: "blur(14px)",
           WebkitBackdropFilter: "blur(14px)",
@@ -4626,14 +4626,15 @@ export default function Home() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: "rgba(0, 0, 0, 0.85)",
-          backdropFilter: "blur(10px)",
-          zIndex: 10000,
+          background: "rgba(0, 0, 0, 0.88)",
+          backdropFilter: "blur(14px)",
+          WebkitBackdropFilter: "blur(14px)",
+          zIndex: 100000,
           display: "flex",
-          alignItems: "flex-start",
+          alignItems: "center",
           justifyContent: "center",
-          padding: "2.5rem 1rem",
-          overflowY: "auto"
+          padding: "1.5rem",
+          overflow: "hidden"
         }}>
           <div className="glass-card animate-fade-in" style={{
             maxWidth: "950px",
