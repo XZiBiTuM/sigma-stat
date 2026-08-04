@@ -95,31 +95,15 @@ export async function POST(request: NextRequest) {
     existing.unshift(customMatch);
     saveCustomMatches(existing);
 
-    // Build synthetic round/death events for "Event of Mr.Chillout" integration
+    // Build synthetic round/death events for hub statistics
     const deaths: any[] = [];
     const rounds: any[] = [];
 
-    // Synthesize events from player stats
     const allPlayers = [...(matchData.players1 || []), ...(matchData.players2 || [])];
     allPlayers.forEach((p: any) => {
-      const knifeCount = parseInt(p.knifeKills || "0", 10);
-      const noscopeCount = parseInt(p.noscopeKills || "0", 10);
-      const aceCount = parseInt(p.aces || "0", 10);
-      const ninjaCount = parseInt(p.ninjaDefuses || "0", 10);
-
-      for (let i = 0; i < knifeCount; i++) {
-        deaths.push({ attacker: p.nickname, victim: "Enemy", weapon: "Knife", round: i + 2 });
-      }
-      for (let i = 0; i < noscopeCount; i++) {
-        deaths.push({ attacker: p.nickname, victim: "Enemy", weapon: "AWP", noscope: true, round: i + 2 });
-      }
-      for (let i = 0; i < aceCount; i++) {
-        for (let k = 0; k < 5; k++) {
-          deaths.push({ attacker: p.nickname, victim: `Enemy_${k + 1}`, weapon: "AK-47", round: i + 5 });
-        }
-      }
-      for (let i = 0; i < ninjaCount; i++) {
-        rounds.push({ reason: "bomb_defused", defuser: p.nickname, living_t_count: 2, round: i + 3 });
+      const killsCount = parseInt(p.kills || "0", 10);
+      for (let i = 0; i < killsCount; i++) {
+        deaths.push({ attacker: p.nickname, victim: "Enemy", weapon: "AK-47", round: i + 1 });
       }
     });
 
@@ -132,7 +116,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: "Матч Cybershoke успешно сохранен и добавлен в статистику хаба!",
+      message: "Матч Cybershoke с KDA игроков успешно сохранен и добавлен в статистику!",
       match: customMatch
     });
   } catch (error: any) {

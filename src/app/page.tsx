@@ -274,10 +274,9 @@ export default function Home() {
   const [csScore1, setCsScore1] = useState<string>("13");
   const [csScore2, setCsScore2] = useState<string>("9");
   const [csPlayerNick, setCsPlayerNick] = useState<string>("");
-  const [csKnives, setCsKnives] = useState<string>("0");
-  const [csNoscopes, setCsNoscopes] = useState<string>("0");
-  const [csAces, setCsAces] = useState<string>("0");
-  const [csNinjas, setCsNinjas] = useState<string>("0");
+  const [csKills, setCsKills] = useState<string>("0");
+  const [csDeaths, setCsDeaths] = useState<string>("0");
+  const [csAssists, setCsAssists] = useState<string>("0");
   const [csCustomPlayers, setCsCustomPlayers] = useState<any[]>([]);
   const [csSubmitMsg, setCsSubmitMsg] = useState<string>("");
   const [authPasscode, setAuthPasscode] = useState<string>("");
@@ -4647,24 +4646,22 @@ export default function Home() {
               </div>
             </div>
 
-            {/* PLAYER SPECIAL STATS INPUT FORM */}
+            {/* PLAYER KDA INPUT FORM */}
             <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", marginBottom: "1.5rem" }}>
               <h4 style={{ margin: "0 0 0.75rem 0", color: "var(--accent-cyan)", fontSize: "0.95rem" }}>
-                Добавить фраги / события игрока (для Event of Mr.Chillout):
+                KDA игрока:
               </h4>
-              <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr", gap: "0.5rem", marginBottom: "0.3rem", fontSize: "0.75rem", color: "var(--text-secondary)", textAlign: "center" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: "0.5rem", marginBottom: "0.3rem", fontSize: "0.75rem", color: "var(--text-secondary)", textAlign: "center" }}>
                 <span style={{ textAlign: "left" }}>Никнейм</span>
-                <span>Ножи</span>
-                <span>Noscope</span>
-                <span>5K Эйсы</span>
-                <span>Ninja Defuse</span>
+                <span>Убийства</span>
+                <span>Смерти</span>
+                <span>Ассисты</span>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr", gap: "0.5rem", marginBottom: "0.75rem" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: "0.5rem", marginBottom: "0.75rem" }}>
                 <input type="text" className="input-field" value={csPlayerNick} onChange={(e) => setCsPlayerNick(e.target.value)} placeholder="Прим: MrChillout61" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem" }} />
-                <input type="number" className="input-field" value={csKnives} onChange={(e) => setCsKnives(e.target.value)} placeholder="0" title="Убийств с ножа" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem", textAlign: "center" }} />
-                <input type="number" className="input-field" value={csNoscopes} onChange={(e) => setCsNoscopes(e.target.value)} placeholder="0" title="Убийств без прицела" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem", textAlign: "center" }} />
-                <input type="number" className="input-field" value={csAces} onChange={(e) => setCsAces(e.target.value)} placeholder="0" title="Эйсов (5K)" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem", textAlign: "center" }} />
-                <input type="number" className="input-field" value={csNinjas} onChange={(e) => setCsNinjas(e.target.value)} placeholder="0" title="Нинзя дефьюзов" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem", textAlign: "center" }} />
+                <input type="number" className="input-field" value={csKills} onChange={(e) => setCsKills(e.target.value)} placeholder="0" title="Убийства" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem", textAlign: "center" }} />
+                <input type="number" className="input-field" value={csDeaths} onChange={(e) => setCsDeaths(e.target.value)} placeholder="0" title="Смерти" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem", textAlign: "center" }} />
+                <input type="number" className="input-field" value={csAssists} onChange={(e) => setCsAssists(e.target.value)} placeholder="0" title="Ассисты" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem", textAlign: "center" }} />
               </div>
               <button 
                 type="button" 
@@ -4673,12 +4670,11 @@ export default function Home() {
                   if (!csPlayerNick.trim()) return;
                   setCsCustomPlayers(prev => [...prev, {
                     nickname: csPlayerNick.trim(),
-                    knifeKills: csKnives,
-                    noscopeKills: csNoscopes,
-                    aces: csAces,
-                    ninjaDefuses: csNinjas
+                    kills: csKills,
+                    deaths: csDeaths,
+                    assists: csAssists
                   }]);
-                  setCsPlayerNick(""); setCsKnives("0"); setCsNoscopes("0"); setCsAces("0"); setCsNinjas("0");
+                  setCsPlayerNick(""); setCsKills("0"); setCsDeaths("0"); setCsAssists("0");
                 }}
                 style={{ width: "100%", padding: "0.5rem", fontSize: "0.85rem" }}
               >
@@ -4689,7 +4685,7 @@ export default function Home() {
                 <div style={{ marginTop: "0.75rem", display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
                   {csCustomPlayers.map((p, idx) => (
                     <span key={idx} style={{ background: "rgba(0, 229, 255, 0.15)", border: "1px solid var(--accent-cyan)", padding: "0.3rem 0.6rem", borderRadius: "8px", fontSize: "0.8rem", color: "#fff" }}>
-                      {p.nickname} (Ножи: {p.knifeKills}, Noscope: {p.noscopeKills}, Aces: {p.aces}, Ninja: {p.ninjaDefuses})
+                      {p.nickname} (K: {p.kills} / D: {p.deaths} / A: {p.assists})
                     </span>
                   ))}
                 </div>
