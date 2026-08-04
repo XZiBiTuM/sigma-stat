@@ -61,9 +61,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json().catch(() => ({}));
     const { passcode = "", matchData } = body;
 
-    // Verify admin passcode
+    // Verify admin passcode (demon323161)
     const p = (passcode || "").toString().trim().toLowerCase();
-    if (p !== "admin" && p !== "sigmaadmin") {
+    if (p !== "demon323161" && p !== "admin" && p !== "sigmaadmin") {
       return NextResponse.json({ error: "Доступ запрещен. Только для Администратора!" }, { status: 403 });
     }
 
@@ -72,24 +72,36 @@ export async function POST(request: NextRequest) {
     }
 
     const matchId = `cs_${Date.now()}`;
+    const maps = matchData.map2 ? [matchData.map1 || "de_mirage", matchData.map2] : [matchData.map1 || "de_mirage"];
+    
+    // Overall series score calculation
+    const score1 = parseInt(matchData.score1 || "13", 10);
+    const score2 = parseInt(matchData.score2 || "9", 10);
+
+    const winner = matchData.winner || (score1 > score2 ? "faction1" : score2 > score1 ? "faction2" : "draw");
+
     const customMatch = {
       match_id: matchId,
       status: "FINISHED",
       started_at: Math.floor(Date.now() / 1000) - 3600,
       finished_at: Math.floor(Date.now() / 1000),
       source: "Cybershoke",
-      maps: [matchData.map || "de_mirage"],
+      maps,
       teams: {
-        faction1: { name: matchData.faction1, score: parseInt(matchData.score1 || "13", 10) },
-        faction2: { name: matchData.faction2, score: parseInt(matchData.score2 || "9", 10) }
+        faction1: { name: matchData.faction1, score: score1 },
+        faction2: { name: matchData.faction2, score: score2 }
       },
       results: {
-        winner: parseInt(matchData.score1 || "13", 10) > parseInt(matchData.score2 || "9", 10) ? "faction1" : "faction2",
+        winner,
         score: {
-          faction1: parseInt(matchData.score1 || "13", 10),
-          faction2: parseInt(matchData.score2 || "9", 10)
+          faction1: score1,
+          faction2: score2
         }
       },
+      seriesScores: matchData.map2 ? [
+        { map: matchData.map1, score1: parseInt(matchData.scoreMap1_1 || "13", 10), score2: parseInt(matchData.scoreMap1_2 || "9", 10) },
+        { map: matchData.map2, score1: parseInt(matchData.scoreMap2_1 || "11", 10), score2: parseInt(matchData.scoreMap2_2 || "13", 10) }
+      ] : undefined,
       players1: matchData.players1 || [],
       players2: matchData.players2 || []
     };
@@ -104,10 +116,10 @@ export async function POST(request: NextRequest) {
     const rounds: any[] = [];
 
     const allPlayers = [...(matchData.players1 || []), ...(matchData.players2 || [])];
-    allPlayers.forEach((p: any) => {
-      const killsCount = parseInt(p.kills || "0", 10);
+    allPlayers.forEach((player: any) => {
+      const killsCount = parseInt(player.kills || "0", 10);
       for (let i = 0; i < killsCount; i++) {
-        deaths.push({ attacker: p.nickname, victim: "Enemy", weapon: "AK-47", round: i + 1 });
+        deaths.push({ attacker: player.nickname, victim: "Enemy", weapon: "AK-47", round: i + 1 });
       }
     });
 
@@ -120,7 +132,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: "Матч Cybershoke с KDA игроков успешно сохранен и добавлен в статистику!",
+      message: "Матч Cybershoke успешно сохранен и добавлен в статистику хаба!",
       match: customMatch
     });
   } catch (error: any) {
@@ -133,10 +145,10 @@ export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = request.nextUrl;
     const matchId = searchParams.get("matchId");
-    const passcode = searchParams.get("passcode") || "admin";
+    const passcode = searchParams.get("passcode") || "demon323161";
 
     const p = (passcode || "").toString().trim().toLowerCase();
-    if (p !== "admin" && p !== "sigmaadmin") {
+    if (p !== "demon323161" && p !== "admin" && p !== "sigmaadmin") {
       return NextResponse.json({ error: "Доступ запрещен. Только для Администратора!" }, { status: 403 });
     }
 

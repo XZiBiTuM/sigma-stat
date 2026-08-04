@@ -266,18 +266,55 @@ export default function Home() {
   // Auth & Event of Mr.Chillout States
   const [userRole, setUserRole] = useState<"GUEST" | "EVENT_MAKER" | "ADMIN">("GUEST");
   const [userName, setUserName] = useState<string>("");
+  const [eventAnnouncement, setEventAnnouncement] = useState<any>(null);
+  const [showEventModal, setShowEventModal] = useState<boolean>(false);
+  const [eventAnnText, setEventAnnText] = useState<string>("");
+  const [eventAnnPrize, setEventAnnPrize] = useState<string>("Knife");
+  const [eventAnnMsg, setEventAnnMsg] = useState<string>("");
+
+  // Restore session from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedRole = localStorage.getItem("sigma_user_role") as any;
+      const savedName = localStorage.getItem("sigma_user_name");
+      if (savedRole && ["GUEST", "EVENT_MAKER", "ADMIN"].includes(savedRole)) {
+        setUserRole(savedRole);
+      }
+      if (savedName) {
+        setUserName(savedName);
+      }
+    } catch (e) {}
+
+    // Fetch active event announcement
+    fetch("/api/events/announcement")
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.announcement) {
+          setEventAnnouncement(data.announcement);
+        }
+      })
+      .catch(() => {});
+  }, []);
   const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
   const [showCybershokeModal, setShowCybershokeModal] = useState<boolean>(false);
-  const [csMap, setCsMap] = useState<string>("de_mirage");
+  const [csMap1, setCsMap1] = useState<string>("de_mirage");
+  const [csMap2, setCsMap2] = useState<string>("");
   const [csFaction1, setCsFaction1] = useState<string>("team_uncle007");
   const [csFaction2, setCsFaction2] = useState<string>("team_nika_jok");
   const [csScore1, setCsScore1] = useState<string>("13");
   const [csScore2, setCsScore2] = useState<string>("9");
-  const [csPlayerNick, setCsPlayerNick] = useState<string>("");
-  const [csKills, setCsKills] = useState<string>("0");
-  const [csDeaths, setCsDeaths] = useState<string>("0");
-  const [csAssists, setCsAssists] = useState<string>("0");
-  const [csCustomPlayers, setCsCustomPlayers] = useState<any[]>([]);
+  const [csWinner, setCsWinner] = useState<string>("faction1");
+  const [csPlayerNick1, setCsPlayerNick1] = useState<string>("");
+  const [csKills1, setCsKills1] = useState<string>("0");
+  const [csDeaths1, setCsDeaths1] = useState<string>("0");
+  const [csAssists1, setCsAssists1] = useState<string>("0");
+  const [csPlayers1, setCsPlayers1] = useState<any[]>([]);
+
+  const [csPlayerNick2, setCsPlayerNick2] = useState<string>("");
+  const [csKills2, setCsKills2] = useState<string>("0");
+  const [csDeaths2, setCsDeaths2] = useState<string>("0");
+  const [csAssists2, setCsAssists2] = useState<string>("0");
+  const [csPlayers2, setCsPlayers2] = useState<any[]>([]);
   const [csSubmitMsg, setCsSubmitMsg] = useState<string>("");
   const [authPasscode, setAuthPasscode] = useState<string>("");
   const [authError, setAuthError] = useState<string>("");
@@ -1689,6 +1726,25 @@ export default function Home() {
               }}>
                 {userRole === "EVENT_MAKER" ? "EVENT MAKER: Mr.Chillout" : "ADMIN"}
               </span>
+
+              {(userRole === "EVENT_MAKER" || userRole === "ADMIN") && (
+                <button 
+                  onClick={() => { setEventAnnMsg(""); setShowEventModal(true); }}
+                  style={{
+                    background: "rgba(124, 77, 255, 0.15)",
+                    border: "1px solid #7c4dff",
+                    borderRadius: "8px",
+                    padding: "0.55rem 0.85rem",
+                    color: "#b388ff",
+                    fontSize: "0.82rem",
+                    fontWeight: "600",
+                    cursor: "pointer",
+                    transition: "all 0.2s"
+                  }}
+                >
+                  Добавить Event
+                </button>
+              )}
 
               <button 
                 onClick={() => {
@@ -4520,7 +4576,7 @@ export default function Home() {
                         localStorage.setItem("sigma_user_role", "EVENT_MAKER");
                         localStorage.setItem("sigma_user_name", "Mr.Chillout");
                         setShowAuthModal(false);
-                      } else if (p === "admin" || p === "sigmaadmin") {
+                      } else if (p === "demon323161" || p === "admin" || p === "sigmaadmin") {
                         setUserRole("ADMIN");
                         setUserName("Admin");
                         localStorage.setItem("sigma_user_role", "ADMIN");
@@ -4550,7 +4606,7 @@ export default function Home() {
                     localStorage.setItem("sigma_user_role", "EVENT_MAKER");
                     localStorage.setItem("sigma_user_name", "Mr.Chillout");
                     setShowAuthModal(false);
-                  } else if (p === "admin" || p === "sigmaadmin") {
+                  } else if (p === "demon323161" || p === "admin" || p === "sigmaadmin") {
                     setUserRole("ADMIN");
                     setUserName("Admin");
                     localStorage.setItem("sigma_user_role", "ADMIN");
@@ -4565,6 +4621,112 @@ export default function Home() {
                 Войти в систему
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* MR.CHILLOUT EVENT ANNOUNCEMENT MODAL */}
+      {showEventModal && (userRole === "EVENT_MAKER" || userRole === "ADMIN") && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "rgba(0, 0, 0, 0.88)",
+          backdropFilter: "blur(14px)",
+          WebkitBackdropFilter: "blur(14px)",
+          zIndex: 100000,
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "center",
+          padding: "3rem 1.5rem",
+          overflowY: "auto"
+        }}>
+          <div className="glass-card animate-fade-in" style={{
+            maxWidth: "600px",
+            width: "92vw",
+            margin: "0 auto",
+            padding: "2.25rem",
+            borderRadius: "24px",
+            border: "1.5px solid #7c4dff",
+            boxShadow: "0 0 50px rgba(124, 77, 255, 0.3)",
+            position: "relative",
+            background: "#0c0a17"
+          }}>
+            <span 
+              className="modal-close-btn" 
+              onClick={() => setShowEventModal(false)}
+              style={{ top: "1.25rem", right: "1.25rem" }}
+            >
+              ✕
+            </span>
+
+            <h3 className="glow-text-cyan" style={{ fontSize: "1.5rem", margin: "0 0 0.5rem 0", fontWeight: "800", textAlign: "center", color: "#b388ff" }}>
+              Добавить Event для Выигрыша Ножа
+            </h3>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", textAlign: "center", marginBottom: "1.5rem" }}>
+              Внесите условия выигрыша ножа на текущем турнире. Инфо будет видна на баннере сайта и автоматически сгорит через 3 дня (72 часа).
+            </p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginBottom: "1.5rem" }}>
+              <div>
+                <label style={{ display: "block", marginBottom: "0.3rem", fontSize: "0.85rem", color: "var(--text-secondary)" }}>Условия выигрыша ножа:</label>
+                <textarea 
+                  className="input-field" 
+                  rows={3}
+                  value={eventAnnText} 
+                  onChange={(e) => setEventAnnText(e.target.value)} 
+                  placeholder="Прим: Для выигрыша ножа нужно набрать больше всех ножевых фрагов за турнир!"
+                  style={{ width: "100%", padding: "0.75rem", borderRadius: "12px", background: "#06050c", fontSize: "0.9rem" }} 
+                />
+              </div>
+
+              <div>
+                <label style={{ display: "block", marginBottom: "0.3rem", fontSize: "0.85rem", color: "var(--text-secondary)" }}>Приз / Награда:</label>
+                <input 
+                  type="text" 
+                  className="input-field" 
+                  value={eventAnnPrize} 
+                  onChange={(e) => setEventAnnPrize(e.target.value)} 
+                  placeholder="Прим: Нож (Knife) / 5000 руб."
+                  style={{ width: "100%", padding: "0.6rem 0.9rem", borderRadius: "10px", background: "#06050c", fontSize: "0.9rem" }} 
+                />
+              </div>
+            </div>
+
+            {eventAnnMsg && (
+              <div style={{ color: "#00e5ff", background: "rgba(0, 229, 255, 0.1)", padding: "0.75rem", borderRadius: "10px", marginBottom: "1rem", fontSize: "0.9rem", textAlign: "center", border: "1px solid var(--accent-cyan)" }}>
+                {eventAnnMsg}
+              </div>
+            )}
+
+            <button 
+              className="btn btn-glow-cyan"
+              onClick={async () => {
+                try {
+                  const passcode = userRole === "EVENT_MAKER" ? "chillout" : "demon323161";
+                  const res = await fetch("/api/events/announcement", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ passcode, text: eventAnnText, prize: eventAnnPrize })
+                  });
+                  const data = await res.json();
+                  if (res.ok && data.success) {
+                    setEventAnnouncement(data.announcement);
+                    setEventAnnMsg("Анонс события опубликован на 3 дня!");
+                    setTimeout(() => { setShowEventModal(false); }, 1500);
+                  } else {
+                    setEventAnnMsg("Ошибка: " + (data.error || "Не удалось сохранить анонс"));
+                  }
+                } catch(e: any) {
+                  setEventAnnMsg("Ошибка: " + e.message);
+                }
+              }}
+              style={{ width: "100%", padding: "0.75rem", fontSize: "1rem", borderRadius: "12px", background: "linear-gradient(135deg, #7c4dff, #00e5ff)" }}
+            >
+              Опубликовать Event
+            </button>
           </div>
         </div>
       )}
@@ -4588,7 +4750,7 @@ export default function Home() {
           overflowY: "auto"
         }}>
           <div className="glass-card animate-fade-in" style={{
-            maxWidth: "700px",
+            maxWidth: "750px",
             width: "92vw",
             margin: "0 auto",
             padding: "2.25rem",
@@ -4610,82 +4772,144 @@ export default function Home() {
               Панель Администратора: Добавление матча Cybershoke
             </h3>
             <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", textAlign: "center", marginBottom: "1.5rem" }}>
-              Внесите результаты матча, сыгранного вне FACEIT (Cybershoke), для сохранения в общую статистику хаба
+              Внесите результаты серии карт Cybershoke с разбивкой KDA по игрокам каждой команды
             </p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1rem" }}>
+            {/* TEAM NAMES & WINNER SELECTOR */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem", marginBottom: "1rem" }}>
               <div>
-                <label style={{ display: "block", marginBottom: "0.3rem", fontSize: "0.85rem", color: "var(--text-secondary)" }}>Команда 1:</label>
+                <label style={{ display: "block", marginBottom: "0.3rem", fontSize: "0.85rem", color: "var(--text-secondary)" }}>Название Команды 1:</label>
                 <input type="text" className="input-field" value={csFaction1} onChange={(e) => setCsFaction1(e.target.value)} style={{ width: "100%", padding: "0.6rem", borderRadius: "10px", background: "#06050c" }} />
               </div>
               <div>
-                <label style={{ display: "block", marginBottom: "0.3rem", fontSize: "0.85rem", color: "var(--text-secondary)" }}>Команда 2:</label>
+                <label style={{ display: "block", marginBottom: "0.3rem", fontSize: "0.85rem", color: "var(--text-secondary)" }}>Название Команды 2:</label>
                 <input type="text" className="input-field" value={csFaction2} onChange={(e) => setCsFaction2(e.target.value)} style={{ width: "100%", padding: "0.6rem", borderRadius: "10px", background: "#06050c" }} />
               </div>
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem", marginBottom: "1.5rem" }}>
               <div>
-                <label style={{ display: "block", marginBottom: "0.3rem", fontSize: "0.85rem", color: "var(--text-secondary)" }}>Карта:</label>
-                <select className="input-field" value={csMap} onChange={(e) => setCsMap(e.target.value)} style={{ width: "100%", padding: "0.6rem", borderRadius: "10px", background: "#06050c" }}>
-                  <option value="de_mirage">Mirage</option>
-                  <option value="de_dust2">Dust 2</option>
-                  <option value="de_anubis">Anubis</option>
-                  <option value="de_inferno">Inferno</option>
-                  <option value="de_nuke">Nuke</option>
-                  <option value="de_ancient">Ancient</option>
+                <label style={{ display: "block", marginBottom: "0.3rem", fontSize: "0.85rem", color: "#ff9100", fontWeight: "700" }}>Победитель матча:</label>
+                <select className="input-field" value={csWinner} onChange={(e) => setCsWinner(e.target.value)} style={{ width: "100%", padding: "0.6rem", borderRadius: "10px", background: "#06050c" }}>
+                  <option value="faction1">Команда 1 ({csFaction1})</option>
+                  <option value="faction2">Команда 2 ({csFaction2})</option>
+                  <option value="draw">Ничья (1:1 / Draw)</option>
                 </select>
               </div>
-              <div>
-                <label style={{ display: "block", marginBottom: "0.3rem", fontSize: "0.85rem", color: "var(--text-secondary)" }}>Счет Команды 1:</label>
-                <input type="number" className="input-field" value={csScore1} onChange={(e) => setCsScore1(e.target.value)} style={{ width: "100%", padding: "0.6rem", borderRadius: "10px", background: "#06050c" }} />
+            </div>
+
+            {/* MAPS & SCORES (SUPPORT BO1 / BO2) */}
+            <div style={{ background: "rgba(255,255,255,0.02)", padding: "1rem", borderRadius: "12px", border: "1px solid var(--border-light)", marginBottom: "1.25rem" }}>
+              <div style={{ fontWeight: "700", fontSize: "0.9rem", color: "var(--accent-cyan)", marginBottom: "0.5rem" }}>
+                Карты серии (BO1 / BO2):
               </div>
-              <div>
-                <label style={{ display: "block", marginBottom: "0.3rem", fontSize: "0.85rem", color: "var(--text-secondary)" }}>Счет Команды 2:</label>
-                <input type="number" className="input-field" value={csScore2} onChange={(e) => setCsScore2(e.target.value)} style={{ width: "100%", padding: "0.6rem", borderRadius: "10px", background: "#06050c" }} />
+              <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 1.5fr 1fr", gap: "0.75rem", marginBottom: "0.5rem" }}>
+                <div>
+                  <label style={{ display: "block", fontSize: "0.75rem", color: "var(--text-secondary)" }}>Карта 1:</label>
+                  <select className="input-field" value={csMap1} onChange={(e) => setCsMap1(e.target.value)} style={{ width: "100%", padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem" }}>
+                    <option value="de_mirage">Mirage</option>
+                    <option value="de_dust2">Dust 2</option>
+                    <option value="de_anubis">Anubis</option>
+                    <option value="de_inferno">Inferno</option>
+                    <option value="de_nuke">Nuke</option>
+                    <option value="de_ancient">Ancient</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ display: "block", fontSize: "0.75rem", color: "var(--text-secondary)" }}>Счет (К1 : К2):</label>
+                  <div style={{ display: "flex", gap: "0.3rem" }}>
+                    <input type="number" className="input-field" value={csScore1} onChange={(e) => setCsScore1(e.target.value)} style={{ width: "50%", padding: "0.5rem", borderRadius: "8px", background: "#06050c", textAlign: "center", fontSize: "0.85rem" }} />
+                    <input type="number" className="input-field" value={csScore2} onChange={(e) => setCsScore2(e.target.value)} style={{ width: "50%", padding: "0.5rem", borderRadius: "8px", background: "#06050c", textAlign: "center", fontSize: "0.85rem" }} />
+                  </div>
+                </div>
+                <div>
+                  <label style={{ display: "block", fontSize: "0.75rem", color: "var(--text-secondary)" }}>Карта 2 (Необязательно):</label>
+                  <select className="input-field" value={csMap2} onChange={(e) => setCsMap2(e.target.value)} style={{ width: "100%", padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem" }}>
+                    <option value="">(Без второй карты)</option>
+                    <option value="de_mirage">Mirage</option>
+                    <option value="de_dust2">Dust 2</option>
+                    <option value="de_anubis">Anubis</option>
+                    <option value="de_inferno">Inferno</option>
+                    <option value="de_nuke">Nuke</option>
+                    <option value="de_ancient">Ancient</option>
+                  </select>
+                </div>
               </div>
             </div>
 
-            {/* PLAYER KDA INPUT FORM */}
-            <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", marginBottom: "1.5rem" }}>
-              <h4 style={{ margin: "0 0 0.75rem 0", color: "var(--accent-cyan)", fontSize: "0.95rem" }}>
-                KDA игрока:
+            {/* TEAM 1 PLAYERS INPUT */}
+            <div style={{ background: "rgba(0, 229, 255, 0.03)", padding: "1.25rem", borderRadius: "16px", border: "1px solid rgba(0, 229, 255, 0.2)", marginBottom: "1rem" }}>
+              <h4 style={{ margin: "0 0 0.5rem 0", color: "#00e5ff", fontSize: "0.95rem" }}>
+                Игроки Команды 1 ({csFaction1}):
               </h4>
               <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: "0.5rem", marginBottom: "0.3rem", fontSize: "0.75rem", color: "var(--text-secondary)", textAlign: "center" }}>
-                <span style={{ textAlign: "left" }}>Никнейм</span>
-                <span>Убийства</span>
-                <span>Смерти</span>
-                <span>Ассисты</span>
+                <span style={{ textAlign: "left" }}>Ник в Хабе / Кибершок</span>
+                <span>Kills</span>
+                <span>Deaths</span>
+                <span>Assists</span>
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: "0.5rem", marginBottom: "0.75rem" }}>
-                <input type="text" className="input-field" value={csPlayerNick} onChange={(e) => setCsPlayerNick(e.target.value)} placeholder="Прим: MrChillout61" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem" }} />
-                <input type="number" className="input-field" value={csKills} onChange={(e) => setCsKills(e.target.value)} placeholder="0" title="Убийства" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem", textAlign: "center" }} />
-                <input type="number" className="input-field" value={csDeaths} onChange={(e) => setCsDeaths(e.target.value)} placeholder="0" title="Смерти" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem", textAlign: "center" }} />
-                <input type="number" className="input-field" value={csAssists} onChange={(e) => setCsAssists(e.target.value)} placeholder="0" title="Ассисты" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem", textAlign: "center" }} />
+                <input type="text" className="input-field" value={csPlayerNick1} onChange={(e) => setCsPlayerNick1(e.target.value)} placeholder="Прим: MrChillout61" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem" }} />
+                <input type="number" className="input-field" value={csKills1} onChange={(e) => setCsKills1(e.target.value)} style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem", textAlign: "center" }} />
+                <input type="number" className="input-field" value={csDeaths1} onChange={(e) => setCsDeaths1(e.target.value)} style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem", textAlign: "center" }} />
+                <input type="number" className="input-field" value={csAssists1} onChange={(e) => setCsAssists1(e.target.value)} style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem", textAlign: "center" }} />
               </div>
               <button 
                 type="button" 
                 className="btn btn-secondary" 
                 onClick={() => {
-                  if (!csPlayerNick.trim()) return;
-                  setCsCustomPlayers(prev => [...prev, {
-                    nickname: csPlayerNick.trim(),
-                    kills: csKills,
-                    deaths: csDeaths,
-                    assists: csAssists
-                  }]);
-                  setCsPlayerNick(""); setCsKills("0"); setCsDeaths("0"); setCsAssists("0");
+                  if (!csPlayerNick1.trim()) return;
+                  setCsPlayers1(prev => [...prev, { nickname: csPlayerNick1.trim(), kills: csKills1, deaths: csDeaths1, assists: csAssists1 }]);
+                  setCsPlayerNick1(""); setCsKills1("0"); setCsDeaths1("0"); setCsAssists1("0");
                 }}
-                style={{ width: "100%", padding: "0.5rem", fontSize: "0.85rem" }}
+                style={{ width: "100%", padding: "0.45rem", fontSize: "0.82rem" }}
               >
-                + Добавить запись игрока
+                + Добавить игрока в Команду 1
               </button>
 
-              {csCustomPlayers.length > 0 && (
-                <div style={{ marginTop: "0.75rem", display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
-                  {csCustomPlayers.map((p, idx) => (
-                    <span key={idx} style={{ background: "rgba(0, 229, 255, 0.15)", border: "1px solid var(--accent-cyan)", padding: "0.3rem 0.6rem", borderRadius: "8px", fontSize: "0.8rem", color: "#fff" }}>
-                      {p.nickname} (K: {p.kills} / D: {p.deaths} / A: {p.assists})
+              {csPlayers1.length > 0 && (
+                <div style={{ marginTop: "0.6rem", display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
+                  {csPlayers1.map((p, idx) => (
+                    <span key={idx} style={{ background: "rgba(0, 229, 255, 0.15)", border: "1px solid var(--accent-cyan)", padding: "0.25rem 0.6rem", borderRadius: "6px", fontSize: "0.8rem", color: "#fff" }}>
+                      {p.nickname} (K:{p.kills} D:{p.deaths} A:{p.assists})
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* TEAM 2 PLAYERS INPUT */}
+            <div style={{ background: "rgba(255, 145, 0, 0.03)", padding: "1.25rem", borderRadius: "16px", border: "1px solid rgba(255, 145, 0, 0.2)", marginBottom: "1.25rem" }}>
+              <h4 style={{ margin: "0 0 0.5rem 0", color: "#ff9100", fontSize: "0.95rem" }}>
+                Игроки Команды 2 ({csFaction2}):
+              </h4>
+              <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: "0.5rem", marginBottom: "0.3rem", fontSize: "0.75rem", color: "var(--text-secondary)", textAlign: "center" }}>
+                <span style={{ textAlign: "left" }}>Ник в Хабе / Кибершок</span>
+                <span>Kills</span>
+                <span>Deaths</span>
+                <span>Assists</span>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: "0.5rem", marginBottom: "0.75rem" }}>
+                <input type="text" className="input-field" value={csPlayerNick2} onChange={(e) => setCsPlayerNick2(e.target.value)} placeholder="Прим: ANAKONDA1966" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem" }} />
+                <input type="number" className="input-field" value={csKills2} onChange={(e) => setCsKills2(e.target.value)} style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem", textAlign: "center" }} />
+                <input type="number" className="input-field" value={csDeaths2} onChange={(e) => setCsDeaths2(e.target.value)} style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem", textAlign: "center" }} />
+                <input type="number" className="input-field" value={csAssists2} onChange={(e) => setCsAssists2(e.target.value)} style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem", textAlign: "center" }} />
+              </div>
+              <button 
+                type="button" 
+                className="btn btn-secondary" 
+                onClick={() => {
+                  if (!csPlayerNick2.trim()) return;
+                  setCsPlayers2(prev => [...prev, { nickname: csPlayerNick2.trim(), kills: csKills2, deaths: csDeaths2, assists: csAssists2 }]);
+                  setCsPlayerNick2(""); setCsKills2("0"); setCsDeaths2("0"); setCsAssists2("0");
+                }}
+                style={{ width: "100%", padding: "0.45rem", fontSize: "0.82rem" }}
+              >
+                + Добавить игрока в Команду 2
+              </button>
+
+              {csPlayers2.length > 0 && (
+                <div style={{ marginTop: "0.6rem", display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
+                  {csPlayers2.map((p, idx) => (
+                    <span key={idx} style={{ background: "rgba(255, 145, 0, 0.15)", border: "1px solid #ff9100", padding: "0.25rem 0.6rem", borderRadius: "6px", fontSize: "0.8rem", color: "#fff" }}>
+                      {p.nickname} (K:{p.kills} D:{p.deaths} A:{p.assists})
                     </span>
                   ))}
                 </div>
@@ -4706,21 +4930,24 @@ export default function Home() {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                      passcode: "admin",
+                      passcode: "demon323161",
                       matchData: {
-                        map: csMap,
+                        map1: csMap1,
+                        map2: csMap2,
                         faction1: csFaction1,
                         faction2: csFaction2,
                         score1: csScore1,
                         score2: csScore2,
-                        players1: csCustomPlayers
+                        winner: csWinner,
+                        players1: csPlayers1,
+                        players2: csPlayers2
                       }
                     })
                   });
                   const data = await res.json();
                   if (res.ok && data.success) {
                     setCsSubmitMsg("Матч Cybershoke успешно сохранен и добавлен!");
-                    setTimeout(() => { setShowCybershokeModal(false); }, 1500);
+                    setTimeout(() => { setShowCybershokeModal(false); fetchMatches(); }, 1500);
                   } else {
                     setCsSubmitMsg("Ошибка: " + (data.error || "Не удалось сохранить матч"));
                   }
@@ -4731,6 +4958,112 @@ export default function Home() {
               style={{ width: "100%", padding: "0.75rem", fontSize: "1rem", borderRadius: "12px", background: "linear-gradient(135deg, #ff9100, #ff1744)" }}
             >
               Сохранить матч Cybershoke
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* MR.CHILLOUT EVENT ANNOUNCEMENT MODAL */}
+      {showEventModal && (userRole === "EVENT_MAKER" || userRole === "ADMIN") && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "rgba(0, 0, 0, 0.88)",
+          backdropFilter: "blur(14px)",
+          WebkitBackdropFilter: "blur(14px)",
+          zIndex: 100000,
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "center",
+          padding: "3rem 1.5rem",
+          overflowY: "auto"
+        }}>
+          <div className="glass-card animate-fade-in" style={{
+            maxWidth: "600px",
+            width: "92vw",
+            margin: "0 auto",
+            padding: "2.25rem",
+            borderRadius: "24px",
+            border: "1.5px solid #7c4dff",
+            boxShadow: "0 0 50px rgba(124, 77, 255, 0.3)",
+            position: "relative",
+            background: "#0c0a17"
+          }}>
+            <span 
+              className="modal-close-btn" 
+              onClick={() => setShowEventModal(false)}
+              style={{ top: "1.25rem", right: "1.25rem" }}
+            >
+              ✕
+            </span>
+
+            <h3 className="glow-text-cyan" style={{ fontSize: "1.5rem", margin: "0 0 0.5rem 0", fontWeight: "800", textAlign: "center", color: "#b388ff" }}>
+              Добавить Event для Выигрыша Ножа
+            </h3>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", textAlign: "center", marginBottom: "1.5rem" }}>
+              Внесите условия выигрыша ножа на текущем турнире. Инфо будет видна на баннере сайта и автоматически сгорит через 3 дня (72 часа).
+            </p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginBottom: "1.5rem" }}>
+              <div>
+                <label style={{ display: "block", marginBottom: "0.3rem", fontSize: "0.85rem", color: "var(--text-secondary)" }}>Условия выигрыша ножа:</label>
+                <textarea 
+                  className="input-field" 
+                  rows={3}
+                  value={eventAnnText} 
+                  onChange={(e) => setEventAnnText(e.target.value)} 
+                  placeholder="Прим: Для выигрыша ножа нужно набрать больше всех ножевых фрагов за турнир!"
+                  style={{ width: "100%", padding: "0.75rem", borderRadius: "12px", background: "#06050c", fontSize: "0.9rem" }} 
+                />
+              </div>
+
+              <div>
+                <label style={{ display: "block", marginBottom: "0.3rem", fontSize: "0.85rem", color: "var(--text-secondary)" }}>Приз / Награда:</label>
+                <input 
+                  type="text" 
+                  className="input-field" 
+                  value={eventAnnPrize} 
+                  onChange={(e) => setEventAnnPrize(e.target.value)} 
+                  placeholder="Прим: Нож (Knife) / 5000 руб."
+                  style={{ width: "100%", padding: "0.6rem 0.9rem", borderRadius: "10px", background: "#06050c", fontSize: "0.9rem" }} 
+                />
+              </div>
+            </div>
+
+            {eventAnnMsg && (
+              <div style={{ color: "#00e5ff", background: "rgba(0, 229, 255, 0.1)", padding: "0.75rem", borderRadius: "10px", marginBottom: "1rem", fontSize: "0.9rem", textAlign: "center", border: "1px solid var(--accent-cyan)" }}>
+                {eventAnnMsg}
+              </div>
+            )}
+
+            <button 
+              className="btn btn-glow-cyan"
+              onClick={async () => {
+                try {
+                  const passcode = userRole === "EVENT_MAKER" ? "chillout" : "demon323161";
+                  const res = await fetch("/api/events/announcement", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ passcode, text: eventAnnText, prize: eventAnnPrize })
+                  });
+                  const data = await res.json();
+                  if (res.ok && data.success) {
+                    setEventAnnouncement(data.announcement);
+                    setEventAnnMsg("Анонс события опубликован на 3 дня!");
+                    setTimeout(() => { setShowEventModal(false); }, 1500);
+                  } else {
+                    setEventAnnMsg("Ошибка: " + (data.error || "Не удалось сохранить анонс"));
+                  }
+                } catch(e: any) {
+                  setEventAnnMsg("Ошибка: " + e.message);
+                }
+              }}
+              style={{ width: "100%", padding: "0.75rem", fontSize: "1rem", borderRadius: "12px", background: "linear-gradient(135deg, #7c4dff, #00e5ff)" }}
+            >
+              Опубликовать Event
             </button>
           </div>
         </div>
