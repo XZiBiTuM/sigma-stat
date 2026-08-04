@@ -267,6 +267,19 @@ export default function Home() {
   const [userRole, setUserRole] = useState<"GUEST" | "EVENT_MAKER" | "ADMIN">("GUEST");
   const [userName, setUserName] = useState<string>("");
   const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
+  const [showCybershokeModal, setShowCybershokeModal] = useState<boolean>(false);
+  const [csMap, setCsMap] = useState<string>("de_mirage");
+  const [csFaction1, setCsFaction1] = useState<string>("team_uncle007");
+  const [csFaction2, setCsFaction2] = useState<string>("team_nika_jok");
+  const [csScore1, setCsScore1] = useState<string>("13");
+  const [csScore2, setCsScore2] = useState<string>("9");
+  const [csPlayerNick, setCsPlayerNick] = useState<string>("");
+  const [csKnives, setCsKnives] = useState<string>("0");
+  const [csNoscopes, setCsNoscopes] = useState<string>("0");
+  const [csAces, setCsAces] = useState<string>("0");
+  const [csNinjas, setCsNinjas] = useState<string>("0");
+  const [csCustomPlayers, setCsCustomPlayers] = useState<any[]>([]);
+  const [csSubmitMsg, setCsSubmitMsg] = useState<string>("");
   const [authPasscode, setAuthPasscode] = useState<string>("");
   const [authError, setAuthError] = useState<string>("");
   const [eventQuery, setEventQuery] = useState<string>("knife");
@@ -1663,6 +1676,25 @@ export default function Home() {
               }}>
                 {userRole === "EVENT_MAKER" ? "⭐ EVENT MAKER: Mr.Chillout" : "👑 ADMIN"}
               </span>
+
+              {userRole === "ADMIN" && (
+                <button 
+                  onClick={() => { setCsSubmitMsg(""); setShowCybershokeModal(true); }}
+                  style={{
+                    background: "linear-gradient(135deg, rgba(255, 145, 0, 0.25), rgba(255, 23, 68, 0.25))",
+                    border: "1px solid #ff9100",
+                    borderRadius: "8px",
+                    padding: "0.45rem 0.85rem",
+                    color: "#fff",
+                    fontWeight: "800",
+                    fontSize: "0.82rem",
+                    cursor: "pointer"
+                  }}
+                >
+                  ➕ Добавить матч Cybershoke
+                </button>
+              )}
+
               <button 
                 onClick={() => {
                   localStorage.removeItem("sigma_user_role");
