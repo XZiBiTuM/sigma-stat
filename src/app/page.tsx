@@ -1622,23 +1622,20 @@ export default function Home() {
           </p>
         </div>
 
-        <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
+        <div style={{ display: "flex", gap: "0.6rem", alignItems: "center" }}>
           <button 
             onClick={() => setShowDraftModal(true)}
             style={{
-              background: "linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(124, 77, 255, 0.15))",
-              border: "1px solid var(--accent-cyan)",
+              background: "rgba(0, 229, 255, 0.08)",
+              border: "1px solid rgba(0, 229, 255, 0.4)",
               borderRadius: "8px",
-              padding: "0.55rem 1rem",
+              padding: "0.55rem 0.95rem",
               color: "#fff",
               fontSize: "0.82rem",
-              fontWeight: "700",
+              fontWeight: "600",
               cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: "0.4rem",
-              boxShadow: "0 0 12px rgba(0, 229, 255, 0.2)",
-              transition: "all 0.2s"
+              transition: "all 0.2s",
+              boxShadow: "0 0 10px rgba(0, 229, 255, 0.15)"
             }}
           >
             Captain's Draft
@@ -1650,50 +1647,49 @@ export default function Home() {
               background: "rgba(255, 255, 255, 0.05)",
               border: "1px solid var(--border-light)",
               borderRadius: "8px",
-              padding: "0.55rem 0.9rem",
+              padding: "0.55rem 0.95rem",
               color: "var(--text-secondary)",
               fontSize: "0.82rem",
               fontWeight: "600",
               cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: "0.35rem",
               transition: "all 0.2s"
             }}
           >
             О сервисе
           </button>
 
+          {userRole === "ADMIN" && (
+            <button 
+              onClick={() => { setCsSubmitMsg(""); setShowCybershokeModal(true); }}
+              style={{
+                background: "rgba(255, 145, 0, 0.12)",
+                border: "1px solid rgba(255, 145, 0, 0.5)",
+                borderRadius: "8px",
+                padding: "0.55rem 0.95rem",
+                color: "#ff9100",
+                fontSize: "0.82rem",
+                fontWeight: "600",
+                cursor: "pointer",
+                transition: "all 0.2s"
+              }}
+            >
+              Добавить матч Cybershoke
+            </button>
+          )}
+
           {userRole !== "GUEST" ? (
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <span className="badge badge-info" style={{ 
-                background: userRole === "EVENT_MAKER" ? "linear-gradient(135deg, #7c4dff, #00e5ff)" : "linear-gradient(135deg, #ff9100, #ff1744)", 
-                color: "#fff", 
-                fontWeight: "800",
-                padding: "0.45rem 0.85rem",
+              <span style={{ 
+                background: userRole === "EVENT_MAKER" ? "rgba(124, 77, 255, 0.2)" : "rgba(255, 145, 0, 0.2)", 
+                border: userRole === "EVENT_MAKER" ? "1px solid #7c4dff" : "1px solid #ff9100",
+                color: userRole === "EVENT_MAKER" ? "#b388ff" : "#ffb74d", 
+                fontWeight: "700",
+                padding: "0.55rem 0.85rem",
                 borderRadius: "8px",
                 fontSize: "0.82rem"
               }}>
-                {userRole === "EVENT_MAKER" ? "⭐ EVENT MAKER: Mr.Chillout" : "👑 ADMIN"}
+                {userRole === "EVENT_MAKER" ? "EVENT MAKER: Mr.Chillout" : "ADMIN"}
               </span>
-
-              {userRole === "ADMIN" && (
-                <button 
-                  onClick={() => { setCsSubmitMsg(""); setShowCybershokeModal(true); }}
-                  style={{
-                    background: "linear-gradient(135deg, rgba(255, 145, 0, 0.25), rgba(255, 23, 68, 0.25))",
-                    border: "1px solid #ff9100",
-                    borderRadius: "8px",
-                    padding: "0.45rem 0.85rem",
-                    color: "#fff",
-                    fontWeight: "800",
-                    fontSize: "0.82rem",
-                    cursor: "pointer"
-                  }}
-                >
-                  ➕ Добавить матч Cybershoke
-                </button>
-              )}
 
               <button 
                 onClick={() => {
@@ -1703,14 +1699,15 @@ export default function Home() {
                   setUserName("");
                 }}
                 style={{
-                  background: "rgba(255, 73, 73, 0.15)",
+                  background: "rgba(255, 73, 73, 0.1)",
                   border: "1px solid rgba(255, 73, 73, 0.3)",
                   borderRadius: "8px",
                   padding: "0.55rem 0.85rem",
                   color: "#ff7b7b",
                   fontSize: "0.82rem",
-                  fontWeight: "700",
-                  cursor: "pointer"
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  transition: "all 0.2s"
                 }}
               >
                 Выйти
@@ -1720,21 +1717,18 @@ export default function Home() {
             <button 
               onClick={() => { setAuthError(""); setAuthPasscode(""); setShowAuthModal(true); }}
               style={{
-                background: "linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(124, 77, 255, 0.15))",
-                border: "1px solid var(--accent-cyan)",
+                background: "rgba(255, 255, 255, 0.05)",
+                border: "1px solid var(--border-light)",
                 borderRadius: "8px",
                 padding: "0.55rem 0.95rem",
                 color: "#fff",
                 fontSize: "0.82rem",
-                fontWeight: "700",
+                fontWeight: "600",
                 cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.35rem",
-                boxShadow: "0 0 10px rgba(0, 229, 255, 0.25)"
+                transition: "all 0.2s"
               }}
             >
-              🔐 Войти
+              Войти
             </button>
           )}
         </div>
@@ -4500,7 +4494,7 @@ export default function Home() {
             </span>
 
             <h3 className="glow-text-cyan" style={{ fontSize: "1.6rem", margin: "0 0 0.5rem 0", fontWeight: "900", textAlign: "center" }}>
-              🔐 Авторизация Доступа
+              Авторизация Доступа
             </h3>
             <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", textAlign: "center", marginBottom: "1.5rem" }}>
               Введите пароль доступа для роли Event Maker (Mr.Chillout) или Администратора
@@ -4572,6 +4566,169 @@ export default function Home() {
                 Войти в систему
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ADMIN CYBERSHOKE MATCH UPLOAD MODAL (ADMIN ONLY) */}
+      {showCybershokeModal && userRole === "ADMIN" && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "rgba(0, 0, 0, 0.88)",
+          backdropFilter: "blur(14px)",
+          WebkitBackdropFilter: "blur(14px)",
+          zIndex: 100000,
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "center",
+          padding: "3rem 1.5rem",
+          overflowY: "auto"
+        }}>
+          <div className="glass-card animate-fade-in" style={{
+            maxWidth: "700px",
+            width: "92vw",
+            margin: "0 auto",
+            padding: "2.25rem",
+            borderRadius: "24px",
+            border: "1.5px solid #ff9100",
+            boxShadow: "0 0 50px rgba(255, 145, 0, 0.3)",
+            position: "relative",
+            background: "#0c0a17"
+          }}>
+            <span 
+              className="modal-close-btn" 
+              onClick={() => setShowCybershokeModal(false)}
+              style={{ top: "1.25rem", right: "1.25rem" }}
+            >
+              ✕
+            </span>
+
+            <h3 className="glow-text-cyan" style={{ fontSize: "1.5rem", margin: "0 0 0.5rem 0", fontWeight: "800", textAlign: "center", color: "#ff9100" }}>
+              Панель Администратора: Добавление матча Cybershoke
+            </h3>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", textAlign: "center", marginBottom: "1.5rem" }}>
+              Внесите результаты матча, сыгранного вне FACEIT (Cybershoke), для сохранения в общую статистику хаба
+            </p>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1rem" }}>
+              <div>
+                <label style={{ display: "block", marginBottom: "0.3rem", fontSize: "0.85rem", color: "var(--text-secondary)" }}>Команда 1:</label>
+                <input type="text" className="input-field" value={csFaction1} onChange={(e) => setCsFaction1(e.target.value)} style={{ width: "100%", padding: "0.6rem", borderRadius: "10px", background: "#06050c" }} />
+              </div>
+              <div>
+                <label style={{ display: "block", marginBottom: "0.3rem", fontSize: "0.85rem", color: "var(--text-secondary)" }}>Команда 2:</label>
+                <input type="text" className="input-field" value={csFaction2} onChange={(e) => setCsFaction2(e.target.value)} style={{ width: "100%", padding: "0.6rem", borderRadius: "10px", background: "#06050c" }} />
+              </div>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem", marginBottom: "1.5rem" }}>
+              <div>
+                <label style={{ display: "block", marginBottom: "0.3rem", fontSize: "0.85rem", color: "var(--text-secondary)" }}>Карта:</label>
+                <select className="input-field" value={csMap} onChange={(e) => setCsMap(e.target.value)} style={{ width: "100%", padding: "0.6rem", borderRadius: "10px", background: "#06050c" }}>
+                  <option value="de_mirage">Mirage</option>
+                  <option value="de_dust2">Dust 2</option>
+                  <option value="de_anubis">Anubis</option>
+                  <option value="de_inferno">Inferno</option>
+                  <option value="de_nuke">Nuke</option>
+                  <option value="de_ancient">Ancient</option>
+                </select>
+              </div>
+              <div>
+                <label style={{ display: "block", marginBottom: "0.3rem", fontSize: "0.85rem", color: "var(--text-secondary)" }}>Счет Команды 1:</label>
+                <input type="number" className="input-field" value={csScore1} onChange={(e) => setCsScore1(e.target.value)} style={{ width: "100%", padding: "0.6rem", borderRadius: "10px", background: "#06050c" }} />
+              </div>
+              <div>
+                <label style={{ display: "block", marginBottom: "0.3rem", fontSize: "0.85rem", color: "var(--text-secondary)" }}>Счет Команды 2:</label>
+                <input type="number" className="input-field" value={csScore2} onChange={(e) => setCsScore2(e.target.value)} style={{ width: "100%", padding: "0.6rem", borderRadius: "10px", background: "#06050c" }} />
+              </div>
+            </div>
+
+            {/* PLAYER SPECIAL STATS INPUT FORM */}
+            <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", marginBottom: "1.5rem" }}>
+              <h4 style={{ margin: "0 0 0.75rem 0", color: "var(--accent-cyan)", fontSize: "0.95rem" }}>
+                Добавить фраги / события игрока (для Event of Mr.Chillout):
+              </h4>
+              <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr", gap: "0.5rem", marginBottom: "0.75rem" }}>
+                <input type="text" className="input-field" value={csPlayerNick} onChange={(e) => setCsPlayerNick(e.target.value)} placeholder="Ник игрока..." style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem" }} />
+                <input type="number" className="input-field" value={csKnives} onChange={(e) => setCsKnives(e.target.value)} placeholder="Ножи" title="Ножи" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem" }} />
+                <input type="number" className="input-field" value={csNoscopes} onChange={(e) => setCsNoscopes(e.target.value)} placeholder="Noscope" title="Noscope" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem" }} />
+                <input type="number" className="input-field" value={csAces} onChange={(e) => setCsAces(e.target.value)} placeholder="5K Aces" title="5K Aces" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem" }} />
+                <input type="number" className="input-field" value={csNinjas} onChange={(e) => setCsNinjas(e.target.value)} placeholder="Ninja" title="Ninja" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem" }} />
+              </div>
+              <button 
+                type="button" 
+                className="btn btn-secondary" 
+                onClick={() => {
+                  if (!csPlayerNick.trim()) return;
+                  setCsCustomPlayers(prev => [...prev, {
+                    nickname: csPlayerNick.trim(),
+                    knifeKills: csKnives,
+                    noscopeKills: csNoscopes,
+                    aces: csAces,
+                    ninjaDefuses: csNinjas
+                  }]);
+                  setCsPlayerNick(""); setCsKnives("0"); setCsNoscopes("0"); setCsAces("0"); setCsNinjas("0");
+                }}
+                style={{ width: "100%", padding: "0.5rem", fontSize: "0.85rem" }}
+              >
+                + Добавить запись игрока
+              </button>
+
+              {csCustomPlayers.length > 0 && (
+                <div style={{ marginTop: "0.75rem", display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
+                  {csCustomPlayers.map((p, idx) => (
+                    <span key={idx} style={{ background: "rgba(0, 229, 255, 0.15)", border: "1px solid var(--accent-cyan)", padding: "0.3rem 0.6rem", borderRadius: "8px", fontSize: "0.8rem", color: "#fff" }}>
+                      {p.nickname} (Ножи: {p.knifeKills}, Noscope: {p.noscopeKills}, Aces: {p.aces}, Ninja: {p.ninjaDefuses})
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {csSubmitMsg && (
+              <div style={{ color: "#00e5ff", background: "rgba(0, 229, 255, 0.1)", padding: "0.75rem", borderRadius: "10px", marginBottom: "1rem", fontSize: "0.9rem", textAlign: "center", border: "1px solid var(--accent-cyan)" }}>
+                {csSubmitMsg}
+              </div>
+            )}
+
+            <button 
+              className="btn btn-glow-cyan"
+              onClick={async () => {
+                try {
+                  const res = await fetch("/api/admin/matches/custom", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      passcode: "admin",
+                      matchData: {
+                        map: csMap,
+                        faction1: csFaction1,
+                        faction2: csFaction2,
+                        score1: csScore1,
+                        score2: csScore2,
+                        players1: csCustomPlayers
+                      }
+                    })
+                  });
+                  const data = await res.json();
+                  if (res.ok && data.success) {
+                    setCsSubmitMsg("Матч Cybershoke успешно сохранен и добавлен!");
+                    setTimeout(() => { setShowCybershokeModal(false); }, 1500);
+                  } else {
+                    setCsSubmitMsg("Ошибка: " + (data.error || "Не удалось сохранить матч"));
+                  }
+                } catch(e: any) {
+                  setCsSubmitMsg("Ошибка: " + e.message);
+                }
+              }}
+              style={{ width: "100%", padding: "0.75rem", fontSize: "1rem", borderRadius: "12px", background: "linear-gradient(135deg, #ff9100, #ff1744)" }}
+            >
+              Сохранить матч Cybershoke
+            </button>
           </div>
         </div>
       )}
