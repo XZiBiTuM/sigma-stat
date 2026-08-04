@@ -4652,12 +4652,19 @@ export default function Home() {
               <h4 style={{ margin: "0 0 0.75rem 0", color: "var(--accent-cyan)", fontSize: "0.95rem" }}>
                 Добавить фраги / события игрока (для Event of Mr.Chillout):
               </h4>
+              <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr", gap: "0.5rem", marginBottom: "0.3rem", fontSize: "0.75rem", color: "var(--text-secondary)", textAlign: "center" }}>
+                <span style={{ textAlign: "left" }}>Никнейм</span>
+                <span>Ножи</span>
+                <span>Noscope</span>
+                <span>5K Эйсы</span>
+                <span>Ninja Defuse</span>
+              </div>
               <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr", gap: "0.5rem", marginBottom: "0.75rem" }}>
-                <input type="text" className="input-field" value={csPlayerNick} onChange={(e) => setCsPlayerNick(e.target.value)} placeholder="Ник игрока..." style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem" }} />
-                <input type="number" className="input-field" value={csKnives} onChange={(e) => setCsKnives(e.target.value)} placeholder="Ножи" title="Ножи" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem" }} />
-                <input type="number" className="input-field" value={csNoscopes} onChange={(e) => setCsNoscopes(e.target.value)} placeholder="Noscope" title="Noscope" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem" }} />
-                <input type="number" className="input-field" value={csAces} onChange={(e) => setCsAces(e.target.value)} placeholder="5K Aces" title="5K Aces" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem" }} />
-                <input type="number" className="input-field" value={csNinjas} onChange={(e) => setCsNinjas(e.target.value)} placeholder="Ninja" title="Ninja" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem" }} />
+                <input type="text" className="input-field" value={csPlayerNick} onChange={(e) => setCsPlayerNick(e.target.value)} placeholder="Прим: MrChillout61" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem" }} />
+                <input type="number" className="input-field" value={csKnives} onChange={(e) => setCsKnives(e.target.value)} placeholder="0" title="Убийств с ножа" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem", textAlign: "center" }} />
+                <input type="number" className="input-field" value={csNoscopes} onChange={(e) => setCsNoscopes(e.target.value)} placeholder="0" title="Убийств без прицела" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem", textAlign: "center" }} />
+                <input type="number" className="input-field" value={csAces} onChange={(e) => setCsAces(e.target.value)} placeholder="0" title="Эйсов (5K)" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem", textAlign: "center" }} />
+                <input type="number" className="input-field" value={csNinjas} onChange={(e) => setCsNinjas(e.target.value)} placeholder="0" title="Нинзя дефьюзов" style={{ padding: "0.5rem", borderRadius: "8px", background: "#06050c", fontSize: "0.85rem", textAlign: "center" }} />
               </div>
               <button 
                 type="button" 
