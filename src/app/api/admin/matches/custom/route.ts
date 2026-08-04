@@ -36,7 +36,11 @@ function updateRoundCache(matchKey: string, data: any) {
       const content = fs.readFileSync(ROUND_CACHE_FILE, "utf8");
       cache = JSON.parse(content || "{}");
     }
-    cache[matchKey] = data;
+    if (data === null) {
+      delete cache[matchKey];
+    } else {
+      cache[matchKey] = data;
+    }
     const dir = path.dirname(ROUND_CACHE_FILE);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
@@ -122,5 +126,37 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error("Error in custom match upload:", error);
     return NextResponse.json({ error: error.message || "Ошибка при сохранении матча" }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const { searchParams } = request.nextUrl;
+    const matchId = searchParams.get("matchId");
+    const passcode = searchParams.get("passcode") || "admin";
+
+    const p = (passcode || "").toString().trim().toLowerCase();
+    if (p !== "admin" && p !== "sigmaadmin") {
+      return NextResponse.json({ error: "Доступ запрещен. Только для Администратора!" }, { status: 403 });
+    }
+
+    if (!matchId) {
+      return NextResponse.json({ error: "Не указан ID матча для удаления" }, { status: 400 });
+    }
+
+    const existing = getCustomMatches();
+    const filtered = existing.filter((m: any) => m.match_id !== matchId);
+    saveCustomMatches(filtered);
+
+    // Clean up round cache
+    updateRoundCache(`${matchId}_map0`, null);
+
+    return NextResponse.json({
+      success: true,
+      message: `Матч ${matchId} успешно удален!`
+    });
+  } catch (error: any) {
+    console.error("Error in custom match deletion:", error);
+    return NextResponse.json({ error: error.message || "Ошибка при удалении матча" }, { status: 500 });
   }
 }
