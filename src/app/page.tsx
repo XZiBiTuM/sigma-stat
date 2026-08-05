@@ -2172,6 +2172,25 @@ export default function Home() {
                     </button>
                   </div>
 
+                  {/* FACEIT DOWNTIME NOTICE BANNER */}
+                  <div style={{
+                    background: "rgba(255, 145, 0, 0.1)",
+                    border: "1px solid rgba(255, 145, 0, 0.35)",
+                    borderRadius: "12px",
+                    padding: "0.85rem 1.25rem",
+                    marginBottom: "1.25rem",
+                    color: "#ffb74d",
+                    fontSize: "0.88rem",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.75rem"
+                  }}>
+                    <span style={{ fontWeight: "700", color: "#ff9100", fontSize: "0.95rem" }}>Информация:</span>
+                    <span>
+                      Данные по прошедшему турниру неполные, так как на платформе FACEIT произошли технические неполадки. Недостающие матчи сведены вручную с Cybershoke.
+                    </span>
+                  </div>
+
                   {isLoadingMatches ? (
                     <div style={{ textAlign: "center", padding: "3rem" }}>
                       <div className="glow-text-cyan" style={{ fontSize: "1.2rem" }}>Загрузка истории матчей...</div>

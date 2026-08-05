@@ -21,47 +21,56 @@ export async function GET(
         const customMatches = JSON.parse(fileData || "[]");
         const found = customMatches.find((m: any) => m.match_id === matchId);
         if (found) {
-          const rounds = [
+          const mapsList = found.mapBreakdown || [
             {
-              match_id: matchId,
-              round_stats: {
-                Map: found.maps?.[0] || "de_mirage",
-                Score: `${found.results?.score?.faction1 || 13}:${found.results?.score?.faction2 || 9}`
-              },
-              teams: [
-                {
-                  team_id: "faction1",
-                  team_stats: { Team: found.teams?.faction1?.name || "Команда 1" },
-                  players: (found.players1 || []).map((p: any) => ({
-                    player_id: `cs_${p.nickname}`,
-                    nickname: p.nickname,
-                    player_stats: {
-                      Kills: (p.kills || 0).toString(),
-                      Deaths: (p.deaths || 0).toString(),
-                      Assists: (p.assists || 0).toString(),
-                      "K/D Ratio": (p.deaths > 0 ? (p.kills / p.deaths).toFixed(2) : p.kills.toString()),
-                      "K/R Ratio": "0.75"
-                    }
-                  }))
-                },
-                {
-                  team_id: "faction2",
-                  team_stats: { Team: found.teams?.faction2?.name || "Команда 2" },
-                  players: (found.players2 || []).map((p: any) => ({
-                    player_id: `cs_${p.nickname}`,
-                    nickname: p.nickname,
-                    player_stats: {
-                      Kills: (p.kills || 0).toString(),
-                      Deaths: (p.deaths || 0).toString(),
-                      Assists: (p.assists || 0).toString(),
-                      "K/D Ratio": (p.deaths > 0 ? (p.kills / p.deaths).toFixed(2) : p.kills.toString()),
-                      "K/R Ratio": "0.75"
-                    }
-                  }))
-                }
-              ]
+              map: found.maps?.[0] || "de_mirage",
+              score1: found.results?.score?.faction1 || 13,
+              score2: found.results?.score?.faction2 || 9,
+              players1: found.players1 || [],
+              players2: found.players2 || []
             }
           ];
+
+          const rounds = mapsList.map((mb: any, idx: number) => ({
+            match_id: `${matchId}_map${idx}`,
+            round_stats: {
+              Map: mb.map || "de_mirage",
+              Score: `${mb.score1 || 13}:${mb.score2 || 9}`
+            },
+            teams: [
+              {
+                team_id: "faction1",
+                team_stats: { Team: found.teams?.faction1?.name || "Команда 1" },
+                players: (mb.players1 || []).map((p: any) => ({
+                  player_id: `cs_${p.nickname}`,
+                  nickname: p.nickname,
+                  player_stats: {
+                    Kills: (p.kills || 0).toString(),
+                    Deaths: (p.deaths || 0).toString(),
+                    Assists: (p.assists || 0).toString(),
+                    "K/D Ratio": (p.deaths > 0 ? (p.kills / p.deaths).toFixed(2) : p.kills.toString()),
+                    "K/R Ratio": "0.75"
+                  }
+                }))
+              },
+              {
+                team_id: "faction2",
+                team_stats: { Team: found.teams?.faction2?.name || "Команда 2" },
+                players: (mb.players2 || []).map((p: any) => ({
+                  player_id: `cs_${p.nickname}`,
+                  nickname: p.nickname,
+                  player_stats: {
+                    Kills: (p.kills || 0).toString(),
+                    Deaths: (p.deaths || 0).toString(),
+                    Assists: (p.assists || 0).toString(),
+                    "K/D Ratio": (p.deaths > 0 ? (p.kills / p.deaths).toFixed(2) : p.kills.toString()),
+                    "K/R Ratio": "0.75"
+                  }
+                }))
+              }
+            ]
+          }));
+
           return NextResponse.json({ rounds });
         }
       } catch (e) {

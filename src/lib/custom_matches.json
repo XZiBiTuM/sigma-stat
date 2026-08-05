@@ -1,1 +1,490 @@
-[]
+[
+  {
+    "match_id": "cs_series_1_inferno_dust2",
+    "status": "FINISHED",
+    "started_at": 1785787200,
+    "finished_at": 1785790800,
+    "source": "Cybershoke",
+    "maps": [
+      "de_inferno",
+      "de_dust2"
+    ],
+    "teams": {
+      "faction1": {
+        "name": "team_SIGMAl",
+        "score": 2
+      },
+      "faction2": {
+        "name": "team_pilotiki161",
+        "score": 0
+      }
+    },
+    "results": {
+      "winner": "faction1",
+      "score": {
+        "faction1": 2,
+        "faction2": 0
+      }
+    },
+    "seriesScores": [
+      {
+        "map": "de_inferno",
+        "score1": 16,
+        "score2": 14
+      },
+      {
+        "map": "de_dust2",
+        "score1": 13,
+        "score2": 6
+      }
+    ],
+    "players1": [
+      {
+        "nickname": "uncle",
+        "kills": 51,
+        "deaths": 34,
+        "assists": 7
+      },
+      {
+        "nickname": "Porshen",
+        "kills": 46,
+        "deaths": 32,
+        "assists": 18
+      },
+      {
+        "nickname": "-R.T.-",
+        "kills": 47,
+        "deaths": 29,
+        "assists": 6
+      },
+      {
+        "nickname": "SIGMA | Луна",
+        "kills": 25,
+        "deaths": 37,
+        "assists": 18
+      },
+      {
+        "nickname": "w1ndyyyk 244",
+        "kills": 24,
+        "deaths": 33,
+        "assists": 14
+      }
+    ],
+    "players2": [
+      {
+        "nickname": "massao61",
+        "kills": 59,
+        "deaths": 28,
+        "assists": 9
+      },
+      {
+        "nickname": "ANAKONDA",
+        "kills": 41,
+        "deaths": 39,
+        "assists": 9
+      },
+      {
+        "nickname": "r.alekseevich",
+        "kills": 28,
+        "deaths": 36,
+        "assists": 13
+      },
+      {
+        "nickname": "pilotiki161",
+        "kills": 18,
+        "deaths": 44,
+        "assists": 16
+      },
+      {
+        "nickname": "Беженец",
+        "kills": 18,
+        "deaths": 40,
+        "assists": 9
+      }
+    ],
+    "mapBreakdown": [
+      {
+        "map": "de_inferno",
+        "score1": 16,
+        "score2": 14,
+        "players1": [
+          {
+            "nickname": "SIGMA | Луна",
+            "kills": 16,
+            "deaths": 23,
+            "assists": 12
+          },
+          {
+            "nickname": "-R.T.-",
+            "kills": 27,
+            "deaths": 19,
+            "assists": 5
+          },
+          {
+            "nickname": "Porshen",
+            "kills": 25,
+            "deaths": 21,
+            "assists": 11
+          },
+          {
+            "nickname": "uncle",
+            "kills": 32,
+            "deaths": 23,
+            "assists": 5
+          },
+          {
+            "nickname": "w1ndyyyk 244",
+            "kills": 13,
+            "deaths": 22,
+            "assists": 9
+          }
+        ],
+        "players2": [
+          {
+            "nickname": "pilotiki161",
+            "kills": 11,
+            "deaths": 26,
+            "assists": 11
+          },
+          {
+            "nickname": "ANAKONDA",
+            "kills": 27,
+            "deaths": 24,
+            "assists": 6
+          },
+          {
+            "nickname": "massao61",
+            "kills": 39,
+            "deaths": 15,
+            "assists": 5
+          },
+          {
+            "nickname": "r.alekseevich",
+            "kills": 16,
+            "deaths": 20,
+            "assists": 7
+          },
+          {
+            "nickname": "Беженец",
+            "kills": 14,
+            "deaths": 21,
+            "assists": 6
+          }
+        ]
+      },
+      {
+        "map": "de_dust2",
+        "score1": 13,
+        "score2": 6,
+        "players1": [
+          {
+            "nickname": "SIGMA | Луна",
+            "kills": 9,
+            "deaths": 14,
+            "assists": 6
+          },
+          {
+            "nickname": "uncle",
+            "kills": 19,
+            "deaths": 11,
+            "assists": 2
+          },
+          {
+            "nickname": "Porshen",
+            "kills": 21,
+            "deaths": 11,
+            "assists": 7
+          },
+          {
+            "nickname": "-R.T.-",
+            "kills": 20,
+            "deaths": 10,
+            "assists": 1
+          },
+          {
+            "nickname": "w1ndyyyk 244",
+            "kills": 11,
+            "deaths": 11,
+            "assists": 5
+          }
+        ],
+        "players2": [
+          {
+            "nickname": "pilotiki161",
+            "kills": 7,
+            "deaths": 18,
+            "assists": 5
+          },
+          {
+            "nickname": "r.alekseevich",
+            "kills": 12,
+            "deaths": 16,
+            "assists": 6
+          },
+          {
+            "nickname": "ANAKONDA",
+            "kills": 14,
+            "deaths": 15,
+            "assists": 3
+          },
+          {
+            "nickname": "Беженец",
+            "kills": 4,
+            "deaths": 19,
+            "assists": 3
+          },
+          {
+            "nickname": "massao61",
+            "kills": 20,
+            "deaths": 13,
+            "assists": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "match_id": "cs_series_2_nuke_anubis",
+    "status": "FINISHED",
+    "started_at": 1785791200,
+    "finished_at": 1785794800,
+    "source": "Cybershoke",
+    "maps": [
+      "de_nuke",
+      "de_anubis"
+    ],
+    "teams": {
+      "faction1": {
+        "name": "team_nycuJaN",
+        "score": 2
+      },
+      "faction2": {
+        "name": "team_MrChillout",
+        "score": 0
+      }
+    },
+    "results": {
+      "winner": "faction1",
+      "score": {
+        "faction1": 2,
+        "faction2": 0
+      }
+    },
+    "seriesScores": [
+      {
+        "map": "de_nuke",
+        "score1": 13,
+        "score2": 8
+      },
+      {
+        "map": "de_anubis",
+        "score1": 13,
+        "score2": 11
+      }
+    ],
+    "players1": [
+      {
+        "nickname": "000 ВАРЯГ 0",
+        "kills": 49,
+        "deaths": 31,
+        "assists": 14
+      },
+      {
+        "nickname": "nycuJaN",
+        "kills": 44,
+        "deaths": 32,
+        "assists": 11
+      },
+      {
+        "nickname": "Nagibator",
+        "kills": 36,
+        "deaths": 28,
+        "assists": 10
+      },
+      {
+        "nickname": "Hakai",
+        "kills": 29,
+        "deaths": 28,
+        "assists": 6
+      },
+      {
+        "nickname": "MAD MAX",
+        "kills": 23,
+        "deaths": 33,
+        "assists": 8
+      }
+    ],
+    "players2": [
+      {
+        "nickname": "nika_jok",
+        "kills": 41,
+        "deaths": 32,
+        "assists": 14
+      },
+      {
+        "nickname": "xzibitum",
+        "kills": 31,
+        "deaths": 37,
+        "assists": 9
+      },
+      {
+        "nickname": "Mr Chillout",
+        "kills": 26,
+        "deaths": 37,
+        "assists": 6
+      },
+      {
+        "nickname": "mendez",
+        "kills": 23,
+        "deaths": 35,
+        "assists": 10
+      },
+      {
+        "nickname": "Stas1kudin",
+        "kills": 13,
+        "deaths": 39,
+        "assists": 12
+      }
+    ],
+    "mapBreakdown": [
+      {
+        "map": "de_nuke",
+        "score1": 13,
+        "score2": 8,
+        "players1": [
+          {
+            "nickname": "nycuJaN",
+            "kills": 22,
+            "deaths": 14,
+            "assists": 7
+          },
+          {
+            "nickname": "000 ВАРЯГ 0",
+            "kills": 23,
+            "deaths": 16,
+            "assists": 7
+          },
+          {
+            "nickname": "MAD MAX",
+            "kills": 11,
+            "deaths": 14,
+            "assists": 4
+          },
+          {
+            "nickname": "Hakai",
+            "kills": 12,
+            "deaths": 13,
+            "assists": 3
+          },
+          {
+            "nickname": "Nagibator",
+            "kills": 19,
+            "deaths": 12,
+            "assists": 6
+          }
+        ],
+        "players2": [
+          {
+            "nickname": "Mr Chillout",
+            "kills": 15,
+            "deaths": 16,
+            "assists": 4
+          },
+          {
+            "nickname": "mendez",
+            "kills": 13,
+            "deaths": 16,
+            "assists": 4
+          },
+          {
+            "nickname": "nika_jok",
+            "kills": 20,
+            "deaths": 14,
+            "assists": 4
+          },
+          {
+            "nickname": "xzibitum",
+            "kills": 1,
+            "deaths": 19,
+            "assists": 4
+          },
+          {
+            "nickname": "Stas1kudin",
+            "kills": 3,
+            "deaths": 20,
+            "assists": 6
+          }
+        ]
+      },
+      {
+        "map": "de_anubis",
+        "score1": 13,
+        "score2": 11,
+        "players1": [
+          {
+            "nickname": "nycuJaN",
+            "kills": 22,
+            "deaths": 18,
+            "assists": 4
+          },
+          {
+            "nickname": "Nagibator",
+            "kills": 17,
+            "deaths": 16,
+            "assists": 4
+          },
+          {
+            "nickname": "Hakai",
+            "kills": 17,
+            "deaths": 15,
+            "assists": 3
+          },
+          {
+            "nickname": "MAD MAX",
+            "kills": 12,
+            "deaths": 19,
+            "assists": 4
+          },
+          {
+            "nickname": "000 ВАРЯГ 0",
+            "kills": 26,
+            "deaths": 15,
+            "assists": 7
+          }
+        ],
+        "players2": [
+          {
+            "nickname": "Mr Chillout",
+            "kills": 11,
+            "deaths": 21,
+            "assists": 2
+          },
+          {
+            "nickname": "xzibitum",
+            "kills": 30,
+            "deaths": 18,
+            "assists": 5
+          },
+          {
+            "nickname": "mendez",
+            "kills": 10,
+            "deaths": 19,
+            "assists": 6
+          },
+          {
+            "nickname": "Stas1kudin",
+            "kills": 10,
+            "deaths": 19,
+            "assists": 6
+          },
+          {
+            "nickname": "nika_jok",
+            "kills": 21,
+            "deaths": 18,
+            "assists": 10
+          }
+        ]
+      }
+    ]
+  }
+]

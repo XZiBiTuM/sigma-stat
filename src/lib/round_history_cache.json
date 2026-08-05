@@ -1,1 +1,4048 @@
-{}
+{
+  "cs_series_1_inferno_dust2_map0": {
+    "matchId": "cs_series_1_inferno_dust2",
+    "source": "Cybershoke",
+    "rounds": [],
+    "deaths": [
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 1
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 2
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 3
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 4
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 5
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 6
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 7
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 8
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 9
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 10
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 11
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 12
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 13
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 14
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 15
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 16
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 17
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 18
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 19
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 20
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 21
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 22
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 23
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 24
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 25
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 26
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 27
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 28
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 29
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 30
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 31
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 32
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 33
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 34
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 35
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 36
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 37
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 38
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 39
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 40
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 41
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 42
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 43
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 44
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 45
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 46
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 47
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 48
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 49
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 50
+      },
+      {
+        "attacker": "uncle",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 51
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 1
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 2
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 3
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 4
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 5
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 6
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 7
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 8
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 9
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 10
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 11
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 12
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 13
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 14
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 15
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 16
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 17
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 18
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 19
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 20
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 21
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 22
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 23
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 24
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 25
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 26
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 27
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 28
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 29
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 30
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 31
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 32
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 33
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 34
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 35
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 36
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 37
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 38
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 39
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 40
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 41
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 42
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 43
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 44
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 45
+      },
+      {
+        "attacker": "Porshen",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 46
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 1
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 2
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 3
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 4
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 5
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 6
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 7
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 8
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 9
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 10
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 11
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 12
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 13
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 14
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 15
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 16
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 17
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 18
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 19
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 20
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 21
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 22
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 23
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 24
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 25
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 26
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 27
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 28
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 29
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 30
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 31
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 32
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 33
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 34
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 35
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 36
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 37
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 38
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 39
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 40
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 41
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 42
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 43
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 44
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 45
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 46
+      },
+      {
+        "attacker": "-R.T.-",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 47
+      },
+      {
+        "attacker": "SIGMA | Луна",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 1
+      },
+      {
+        "attacker": "SIGMA | Луна",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 2
+      },
+      {
+        "attacker": "SIGMA | Луна",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 3
+      },
+      {
+        "attacker": "SIGMA | Луна",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 4
+      },
+      {
+        "attacker": "SIGMA | Луна",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 5
+      },
+      {
+        "attacker": "SIGMA | Луна",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 6
+      },
+      {
+        "attacker": "SIGMA | Луна",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 7
+      },
+      {
+        "attacker": "SIGMA | Луна",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 8
+      },
+      {
+        "attacker": "SIGMA | Луна",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 9
+      },
+      {
+        "attacker": "SIGMA | Луна",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 10
+      },
+      {
+        "attacker": "SIGMA | Луна",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 11
+      },
+      {
+        "attacker": "SIGMA | Луна",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 12
+      },
+      {
+        "attacker": "SIGMA | Луна",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 13
+      },
+      {
+        "attacker": "SIGMA | Луна",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 14
+      },
+      {
+        "attacker": "SIGMA | Луна",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 15
+      },
+      {
+        "attacker": "SIGMA | Луна",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 16
+      },
+      {
+        "attacker": "SIGMA | Луна",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 17
+      },
+      {
+        "attacker": "SIGMA | Луна",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 18
+      },
+      {
+        "attacker": "SIGMA | Луна",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 19
+      },
+      {
+        "attacker": "SIGMA | Луна",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 20
+      },
+      {
+        "attacker": "SIGMA | Луна",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 21
+      },
+      {
+        "attacker": "SIGMA | Луна",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 22
+      },
+      {
+        "attacker": "SIGMA | Луна",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 23
+      },
+      {
+        "attacker": "SIGMA | Луна",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 24
+      },
+      {
+        "attacker": "SIGMA | Луна",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 25
+      },
+      {
+        "attacker": "w1ndyyyk 244",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 1
+      },
+      {
+        "attacker": "w1ndyyyk 244",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 2
+      },
+      {
+        "attacker": "w1ndyyyk 244",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 3
+      },
+      {
+        "attacker": "w1ndyyyk 244",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 4
+      },
+      {
+        "attacker": "w1ndyyyk 244",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 5
+      },
+      {
+        "attacker": "w1ndyyyk 244",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 6
+      },
+      {
+        "attacker": "w1ndyyyk 244",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 7
+      },
+      {
+        "attacker": "w1ndyyyk 244",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 8
+      },
+      {
+        "attacker": "w1ndyyyk 244",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 9
+      },
+      {
+        "attacker": "w1ndyyyk 244",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 10
+      },
+      {
+        "attacker": "w1ndyyyk 244",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 11
+      },
+      {
+        "attacker": "w1ndyyyk 244",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 12
+      },
+      {
+        "attacker": "w1ndyyyk 244",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 13
+      },
+      {
+        "attacker": "w1ndyyyk 244",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 14
+      },
+      {
+        "attacker": "w1ndyyyk 244",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 15
+      },
+      {
+        "attacker": "w1ndyyyk 244",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 16
+      },
+      {
+        "attacker": "w1ndyyyk 244",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 17
+      },
+      {
+        "attacker": "w1ndyyyk 244",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 18
+      },
+      {
+        "attacker": "w1ndyyyk 244",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 19
+      },
+      {
+        "attacker": "w1ndyyyk 244",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 20
+      },
+      {
+        "attacker": "w1ndyyyk 244",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 21
+      },
+      {
+        "attacker": "w1ndyyyk 244",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 22
+      },
+      {
+        "attacker": "w1ndyyyk 244",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 23
+      },
+      {
+        "attacker": "w1ndyyyk 244",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 24
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 1
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 2
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 3
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 4
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 5
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 6
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 7
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 8
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 9
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 10
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 11
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 12
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 13
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 14
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 15
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 16
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 17
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 18
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 19
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 20
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 21
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 22
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 23
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 24
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 25
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 26
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 27
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 28
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 29
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 30
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 31
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 32
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 33
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 34
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 35
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 36
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 37
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 38
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 39
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 40
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 41
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 42
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 43
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 44
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 45
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 46
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 47
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 48
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 49
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 50
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 51
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 52
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 53
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 54
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 55
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 56
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 57
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 58
+      },
+      {
+        "attacker": "massao61",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 59
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 1
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 2
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 3
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 4
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 5
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 6
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 7
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 8
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 9
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 10
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 11
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 12
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 13
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 14
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 15
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 16
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 17
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 18
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 19
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 20
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 21
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 22
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 23
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 24
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 25
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 26
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 27
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 28
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 29
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 30
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 31
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 32
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 33
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 34
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 35
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 36
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 37
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 38
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 39
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 40
+      },
+      {
+        "attacker": "ANAKONDA",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 41
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 1
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 2
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 3
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 4
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 5
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 6
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 7
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 8
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 9
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 10
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 11
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 12
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 13
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 14
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 15
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 16
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 17
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 18
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 19
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 20
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 21
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 22
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 23
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 24
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 25
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 26
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 27
+      },
+      {
+        "attacker": "r.alekseevich",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 28
+      },
+      {
+        "attacker": "pilotiki161",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 1
+      },
+      {
+        "attacker": "pilotiki161",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 2
+      },
+      {
+        "attacker": "pilotiki161",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 3
+      },
+      {
+        "attacker": "pilotiki161",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 4
+      },
+      {
+        "attacker": "pilotiki161",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 5
+      },
+      {
+        "attacker": "pilotiki161",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 6
+      },
+      {
+        "attacker": "pilotiki161",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 7
+      },
+      {
+        "attacker": "pilotiki161",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 8
+      },
+      {
+        "attacker": "pilotiki161",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 9
+      },
+      {
+        "attacker": "pilotiki161",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 10
+      },
+      {
+        "attacker": "pilotiki161",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 11
+      },
+      {
+        "attacker": "pilotiki161",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 12
+      },
+      {
+        "attacker": "pilotiki161",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 13
+      },
+      {
+        "attacker": "pilotiki161",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 14
+      },
+      {
+        "attacker": "pilotiki161",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 15
+      },
+      {
+        "attacker": "pilotiki161",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 16
+      },
+      {
+        "attacker": "pilotiki161",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 17
+      },
+      {
+        "attacker": "pilotiki161",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 18
+      },
+      {
+        "attacker": "Беженец",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 1
+      },
+      {
+        "attacker": "Беженец",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 2
+      },
+      {
+        "attacker": "Беженец",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 3
+      },
+      {
+        "attacker": "Беженец",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 4
+      },
+      {
+        "attacker": "Беженец",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 5
+      },
+      {
+        "attacker": "Беженец",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 6
+      },
+      {
+        "attacker": "Беженец",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 7
+      },
+      {
+        "attacker": "Беженец",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 8
+      },
+      {
+        "attacker": "Беженец",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 9
+      },
+      {
+        "attacker": "Беженец",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 10
+      },
+      {
+        "attacker": "Беженец",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 11
+      },
+      {
+        "attacker": "Беженец",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 12
+      },
+      {
+        "attacker": "Беженец",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 13
+      },
+      {
+        "attacker": "Беженец",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 14
+      },
+      {
+        "attacker": "Беженец",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 15
+      },
+      {
+        "attacker": "Беженец",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 16
+      },
+      {
+        "attacker": "Беженец",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 17
+      },
+      {
+        "attacker": "Беженец",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 18
+      }
+    ]
+  },
+  "cs_series_2_nuke_anubis_map0": {
+    "matchId": "cs_series_2_nuke_anubis",
+    "source": "Cybershoke",
+    "rounds": [],
+    "deaths": [
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 1
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 2
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 3
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 4
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 5
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 6
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 7
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 8
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 9
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 10
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 11
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 12
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 13
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 14
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 15
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 16
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 17
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 18
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 19
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 20
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 21
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 22
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 23
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 24
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 25
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 26
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 27
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 28
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 29
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 30
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 31
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 32
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 33
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 34
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 35
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 36
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 37
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 38
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 39
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 40
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 41
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 42
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 43
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 44
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 45
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 46
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 47
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 48
+      },
+      {
+        "attacker": "000 ВАРЯГ 0",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 49
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 1
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 2
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 3
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 4
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 5
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 6
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 7
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 8
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 9
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 10
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 11
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 12
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 13
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 14
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 15
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 16
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 17
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 18
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 19
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 20
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 21
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 22
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 23
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 24
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 25
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 26
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 27
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 28
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 29
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 30
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 31
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 32
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 33
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 34
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 35
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 36
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 37
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 38
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 39
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 40
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 41
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 42
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 43
+      },
+      {
+        "attacker": "nycuJaN",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 44
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 1
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 2
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 3
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 4
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 5
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 6
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 7
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 8
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 9
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 10
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 11
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 12
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 13
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 14
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 15
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 16
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 17
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 18
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 19
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 20
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 21
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 22
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 23
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 24
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 25
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 26
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 27
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 28
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 29
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 30
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 31
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 32
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 33
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 34
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 35
+      },
+      {
+        "attacker": "Nagibator",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 36
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 1
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 2
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 3
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 4
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 5
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 6
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 7
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 8
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 9
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 10
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 11
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 12
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 13
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 14
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 15
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 16
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 17
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 18
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 19
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 20
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 21
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 22
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 23
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 24
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 25
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 26
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 27
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 28
+      },
+      {
+        "attacker": "Hakai",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 29
+      },
+      {
+        "attacker": "MAD MAX",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 1
+      },
+      {
+        "attacker": "MAD MAX",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 2
+      },
+      {
+        "attacker": "MAD MAX",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 3
+      },
+      {
+        "attacker": "MAD MAX",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 4
+      },
+      {
+        "attacker": "MAD MAX",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 5
+      },
+      {
+        "attacker": "MAD MAX",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 6
+      },
+      {
+        "attacker": "MAD MAX",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 7
+      },
+      {
+        "attacker": "MAD MAX",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 8
+      },
+      {
+        "attacker": "MAD MAX",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 9
+      },
+      {
+        "attacker": "MAD MAX",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 10
+      },
+      {
+        "attacker": "MAD MAX",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 11
+      },
+      {
+        "attacker": "MAD MAX",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 12
+      },
+      {
+        "attacker": "MAD MAX",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 13
+      },
+      {
+        "attacker": "MAD MAX",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 14
+      },
+      {
+        "attacker": "MAD MAX",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 15
+      },
+      {
+        "attacker": "MAD MAX",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 16
+      },
+      {
+        "attacker": "MAD MAX",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 17
+      },
+      {
+        "attacker": "MAD MAX",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 18
+      },
+      {
+        "attacker": "MAD MAX",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 19
+      },
+      {
+        "attacker": "MAD MAX",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 20
+      },
+      {
+        "attacker": "MAD MAX",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 21
+      },
+      {
+        "attacker": "MAD MAX",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 22
+      },
+      {
+        "attacker": "MAD MAX",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 23
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 1
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 2
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 3
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 4
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 5
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 6
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 7
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 8
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 9
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 10
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 11
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 12
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 13
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 14
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 15
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 16
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 17
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 18
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 19
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 20
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 21
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 22
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 23
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 24
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 25
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 26
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 27
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 28
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 29
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 30
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 31
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 32
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 33
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 34
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 35
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 36
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 37
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 38
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 39
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 40
+      },
+      {
+        "attacker": "nika_jok",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 41
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 1
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 2
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 3
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 4
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 5
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 6
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 7
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 8
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 9
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 10
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 11
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 12
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 13
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 14
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 15
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 16
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 17
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 18
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 19
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 20
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 21
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 22
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 23
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 24
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 25
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 26
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 27
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 28
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 29
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 30
+      },
+      {
+        "attacker": "xzibitum",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 31
+      },
+      {
+        "attacker": "Mr Chillout",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 1
+      },
+      {
+        "attacker": "Mr Chillout",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 2
+      },
+      {
+        "attacker": "Mr Chillout",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 3
+      },
+      {
+        "attacker": "Mr Chillout",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 4
+      },
+      {
+        "attacker": "Mr Chillout",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 5
+      },
+      {
+        "attacker": "Mr Chillout",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 6
+      },
+      {
+        "attacker": "Mr Chillout",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 7
+      },
+      {
+        "attacker": "Mr Chillout",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 8
+      },
+      {
+        "attacker": "Mr Chillout",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 9
+      },
+      {
+        "attacker": "Mr Chillout",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 10
+      },
+      {
+        "attacker": "Mr Chillout",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 11
+      },
+      {
+        "attacker": "Mr Chillout",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 12
+      },
+      {
+        "attacker": "Mr Chillout",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 13
+      },
+      {
+        "attacker": "Mr Chillout",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 14
+      },
+      {
+        "attacker": "Mr Chillout",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 15
+      },
+      {
+        "attacker": "Mr Chillout",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 16
+      },
+      {
+        "attacker": "Mr Chillout",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 17
+      },
+      {
+        "attacker": "Mr Chillout",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 18
+      },
+      {
+        "attacker": "Mr Chillout",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 19
+      },
+      {
+        "attacker": "Mr Chillout",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 20
+      },
+      {
+        "attacker": "Mr Chillout",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 21
+      },
+      {
+        "attacker": "Mr Chillout",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 22
+      },
+      {
+        "attacker": "Mr Chillout",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 23
+      },
+      {
+        "attacker": "Mr Chillout",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 24
+      },
+      {
+        "attacker": "Mr Chillout",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 25
+      },
+      {
+        "attacker": "Mr Chillout",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 26
+      },
+      {
+        "attacker": "mendez",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 1
+      },
+      {
+        "attacker": "mendez",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 2
+      },
+      {
+        "attacker": "mendez",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 3
+      },
+      {
+        "attacker": "mendez",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 4
+      },
+      {
+        "attacker": "mendez",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 5
+      },
+      {
+        "attacker": "mendez",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 6
+      },
+      {
+        "attacker": "mendez",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 7
+      },
+      {
+        "attacker": "mendez",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 8
+      },
+      {
+        "attacker": "mendez",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 9
+      },
+      {
+        "attacker": "mendez",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 10
+      },
+      {
+        "attacker": "mendez",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 11
+      },
+      {
+        "attacker": "mendez",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 12
+      },
+      {
+        "attacker": "mendez",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 13
+      },
+      {
+        "attacker": "mendez",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 14
+      },
+      {
+        "attacker": "mendez",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 15
+      },
+      {
+        "attacker": "mendez",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 16
+      },
+      {
+        "attacker": "mendez",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 17
+      },
+      {
+        "attacker": "mendez",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 18
+      },
+      {
+        "attacker": "mendez",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 19
+      },
+      {
+        "attacker": "mendez",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 20
+      },
+      {
+        "attacker": "mendez",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 21
+      },
+      {
+        "attacker": "mendez",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 22
+      },
+      {
+        "attacker": "mendez",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 23
+      },
+      {
+        "attacker": "Stas1kudin",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 1
+      },
+      {
+        "attacker": "Stas1kudin",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 2
+      },
+      {
+        "attacker": "Stas1kudin",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 3
+      },
+      {
+        "attacker": "Stas1kudin",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 4
+      },
+      {
+        "attacker": "Stas1kudin",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 5
+      },
+      {
+        "attacker": "Stas1kudin",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 6
+      },
+      {
+        "attacker": "Stas1kudin",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 7
+      },
+      {
+        "attacker": "Stas1kudin",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 8
+      },
+      {
+        "attacker": "Stas1kudin",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 9
+      },
+      {
+        "attacker": "Stas1kudin",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 10
+      },
+      {
+        "attacker": "Stas1kudin",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 11
+      },
+      {
+        "attacker": "Stas1kudin",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 12
+      },
+      {
+        "attacker": "Stas1kudin",
+        "victim": "Enemy",
+        "weapon": "AK-47",
+        "round": 13
+      }
+    ]
+  }
+}
