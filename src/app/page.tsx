@@ -2172,24 +2172,25 @@ export default function Home() {
                     </button>
                   </div>
 
-                  {/* FACEIT DOWNTIME NOTICE BANNER */}
-                  <div style={{
-                    background: "rgba(255, 145, 0, 0.1)",
-                    border: "1px solid rgba(255, 145, 0, 0.35)",
-                    borderRadius: "12px",
-                    padding: "0.85rem 1.25rem",
-                    marginBottom: "1.25rem",
-                    color: "#ffb74d",
-                    fontSize: "0.88rem",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.75rem"
-                  }}>
-                    <span style={{ fontWeight: "700", color: "#ff9100", fontSize: "0.95rem" }}>Информация:</span>
-                    <span>
-                      Данные по прошедшему турниру неполные, так как на платформе FACEIT произошли технические неполадки. Недостающие матчи сведены вручную с Cybershoke.
-                    </span>
-                  </div>
+                  {/* FACEIT DOWNTIME NOTICE BANNER (AUTO-EXPIRES IN 2 WEEKS: AUG 19 2026) */}
+                  {Date.now() < new Date('2026-08-19T23:59:59Z').getTime() && (
+                    <div style={{
+                      background: "rgba(255, 145, 0, 0.1)",
+                      border: "1px solid rgba(255, 145, 0, 0.35)",
+                      borderRadius: "12px",
+                      padding: "0.85rem 1.25rem",
+                      color: "#ffb74d",
+                      fontSize: "0.88rem",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.75rem"
+                    }}>
+                      <span style={{ fontWeight: "700", color: "#ff9100", fontSize: "0.95rem" }}>Информация:</span>
+                      <span>
+                        Данные по прошедшему турниру неполные, так как на платформе FACEIT произошли технические неполадки. Недостающие матчи сведены вручную с Cybershoke.
+                      </span>
+                    </div>
+                  )}
 
                   {isLoadingMatches ? (
                     <div style={{ textAlign: "center", padding: "3rem" }}>
@@ -2200,10 +2201,11 @@ export default function Home() {
                       Матчи в данной категории отсутствуют.
                     </div>
                   ) : (
-                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginTop: "1rem" }}>
                       {filteredMatches.map((match) => {
                         const isFinished = match.status === "FINISHED";
                         const isLive = match.status === "ONGOING" || match.status === "LIVE";
+                        const isCustom = (match as any).source === "Cybershoke" || match.match_id.startsWith("cs_");
                         const mapName = match.voting?.map?.entities?.[0]?.name || "Голосование...";
                         const matchDate = new Date(match.finished_at ? match.finished_at * 1000 : match.started_at * 1000).toLocaleString("ru-RU", {
                           day: "numeric",
@@ -2221,42 +2223,52 @@ export default function Home() {
                               display: "flex",
                               justifyContent: "space-between",
                               alignItems: "center",
-                              padding: "1.25rem",
-                              borderLeft: isLive ? "4px solid var(--accent-cyan)" : isFinished ? "1px solid var(--border-light)" : "4px solid var(--danger)",
-                              flexWrap: "wrap",
-                              gap: "1rem",
+                              padding: "1.25rem 1.5rem",
+                              borderRadius: "16px",
+                              border: isCustom ? "1.5px solid rgba(255, 145, 0, 0.4)" : "1px solid var(--border-light)",
                               position: "relative",
-                              overflow: "hidden"
+                              overflow: "hidden",
+                              boxShadow: isCustom ? "0 0 25px rgba(255, 145, 0, 0.15)" : "none",
+                              gap: "1.5rem",
+                              flexWrap: "wrap"
                             }}
                           >
-                            {/* Dynamic Maps Background */}
-                            <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 0, overflow: "hidden", borderRadius: "inherit" }}>
+                            {/* Card Map Background */}
+                            <div style={{
+                              position: "absolute",
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              pointerEvents: "none",
+                              zIndex: 1
+                            }}>
                               {matchMaps.length > 1 ? (
                                 <>
                                   <div style={{
                                     position: "absolute",
                                     top: 0,
                                     left: 0,
-                                    width: "100%",
+                                    width: "55%",
                                     height: "100%",
-                                    background: `url(${getMapImageUrl(matchMaps[0])}) center/cover no-repeat, var(--bg-card)`,
-                                    clipPath: "polygon(0 0, 52% 0, 48% 100%, 0 100%)"
+                                    background: `url(${getMapImageUrl(matchMaps[0])}) center/cover no-repeat`,
+                                    clipPath: "polygon(0 0, 100% 0, 80% 100%, 0 100%)"
                                   }} />
                                   <div style={{
                                     position: "absolute",
                                     top: 0,
-                                    left: 0,
-                                    width: "100%",
+                                    right: 0,
+                                    width: "55%",
                                     height: "100%",
-                                    background: `url(${getMapImageUrl(matchMaps[1])}) center/cover no-repeat, var(--bg-card)`,
-                                    clipPath: "polygon(52% 0, 100% 0, 100% 100%, 48% 100%)"
+                                    background: `url(${getMapImageUrl(matchMaps[1])}) center/cover no-repeat`,
+                                    clipPath: "polygon(20% 0, 100% 0, 100% 100%, 0 100%)"
                                   }} />
                                   <div style={{
                                     position: "absolute",
                                     top: 0,
                                     bottom: 0,
-                                    background: "rgba(255, 198, 25, 0.4)",
-                                    width: "1.5px",
+                                    width: "3px",
+                                    background: "linear-gradient(to bottom, #00e5ff, #7c4dff)",
                                     left: "50%",
                                     transform: "translateX(-50%) skewX(-4deg)",
                                     zIndex: 1
