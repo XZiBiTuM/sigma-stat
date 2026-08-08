@@ -263,6 +263,58 @@ export default function Home() {
   const [draftTurnSequence, setDraftTurnSequence] = useState<number[]>([]);
   const [draftCurrentStepIndex, setDraftCurrentStepIndex] = useState(0);
 
+  // Player Overrides & Skill Rating States
+  const [playerOverridesMap, setPlayerOverridesMap] = useState<Record<string, any>>({});
+  const [showAdminPlayerEditModal, setShowAdminPlayerEditModal] = useState<boolean>(false);
+  const [adminEditingPlayer, setAdminEditingPlayer] = useState<any>(null);
+  const [adminCsRatingInput, setAdminCsRatingInput] = useState<string>("");
+  const [adminCustomEloInput, setAdminCustomEloInput] = useState<string>("");
+  const [adminCustomScoreInput, setAdminCustomScoreInput] = useState<string>("");
+  const [adminEditSubmitting, setAdminEditSubmitting] = useState<boolean>(false);
+  const [adminEditMsg, setAdminEditMsg] = useState<string>("");
+
+  const fetchPlayerOverrides = async () => {
+    try {
+      const res = await fetch("/api/admin/players/override");
+      if (res.ok) {
+        const data = await res.json();
+        if (data.overrides) setPlayerOverridesMap(data.overrides);
+      }
+    } catch (err) {
+      console.error("Failed to fetch player overrides", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchPlayerOverrides();
+  }, []);
+
+  const getPlayerSkillInfo = (playerId: string, nickname: string, eloVal?: number) => {
+    const ov = playerOverridesMap[playerId] || playerOverridesMap[nickname] || {};
+    const elo = ov.customElo || eloVal || 1000;
+    const csRating = ov.csRating || Math.round(elo * 9.5);
+
+    let score = ov.customSkillScore;
+    if (score === undefined || score === null) {
+      const sElo = Math.min(100, Math.max(10, (elo - 300) / 22));
+      const sPremier = Math.min(100, Math.max(10, csRating / 260));
+      score = Math.round((0.45 * sElo) + (0.55 * sPremier));
+    }
+
+    let tier = "C Tier";
+    let color = "#818cf8";
+    let bg = "rgba(129, 140, 248, 0.12)";
+    let border = "rgba(129, 140, 248, 0.3)";
+
+    if (score >= 90) { tier = "S+ Tier"; color = "#ffd700"; bg = "rgba(255, 215, 0, 0.15)"; border = "rgba(255, 215, 0, 0.4)"; }
+    else if (score >= 80) { tier = "S Tier"; color = "#c084fc"; bg = "rgba(192, 132, 252, 0.15)"; border = "rgba(192, 132, 252, 0.4)"; }
+    else if (score >= 70) { tier = "A+ Tier"; color = "#00e5ff"; bg = "rgba(0, 229, 255, 0.15)"; border = "rgba(0, 229, 255, 0.4)"; }
+    else if (score >= 60) { tier = "A Tier"; color = "#4caf50"; bg = "rgba(76, 175, 80, 0.15)"; border = "rgba(76, 175, 80, 0.4)"; }
+    else if (score >= 50) { tier = "B Tier"; color = "#ff9100"; bg = "rgba(255, 145, 0, 0.15)"; border = "rgba(255, 145, 0, 0.4)"; }
+
+    return { score, tier, color, bg, border, csRating, elo, override: ov };
+  };
+
   // Auth & Event of Mr.Chillout States
   const [userRole, setUserRole] = useState<"GUEST" | "EVENT_MAKER" | "ADMIN">("GUEST");
   const [userName, setUserName] = useState<string>("");
@@ -2029,7 +2081,8 @@ export default function Home() {
                           <tr>
                             <th style={{ width: "70px", textAlign: "center" }}>Место</th>
                             <th>Игрок</th>
-                            <th style={{ textAlign: "center" }}>Очки</th>
+                            <th style={{ textAlign: "center" }}>Скилл (1-100)</th>
+                             <th style={{ textAlign: "center" }}>Очки</th>
                             <th style={{ textAlign: "center" }}>Матчи</th>
                             <th style={{ textAlign: "center" }}>В / П</th>
                             <th style={{ textAlign: "center" }}>Win Rate</th>
@@ -4050,6 +4103,64 @@ export default function Home() {
                       )}
                     </div>
                   </div>
+
+                  {/* Skill Rating & Premier CS Rating Banner */}
+                  {(() => {
+                    const sk = getPlayerSkillInfo(playerProfile.player_id, playerProfile.nickname, playerProfile.games?.cs2?.faceit_elo || playerProfile.games?.csgo?.faceit_elo);
+                    return (
+                      <div className="glass-card" style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        padding: "0.85rem 1.25rem",
+                        borderRadius: "10px",
+                        background: "rgba(255,255,255,0.02)",
+                        border: "1px solid var(--border-light)",
+                        gap: "1rem"
+                      }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                          <span 
+                            style={{
+                              fontSize: "1.1rem",
+                              fontWeight: "900",
+                              background: sk.bg,
+                              border: `1px solid ${sk.border}`,
+                              color: sk.color,
+                              padding: "0.3rem 0.75rem",
+                              borderRadius: "8px"
+                            }}
+                          >
+                            {sk.score} / 100
+                          </span>
+                          <div>
+                            <span style={{ fontSize: "0.82rem", fontWeight: "700", color: sk.color }}>
+                              {sk.tier} — Оценка скилла
+                            </span>
+                            <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", display: "block" }}>
+                              Premier CS Rating: <strong style={{ color: "#fff" }}>{sk.csRating.toLocaleString("ru-RU")}</strong>
+                            </span>
+                          </div>
+                        </div>
+
+                        {userRole === "ADMIN" && (
+                          <button
+                            className="btn btn-secondary"
+                            style={{ fontSize: "0.78rem", padding: "0.4rem 0.85rem", borderRadius: "6px" }}
+                            onClick={() => {
+                              setAdminEditingPlayer(playerProfile);
+                              setAdminCsRatingInput(sk.csRating.toString());
+                              setAdminCustomEloInput(sk.override?.customElo !== undefined ? sk.override.customElo.toString() : "");
+                              setAdminCustomScoreInput(sk.override?.customSkillScore !== undefined ? sk.override.customSkillScore.toString() : "");
+                              setAdminEditMsg("");
+                              setShowAdminPlayerEditModal(true);
+                            }}
+                          >
+                            Редактировать инфу
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })()}
 
                   {/* Level, Elo & HLTV 2.0 display */}
                   {(() => {
