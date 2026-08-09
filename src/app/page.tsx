@@ -598,7 +598,29 @@ export default function Home() {
         const hubData = await hubRes.json();
         setHubDetails(hubData);
 
-        // Fetch Hub Leaderboards
+        // Fetch Hub Members & Populate ELO Map FIRST
+        const membersRes = await fetch(`/api/faceit/hubs/${hubId}/members`);
+        if (membersRes.ok) {
+          const membersData = await membersRes.json();
+          const items = membersData.items || [];
+          setMembers(items);
+
+          const eloMap: Record<string, number> = {};
+          items.forEach((m: any) => {
+            const elo = m.faceit_elo || m.elo || m.games?.cs2?.faceit_elo || m.games?.csgo?.faceit_elo;
+            if (elo) {
+              if (m.user_id) eloMap[m.user_id] = elo;
+              if (m.player_id) eloMap[m.player_id] = elo;
+              if (m.nickname) {
+                eloMap[m.nickname] = elo;
+                eloMap[m.nickname.toLowerCase()] = elo;
+              }
+            }
+          });
+          setPlayerEloMap(prev => ({ ...prev, ...eloMap }));
+        }
+
+        // Fetch Hub Leaderboards NEXT
         const leaderboardsRes = await fetch(`/api/faceit/hubs/${hubId}/leaderboards`);
         let finalLeaderboards = [{ leaderboard_id: "general", leaderboard_name: "Общий рейтинг (All-time)", status: "ACTIVE" }];
         if (leaderboardsRes.ok) {
@@ -608,13 +630,6 @@ export default function Home() {
         }
         setLeaderboards(finalLeaderboards);
         setSelectedLeaderboardId(finalLeaderboards[0].leaderboard_id);
-
-        // Fetch Hub Members
-        const membersRes = await fetch(`/api/faceit/hubs/${hubId}/members`);
-        if (membersRes.ok) {
-          const membersData = await membersRes.json();
-          setMembers(membersData.items || []);
-        }
 
         // Fetch Hub Matches
         fetchMatches();
