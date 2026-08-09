@@ -306,13 +306,14 @@ export default function Home() {
                (lowerNick && playerOverridesMap[lowerNick]) || 
                (nickname && playerOverridesMap[nickname]) || {};
 
-    const elo = ov.customElo || 
-                (playerId && playerEloMap[playerId]) || 
-                (lowerNick && playerEloMap[lowerNick]) || 
-                (nickname && playerEloMap[nickname]) || 
-                eloVal || 1000;
+    const baseElo = ov.customElo || 
+                    (playerId && playerEloMap[playerId]) || 
+                    (lowerNick && playerEloMap[lowerNick]) || 
+                    (nickname && playerEloMap[nickname]) || 
+                    eloVal;
 
-    const csRating = ov.csRating || Math.round(elo * 9.5);
+    const csRating = ov.csRating || (baseElo ? Math.round(baseElo * 9.5) : 9500);
+    const elo = baseElo || (ov.csRating ? Math.round(ov.csRating / 11.53) : 1000);
 
     let score = ov.customSkillScore;
     if (score === undefined || score === null) {
