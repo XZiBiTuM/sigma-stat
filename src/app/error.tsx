@@ -43,9 +43,25 @@ export default function Error({
         <h2 style={{ fontSize: "1.3rem", fontWeight: "800", marginBottom: "0.75rem", color: "#fff" }}>
           Временный сбой загрузки
         </h2>
-        <p style={{ fontSize: "0.85rem", color: "#9ca3af", marginBottom: "1.5rem", lineHeight: "1.5" }}>
+        <p style={{ fontSize: "0.85rem", color: "#9ca3af", marginBottom: "1rem", lineHeight: "1.5" }}>
           Не удалось обновить данные или произошло обновление системы. Нажмите кнопку ниже для перезагрузки.
         </p>
+
+        {error && (
+          <div style={{
+            background: "rgba(239, 68, 68, 0.1)",
+            border: "1px solid rgba(239, 68, 68, 0.3)",
+            color: "#fca5a5",
+            borderRadius: "8px",
+            padding: "0.75rem",
+            fontSize: "0.75rem",
+            marginBottom: "1.25rem",
+            wordBreak: "break-all",
+            textAlign: "left"
+          }}>
+            <strong>Error:</strong> {error.message || String(error)}
+          </div>
+        )}
 
         <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center" }}>
           <button
