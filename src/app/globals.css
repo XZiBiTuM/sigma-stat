@@ -375,8 +375,8 @@ html, body {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  width: 100vw;
+  height: 100vh;
   background: rgba(0, 0, 0, 0.88);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
@@ -384,14 +384,14 @@ html, body {
   justify-content: center;
   align-items: center;
   z-index: 100000;
-  padding: 1.5rem;
-  overflow-y: auto;
+  padding: 1rem;
+  overflow: hidden;
 }
 
 .modal-content {
   width: 100%;
-  max-width: 850px;
-  max-height: 90vh;
+  max-width: 780px;
+  max-height: 85vh;
   overflow-y: auto;
   margin: auto;
   background: #0f0d1a;

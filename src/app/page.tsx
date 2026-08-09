@@ -4104,64 +4104,6 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* Skill Rating & Premier CS Rating Banner */}
-                  {(() => {
-                    const sk = getPlayerSkillInfo(playerProfile.player_id, playerProfile.nickname, playerProfile.games?.cs2?.faceit_elo || playerProfile.games?.csgo?.faceit_elo);
-                    return (
-                      <div className="glass-card" style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        padding: "0.85rem 1.25rem",
-                        borderRadius: "10px",
-                        background: "rgba(255,255,255,0.02)",
-                        border: "1px solid var(--border-light)",
-                        gap: "1rem"
-                      }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                          <span 
-                            style={{
-                              fontSize: "1.1rem",
-                              fontWeight: "900",
-                              background: sk.bg,
-                              border: `1px solid ${sk.border}`,
-                              color: sk.color,
-                              padding: "0.3rem 0.75rem",
-                              borderRadius: "8px"
-                            }}
-                          >
-                            {sk.score} / 100
-                          </span>
-                          <div>
-                            <span style={{ fontSize: "0.82rem", fontWeight: "700", color: sk.color }}>
-                              {sk.tier} — Оценка скилла
-                            </span>
-                            <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", display: "block" }}>
-                              Premier CS Rating: <strong style={{ color: "#fff" }}>{sk.csRating.toLocaleString("ru-RU")}</strong>
-                            </span>
-                          </div>
-                        </div>
-
-                        {userRole === "ADMIN" && (
-                          <button
-                            className="btn btn-secondary"
-                            style={{ fontSize: "0.78rem", padding: "0.4rem 0.85rem", borderRadius: "6px" }}
-                            onClick={() => {
-                              setAdminEditingPlayer(playerProfile);
-                              setAdminCsRatingInput(sk.csRating.toString());
-                              setAdminCustomEloInput(sk.override?.customElo !== undefined ? sk.override.customElo.toString() : "");
-                              setAdminCustomScoreInput(sk.override?.customSkillScore !== undefined ? sk.override.customSkillScore.toString() : "");
-                              setAdminEditMsg("");
-                              setShowAdminPlayerEditModal(true);
-                            }}
-                          >
-                            Редактировать инфу
-                          </button>
-                        )}
-                      </div>
-                    );
-                  })()}
-
                   {/* Level, Elo & HLTV 2.0 display */}
                   {(() => {
                     const gameId = hubDetails?.game_id || "cs2";
@@ -4190,6 +4132,65 @@ export default function Home() {
                     );
                   })()}
                 </div>
+
+                {/* Skill Rating & Premier CS Rating Dedicated Block */}
+                {(() => {
+                  const sk = getPlayerSkillInfo(playerProfile.player_id, playerProfile.nickname, playerProfile.games?.cs2?.faceit_elo || playerProfile.games?.csgo?.faceit_elo);
+                  return (
+                    <div className="glass-card" style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      padding: "0.85rem 1.25rem",
+                      borderRadius: "12px",
+                      background: "rgba(255, 255, 255, 0.02)",
+                      border: "1px solid var(--border-light)",
+                      gap: "1rem",
+                      marginTop: "0.25rem"
+                    }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                        <span 
+                          style={{
+                            fontSize: "1.2rem",
+                            fontWeight: "900",
+                            background: sk.bg,
+                            border: `1px solid ${sk.border}`,
+                            color: sk.color,
+                            padding: "0.35rem 0.85rem",
+                            borderRadius: "10px"
+                          }}
+                        >
+                          {sk.score} / 100
+                        </span>
+                        <div>
+                          <span style={{ fontSize: "0.88rem", fontWeight: "800", color: sk.color }}>
+                            {sk.tier} — Оценка скилла
+                          </span>
+                          <span style={{ fontSize: "0.76rem", color: "var(--text-secondary)", display: "block", marginTop: "0.1rem" }}>
+                            Premier CS Rating: <strong style={{ color: "#fff" }}>{sk.csRating.toLocaleString("ru-RU")}</strong>
+                          </span>
+                        </div>
+                      </div>
+
+                      {userRole === "ADMIN" && (
+                        <button
+                          className="btn btn-secondary"
+                          style={{ fontSize: "0.78rem", padding: "0.45rem 0.9rem", borderRadius: "8px" }}
+                          onClick={() => {
+                            setAdminEditingPlayer(playerProfile);
+                            setAdminCsRatingInput(sk.csRating.toString());
+                            setAdminCustomEloInput(sk.override?.customElo !== undefined ? sk.override.customElo.toString() : "");
+                            setAdminCustomScoreInput(sk.override?.customSkillScore !== undefined ? sk.override.customSkillScore.toString() : "");
+                            setAdminEditMsg("");
+                            setShowAdminPlayerEditModal(true);
+                          }}
+                        >
+                          Редактировать инфу
+                        </button>
+                      )}
+                    </div>
+                  );
+                })()}
 
                 {/* Tabs Menu */}
                 <div style={{
