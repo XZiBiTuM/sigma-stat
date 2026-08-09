@@ -2928,7 +2928,7 @@ export default function Home() {
 
       {/* MODAL: MATCH DETAILS STATS */}
       {selectedMatchId && (
-        <div className="modal-overlay" onClick={() => setSelectedMatchId(null)}>
+        <div className="modal-overlay" onClick={() => setSelectedMatchId(null)} style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "rgba(0, 0, 0, 0.88)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 999999, padding: "1rem" }}>
           <div className="modal-content glass-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: "1000px", width: "100%", padding: "2.5rem 2rem 2rem 2rem", position: "relative" }}>
             <span className="modal-close-btn" onClick={() => setSelectedMatchId(null)}>✕</span>
             <ErrorBoundary>
@@ -4077,7 +4077,7 @@ export default function Home() {
 
       {/* MODAL: PLAYER STATS */}
       {selectedPlayerId && (
-        <div className="modal-overlay" onClick={() => setSelectedPlayerId(null)}>
+        <div className="modal-overlay" onClick={() => setSelectedPlayerId(null)} style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "rgba(0, 0, 0, 0.88)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 999999, padding: "1rem" }}>
           <div className="modal-content glass-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: "680px", padding: "2rem" }}>
             <span className="modal-close-btn" onClick={() => setSelectedPlayerId(null)}>✕</span>
             <ErrorBoundary>
