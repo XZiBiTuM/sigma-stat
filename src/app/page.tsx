@@ -279,7 +279,17 @@ export default function Home() {
       const res = await fetch("/api/admin/players/override");
       if (res.ok) {
         const data = await res.json();
-        if (data.overrides) setPlayerOverridesMap(data.overrides);
+        if (data.overrides) {
+          const map: Record<string, any> = {};
+          Object.entries(data.overrides).forEach(([k, v]: [string, any]) => {
+            map[k] = v;
+            if (v && v.nickname) {
+              map[v.nickname] = v;
+              map[v.nickname.toLowerCase()] = v;
+            }
+          });
+          setPlayerOverridesMap(map);
+        }
       }
     } catch (err) {
       console.error("Failed to fetch player overrides", err);
@@ -291,7 +301,10 @@ export default function Home() {
   }, []);
 
   const getPlayerSkillInfo = (playerId: string, nickname: string, eloVal?: number) => {
-    const ov = playerOverridesMap[playerId] || playerOverridesMap[nickname] || {};
+    const lowerNick = (nickname || "").toLowerCase();
+    const ov = (playerId && playerOverridesMap[playerId]) || 
+               (lowerNick && playerOverridesMap[lowerNick]) || 
+               (nickname && playerOverridesMap[nickname]) || {};
     const elo = ov.customElo || eloVal || 1000;
     const csRating = ov.csRating || Math.round(elo * 9.5);
 
