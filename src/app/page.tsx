@@ -322,18 +322,48 @@ export default function Home() {
       score = Math.round((0.45 * sElo) + (0.55 * sPremier));
     }
 
-    let tier = "C Tier";
-    let color = "#818cf8";
-    let bg = "rgba(129, 140, 248, 0.12)";
-    let border = "rgba(129, 140, 248, 0.3)";
+    // Rainbow Tier Hierarchy (Red = lowest/worst, Purple/Glowing Purple = highest/best)
+    let tier = "D Tier";
+    let color = "#ff4d4d"; // Red
+    let bg = "rgba(255, 77, 77, 0.15)";
+    let border = "rgba(255, 77, 77, 0.4)";
+    let glow = "";
 
-    if (score >= 90) { tier = "S+ Tier"; color = "#ffd700"; bg = "rgba(255, 215, 0, 0.15)"; border = "rgba(255, 215, 0, 0.4)"; }
-    else if (score >= 80) { tier = "S Tier"; color = "#c084fc"; bg = "rgba(192, 132, 252, 0.15)"; border = "rgba(192, 132, 252, 0.4)"; }
-    else if (score >= 70) { tier = "A+ Tier"; color = "#00e5ff"; bg = "rgba(0, 229, 255, 0.15)"; border = "rgba(0, 229, 255, 0.4)"; }
-    else if (score >= 60) { tier = "A Tier"; color = "#4caf50"; bg = "rgba(76, 175, 80, 0.15)"; border = "rgba(76, 175, 80, 0.4)"; }
-    else if (score >= 50) { tier = "B Tier"; color = "#ff9100"; bg = "rgba(255, 145, 0, 0.15)"; border = "rgba(255, 145, 0, 0.4)"; }
+    if (score >= 90) {
+      tier = "S+ Tier";
+      color = "#e9d5ff"; // Light Glowing Purple
+      bg = "rgba(168, 85, 247, 0.25)";
+      border = "rgba(192, 132, 252, 0.8)";
+      glow = "0 0 16px rgba(192, 132, 252, 0.7), 0 0 4px rgba(168, 85, 247, 0.9)";
+    } else if (score >= 80) {
+      tier = "S Tier";
+      color = "#c084fc"; // Vibrant Purple
+      bg = "rgba(168, 85, 247, 0.18)";
+      border = "rgba(168, 85, 247, 0.6)";
+      glow = "0 0 12px rgba(168, 85, 247, 0.5)";
+    } else if (score >= 70) {
+      tier = "A+ Tier";
+      color = "#00e5ff"; // Cyan / Neon Aqua
+      bg = "rgba(0, 229, 255, 0.15)";
+      border = "rgba(0, 229, 255, 0.4)";
+    } else if (score >= 60) {
+      tier = "A Tier";
+      color = "#4caf50"; // Green
+      bg = "rgba(76, 175, 80, 0.15)";
+      border = "rgba(76, 175, 80, 0.4)";
+    } else if (score >= 50) {
+      tier = "B Tier";
+      color = "#ffca28"; // Yellow
+      bg = "rgba(255, 202, 40, 0.15)";
+      border = "rgba(255, 202, 40, 0.4)";
+    } else if (score >= 40) {
+      tier = "C Tier";
+      color = "#ff9100"; // Orange
+      bg = "rgba(255, 145, 0, 0.15)";
+      border = "rgba(255, 145, 0, 0.4)";
+    }
 
-    return { score, tier, color, bg, border, csRating, elo, override: ov };
+    return { score, tier, color, bg, border, glow, csRating, elo, override: ov };
   };
 
   // Auth & Event of Mr.Chillout States
