@@ -197,7 +197,11 @@ const POPULAR_HUBS = [
 export default function Home() {
   const [hubIdInput, setHubIdInput] = useState("0dd077bc-b401-4f5c-8a40-47578601ccb7");
   const [hubId, setHubId] = useState<string | null>("0dd077bc-b401-4f5c-8a40-47578601ccb7");
-  const [activeTab, setActiveTab] = useState<"leaderboard" | "matches" | "members" | "tournaments">("leaderboard");
+  const [activeTab, setActiveTab] = useState<"leaderboard" | "matches" | "members" | "tournaments" | "compare">("leaderboard");
+  const [comparePlayer1Id, setComparePlayer1Id] = useState<string>("");
+  const [comparePlayer2Id, setComparePlayer2Id] = useState<string>("");
+  const [compareSearchQuery1, setCompareSearchQuery1] = useState("");
+  const [compareSearchQuery2, setCompareSearchQuery2] = useState("");
   
   // Tournaments states
   const [tournaments, setTournaments] = useState<any[]>([]);
@@ -2153,6 +2157,12 @@ export default function Home() {
                 >
                   Турниры ({tournaments.length || "…"})
                 </button>
+                <button 
+                  className={`tab-btn ${activeTab === 'compare' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('compare')}
+                >
+                  ⚔️ Сравнение
+                </button>
               </div>
 
 
@@ -3117,6 +3127,213 @@ export default function Home() {
                   })()}
                 </div>
               )}
+
+              {/* TAB CONTENT: COMPARE */}
+              {activeTab === 'compare' && (() => {
+                const p1 = rankings.find(r => r.player?.player_id === comparePlayer1Id);
+                const p2 = rankings.find(r => r.player?.player_id === comparePlayer2Id);
+                const sk1 = p1 ? getPlayerSkillInfo(p1.player.player_id, p1.player.nickname) : null;
+                const sk2 = p2 ? getPlayerSkillInfo(p2.player.player_id, p2.player.nickname) : null;
+
+                const filteredPlayers1 = rankings.filter(r => {
+                  const nick = r.player?.nickname?.toLowerCase() || "";
+                  return r.player?.player_id !== comparePlayer2Id && nick.includes(compareSearchQuery1.toLowerCase());
+                });
+                const filteredPlayers2 = rankings.filter(r => {
+                  const nick = r.player?.nickname?.toLowerCase() || "";
+                  return r.player?.player_id !== comparePlayer1Id && nick.includes(compareSearchQuery2.toLowerCase());
+                });
+
+                const statRow = (label: string, val1: React.ReactNode, val2: React.ReactNode, higherIsBetter = true) => {
+                  const n1 = typeof val1 === 'number' ? val1 : parseFloat(String(val1));
+                  const n2 = typeof val2 === 'number' ? val2 : parseFloat(String(val2));
+                  const p1Wins = !isNaN(n1) && !isNaN(n2) && (higherIsBetter ? n1 > n2 : n1 < n2);
+                  const p2Wins = !isNaN(n1) && !isNaN(n2) && (higherIsBetter ? n2 > n1 : n2 < n1);
+                  return (
+                    <tr key={label} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                      <td style={{ padding: "0.7rem 1rem", color: p1Wins ? "#4ade80" : p2Wins ? "var(--text-secondary)" : "var(--text-primary)", fontWeight: p1Wins ? "700" : "500", textAlign: "right", fontSize: "0.9rem" }}>
+                        {val1 ?? "—"}
+                        {p1Wins && <span style={{ marginLeft: "0.35rem", color: "#4ade80" }}>◀</span>}
+                      </td>
+                      <td style={{ padding: "0.7rem 0.5rem", color: "var(--text-muted)", fontSize: "0.78rem", textAlign: "center", whiteSpace: "nowrap", fontWeight: "600" }}>{label}</td>
+                      <td style={{ padding: "0.7rem 1rem", color: p2Wins ? "#4ade80" : p1Wins ? "var(--text-secondary)" : "var(--text-primary)", fontWeight: p2Wins ? "700" : "500", textAlign: "left", fontSize: "0.9rem" }}>
+                        {p2Wins && <span style={{ marginRight: "0.35rem", color: "#4ade80" }}>▶</span>}
+                        {val2 ?? "—"}
+                      </td>
+                    </tr>
+                  );
+                };
+
+                return (
+                  <div className="glass-card animate-fade-in" style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+                    <div>
+                      <h3 style={{ fontSize: "1.2rem", color: "#fff", marginBottom: "0.25rem" }}>⚔️ Сравнение игроков</h3>
+                      <p style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>Выбери двух игроков из таблицы лидеров хаба — сравним их по ключевым показателям</p>
+                    </div>
+
+                    {/* Player selectors */}
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: "1.5rem", alignItems: "start" }}>
+                      {/* Player 1 selector */}
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                        <div style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.05em" }}>Игрок 1</div>
+                        <input
+                          type="text"
+                          className="input-field"
+                          placeholder="Поиск по нику…"
+                          value={compareSearchQuery1}
+                          onChange={e => setCompareSearchQuery1(e.target.value)}
+                          style={{ fontSize: "0.85rem" }}
+                        />
+                        <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", maxHeight: "200px", overflowY: "auto" }}>
+                          {filteredPlayers1.slice(0, 8).map(r => (
+                            <button
+                              key={r.player.player_id}
+                              onClick={() => { setComparePlayer1Id(r.player.player_id); setCompareSearchQuery1(""); }}
+                              style={{
+                                display: "flex", alignItems: "center", gap: "0.6rem",
+                                background: comparePlayer1Id === r.player.player_id ? "rgba(0, 229, 255, 0.12)" : "rgba(255,255,255,0.03)",
+                                border: comparePlayer1Id === r.player.player_id ? "1px solid rgba(0,229,255,0.4)" : "1px solid transparent",
+                                borderRadius: "8px", padding: "0.45rem 0.75rem",
+                                cursor: "pointer", textAlign: "left"
+                              }}
+                            >
+                              {r.player.avatar && <img src={r.player.avatar} alt="" style={{ width: "24px", height: "24px", borderRadius: "50%", objectFit: "cover" }} />}
+                              <span style={{ fontSize: "0.85rem", color: comparePlayer1Id === r.player.player_id ? "var(--accent-cyan)" : "var(--text-primary)", fontWeight: "600" }}>{r.player.nickname}</span>
+                              <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginLeft: "auto" }}>#{r.position}</span>
+                            </button>
+                          ))}
+                        </div>
+                        {p1 && (
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(0,229,255,0.06)", border: "1px solid rgba(0,229,255,0.25)", borderRadius: "12px", padding: "0.75rem 1rem" }}>
+                            {p1.player.avatar && <img src={p1.player.avatar} alt="" style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(0,229,255,0.4)" }} />}
+                            <div>
+                              <div style={{ fontWeight: "700", fontSize: "1rem", color: "#fff" }}>{p1.player.nickname}</div>
+                              <div style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>#{p1.position} в хабе</div>
+                            </div>
+                            {sk1 && <span style={{ marginLeft: "auto", background: sk1.bg, color: sk1.color, border: `1px solid ${sk1.border}`, borderRadius: "6px", padding: "0.2rem 0.55rem", fontSize: "0.8rem", fontWeight: "700", boxShadow: sk1.glow || undefined }}>{sk1.score}/100</span>}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* VS divider */}
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", paddingTop: "3rem" }}>
+                        <div style={{ fontSize: "1.8rem", fontWeight: "900", color: "var(--text-muted)", letterSpacing: "0.1em", opacity: 0.5 }}>VS</div>
+                      </div>
+
+                      {/* Player 2 selector */}
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                        <div style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.05em" }}>Игрок 2</div>
+                        <input
+                          type="text"
+                          className="input-field"
+                          placeholder="Поиск по нику…"
+                          value={compareSearchQuery2}
+                          onChange={e => setCompareSearchQuery2(e.target.value)}
+                          style={{ fontSize: "0.85rem" }}
+                        />
+                        <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", maxHeight: "200px", overflowY: "auto" }}>
+                          {filteredPlayers2.slice(0, 8).map(r => (
+                            <button
+                              key={r.player.player_id}
+                              onClick={() => { setComparePlayer2Id(r.player.player_id); setCompareSearchQuery2(""); }}
+                              style={{
+                                display: "flex", alignItems: "center", gap: "0.6rem",
+                                background: comparePlayer2Id === r.player.player_id ? "rgba(168, 85, 247, 0.12)" : "rgba(255,255,255,0.03)",
+                                border: comparePlayer2Id === r.player.player_id ? "1px solid rgba(168,85,247,0.4)" : "1px solid transparent",
+                                borderRadius: "8px", padding: "0.45rem 0.75rem",
+                                cursor: "pointer", textAlign: "left"
+                              }}
+                            >
+                              {r.player.avatar && <img src={r.player.avatar} alt="" style={{ width: "24px", height: "24px", borderRadius: "50%", objectFit: "cover" }} />}
+                              <span style={{ fontSize: "0.85rem", color: comparePlayer2Id === r.player.player_id ? "#c084fc" : "var(--text-primary)", fontWeight: "600" }}>{r.player.nickname}</span>
+                              <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginLeft: "auto" }}>#{r.position}</span>
+                            </button>
+                          ))}
+                        </div>
+                        {p2 && (
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(168,85,247,0.06)", border: "1px solid rgba(168,85,247,0.25)", borderRadius: "12px", padding: "0.75rem 1rem" }}>
+                            {p2.player.avatar && <img src={p2.player.avatar} alt="" style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(168,85,247,0.4)" }} />}
+                            <div>
+                              <div style={{ fontWeight: "700", fontSize: "1rem", color: "#fff" }}>{p2.player.nickname}</div>
+                              <div style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>#{p2.position} в хабе</div>
+                            </div>
+                            {sk2 && <span style={{ marginLeft: "auto", background: sk2.bg, color: sk2.color, border: `1px solid ${sk2.border}`, borderRadius: "6px", padding: "0.2rem 0.55rem", fontSize: "0.8rem", fontWeight: "700", boxShadow: sk2.glow || undefined }}>{sk2.score}/100</span>}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Stats comparison table */}
+                    {p1 && p2 ? (
+                      <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+                        <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "16px", overflow: "hidden" }}>
+                          {/* Header */}
+                          <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", background: "rgba(255,255,255,0.04)", padding: "0.75rem 1rem", borderBottom: "1px solid var(--border-light)" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", justifyContent: "flex-end" }}>
+                              {p1.player.avatar && <img src={p1.player.avatar} alt="" style={{ width: "22px", height: "22px", borderRadius: "50%" }} />}
+                              <span style={{ fontWeight: "700", color: "var(--accent-cyan)", fontSize: "0.9rem" }}>{p1.player.nickname}</span>
+                            </div>
+                            <div style={{ padding: "0 1.5rem", color: "var(--text-muted)", fontSize: "0.75rem", textAlign: "center", fontWeight: "600" }}>ПОКАЗАТЕЛЬ</div>
+                            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                              {p2.player.avatar && <img src={p2.player.avatar} alt="" style={{ width: "22px", height: "22px", borderRadius: "50%" }} />}
+                              <span style={{ fontWeight: "700", color: "#c084fc", fontSize: "0.9rem" }}>{p2.player.nickname}</span>
+                            </div>
+                          </div>
+                          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                            <tbody>
+                              {sk1 && sk2 && statRow("Скилл (1–100)", sk1.score, sk2.score)}
+                              {statRow("Очки в хабе", p1.points, p2.points)}
+                              {statRow("Матчи в хабе", p1.played, p2.played)}
+                              {statRow("Победы", p1.won, p2.won)}
+                              {statRow("Поражения", p1.lost, p2.lost, false)}
+                              {statRow("Win Rate", p1.played > 0 ? parseFloat(((p1.won / p1.played) * 100).toFixed(1)) : 0, p2.played > 0 ? parseFloat(((p2.won / p2.played) * 100).toFixed(1)) : 0)}
+                              {statRow("Текущий стрик", p1.current_streak, p2.current_streak)}
+                              {statRow("Место в хабе", p1.position, p2.position, false)}
+                            </tbody>
+                          </table>
+                        </div>
+
+                        {/* H2H matches */}
+                        {(() => {
+                          const h2hMatches = matches.filter(m => {
+                            const allRounds = (m as any)._rounds as MatchRound[] | undefined;
+                            if (!allRounds) return false;
+                            const allPlayerIds = allRounds.flatMap(r => r.teams?.flatMap(t => t.players?.map(p => p.player_id) || []) || []);
+                            return allPlayerIds.includes(comparePlayer1Id) && allPlayerIds.includes(comparePlayer2Id);
+                          });
+
+                          // simpler: look in finished matches with player stats already known
+                          const finishedMatches = matches.filter(m => m.status === "FINISHED");
+                          
+                          return (
+                            <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "16px", padding: "1.25rem 1.5rem" }}>
+                              <h4 style={{ fontSize: "1rem", color: "#fff", marginBottom: "0.5rem" }}>Матчи в хабе вместе</h4>
+                              <p style={{ fontSize: "0.82rem", color: "var(--text-muted)", marginBottom: "1rem" }}>
+                                Данные по составам матчей загружаются только при открытии матча — для точного H2H кликни на нужный матч во вкладке «История игр» и возвращайся сюда.
+                              </p>
+                              <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+                                <div style={{ background: "rgba(0,229,255,0.06)", border: "1px solid rgba(0,229,255,0.2)", borderRadius: "10px", padding: "0.75rem 1.25rem", textAlign: "center" }}>
+                                  <div style={{ fontSize: "1.4rem", fontWeight: "900", color: "var(--accent-cyan)" }}>{finishedMatches.length}</div>
+                                  <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>матчей в хабе всего</div>
+                                </div>
+                                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flex: 1, color: "var(--text-secondary)", fontSize: "0.85rem", lineHeight: "1.5" }}>
+                                  💡 В следующей версии здесь появится автоматический поиск матчей где оба игрока были в разных командах и счёт побед/поражений в дуэлях между ними.
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })()}
+                      </div>
+                    ) : (
+                      <div style={{ textAlign: "center", padding: "3rem", border: "1px dashed var(--border-light)", borderRadius: "16px", color: "var(--text-muted)" }}>
+                        <div style={{ fontSize: "2.5rem", marginBottom: "0.75rem" }}>⚔️</div>
+                        <div style={{ fontSize: "1rem", color: "var(--text-secondary)", fontWeight: "600" }}>Выбери двух игроков выше</div>
+                        <div style={{ fontSize: "0.85rem", marginTop: "0.35rem" }}>Кликни на ники в списке — сравним их по скиллу, Win Rate, матчам и месту в хабе</div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
 
             </div>
 
@@ -5480,13 +5697,13 @@ export default function Home() {
             {tourStep === 0 && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center" }}>
                 <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
-                  Добро пожаловать в СИГМА КИБЕР КЛУБ
+                  Добро пожаловать в Сигма Кибер Клуб
                 </h3>
                 <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7" }}>
-                  Здесь собрана вся главная статистика хаба, таблица лидеров, подробные разборы матчей и аналитика ИИ Leetify.
+                  Статистика хаба в одном месте — без лишнего. Таблица лидеров, история матчей, Leetify AI и Captain's Draft. Всё то, чего не хватало стандартному FACEIT.
                 </p>
                 <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "1rem", color: "var(--text-primary)" }}>
-                  <strong>Таблица лидеров:</strong> отслеживайте очки, Win Rate, текущие серии побед/поражений и переключайтесь между сезонами!
+                  <strong>Leaderboard:</strong> очки, Win Rate, стрики и динамика по сезонам — сразу видно, кто реально тащит, а кто просто набрал матчи
                 </div>
               </div>
             )}
@@ -5494,14 +5711,14 @@ export default function Home() {
             {tourStep === 1 && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center" }}>
                 <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
-                  Интерактивный разбор матчей CS2 (HUD)
+                  Match History & 2D Playback
                 </h3>
                 <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7" }}>
-                  Вкладка «История игр» содержит пошаговый разбор раундов на 2D-карте арены!
+                  В каждом матче — полный разбор по раундам на 2D-карте: куда шли, откуда убили, какое оружие использовали.
                 </p>
                 <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                  <div><strong>2D Heatmap & Киллфилд:</strong> отслеживайте позиции выстрелов, трассеры и вектор каждого убийства.</div>
-                  <div><strong>SVG Иконки оружия:</strong> отображение чистого белого силуэта оружия и хедшотов.</div>
+                  <div><strong>2D Kill Feed:</strong> трассеры выстрелов, позиции на карте, headshot'ы и иконки оружия в реальных координатах</div>
+                  <div><strong>Round-by-round stats:</strong> K/D, ADR, MVP и детальная таблица по каждому игроку</div>
                 </div>
               </div>
             )}
@@ -5509,14 +5726,14 @@ export default function Home() {
             {tourStep === 2 && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center" }}>
                 <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
-                  Профили игроков & Аналитика Leetify
+                  Профили игроков
                 </h3>
                 <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7" }}>
-                  Нажмите на никнейм любого игрока, чтобы открыть расширенный дашборд статистики!
+                  Кликни на ник — откроется профиль со всей статистикой: FACEIT, Steam и Leetify AI в одном окне.
                 </p>
                 <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                  <div><strong>Статистика FACEIT:</strong> динамика Elo, КД, ADR, процент хедшотов и винрейт на картах.</div>
-                  <div><strong>Leetify AI:</strong> оценка AIM, позиционирования и эффективности использования гранат.</div>
+                  <div><strong>FACEIT Stats:</strong> K/D, ADR, HS%, Win Rate по картам и динамика Elo</div>
+                  <div><strong>Leetify AI:</strong> оценка прицеливания, позиционирования и полезности гранат</div>
                 </div>
               </div>
             )}
@@ -5527,11 +5744,11 @@ export default function Home() {
                   Captain's Draft
                 </h3>
                 <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7" }}>
-                  Проводите живые турнирные драфты в реальном времени с синхронизацией между компьютерами капитанов!
+                  Делим на команды без споров — Snake Draft на 4 капитана с live-синхронизацией между устройствами.
                 </p>
                 <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                  <div><strong>Snake Draft System:</strong> автоматическая очередность пиков и подсветка текущего хода.</div>
-                  <div><strong>Сохранение & Экспорт:</strong> прогресс сохраняется при F5, результаты скачиваются в .txt файл.</div>
+                  <div><strong>Snake Draft System:</strong> порядок пиков переключается автоматически, текущий ход подсвечивается</div>
+                  <div><strong>Сохранение & экспорт:</strong> прогресс переживает F5, финальный состав скачивается в .txt</div>
                 </div>
               </div>
             )}
@@ -5539,14 +5756,14 @@ export default function Home() {
             {tourStep === 4 && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center" }}>
                 <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
-                  Умный поиск & Скрытые игроки
+                  Фильтры, сортировка & Сравнение
                 </h3>
                 <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7" }}>
-                  Быстрый поиск участников по никнеймам и переключение отображения скрытых профилей!
+                  Ищи по нику, фильтруй по минимуму матчей, сортируй по скиллу или Win Rate — и сравнивай двух игроков напрямую.
                 </p>
                 <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                  <div><strong>Мгновенная фильтрация:</strong> введите фрагмент ника для мгновенного поиска по таблице.</div>
-                  <div><strong>Скрытые профили:</strong> тумблер «Показать скрытых игроков» для отображения особых участников.</div>
+                  <div><strong>Skill Rating (1–100):</strong> взвешенная оценка на основе FACEIT Elo (45%) и CS2 Premier Rating (55%) — от красного до фиолетового</div>
+                  <div><strong>⚔️ Сравнение:</strong> отдельная вкладка с таблицей показателей двух игроков рядом</div>
                 </div>
               </div>
             )}
