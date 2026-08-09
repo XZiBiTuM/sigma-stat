@@ -265,6 +265,7 @@ export default function Home() {
 
   // Player Overrides & Skill Rating States
   const [playerOverridesMap, setPlayerOverridesMap] = useState<Record<string, any>>({});
+  const [playerEloMap, setPlayerEloMap] = useState<Record<string, number>>({});
   const [showAdminPlayerEditModal, setShowAdminPlayerEditModal] = useState<boolean>(false);
   const [adminEditingPlayer, setAdminEditingPlayer] = useState<any>(null);
   const [adminCsRatingInput, setAdminCsRatingInput] = useState<string>("");
