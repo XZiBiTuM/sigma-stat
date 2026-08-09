@@ -13,6 +13,28 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                function autoReloadOnDeployError(msg) {
+                  if (msg && (msg.indexOf('Server Action') !== -1 || msg.indexOf('Loading chunk') !== -1 || msg.indexOf('older or newer deployment') !== -1)) {
+                    console.warn('Deployment hash mismatch detected, reloading page...');
+                    window.location.reload();
+                  }
+                }
+                window.addEventListener('error', function(e) {
+                  autoReloadOnDeployError(e && e.message);
+                });
+                window.addEventListener('unhandledrejection', function(e) {
+                  autoReloadOnDeployError(e && e.reason && e.reason.message);
+                });
+              })();
+            `
+          }}
+        />
+      </head>
       <body>
         {children}
       </body>
