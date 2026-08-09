@@ -253,6 +253,25 @@ export default function Home() {
   // Hidden players toggle state
   const [showHiddenPlayers, setShowHiddenPlayers] = useState(false);
 
+  // Sorting & Min Matches filter state
+  const [sortField, setSortField] = useState<"default" | "skill" | "points" | "matches" | "winrate">("default");
+  const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
+  const [minMatchesFilter, setMinMatchesFilter] = useState<number>(0);
+
+  const handleSort = (field: "skill" | "points" | "matches" | "winrate") => {
+    if (sortField === field) {
+      if (sortOrder === "desc") {
+        setSortOrder("asc");
+      } else {
+        setSortField("default");
+        setSortOrder("desc");
+      }
+    } else {
+      setSortField(field);
+      setSortOrder("desc");
+    }
+  };
+
   // 4-Captain Draft System state
   const [showDraftModal, setShowDraftModal] = useState(false);
   const [draftStep, setDraftStep] = useState<"setup" | "picking" | "finished">("setup");
@@ -1561,18 +1580,63 @@ export default function Home() {
     setError(null);
   };
 
-  // Filters for client-side lists
-  const filteredRankings = rankings.filter((item) => {
-    const playerInfo = item.player || (item as any).user;
-    const nickname = (playerInfo?.nickname || "").toLowerCase();
+  // Filters & Sorting for client-side lists
+  const filteredRankings = rankings
+    .filter((item) => {
+      const playerInfo = item.player || (item as any).user;
+      const nickname = (playerInfo?.nickname || "").toLowerCase();
 
-    // Hide player Lynxick unless showHiddenPlayers is toggled on
-    if (nickname === "lynxick" && !showHiddenPlayers) {
-      return false;
-    }
+      // Hide player Lynxick unless showHiddenPlayers is toggled on
+      if (nickname === "lynxick" && !showHiddenPlayers) {
+        return false;
+      }
 
-    return nickname.includes(playerSearchQuery.toLowerCase());
-  });
+      // Filter by min matches played in hub
+      const matchesCount = item.played ?? (item as any).matches ?? (item as any).played_matches ?? 0;
+      if (minMatchesFilter > 0 && matchesCount < minMatchesFilter) {
+        return false;
+      }
+
+      return nickname.includes(playerSearchQuery.toLowerCase());
+    })
+    .sort((a, b) => {
+      if (sortField === "default") return 0;
+
+      const extractInfo = (item: any) => {
+        const p = item.player || item.user || item;
+        const id = p.player_id || p.user_id || p.id || item.player_id || item.user_id || item.id || "";
+        const nick = p.nickname || item.nickname || "";
+        const elo = p.faceit_elo || p.elo || item.faceit_elo || item.elo;
+        return { id, nick, elo };
+      };
+
+      const itemA = extractInfo(a);
+      const itemB = extractInfo(b);
+
+      let valA = 0;
+      let valB = 0;
+
+      if (sortField === "skill") {
+        const skA = getPlayerSkillInfo(itemA.id, itemA.nick, itemA.elo);
+        const skB = getPlayerSkillInfo(itemB.id, itemB.nick, itemB.elo);
+        valA = skA.score;
+        valB = skB.score;
+      } else if (sortField === "points") {
+        valA = a.points ?? (a as any).score ?? 0;
+        valB = b.points ?? (b as any).score ?? 0;
+      } else if (sortField === "matches") {
+        valA = a.played ?? (a as any).matches ?? (a as any).played_matches ?? 0;
+        valB = b.played ?? (b as any).matches ?? (b as any).played_matches ?? 0;
+      } else if (sortField === "winrate") {
+        const wA = (a as any).win_rate !== undefined ? parseFloat(String((a as any).win_rate)) : (a.won && a.played ? (a.won / a.played) * 100 : 0);
+        const wB = (b as any).win_rate !== undefined ? parseFloat(String((b as any).win_rate)) : (b.won && b.played ? (b.won / b.played) * 100 : 0);
+        valA = isNaN(wA) ? 0 : wA;
+        valB = isNaN(wB) ? 0 : wB;
+      }
+
+      if (valA === valB) return 0;
+      return sortOrder === "desc" ? (valB - valA) : (valA - valB);
+    });
 
   const filteredMatches = matches.filter((match) => {
     if (filterMatchStatus === "all") return true;
@@ -2099,15 +2163,61 @@ export default function Home() {
                   
                   {/* Search and Filters */}
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
-                    <div className="input-group" style={{ maxWidth: "350px" }}>
-                      <input
-                        type="text"
-                        placeholder="Поиск игрока по никнейму…"
-                        className="input-field"
-                        value={playerSearchQuery}
-                        onChange={(e) => setPlayerSearchQuery(e.target.value)}
-                      />
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap", flex: 1 }}>
+                      <div className="input-group" style={{ maxWidth: "280px" }}>
+                        <input
+                          type="text"
+                          placeholder="Поиск игрока по никнейму…"
+                          className="input-field"
+                          value={playerSearchQuery}
+                          onChange={(e) => setPlayerSearchQuery(e.target.value)}
+                        />
+                      </div>
+
+                      {/* Filter by Min Matches */}
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", background: "rgba(255,255,255,0.03)", border: "1px solid var(--border-light)", borderRadius: "8px", padding: "0.25rem 0.5rem" }}>
+                        <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: "600", whiteSpace: "nowrap" }}>Матчи:</span>
+                        {[0, 3, 5, 10, 20].map((m) => (
+                          <button
+                            key={m}
+                            onClick={() => setMinMatchesFilter(m)}
+                            style={{
+                              background: minMatchesFilter === m ? "linear-gradient(135deg, #7c3aed, #06b6d4)" : "transparent",
+                              border: "none",
+                              borderRadius: "6px",
+                              padding: "0.2rem 0.55rem",
+                              color: minMatchesFilter === m ? "#fff" : "var(--text-secondary)",
+                              fontSize: "0.75rem",
+                              fontWeight: minMatchesFilter === m ? "700" : "500",
+                              cursor: "pointer",
+                              transition: "all 0.15s"
+                            }}
+                          >
+                            {m === 0 ? "Все" : `${m}+`}
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Reset sort button */}
+                      {sortField !== "default" && (
+                        <button
+                          onClick={() => { setSortField("default"); setSortOrder("desc"); }}
+                          style={{
+                            background: "rgba(168, 85, 247, 0.15)",
+                            border: "1px solid rgba(168, 85, 247, 0.4)",
+                            borderRadius: "6px",
+                            padding: "0.3rem 0.65rem",
+                            color: "#c084fc",
+                            fontSize: "0.75rem",
+                            fontWeight: "600",
+                            cursor: "pointer"
+                          }}
+                        >
+                          Сбросить ✕
+                        </button>
+                      )}
                     </div>
+
                     <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
                       <button
                         onClick={() => setShowHiddenPlayers(!showHiddenPlayers)}
@@ -2123,10 +2233,10 @@ export default function Home() {
                           transition: "all 0.2s"
                         }}
                       >
-                        {showHiddenPlayers ? "Скрыть скрытых игроков" : "Показать скрытых игроков"}
+                        {showHiddenPlayers ? "Скрыть скрытых" : "Показать скрытых"}
                       </button>
                       <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
-                        Показано игроков: {filteredRankings.length}
+                        Показано: {filteredRankings.length}
                       </div>
                     </div>
                   </div>
@@ -2147,11 +2257,35 @@ export default function Home() {
                           <tr>
                             <th style={{ width: "70px", textAlign: "center" }}>Место</th>
                             <th>Игрок</th>
-                            <th style={{ textAlign: "center" }}>Скилл (1-100)</th>
-                             <th style={{ textAlign: "center" }}>Очки</th>
-                            <th style={{ textAlign: "center" }}>Матчи</th>
+                            <th
+                              onClick={() => handleSort("skill")}
+                              style={{ textAlign: "center", cursor: "pointer", userSelect: "none", color: sortField === "skill" ? "var(--accent-cyan)" : undefined, whiteSpace: "nowrap" }}
+                              title="Нажмите для сортировки по скиллу"
+                            >
+                              Скилл (1-100) {sortField === "skill" ? (sortOrder === "desc" ? "▼" : "▲") : "⇅"}
+                            </th>
+                            <th
+                              onClick={() => handleSort("points")}
+                              style={{ textAlign: "center", cursor: "pointer", userSelect: "none", color: sortField === "points" ? "var(--accent-cyan)" : undefined, whiteSpace: "nowrap" }}
+                              title="Нажмите для сортировки по очкам"
+                            >
+                              Очки {sortField === "points" ? (sortOrder === "desc" ? "▼" : "▲") : "⇅"}
+                            </th>
+                            <th
+                              onClick={() => handleSort("matches")}
+                              style={{ textAlign: "center", cursor: "pointer", userSelect: "none", color: sortField === "matches" ? "var(--accent-cyan)" : undefined, whiteSpace: "nowrap" }}
+                              title="Нажмите для сортировки по матчам"
+                            >
+                              Матчи {sortField === "matches" ? (sortOrder === "desc" ? "▼" : "▲") : "⇅"}
+                            </th>
                             <th style={{ textAlign: "center" }}>В / П</th>
-                            <th style={{ textAlign: "center" }}>Win Rate</th>
+                            <th
+                              onClick={() => handleSort("winrate")}
+                              style={{ textAlign: "center", cursor: "pointer", userSelect: "none", color: sortField === "winrate" ? "var(--accent-cyan)" : undefined, whiteSpace: "nowrap" }}
+                              title="Нажмите для сортировки по Win Rate"
+                            >
+                              Win Rate {sortField === "winrate" ? (sortOrder === "desc" ? "▼" : "▲") : "⇅"}
+                            </th>
                             <th style={{ textAlign: "center" }}>Стрик</th>
                           </tr>
                         </thead>
