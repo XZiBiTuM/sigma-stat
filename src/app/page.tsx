@@ -305,17 +305,23 @@ export default function Home() {
     const ov = (playerId && playerOverridesMap[playerId]) || 
                (lowerNick && playerOverridesMap[lowerNick]) || 
                (nickname && playerOverridesMap[nickname]) || {};
+
+    const csRating = ov.csRating || (eloVal ? Math.round(eloVal * 9.5) : undefined);
+    const fallbackElo = csRating ? Math.round(csRating / 11.5) : 1000;
+
     const elo = ov.customElo || 
                 (playerId && playerEloMap[playerId]) || 
                 (lowerNick && playerEloMap[lowerNick]) || 
                 (nickname && playerEloMap[nickname]) || 
-                eloVal || 1000;
-    const csRating = ov.csRating || Math.round(elo * 9.5);
+                eloVal || 
+                fallbackElo;
+
+    const finalCsRating = csRating || Math.round(elo * 9.5);
 
     let score = ov.customSkillScore;
     if (score === undefined || score === null) {
       const sElo = Math.min(100, Math.max(10, (elo - 300) / 22));
-      const sPremier = Math.min(100, Math.max(10, csRating / 260));
+      const sPremier = Math.min(100, Math.max(10, finalCsRating / 260));
       score = Math.round((0.45 * sElo) + (0.55 * sPremier));
     }
 
