@@ -2903,6 +2903,29 @@ export default function Home() {
         </div>
       )}
 
+      {/* BASE FOOTER */}
+      <footer style={{
+        marginTop: "4rem",
+        borderTop: "1px solid var(--border-light)",
+        padding: "2rem 1.5rem",
+        textAlign: "center",
+        background: "rgba(10, 8, 20, 0.6)",
+        backdropFilter: "blur(12px)",
+        color: "var(--text-muted)",
+        fontSize: "0.85rem",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "0.5rem"
+      }}>
+        <div style={{ fontWeight: "900", color: "#fff", letterSpacing: "0.05em" }}>
+          СИГМА КИБЕР КЛУБ &copy; {new Date().getFullYear()}
+        </div>
+        <div style={{ fontSize: "0.78rem", color: "var(--text-secondary)" }}>
+          Powered by <span style={{ color: "var(--accent-cyan)", fontWeight: "800" }}>XZiBiTuM</span>
+        </div>
+      </footer>
+
       {/* MODAL: MATCH DETAILS STATS */}
       {selectedMatchId && (
         <div className="modal-overlay" onClick={() => setSelectedMatchId(null)}>
@@ -4051,6 +4074,7 @@ export default function Home() {
         </div>
       )}
 
+
       {/* MODAL: PLAYER STATS */}
       {selectedPlayerId && (
         <div className="modal-overlay" onClick={() => setSelectedPlayerId(null)}>
@@ -4631,28 +4655,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* BASE FOOTER */}
-      <footer style={{
-        marginTop: "4rem",
-        borderTop: "1px solid var(--border-light)",
-        padding: "2rem 1.5rem",
-        textAlign: "center",
-        background: "rgba(10, 8, 20, 0.6)",
-        backdropFilter: "blur(12px)",
-        color: "var(--text-muted)",
-        fontSize: "0.85rem",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: "0.5rem"
-      }}>
-        <div style={{ fontWeight: "900", color: "#fff", letterSpacing: "0.05em" }}>
-          СИГМА КИБЕР КЛУБ &copy; {new Date().getFullYear()}
-        </div>
-        <div style={{ fontSize: "0.78rem", color: "var(--text-secondary)" }}>
-          Powered by <span style={{ color: "var(--accent-cyan)", fontWeight: "800" }}>XZiBiTuM</span>
-        </div>
-      </footer>
+
 
       {/* AUTHENTICATION MODAL */}
       {showAuthModal && (
