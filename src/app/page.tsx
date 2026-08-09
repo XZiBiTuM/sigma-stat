@@ -306,22 +306,18 @@ export default function Home() {
                (lowerNick && playerOverridesMap[lowerNick]) || 
                (nickname && playerOverridesMap[nickname]) || {};
 
-    const csRating = ov.csRating || (eloVal ? Math.round(eloVal * 9.5) : undefined);
-    const fallbackElo = csRating ? Math.round(csRating / 11.5) : 1000;
-
     const elo = ov.customElo || 
                 (playerId && playerEloMap[playerId]) || 
                 (lowerNick && playerEloMap[lowerNick]) || 
                 (nickname && playerEloMap[nickname]) || 
-                eloVal || 
-                fallbackElo;
+                eloVal || 1000;
 
-    const finalCsRating = csRating || Math.round(elo * 9.5);
+    const csRating = ov.csRating || Math.round(elo * 9.5);
 
     let score = ov.customSkillScore;
     if (score === undefined || score === null) {
       const sElo = Math.min(100, Math.max(10, (elo - 300) / 22));
-      const sPremier = Math.min(100, Math.max(10, finalCsRating / 260));
+      const sPremier = Math.min(100, Math.max(10, csRating / 260));
       score = Math.round((0.45 * sElo) + (0.55 * sPremier));
     }
 
@@ -2024,7 +2020,7 @@ export default function Home() {
                   Участников хаба
                 </span>
                 <div style={{ fontSize: "1.75rem", fontWeight: "700", color: "var(--accent-cyan)", marginTop: "0.15rem" }}>
-                  {Math.max(hubDetails.players_number ?? 0, members.length).toLocaleString("ru-RU")}
+                  {Math.max(hubDetails?.players_number ?? 0, members.length).toLocaleString("ru-RU")}
                 </div>
               </div>
             </div>
@@ -2194,7 +2190,7 @@ export default function Home() {
                                           padding: "0.25rem 0.6rem",
                                           borderRadius: "6px"
                                         }}
-                                        title={`CS2 Premier Rating: ${sk.csRating.toLocaleString('ru-RU')}`}
+                                        title={`CS2 Premier Rating: ${(sk?.csRating ?? 0).toLocaleString('ru-RU')}`}
                                       >
                                         {sk.score} / 100
                                       </span>
@@ -4252,7 +4248,7 @@ export default function Home() {
                             {sk.tier} — Оценка скилла
                           </span>
                           <span style={{ fontSize: "0.76rem", color: "var(--text-secondary)", display: "block", marginTop: "0.1rem" }}>
-                            Premier CS Rating: <strong style={{ color: "#fff" }}>{sk.csRating.toLocaleString("ru-RU")}</strong>
+                            Premier CS Rating: <strong style={{ color: "#fff" }}>{(sk?.csRating ?? 0).toLocaleString("ru-RU")}</strong>
                           </span>
                         </div>
                       </div>
