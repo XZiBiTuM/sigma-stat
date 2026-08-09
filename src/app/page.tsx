@@ -1716,7 +1716,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="container animate-fade-in" style={{ minHeight: "100vh", display: "flex", flexDirection: "column", boxSizing: "border-box" }}>
+      <div className="container" style={{ minHeight: "100vh", display: "flex", flexDirection: "column", boxSizing: "border-box" }}>
       {/* HEADER SECTION */}
       <header style={{
         display: "flex",
@@ -4135,8 +4135,8 @@ export default function Home() {
 
             {/* MODAL: PLAYER STATS */}
       {selectedPlayerId && (
-        <div className="modal-overlay" onClick={() => setSelectedPlayerId(null)} style={{ position: "fixed", inset: 0, top: 0, left: 0, right: 0, bottom: 0, width: "100vw", height: "100vh", background: "rgba(0, 0, 0, 0.88)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", display: "grid", placeItems: "center", zIndex: 999999, padding: "1rem", margin: 0, boxSizing: "border-box" }}>
-          <div className="modal-content glass-card" onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxWidth: "680px", maxHeight: "85vh", overflowY: "auto", padding: "2rem", margin: "0 auto", position: "relative", boxSizing: "border-box" }}>
+        <div className="modal-overlay" onClick={() => setSelectedPlayerId(null)} style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, width: "100%", height: "100%", background: "rgba(0, 0, 0, 0.88)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 999999, padding: "1rem", boxSizing: "border-box" }}>
+          <div className="modal-content glass-card" onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxWidth: "680px", maxHeight: "85vh", overflowY: "auto", padding: "2rem", margin: "auto", position: "relative", boxSizing: "border-box" }}>
             <span className="modal-close-btn" onClick={() => setSelectedPlayerId(null)}>✕</span>
             <ErrorBoundary>
 
