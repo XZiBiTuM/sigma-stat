@@ -305,7 +305,11 @@ export default function Home() {
     const ov = (playerId && playerOverridesMap[playerId]) || 
                (lowerNick && playerOverridesMap[lowerNick]) || 
                (nickname && playerOverridesMap[nickname]) || {};
-    const elo = ov.customElo || eloVal || 1000;
+    const elo = ov.customElo || 
+                (playerId && playerEloMap[playerId]) || 
+                (lowerNick && playerEloMap[lowerNick]) || 
+                (nickname && playerEloMap[nickname]) || 
+                eloVal || 1000;
     const csRating = ov.csRating || Math.round(elo * 9.5);
 
     let score = ov.customSkillScore;
