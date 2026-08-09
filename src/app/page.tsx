@@ -2140,6 +2140,28 @@ export default function Home() {
                                     )}
                                   </div>
                                 </td>
+                                <td style={{ textAlign: "center" }}>
+                                  {(() => {
+                                    const sk = getPlayerSkillInfo(playerId, nickname, (item.player as any)?.faceit_elo || (item as any).elo || (item.player as any)?.elo);
+                                    return (
+                                      <span 
+                                        className="badge" 
+                                        style={{ 
+                                          fontSize: "0.78rem", 
+                                          fontWeight: "800", 
+                                          background: sk.bg, 
+                                          border: `1px solid ${sk.border}`, 
+                                          color: sk.color,
+                                          padding: "0.25rem 0.6rem",
+                                          borderRadius: "6px"
+                                        }}
+                                        title={`CS2 Premier Rating: ${sk.csRating.toLocaleString('ru-RU')}`}
+                                      >
+                                        {sk.score} / 100
+                                      </span>
+                                    );
+                                  })()}
+                                </td>
                                 <td style={{ textAlign: "center", fontWeight: "700", color: "#fff" }}>
                                   {points}
                                 </td>
