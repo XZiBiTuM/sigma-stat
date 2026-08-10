@@ -83,6 +83,90 @@ export default function PlayerProfilePage() {
   const [steamHover, setSteamHover] = useState(false);
   const [faceitHover, setFaceitHover] = useState(false);
   const [copyHover, setCopyHover] = useState(false);
+  const [playerOverridesMap, setPlayerOverridesMap] = useState<Record<string, any>>({});
+
+  useEffect(() => {
+    fetch("/api/admin/players/override")
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.overrides) {
+          const map: Record<string, any> = {};
+          Object.entries(data.overrides).forEach(([k, v]: [string, any]) => {
+            map[k] = v;
+            if (v && v.nickname) {
+              map[v.nickname] = v;
+              map[v.nickname.toLowerCase()] = v;
+            }
+          });
+          setPlayerOverridesMap(map);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const getPlayerSkillInfo = (playerIdVal: string, nicknameVal: string, eloVal?: number) => {
+    const lowerNick = (nicknameVal || "").toLowerCase();
+    const ov = (playerIdVal && playerOverridesMap[playerIdVal]) || 
+               (lowerNick && playerOverridesMap[lowerNick]) || 
+               (nicknameVal && playerOverridesMap[nicknameVal]) || {};
+
+    const baseElo = ov.customElo || eloVal || (ov.csRating ? Math.round(ov.csRating / 11.53) : 1000);
+    const csRating = ov.csRating || (baseElo ? Math.round(baseElo * 9.5) : 9500);
+    const elo = baseElo || (ov.csRating ? Math.round(ov.csRating / 11.53) : 1000);
+
+    let score = ov.customSkillScore;
+    if (score === undefined || score === null) {
+      const sElo = Math.min(100, Math.max(10, (elo - 300) / 22));
+      const sPremier = Math.min(100, Math.max(10, csRating / 260));
+      score = Math.round((0.45 * sElo) + (0.55 * sPremier));
+    }
+
+    let tier = "D Tier";
+    let color = "#ff4d4d";
+    let bg = "rgba(255, 77, 77, 0.15)";
+    let border = "rgba(255, 77, 77, 0.4)";
+    let glow = "";
+
+    if (score >= 90) {
+      tier = "S+ Tier";
+      color = "#c084fc";
+      bg = "rgba(192, 132, 252, 0.18)";
+      border = "rgba(192, 132, 252, 0.5)";
+      glow = "0 0 16px rgba(192, 132, 252, 0.6)";
+    } else if (score >= 80) {
+      tier = "S Tier";
+      color = "#a855f7";
+      bg = "rgba(168, 85, 247, 0.15)";
+      border = "rgba(168, 85, 247, 0.4)";
+    } else if (score >= 70) {
+      tier = "A+ Tier";
+      color = "#38bdf8";
+      bg = "rgba(56, 189, 248, 0.15)";
+      border = "rgba(56, 189, 248, 0.4)";
+    } else if (score >= 60) {
+      tier = "A Tier";
+      color = "#06b6d4";
+      bg = "rgba(6, 182, 212, 0.15)";
+      border = "rgba(6, 182, 212, 0.4)";
+    } else if (score >= 50) {
+      tier = "B Tier";
+      color = "#4ade80";
+      bg = "rgba(74, 222, 128, 0.15)";
+      border = "rgba(74, 222, 128, 0.4)";
+    } else if (score >= 40) {
+      tier = "C Tier";
+      color = "#facc15";
+      bg = "rgba(250, 204, 21, 0.15)";
+      border = "rgba(250, 204, 21, 0.4)";
+    } else if (score >= 30) {
+      tier = "D+ Tier";
+      color = "#fb923c";
+      bg = "rgba(251, 146, 60, 0.15)";
+      border = "rgba(251, 146, 60, 0.4)";
+    }
+
+    return { score, tier, color, bg, border, glow, csRating, override: ov };
+  };
 
   const handleCopyProfile = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -575,6 +659,49 @@ export default function PlayerProfilePage() {
               </div>
             )}
           </div>
+
+          {/* Skill Rating & Premier CS Rating Dedicated Block */}
+          {(() => {
+            const eloVal = cs2Info?.faceit_elo;
+            const sk = getPlayerSkillInfo(profile.player_id, profile.nickname, eloVal);
+            return (
+              <div className="glass-card" style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: "1.1rem 1.5rem",
+                borderRadius: "16px",
+                background: "rgba(255, 255, 255, 0.02)",
+                border: "1px solid var(--border-light)",
+                gap: "1rem"
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
+                  <span 
+                    style={{
+                      fontSize: "1.4rem",
+                      fontWeight: "900",
+                      background: sk.bg,
+                      border: `1px solid ${sk.border}`,
+                      color: sk.color,
+                      padding: "0.45rem 1rem",
+                      borderRadius: "12px",
+                      boxShadow: sk.glow || "none"
+                    }}
+                  >
+                    {sk.score} / 100
+                  </span>
+                  <div>
+                    <span style={{ fontSize: "1rem", fontWeight: "800", color: sk.color }}>
+                      {sk.tier} — Оценка скилла
+                    </span>
+                    <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)", display: "block", marginTop: "0.2rem" }}>
+                      Premier CS Rating: <strong style={{ color: "#fff" }}>{(sk?.csRating ?? 0).toLocaleString("ru-RU")}</strong>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Detailed Statistics Container */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "2rem", alignItems: "stretch" }}>
