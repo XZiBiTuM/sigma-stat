@@ -5821,6 +5821,147 @@ export default function Home() {
         </div>
       )}
 
+      {/* ADMIN INDIVIDUAL PLAYER EDIT MODAL */}
+      {showAdminPlayerEditModal && adminEditingPlayer && userRole === "ADMIN" && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "rgba(0, 0, 0, 0.88)",
+          backdropFilter: "blur(14px)",
+          WebkitBackdropFilter: "blur(14px)",
+          zIndex: 1000000,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "1.5rem"
+        }}>
+          <div className="glass-card animate-fade-in" style={{
+            maxWidth: "500px",
+            width: "100%",
+            padding: "2rem",
+            borderRadius: "20px",
+            border: "1.5px solid var(--accent-cyan)",
+            boxShadow: "0 0 40px rgba(0, 229, 255, 0.2)",
+            position: "relative",
+            background: "#0c0a17"
+          }}>
+            <span 
+              className="modal-close-btn" 
+              onClick={() => setShowAdminPlayerEditModal(false)}
+              style={{ top: "1.25rem", right: "1.25rem" }}
+            >
+              ✕
+            </span>
+
+            <h3 className="glow-text-cyan" style={{ fontSize: "1.35rem", margin: "0 0 0.5rem 0", fontWeight: "800", textAlign: "center" }}>
+              Редактирование игрока: {adminEditingPlayer.nickname}
+            </h3>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.82rem", textAlign: "center", marginBottom: "1.25rem" }}>
+              Задайте индивидуальные переопределения рейтинга или ELO для игрока хаба
+            </p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginBottom: "1.25rem" }}>
+              <div>
+                <label style={{ display: "block", marginBottom: "0.3rem", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+                  Premier CS Rating (очки в CS2):
+                </label>
+                <input 
+                  type="number" 
+                  className="input-field" 
+                  value={adminCsRatingInput} 
+                  onChange={(e) => setAdminCsRatingInput(e.target.value)} 
+                  placeholder="Прим: 18940 или 14500" 
+                  style={{ width: "100%", padding: "0.65rem", borderRadius: "10px", background: "#06050c", fontSize: "0.9rem" }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: "block", marginBottom: "0.3rem", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+                  Фиксированный балл скилла (1–100, опционально):
+                </label>
+                <input 
+                  type="number" 
+                  className="input-field" 
+                  value={adminCustomScoreInput} 
+                  onChange={(e) => setAdminCustomScoreInput(e.target.value)} 
+                  placeholder="Прим: 85" 
+                  style={{ width: "100%", padding: "0.65rem", borderRadius: "10px", background: "#06050c", fontSize: "0.9rem" }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: "block", marginBottom: "0.3rem", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+                  Custom FACEIT ELO (если отличается):
+                </label>
+                <input 
+                  type="number" 
+                  className="input-field" 
+                  value={adminCustomEloInput} 
+                  onChange={(e) => setAdminCustomEloInput(e.target.value)} 
+                  placeholder="Прим: 1980" 
+                  style={{ width: "100%", padding: "0.65rem", borderRadius: "10px", background: "#06050c", fontSize: "0.9rem" }}
+                />
+              </div>
+
+              {adminEditMsg && (
+                <div style={{ fontSize: "0.82rem", color: adminEditMsg.includes("Ошибка") ? "#ff4949" : "#4caf50", textAlign: "center" }}>
+                  {adminEditMsg}
+                </div>
+              )}
+            </div>
+
+            <div style={{ display: "flex", gap: "0.75rem" }}>
+              <button 
+                className="btn btn-secondary" 
+                onClick={() => setShowAdminPlayerEditModal(false)}
+                style={{ flex: 1, padding: "0.65rem", borderRadius: "10px" }}
+              >
+                Отмена
+              </button>
+              <button 
+                className="btn btn-glow-cyan" 
+                onClick={async () => {
+                  try {
+                    setAdminEditMsg("Сохранение...");
+                    const res = await fetch("/api/admin/players/override", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        passcode: "sigmaadmin",
+                        playerId: adminEditingPlayer.player_id,
+                        nickname: adminEditingPlayer.nickname,
+                        csRating: adminCsRatingInput !== "" ? Number(adminCsRatingInput) : undefined,
+                        customElo: adminCustomEloInput !== "" ? Number(adminCustomEloInput) : undefined,
+                        customSkillScore: adminCustomScoreInput !== "" ? Number(adminCustomScoreInput) : undefined
+                      })
+                    });
+                    const data = await res.json();
+                    if (res.ok && data.success) {
+                      setAdminEditMsg("Сохранено успешно!");
+                      fetchPlayerOverrides();
+                      setTimeout(() => {
+                        setShowAdminPlayerEditModal(false);
+                        setAdminEditMsg("");
+                      }, 1000);
+                    } else {
+                      setAdminEditMsg(data.error || "Ошибка сохранения");
+                    }
+                  } catch (err: any) {
+                    setAdminEditMsg("Ошибка сети: " + err.message);
+                  }
+                }}
+                style={{ flex: 1, padding: "0.65rem", borderRadius: "10px" }}
+              >
+                Сохранить
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ADMIN BATCH PREMIER PTS & SKILL SCORE EDIT MODAL */}
       {showBatchPtsModal && userRole === "ADMIN" && (
         <div style={{
