@@ -295,6 +295,9 @@ export default function Home() {
   const [adminCustomScoreInput, setAdminCustomScoreInput] = useState<string>("");
   const [adminEditSubmitting, setAdminEditSubmitting] = useState<boolean>(false);
   const [adminEditMsg, setAdminEditMsg] = useState<string>("");
+  const [showBatchPtsModal, setShowBatchPtsModal] = useState<boolean>(false);
+  const [batchPtsMap, setBatchPtsMap] = useState<Record<string, string>>({});
+  const [batchSaveMsg, setBatchSaveMsg] = useState<string>("");
 
   const fetchPlayerOverrides = async () => {
     try {
@@ -1923,22 +1926,53 @@ export default function Home() {
           </button>
 
           {userRole === "ADMIN" && (
-            <button 
-              onClick={() => { setCsSubmitMsg(""); setShowCybershokeModal(true); }}
-              style={{
-                background: "rgba(255, 145, 0, 0.12)",
-                border: "1px solid rgba(255, 145, 0, 0.5)",
-                borderRadius: "8px",
-                padding: "0.55rem 0.95rem",
-                color: "#ff9100",
-                fontSize: "0.82rem",
-                fontWeight: "600",
-                cursor: "pointer",
-                transition: "all 0.2s"
-              }}
-            >
-              Добавить матч Cybershoke
-            </button>
+            <div style={{ display: "flex", gap: "0.5rem" }}>
+              <button 
+                onClick={() => { setCsSubmitMsg(""); setShowCybershokeModal(true); }}
+                style={{
+                  background: "rgba(255, 145, 0, 0.12)",
+                  border: "1px solid rgba(255, 145, 0, 0.5)",
+                  borderRadius: "8px",
+                  padding: "0.55rem 0.95rem",
+                  color: "#ff9100",
+                  fontSize: "0.82rem",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  transition: "all 0.2s"
+                }}
+              >
+                Добавить матч Cybershoke
+              </button>
+              <button 
+                onClick={() => { 
+                  setBatchSaveMsg(""); 
+                  const initial: Record<string, string> = {};
+                  (rankings || []).forEach((item: any) => {
+                    const nick = item.nickname || item.player?.nickname;
+                    const pId = item.player_id || item.player?.player_id;
+                    const ov = (pId && playerOverridesMap[pId]) || (nick && playerOverridesMap[nick]) || {};
+                    if (nick) {
+                      initial[nick] = ov.csRating !== undefined ? ov.csRating.toString() : "";
+                    }
+                  });
+                  setBatchPtsMap(initial);
+                  setShowBatchPtsModal(true); 
+                }}
+                style={{
+                  background: "rgba(0, 229, 255, 0.12)",
+                  border: "1px solid rgba(0, 229, 255, 0.5)",
+                  borderRadius: "8px",
+                  padding: "0.55rem 0.95rem",
+                  color: "var(--accent-cyan)",
+                  fontSize: "0.82rem",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  transition: "all 0.2s"
+                }}
+              >
+                Массовое редактирование PTS
+              </button>
+            </div>
           )}
 
           {userRole !== "GUEST" ? (
@@ -5869,6 +5903,153 @@ export default function Home() {
                 style={{ flex: 1, padding: "0.65rem", borderRadius: "10px" }}
               >
                 Сохранить
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ADMIN BATCH PREMIER PTS EDIT MODAL */}
+      {showBatchPtsModal && userRole === "ADMIN" && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "rgba(0, 0, 0, 0.88)",
+          backdropFilter: "blur(14px)",
+          WebkitBackdropFilter: "blur(14px)",
+          zIndex: 1000000,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "1.5rem"
+        }}>
+          <div className="glass-card animate-fade-in" style={{
+            maxWidth: "750px",
+            width: "100%",
+            maxHeight: "85vh",
+            overflowY: "auto",
+            padding: "2rem",
+            borderRadius: "24px",
+            border: "1.5px solid var(--accent-cyan)",
+            boxShadow: "0 0 50px rgba(0, 229, 255, 0.25)",
+            position: "relative",
+            background: "#0c0a17"
+          }}>
+            <span 
+              className="modal-close-btn" 
+              onClick={() => setShowBatchPtsModal(false)}
+              style={{ top: "1.25rem", right: "1.25rem" }}
+            >
+              ✕
+            </span>
+
+            <h3 className="glow-text-cyan" style={{ fontSize: "1.5rem", margin: "0 0 0.5rem 0", fontWeight: "800", textAlign: "center" }}>
+              Массовое изменение Premier PTS всех игроков
+            </h3>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem", textAlign: "center", marginBottom: "1.5rem" }}>
+              Введите число Premier PTS напротив нужных игроков и нажмите «Сохранить все PTS»
+            </p>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem", marginBottom: "1.5rem" }}>
+              {(rankings && rankings.length > 0 ? rankings : []).map((item: any, idx: number) => {
+                const nick = item.nickname || item.player?.nickname || "Игрок";
+                const pId = item.player_id || item.player?.player_id;
+                const ov = (pId && playerOverridesMap[pId]) || (nick && playerOverridesMap[nick]) || {};
+                const currentPts = batchPtsMap[nick] !== undefined ? batchPtsMap[nick] : (ov.csRating !== undefined ? ov.csRating.toString() : "");
+
+                return (
+                  <div key={idx} style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    background: "rgba(255, 255, 255, 0.02)",
+                    border: "1px solid var(--border-light)",
+                    borderRadius: "10px",
+                    padding: "0.5rem 0.75rem"
+                  }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+                      <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", width: "22px" }}>#{idx + 1}</span>
+                      <span style={{ fontSize: "0.85rem", fontWeight: "700", color: "#fff" }}>{nick}</span>
+                    </div>
+                    <input 
+                      type="number"
+                      value={currentPts}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setBatchPtsMap(prev => ({ ...prev, [nick]: val }));
+                      }}
+                      placeholder="PTS"
+                      style={{
+                        width: "110px",
+                        padding: "0.4rem 0.6rem",
+                        borderRadius: "8px",
+                        background: "#06050c",
+                        border: "1px solid var(--border-light)",
+                        color: "var(--accent-cyan)",
+                        fontWeight: "700",
+                        fontSize: "0.85rem",
+                        textAlign: "right"
+                      }}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+
+            {batchSaveMsg && (
+              <div style={{ fontSize: "0.85rem", color: batchSaveMsg.includes("Ошибка") ? "#ff4949" : "#4caf50", textAlign: "center", marginBottom: "1rem" }}>
+                {batchSaveMsg}
+              </div>
+            )}
+
+            <div style={{ display: "flex", gap: "1rem" }}>
+              <button 
+                className="btn btn-secondary" 
+                onClick={() => setShowBatchPtsModal(false)}
+                style={{ flex: 1, padding: "0.75rem", borderRadius: "12px" }}
+              >
+                Отмена
+              </button>
+              <button 
+                className="btn btn-glow-cyan" 
+                onClick={async () => {
+                  try {
+                    setBatchSaveMsg("Сохранение всех игроков...");
+                    const batchArray = Object.entries(batchPtsMap).map(([nickname, pts]) => ({
+                      nickname,
+                      csRating: pts !== "" ? Number(pts) : undefined
+                    }));
+
+                    const res = await fetch("/api/admin/players/override", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        passcode: "sigmaadmin",
+                        batchOverrides: batchArray
+                      })
+                    });
+
+                    const data = await res.json();
+                    if (res.ok && data.success) {
+                      setBatchSaveMsg("Все Premier PTS успешно сохранены!");
+                      fetchPlayerOverrides();
+                      setTimeout(() => {
+                        setShowBatchPtsModal(false);
+                        setBatchSaveMsg("");
+                      }, 1200);
+                    } else {
+                      setBatchSaveMsg(data.error || "Ошибка сохранения");
+                    }
+                  } catch (err: any) {
+                    setBatchSaveMsg("Ошибка сети: " + err.message);
+                  }
+                }}
+                style={{ flex: 1, padding: "0.75rem", borderRadius: "12px" }}
+              >
+                Сохранить все PTS
               </button>
             </div>
           </div>

@@ -29,10 +29,34 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { passcode, playerId, nickname, csRating, customElo, customSkillScore } = body;
+    const { passcode, batchOverrides, playerId, nickname, csRating, customElo, customSkillScore } = body;
 
     if (passcode !== "demon323161" && passcode !== "sigmaadmin") {
       return NextResponse.json({ error: "Неверный пароль администратора" }, { status: 403 });
+    }
+
+    const current = await readOverrides();
+
+    // Support batch update for all 33 players at once!
+    if (Array.isArray(batchOverrides)) {
+      batchOverrides.forEach((item: any) => {
+        const key = item.playerId || item.nickname;
+        if (!key) return;
+        current[key] = {
+          ...(current[key] || {}),
+          nickname: item.nickname || current[key]?.nickname || key,
+          csRating: item.csRating !== undefined && item.csRating !== "" && item.csRating !== null ? Number(item.csRating) : current[key]?.csRating,
+          customElo: item.customElo !== undefined && item.customElo !== "" && item.customElo !== null ? Number(item.customElo) : current[key]?.customElo,
+          customSkillScore: item.customSkillScore !== undefined && item.customSkillScore !== "" && item.customSkillScore !== null ? Number(item.customSkillScore) : current[key]?.customSkillScore,
+          updatedAt: new Date().toISOString()
+        };
+        if (item.nickname && item.nickname !== key) {
+          current[item.nickname] = current[key];
+        }
+      });
+
+      await saveOverrides(current);
+      return NextResponse.json({ success: true, allOverrides: current });
     }
 
     if (!playerId && !nickname) {
@@ -40,7 +64,6 @@ export async function POST(request: NextRequest) {
     }
 
     const key = playerId || nickname;
-    const current = await readOverrides();
 
     current[key] = {
       ...(current[key] || {}),
@@ -51,7 +74,6 @@ export async function POST(request: NextRequest) {
       updatedAt: new Date().toISOString()
     };
 
-    // Also alias by nickname if key is UUID
     if (nickname && nickname !== key) {
       current[nickname] = current[key];
     }
