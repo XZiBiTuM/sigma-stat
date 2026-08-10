@@ -188,7 +188,12 @@ export default function PlayerProfilePage() {
       );
     }
 
-    const { premierRating, ranks, vacBanned, gameBans } = steamStats;
+    const lowerNick = (profile?.nickname || "").toLowerCase();
+    const ov = (profile?.player_id && playerOverridesMap[profile.player_id]) || 
+               (lowerNick && playerOverridesMap[lowerNick]) || {};
+
+    const premierRating = steamStats?.premierRating || ov?.csRating;
+    const { ranks, vacBanned, gameBans } = steamStats;
 
     // Premier rating tier color (CS2 colors)
     let tierColor = "#cbd5e1";
