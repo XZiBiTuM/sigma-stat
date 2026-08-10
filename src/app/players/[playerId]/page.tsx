@@ -220,10 +220,12 @@ export default function PlayerProfilePage() {
           }}>
             <div>
               <span style={{ fontSize: "0.8rem", fontWeight: "800", color: "#fff" }}>CS2 Premier Rating</span>
-              <span style={{ fontSize: "0.65rem", color: "var(--text-muted)", display: "block" }}>Официальный рейтинг Valve</span>
+              <span style={{ fontSize: "0.65rem", color: "var(--text-muted)", display: "block" }}>
+                {premierRating ? "Официальный рейтинг Valve / CSSTATS" : "Нету в CSSTATS (расчет по скиллу ELO)"}
+              </span>
             </div>
-            <span style={{ fontSize: "1.25rem", fontWeight: "900", color: premierRating ? tierColor : "var(--text-secondary)", textShadow: premierRating ? `0 0 10px ${tierColor}30` : "none" }}>
-              {premierRating ? `${premierRating.toLocaleString()} PTS` : "Без рейтинга"}
+            <span style={{ fontSize: "1.2rem", fontWeight: "900", color: premierRating ? tierColor : "var(--text-secondary)", textShadow: premierRating ? `0 0 10px ${tierColor}30` : "none" }}>
+              {premierRating ? `${premierRating.toLocaleString()} PTS` : "Нету (Без рейтинга)"}
             </span>
           </div>
 
