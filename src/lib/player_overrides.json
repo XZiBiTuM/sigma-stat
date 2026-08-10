@@ -2,17 +2,17 @@
   "d2e54be2-54d9-4d3e-ad8f-807919c0982c": {
     "nickname": "Porshen",
     "csRating": 23500,
-    "customElo": 2308
+    "customElo": 2199
   },
   "c9e13dd4-8ec4-4fec-b3d0-620f7ced7233": {
     "nickname": "nika_jok",
     "csRating": 21000,
-    "customElo": 1931
+    "customElo": 1981
   },
   "2c9dafb1-43d5-4883-b61d-30b7f7824d3c": {
     "nickname": "XZiBiTuM",
     "csRating": 20800,
-    "customElo": 1928
+    "customElo": 1980
   },
   "81ca8d1b-4037-4d7b-96ca-4f4fb2cfade1": {
     "nickname": "massao61",
@@ -42,7 +42,7 @@
   "af52ceb5-cde0-47dd-bf48-7e640d7372ac": {
     "nickname": "ANAKONDA1966",
     "csRating": 13800,
-    "customElo": 962
+    "customElo": 1197
   },
   "e1c67ef9-50cb-424b-b8d3-558aa0165b75": {
     "nickname": "MrChillout61",
@@ -83,5 +83,260 @@
     "nickname": "Pilotiki161",
     "customElo": 1029,
     "csRating": 9776
+  },
+  "anakonda1966": {
+    "nickname": "ANAKONDA1966",
+    "customElo": 1197,
+    "csRating": 11372
+  },
+  "46765b9c-77f3-4c92-9d04-e94f6d4bf575": {
+    "nickname": "Lynxick",
+    "customElo": 2411,
+    "csRating": 22905
+  },
+  "lynxick": {
+    "nickname": "Lynxick",
+    "customElo": 2411,
+    "csRating": 22905
+  },
+  "73866213-0a98-48c4-9858-912dc1a8ecad": {
+    "nickname": "khachik92",
+    "customElo": 600,
+    "csRating": 5700
+  },
+  "khachik92": {
+    "nickname": "khachik92",
+    "customElo": 600,
+    "csRating": 5700
+  },
+  "nika_jok": {
+    "nickname": "nika_jok",
+    "customElo": 1981,
+    "csRating": 18820
+  },
+  "456f617d-3aa9-41d2-9da9-2905b7656971": {
+    "nickname": "Baltika--7",
+    "customElo": 1000,
+    "csRating": 9500
+  },
+  "baltika--7": {
+    "nickname": "Baltika--7",
+    "customElo": 1000,
+    "csRating": 9500
+  },
+  "ce21732e-002e-4951-96cf-970d56a2eff4": {
+    "nickname": "Kups2-0",
+    "customElo": 1641,
+    "csRating": 15590
+  },
+  "kups2-0": {
+    "nickname": "Kups2-0",
+    "customElo": 1641,
+    "csRating": 15590
+  },
+  "jiyhatuk_1": {
+    "nickname": "JIyHaTuK_1",
+    "customElo": 1100,
+    "csRating": 10450
+  },
+  "bezhenec": {
+    "nickname": "Bezhenec",
+    "customElo": 697,
+    "csRating": 6622
+  },
+  "mrchillout61": {
+    "nickname": "MrChillout61",
+    "customElo": 908,
+    "csRating": 8626
+  },
+  "uncle007": {
+    "nickname": "uncle007",
+    "customElo": 1514,
+    "csRating": 14383
+  },
+  "64ec3e31-5389-4dba-873f-29e65f5b759c": {
+    "nickname": "Garrymania",
+    "customElo": 1000,
+    "csRating": 9500
+  },
+  "garrymania": {
+    "nickname": "Garrymania",
+    "customElo": 1000,
+    "csRating": 9500
+  },
+  "bc5a59c4-dd46-4a9c-a114-850fd50f358e": {
+    "nickname": "a1m_bich",
+    "customElo": 825,
+    "csRating": 7838
+  },
+  "a1m_bich": {
+    "nickname": "a1m_bich",
+    "customElo": 825,
+    "csRating": 7838
+  },
+  "a9c1517b-06b2-41c6-b748-a5528340e319": {
+    "nickname": "Pilotiki161",
+    "customElo": 1029,
+    "csRating": 9776
+  },
+  "pilotiki161": {
+    "nickname": "Pilotiki161",
+    "customElo": 1029,
+    "csRating": 9776
+  },
+  "4e4df10d-ca21-4d85-84d0-93212bea7e76": {
+    "nickname": "Raul800",
+    "customElo": 1378,
+    "csRating": 13091
+  },
+  "raul800": {
+    "nickname": "Raul800",
+    "customElo": 1378,
+    "csRating": 13091
+  },
+  "rt_bers": {
+    "nickname": "RT_BERS",
+    "customElo": 1256,
+    "csRating": 11932
+  },
+  "cea765cf-b74d-40ba-bc09-3a5bab0c28e9": {
+    "nickname": "BryanOKnish1",
+    "customElo": 725,
+    "csRating": 6888
+  },
+  "bryanoknish1": {
+    "nickname": "BryanOKnish1",
+    "customElo": 725,
+    "csRating": 6888
+  },
+  "584a15e3-171c-4b5c-9bb5-dff74d3068b6": {
+    "nickname": "At1antida",
+    "customElo": 1129,
+    "csRating": 10726
+  },
+  "at1antida": {
+    "nickname": "At1antida",
+    "customElo": 1129,
+    "csRating": 10726
+  },
+  "77d55813-60e2-4a3f-8e3a-2c90e2d75ce6": {
+    "nickname": "su666nyak",
+    "customElo": 2193,
+    "csRating": 20834
+  },
+  "su666nyak": {
+    "nickname": "su666nyak",
+    "customElo": 2193,
+    "csRating": 20834
+  },
+  "3fcbefe9-9591-43fa-81e6-6b3ab38021d8": {
+    "nickname": "avtolike",
+    "customElo": 705,
+    "csRating": 6698
+  },
+  "avtolike": {
+    "nickname": "avtolike",
+    "customElo": 705,
+    "csRating": 6698
+  },
+  "3261cf01-21da-4112-bee3-3fe831be85b9": {
+    "nickname": "Kapral_61",
+    "customElo": 1000,
+    "csRating": 9500
+  },
+  "kapral_61": {
+    "nickname": "Kapral_61",
+    "customElo": 1000,
+    "csRating": 9500
+  },
+  "madmax14888": {
+    "nickname": "madmax14888",
+    "customElo": 942,
+    "csRating": 8949
+  },
+  "906a4978-0c4b-4536-9b17-c7cb9926e299": {
+    "nickname": "Pach03",
+    "customElo": 973,
+    "csRating": 9244
+  },
+  "pach03": {
+    "nickname": "Pach03",
+    "customElo": 973,
+    "csRating": 9244
+  },
+  "xzibitum": {
+    "nickname": "XZiBiTuM",
+    "customElo": 1980,
+    "csRating": 18810
+  },
+  "stas1kudin": {
+    "nickname": "Stas1kudin",
+    "customElo": 1000,
+    "csRating": 9500
+  },
+  "mendez161": {
+    "nickname": "mendez161",
+    "customElo": 1000,
+    "csRating": 9500
+  },
+  "porshen": {
+    "nickname": "Porshen",
+    "customElo": 2199,
+    "csRating": 20891
+  },
+  "85866365-b130-4feb-bb7e-86cf8a43a65a": {
+    "nickname": "syrass",
+    "customElo": 1256,
+    "csRating": 11932
+  },
+  "syrass": {
+    "nickname": "syrass",
+    "customElo": 1256,
+    "csRating": 11932
+  },
+  "90a2b3cd-0c84-499b-915f-9f21bf4ae698": {
+    "nickname": "DatObase",
+    "customElo": 1000,
+    "csRating": 9500
+  },
+  "datobase": {
+    "nickname": "DatObase",
+    "customElo": 1000,
+    "csRating": 9500
+  },
+  "massao61": {
+    "nickname": "massao61",
+    "customElo": 1597,
+    "csRating": 15172
+  },
+  "ac4b58a4-4cf7-4eae-97ef-262480304e81": {
+    "nickname": "Gigant161",
+    "customElo": 1063,
+    "csRating": 10099
+  },
+  "gigant161": {
+    "nickname": "Gigant161",
+    "customElo": 1063,
+    "csRating": 10099
+  },
+  "nycujan": {
+    "nickname": "nycujan",
+    "customElo": 1095,
+    "csRating": 10403
+  },
+  "3769f84c-cb71-4f76-b261-87486842b967": {
+    "nickname": "FCG_pilotiki",
+    "customElo": 1459,
+    "csRating": 13861
+  },
+  "fcg_pilotiki": {
+    "nickname": "FCG_pilotiki",
+    "customElo": 1459,
+    "csRating": 13861
+  },
+  "w1ndyyyk_244": {
+    "nickname": "w1ndyyyk_244",
+    "customElo": 456,
+    "csRating": 4332
   }
 }
