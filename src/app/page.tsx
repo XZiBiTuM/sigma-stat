@@ -297,6 +297,7 @@ export default function Home() {
   const [adminEditMsg, setAdminEditMsg] = useState<string>("");
   const [showBatchPtsModal, setShowBatchPtsModal] = useState<boolean>(false);
   const [batchPtsMap, setBatchPtsMap] = useState<Record<string, string>>({});
+  const [batchScoreMap, setBatchScoreMap] = useState<Record<string, string>>({});
   const [batchSaveMsg, setBatchSaveMsg] = useState<string>("");
 
   const fetchPlayerOverrides = async () => {
@@ -1889,20 +1890,33 @@ export default function Home() {
           </p>
         </div>
 
-        <div style={{ display: "flex", gap: "0.6rem", alignItems: "center" }}>
+        {/* Centered Unified Header Navigation Buttons */}
+        <div style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "0.65rem",
+          flexWrap: "wrap",
+          width: "100%",
+          marginTop: "1rem"
+        }}>
           <button 
             onClick={() => setShowDraftModal(true)}
             style={{
-              background: "rgba(0, 229, 255, 0.08)",
-              border: "1px solid rgba(0, 229, 255, 0.4)",
-              borderRadius: "8px",
-              padding: "0.55rem 0.95rem",
-              color: "#fff",
+              height: "38px",
+              padding: "0 1.1rem",
+              borderRadius: "10px",
               fontSize: "0.82rem",
-              fontWeight: "600",
+              fontWeight: "700",
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "rgba(0, 229, 255, 0.1)",
+              border: "1px solid rgba(0, 229, 255, 0.4)",
+              color: "#00e5ff",
               cursor: "pointer",
-              transition: "all 0.2s",
-              boxShadow: "0 0 10px rgba(0, 229, 255, 0.15)"
+              transition: "all 0.2s ease-in-out",
+              boxShadow: "0 0 12px rgba(0, 229, 255, 0.15)"
             }}
           >
             Captain's Draft
@@ -1911,34 +1925,42 @@ export default function Home() {
           <button 
             onClick={() => { setTourStep(0); setShowTourModal(true); }}
             style={{
+              height: "38px",
+              padding: "0 1.1rem",
+              borderRadius: "10px",
+              fontSize: "0.82rem",
+              fontWeight: "700",
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
               background: "rgba(255, 255, 255, 0.05)",
               border: "1px solid var(--border-light)",
-              borderRadius: "8px",
-              padding: "0.55rem 0.95rem",
               color: "var(--text-secondary)",
-              fontSize: "0.82rem",
-              fontWeight: "600",
               cursor: "pointer",
-              transition: "all 0.2s"
+              transition: "all 0.2s ease-in-out"
             }}
           >
             О сервисе
           </button>
 
           {userRole === "ADMIN" && (
-            <div style={{ display: "flex", gap: "0.5rem" }}>
+            <>
               <button 
                 onClick={() => { setCsSubmitMsg(""); setShowCybershokeModal(true); }}
                 style={{
+                  height: "38px",
+                  padding: "0 1.1rem",
+                  borderRadius: "10px",
+                  fontSize: "0.82rem",
+                  fontWeight: "700",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                   background: "rgba(255, 145, 0, 0.12)",
                   border: "1px solid rgba(255, 145, 0, 0.5)",
-                  borderRadius: "8px",
-                  padding: "0.55rem 0.95rem",
                   color: "#ff9100",
-                  fontSize: "0.82rem",
-                  fontWeight: "600",
                   cursor: "pointer",
-                  transition: "all 0.2s"
+                  transition: "all 0.2s ease-in-out"
                 }}
               >
                 Добавить матч Cybershoke
@@ -1946,44 +1968,55 @@ export default function Home() {
               <button 
                 onClick={() => { 
                   setBatchSaveMsg(""); 
-                  const initial: Record<string, string> = {};
+                  const initialPts: Record<string, string> = {};
+                  const initialScore: Record<string, string> = {};
                   (rankings || []).forEach((item: any) => {
                     const nick = item.nickname || item.player?.nickname;
                     const pId = item.player_id || item.player?.player_id;
                     const ov = (pId && playerOverridesMap[pId]) || (nick && playerOverridesMap[nick]) || {};
                     if (nick) {
-                      initial[nick] = ov.csRating !== undefined ? ov.csRating.toString() : "";
+                      initialPts[nick] = ov.csRating !== undefined ? ov.csRating.toString() : "";
+                      initialScore[nick] = ov.customSkillScore !== undefined ? ov.customSkillScore.toString() : "";
                     }
                   });
-                  setBatchPtsMap(initial);
+                  setBatchPtsMap(initialPts);
+                  setBatchScoreMap(initialScore);
                   setShowBatchPtsModal(true); 
                 }}
                 style={{
+                  height: "38px",
+                  padding: "0 1.1rem",
+                  borderRadius: "10px",
+                  fontSize: "0.82rem",
+                  fontWeight: "700",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                   background: "rgba(0, 229, 255, 0.12)",
                   border: "1px solid rgba(0, 229, 255, 0.5)",
-                  borderRadius: "8px",
-                  padding: "0.55rem 0.95rem",
                   color: "var(--accent-cyan)",
-                  fontSize: "0.82rem",
-                  fontWeight: "600",
                   cursor: "pointer",
-                  transition: "all 0.2s"
+                  transition: "all 0.2s ease-in-out"
                 }}
               >
-                Массовое редактирование PTS
+                Массовое редактирование PTS и Скилла
               </button>
-            </div>
+            </>
           )}
 
           {userRole !== "GUEST" ? (
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
               <span style={{ 
+                height: "38px",
+                padding: "0 1rem",
+                borderRadius: "10px",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
                 background: userRole === "EVENT_MAKER" ? "rgba(124, 77, 255, 0.2)" : "rgba(255, 145, 0, 0.2)", 
                 border: userRole === "EVENT_MAKER" ? "1px solid #7c4dff" : "1px solid #ff9100",
                 color: userRole === "EVENT_MAKER" ? "#b388ff" : "#ffb74d", 
                 fontWeight: "700",
-                padding: "0.55rem 0.85rem",
-                borderRadius: "8px",
                 fontSize: "0.82rem"
               }}>
                 {userRole === "EVENT_MAKER" ? "EVENT MAKER: Mr.Chillout" : "ADMIN"}
@@ -1993,15 +2026,19 @@ export default function Home() {
                 <button 
                   onClick={() => { setEventAnnMsg(""); setShowEventModal(true); }}
                   style={{
+                    height: "38px",
+                    padding: "0 1.1rem",
+                    borderRadius: "10px",
+                    fontSize: "0.82rem",
+                    fontWeight: "700",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                     background: "rgba(124, 77, 255, 0.15)",
                     border: "1px solid #7c4dff",
-                    borderRadius: "8px",
-                    padding: "0.55rem 0.85rem",
                     color: "#b388ff",
-                    fontSize: "0.82rem",
-                    fontWeight: "600",
                     cursor: "pointer",
-                    transition: "all 0.2s"
+                    transition: "all 0.2s ease-in-out"
                   }}
                 >
                   Добавить Event
@@ -2016,15 +2053,19 @@ export default function Home() {
                   setUserName("");
                 }}
                 style={{
-                  background: "rgba(255, 73, 73, 0.1)",
-                  border: "1px solid rgba(255, 73, 73, 0.3)",
-                  borderRadius: "8px",
-                  padding: "0.55rem 0.85rem",
-                  color: "#ff7b7b",
+                  height: "38px",
+                  padding: "0 1.1rem",
+                  borderRadius: "10px",
                   fontSize: "0.82rem",
-                  fontWeight: "600",
+                  fontWeight: "700",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "rgba(255, 73, 73, 0.12)",
+                  border: "1px solid rgba(255, 73, 73, 0.4)",
+                  color: "#ff7b7b",
                   cursor: "pointer",
-                  transition: "all 0.2s"
+                  transition: "all 0.2s ease-in-out"
                 }}
               >
                 Выйти
@@ -2032,20 +2073,24 @@ export default function Home() {
             </div>
           ) : (
             <button 
-              onClick={() => { setAuthError(""); setAuthPasscode(""); setShowAuthModal(true); }}
+              onClick={() => { setAuthPasscode(""); setAuthError(""); setShowAuthModal(true); }}
               style={{
-                background: "rgba(255, 255, 255, 0.05)",
-                border: "1px solid var(--border-light)",
-                borderRadius: "8px",
-                padding: "0.55rem 0.95rem",
-                color: "#fff",
+                height: "38px",
+                padding: "0 1.1rem",
+                borderRadius: "10px",
                 fontSize: "0.82rem",
-                fontWeight: "600",
+                fontWeight: "700",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "rgba(0, 229, 255, 0.12)",
+                border: "1px solid rgba(0, 229, 255, 0.5)",
+                color: "var(--accent-cyan)",
                 cursor: "pointer",
-                transition: "all 0.2s"
+                transition: "all 0.2s ease-in-out"
               }}
             >
-              Войти
+              Вход для оргов
             </button>
           )}
         </div>
@@ -4725,6 +4770,11 @@ export default function Home() {
                           <span style={{ fontSize: "0.76rem", color: "var(--text-secondary)", display: "block", marginTop: "0.1rem" }}>
                             Premier CS Rating {sk.isRealPremier ? "" : "(расчетный)"}: <strong style={{ color: "#fff" }}>{(sk?.csRating ?? 0).toLocaleString("ru-RU")}</strong>
                           </span>
+                          {!sk.isRealPremier && (
+                            <span style={{ fontSize: "0.68rem", color: "#ffb74d", display: "block", marginTop: "0.2rem" }}>
+                              ⚠️ Значение может быть неточным: игрок не отдает статистику через официальный API Valve.
+                            </span>
+                          )}
                         </div>
                       </div>
 
@@ -5771,148 +5821,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* ADMIN PLAYER EDIT MODAL */}
-      {showAdminPlayerEditModal && adminEditingPlayer && userRole === "ADMIN" && (
-        <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: "rgba(0, 0, 0, 0.88)",
-          backdropFilter: "blur(14px)",
-          WebkitBackdropFilter: "blur(14px)",
-          zIndex: 1000000,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "1.5rem"
-        }}>
-          <div className="glass-card animate-fade-in" style={{
-            maxWidth: "500px",
-            width: "100%",
-            padding: "2rem",
-            borderRadius: "20px",
-            border: "1.5px solid var(--accent-cyan)",
-            boxShadow: "0 0 40px rgba(0, 229, 255, 0.2)",
-            position: "relative",
-            background: "#0c0a17"
-          }}>
-            <span 
-              className="modal-close-btn" 
-              onClick={() => setShowAdminPlayerEditModal(false)}
-              style={{ top: "1.25rem", right: "1.25rem" }}
-            >
-              ✕
-            </span>
-
-            <h3 className="glow-text-cyan" style={{ fontSize: "1.35rem", margin: "0 0 0.5rem 0", fontWeight: "800", textAlign: "center" }}>
-              Редактирование игрока: {adminEditingPlayer.nickname}
-            </h3>
-            <p style={{ color: "var(--text-secondary)", fontSize: "0.82rem", textAlign: "center", marginBottom: "1.25rem" }}>
-              Задайте индивидуальные переопределения рейтинга или ELO для игрока хаба
-            </p>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginBottom: "1.25rem" }}>
-              <div>
-                <label style={{ display: "block", marginBottom: "0.3rem", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
-                  Premier CS Rating (очки в CS2):
-                </label>
-                <input 
-                  type="number" 
-                  className="input-field" 
-                  value={adminCsRatingInput} 
-                  onChange={(e) => setAdminCsRatingInput(e.target.value)} 
-                  placeholder="Прим: 18940 или 14500" 
-                  style={{ width: "100%", padding: "0.65rem", borderRadius: "10px", background: "#06050c", fontSize: "0.9rem" }}
-                />
-              </div>
-
-              <div>
-                <label style={{ display: "block", marginBottom: "0.3rem", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
-                  Custom FACEIT ELO (если отличается):
-                </label>
-                <input 
-                  type="number" 
-                  className="input-field" 
-                  value={adminCustomEloInput} 
-                  onChange={(e) => setAdminCustomEloInput(e.target.value)} 
-                  placeholder="Прим: 1980" 
-                  style={{ width: "100%", padding: "0.65rem", borderRadius: "10px", background: "#06050c", fontSize: "0.9rem" }}
-                />
-              </div>
-
-              <div>
-                <label style={{ display: "block", marginBottom: "0.3rem", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
-                  Фиксированный балл скилла (1–100, опционально):
-                </label>
-                <input 
-                  type="number" 
-                  className="input-field" 
-                  value={adminCustomScoreInput} 
-                  onChange={(e) => setAdminCustomScoreInput(e.target.value)} 
-                  placeholder="Прим: 85" 
-                  style={{ width: "100%", padding: "0.65rem", borderRadius: "10px", background: "#06050c", fontSize: "0.9rem" }}
-                />
-              </div>
-
-              {adminEditMsg && (
-                <div style={{ fontSize: "0.82rem", color: adminEditMsg.includes("Ошибка") ? "#ff4949" : "#4caf50", textAlign: "center" }}>
-                  {adminEditMsg}
-                </div>
-              )}
-            </div>
-
-            <div style={{ display: "flex", gap: "0.75rem" }}>
-              <button 
-                className="btn btn-secondary" 
-                onClick={() => setShowAdminPlayerEditModal(false)}
-                style={{ flex: 1, padding: "0.65rem", borderRadius: "10px" }}
-              >
-                Отмена
-              </button>
-              <button 
-                className="btn btn-glow-cyan" 
-                onClick={async () => {
-                  try {
-                    setAdminEditMsg("Сохранение...");
-                    const res = await fetch("/api/admin/players/override", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
-                        passcode: "sigmaadmin",
-                        playerId: adminEditingPlayer.player_id,
-                        nickname: adminEditingPlayer.nickname,
-                        csRating: adminCsRatingInput !== "" ? Number(adminCsRatingInput) : undefined,
-                        customElo: adminCustomEloInput !== "" ? Number(adminCustomEloInput) : undefined,
-                        customSkillScore: adminCustomScoreInput !== "" ? Number(adminCustomScoreInput) : undefined
-                      })
-                    });
-                    const data = await res.json();
-                    if (res.ok && data.success) {
-                      setAdminEditMsg("Сохранено успешно!");
-                      fetchPlayerOverrides();
-                      setTimeout(() => {
-                        setShowAdminPlayerEditModal(false);
-                        setAdminEditMsg("");
-                      }, 1000);
-                    } else {
-                      setAdminEditMsg(data.error || "Ошибка сохранения");
-                    }
-                  } catch (err: any) {
-                    setAdminEditMsg("Ошибка сети: " + err.message);
-                  }
-                }}
-                style={{ flex: 1, padding: "0.65rem", borderRadius: "10px" }}
-              >
-                Сохранить
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ADMIN BATCH PREMIER PTS EDIT MODAL */}
+      {/* ADMIN BATCH PREMIER PTS & SKILL SCORE EDIT MODAL */}
       {showBatchPtsModal && userRole === "ADMIN" && (
         <div style={{
           position: "fixed",
@@ -5930,9 +5839,9 @@ export default function Home() {
           padding: "1.5rem"
         }}>
           <div className="glass-card animate-fade-in" style={{
-            maxWidth: "750px",
+            maxWidth: "850px",
             width: "100%",
-            maxHeight: "85vh",
+            maxHeight: "88vh",
             overflowY: "auto",
             padding: "2rem",
             borderRadius: "24px",
@@ -5950,11 +5859,33 @@ export default function Home() {
             </span>
 
             <h3 className="glow-text-cyan" style={{ fontSize: "1.5rem", margin: "0 0 0.5rem 0", fontWeight: "800", textAlign: "center" }}>
-              Массовое изменение Premier PTS всех игроков
+              Массовое редактирование Premier PTS и Скилла игроков
             </h3>
-            <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem", textAlign: "center", marginBottom: "1.5rem" }}>
-              Введите число Premier PTS напротив нужных игроков и нажмите «Сохранить все PTS»
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem", textAlign: "center", marginBottom: "1.25rem" }}>
+              Задайте Premier PTS или индивидуальный Балл Скилла (1–100) для каждого игрока
             </p>
+
+            {/* Formula Explanation Banner */}
+            <div style={{
+              background: "rgba(0, 229, 255, 0.05)",
+              border: "1px solid rgba(0, 229, 255, 0.2)",
+              borderRadius: "12px",
+              padding: "0.85rem 1.1rem",
+              marginBottom: "1.25rem",
+              fontSize: "0.82rem",
+              color: "var(--text-secondary)",
+              lineHeight: "1.45"
+            }}>
+              <strong style={{ color: "var(--accent-cyan)", display: "block", marginBottom: "0.35rem", fontSize: "0.88rem" }}>
+                📐 Формула расчёта рейтинга скилла (1–100):
+              </strong>
+              <div>▫️ <strong>FACEIT ELO (вклад 45%):</strong> <code style={{ background: "rgba(0,0,0,0.3)", padding: "0.1rem 0.35rem", borderRadius: "4px", color: "#e0e0e0" }}>(ELO - 300) / 22</code></div>
+              <div>▫️ <strong>Premier CS (вклад 55%):</strong> <code style={{ background: "rgba(0,0,0,0.3)", padding: "0.1rem 0.35rem", borderRadius: "4px", color: "#e0e0e0" }}>PTS / 260</code></div>
+              <div>▫️ <strong>Итоговый балл скилла:</strong> <code style={{ color: "#00e5ff", fontWeight: "700" }}>Math.round(0.45 × S_ELO + 0.55 × S_Premier)</code></div>
+              <div style={{ marginTop: "0.4rem", color: "#ffb74d", fontSize: "0.78rem" }}>
+                💡 <em>При вводе поля «Скилл (1–100)» значение фиксируется и напрямую задает балл игрока!</em>
+              </div>
+            </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem", marginBottom: "1.5rem" }}>
               {(rankings && rankings.length > 0 ? rankings : []).map((item: any, idx: number) => {
@@ -5962,6 +5893,7 @@ export default function Home() {
                 const pId = item.player_id || item.player?.player_id;
                 const ov = (pId && playerOverridesMap[pId]) || (nick && playerOverridesMap[nick]) || {};
                 const currentPts = batchPtsMap[nick] !== undefined ? batchPtsMap[nick] : (ov.csRating !== undefined ? ov.csRating.toString() : "");
+                const currentScore = batchScoreMap[nick] !== undefined ? batchScoreMap[nick] : (ov.customSkillScore !== undefined ? ov.customSkillScore.toString() : "");
 
                 return (
                   <div key={idx} style={{
@@ -5971,32 +5903,63 @@ export default function Home() {
                     background: "rgba(255, 255, 255, 0.02)",
                     border: "1px solid var(--border-light)",
                     borderRadius: "10px",
-                    padding: "0.5rem 0.75rem"
+                    padding: "0.55rem 0.85rem",
+                    gap: "0.5rem"
                   }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-                      <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", width: "22px" }}>#{idx + 1}</span>
-                      <span style={{ fontSize: "0.85rem", fontWeight: "700", color: "#fff" }}>{nick}</span>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", minWidth: "120px" }}>
+                      <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", width: "20px" }}>#{idx + 1}</span>
+                      <span style={{ fontSize: "0.85rem", fontWeight: "700", color: "#fff", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{nick}</span>
                     </div>
-                    <input 
-                      type="number"
-                      value={currentPts}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setBatchPtsMap(prev => ({ ...prev, [nick]: val }));
-                      }}
-                      placeholder="PTS"
-                      style={{
-                        width: "110px",
-                        padding: "0.4rem 0.6rem",
-                        borderRadius: "8px",
-                        background: "#06050c",
-                        border: "1px solid var(--border-light)",
-                        color: "var(--accent-cyan)",
-                        fontWeight: "700",
-                        fontSize: "0.85rem",
-                        textAlign: "right"
-                      }}
-                    />
+
+                    <div style={{ display: "flex", gap: "0.4rem", alignItems: "center" }}>
+                      <div>
+                        <span style={{ fontSize: "0.62rem", color: "var(--text-muted)", display: "block", textAlign: "center" }}>Premier PTS</span>
+                        <input 
+                          type="number"
+                          value={currentPts}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setBatchPtsMap(prev => ({ ...prev, [nick]: val }));
+                          }}
+                          placeholder="PTS"
+                          style={{
+                            width: "90px",
+                            padding: "0.35rem 0.5rem",
+                            borderRadius: "7px",
+                            background: "#06050c",
+                            border: "1px solid var(--border-light)",
+                            color: "var(--accent-cyan)",
+                            fontWeight: "700",
+                            fontSize: "0.82rem",
+                            textAlign: "right"
+                          }}
+                        />
+                      </div>
+
+                      <div>
+                        <span style={{ fontSize: "0.62rem", color: "var(--text-muted)", display: "block", textAlign: "center" }}>Скилл 1-100</span>
+                        <input 
+                          type="number"
+                          value={currentScore}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setBatchScoreMap(prev => ({ ...prev, [nick]: val }));
+                          }}
+                          placeholder="1-100"
+                          style={{
+                            width: "70px",
+                            padding: "0.35rem 0.5rem",
+                            borderRadius: "7px",
+                            background: "#06050c",
+                            border: "1px solid var(--border-light)",
+                            color: "#c084fc",
+                            fontWeight: "700",
+                            fontSize: "0.82rem",
+                            textAlign: "right"
+                          }}
+                        />
+                      </div>
+                    </div>
                   </div>
                 );
               })}
@@ -6020,10 +5983,11 @@ export default function Home() {
                 className="btn btn-glow-cyan" 
                 onClick={async () => {
                   try {
-                    setBatchSaveMsg("Сохранение всех игроков...");
-                    const batchArray = Object.entries(batchPtsMap).map(([nickname, pts]) => ({
+                    setBatchSaveMsg("Сохранение данных игроков...");
+                    const batchArray = Object.keys({ ...batchPtsMap, ...batchScoreMap }).map(nickname => ({
                       nickname,
-                      csRating: pts !== "" ? Number(pts) : undefined
+                      csRating: batchPtsMap[nickname] !== undefined && batchPtsMap[nickname] !== "" ? Number(batchPtsMap[nickname]) : undefined,
+                      customSkillScore: batchScoreMap[nickname] !== undefined && batchScoreMap[nickname] !== "" ? Number(batchScoreMap[nickname]) : undefined
                     }));
 
                     const res = await fetch("/api/admin/players/override", {
@@ -6037,7 +6001,7 @@ export default function Home() {
 
                     const data = await res.json();
                     if (res.ok && data.success) {
-                      setBatchSaveMsg("Все Premier PTS успешно сохранены!");
+                      setBatchSaveMsg("Данные игроков успешно сохранены!");
                       fetchPlayerOverrides();
                       setTimeout(() => {
                         setShowBatchPtsModal(false);
@@ -6052,12 +6016,13 @@ export default function Home() {
                 }}
                 style={{ flex: 1, padding: "0.75rem", borderRadius: "12px" }}
               >
-                Сохранить все PTS
+                Сохранить все данные
               </button>
             </div>
           </div>
         </div>
       )}
+
 
       {/* ONBOARDING TOUR MODAL */}
       {showTourModal && (
