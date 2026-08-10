@@ -2446,11 +2446,6 @@ export default function Home() {
                                     <span style={{ fontWeight: "600", color: "var(--accent-cyan)" }} className="hover-underline">
                                       {nickname}
                                     </span>
-                                    {nickname.toLowerCase() === "lynxick" && (
-                                      <span style={{ fontSize: "0.6rem", background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", padding: "0.1rem 0.35rem", borderRadius: "3px", color: "var(--text-muted)" }}>
-                                        Скрытый
-                                      </span>
-                                    )}
                                     {country && (
                                       <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
                                         [{country.toUpperCase()}]
