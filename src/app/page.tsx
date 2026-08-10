@@ -260,7 +260,7 @@ export default function Home() {
   // Sorting & Min Matches filter state
   const [sortField, setSortField] = useState<"default" | "skill" | "points" | "matches" | "winrate">("default");
   const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
-  const [minMatchesFilter, setMinMatchesFilter] = useState<number>(0);
+  const [minMatchesFilter, setMinMatchesFilter] = useState<number>(10);
 
   const handleSort = (field: "skill" | "points" | "matches" | "winrate") => {
     if (sortField === field) {
@@ -1840,7 +1840,7 @@ export default function Home() {
             </span>
           </h1>
           <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem", marginTop: "0.25rem", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: "700" }}>
-            GG WP
+            Чем труднее битва - тем слаще победа
           </p>
         </div>
 
@@ -2102,7 +2102,7 @@ export default function Home() {
                   {hubDetails.name}
                 </h2>
                 <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginTop: "0.5rem", lineHeight: "1.4", maxWidth: "800px" }}>
-                  {hubDetails.description || "CS 2"}
+                  {hubDetails.description || "FACEIT HUB"}
                 </p>
               </div>
 
@@ -2161,7 +2161,7 @@ export default function Home() {
                   className={`tab-btn ${activeTab === 'compare' ? 'active' : ''}`}
                   onClick={() => setActiveTab('compare')}
                 >
-                  ⚔️ Сравнение
+                  Сравнение
                 </button>
               </div>
 
@@ -3130,9 +3130,10 @@ export default function Home() {
 
               {/* TAB CONTENT: COMPARE */}
               {activeTab === 'compare' && (() => {
+                const DEFAULT_AVATAR = "https://assets.faceit-cdn.net/avatars/default_avatar.jpg";
                 const getItemId = (r: any) => r.player?.player_id || r.player?.user_id || r.user?.player_id || r.user?.user_id || r.player_id || r.user_id || "";
                 const getItemNick = (r: any) => r.player?.nickname || r.user?.nickname || r.nickname || "";
-                const getItemAvatar = (r: any) => r.player?.avatar || r.user?.avatar || r.avatar || "";
+                const getItemAvatar = (r: any) => r.player?.avatar || r.user?.avatar || r.avatar || DEFAULT_AVATAR;
                 const p1 = rankings.find((r: any) => getItemId(r) === comparePlayer1Id);
                 const p2 = rankings.find((r: any) => getItemId(r) === comparePlayer2Id);
                 const sk1 = p1 ? getPlayerSkillInfo(getItemId(p1), getItemNick(p1)) : null;
@@ -3170,7 +3171,7 @@ export default function Home() {
                 return (
                   <div className="glass-card animate-fade-in" style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
                     <div>
-                      <h3 style={{ fontSize: "1.2rem", color: "#fff", marginBottom: "0.25rem" }}>⚔️ Сравнение игроков</h3>
+                      <h3 style={{ fontSize: "1.2rem", color: "#fff", marginBottom: "0.25rem" }}>Сравнение игроков</h3>
                       <p style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>Выбери двух игроков из таблицы лидеров хаба — сравним их по ключевым показателям</p>
                     </div>
 
@@ -3187,8 +3188,8 @@ export default function Home() {
                           onChange={e => setCompareSearchQuery1(e.target.value)}
                           style={{ fontSize: "0.85rem" }}
                         />
-                        <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", maxHeight: "200px", overflowY: "auto" }}>
-                          {filteredPlayers1.slice(0, 8).map(r => (
+                        <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", maxHeight: "250px", overflowY: "auto" }}>
+                          {filteredPlayers1.map(r => (
                             <button
                               key={getItemId(r)}
                               onClick={() => { setComparePlayer1Id(getItemId(r)); setCompareSearchQuery1(""); }}
@@ -3200,7 +3201,7 @@ export default function Home() {
                                 cursor: "pointer", textAlign: "left"
                               }}
                             >
-                              {getItemAvatar(r) && <img src={getItemAvatar(r)} alt="" style={{ width: "24px", height: "24px", borderRadius: "50%", objectFit: "cover" }} />}
+                              <img src={getItemAvatar(r)} alt="" style={{ width: "24px", height: "24px", borderRadius: "50%", objectFit: "cover" }} />
                               <span style={{ fontSize: "0.85rem", color: comparePlayer1Id === getItemId(r) ? "var(--accent-cyan)" : "var(--text-primary)", fontWeight: "600" }}>{getItemNick(r)}</span>
                               <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginLeft: "auto" }}>#{r.position}</span>
                             </button>
@@ -3234,8 +3235,8 @@ export default function Home() {
                           onChange={e => setCompareSearchQuery2(e.target.value)}
                           style={{ fontSize: "0.85rem" }}
                         />
-                        <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", maxHeight: "200px", overflowY: "auto" }}>
-                          {filteredPlayers2.slice(0, 8).map(r => (
+                        <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", maxHeight: "250px", overflowY: "auto" }}>
+                          {filteredPlayers2.map(r => (
                             <button
                               key={getItemId(r)}
                               onClick={() => { setComparePlayer2Id(getItemId(r)); setCompareSearchQuery2(""); }}
@@ -3247,7 +3248,7 @@ export default function Home() {
                                 cursor: "pointer", textAlign: "left"
                               }}
                             >
-                              {getItemAvatar(r) && <img src={getItemAvatar(r)} alt="" style={{ width: "24px", height: "24px", borderRadius: "50%", objectFit: "cover" }} />}
+                              <img src={getItemAvatar(r)} alt="" style={{ width: "24px", height: "24px", borderRadius: "50%", objectFit: "cover" }} />
                               <span style={{ fontSize: "0.85rem", color: comparePlayer2Id === getItemId(r) ? "#c084fc" : "var(--text-primary)", fontWeight: "600" }}>{getItemNick(r)}</span>
                               <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginLeft: "auto" }}>#{r.position}</span>
                             </button>
@@ -3329,7 +3330,7 @@ export default function Home() {
                       </div>
                     ) : (
                       <div style={{ textAlign: "center", padding: "3rem", border: "1px dashed var(--border-light)", borderRadius: "16px", color: "var(--text-muted)" }}>
-                        <div style={{ fontSize: "2.5rem", marginBottom: "0.75rem" }}>⚔️</div>
+                        <div style={{ fontSize: "2rem", fontWeight: "900", color: "var(--accent-cyan)", marginBottom: "0.75rem" }}>VS</div>
                         <div style={{ fontSize: "1rem", color: "var(--text-secondary)", fontWeight: "600" }}>Выбери двух игроков выше</div>
                         <div style={{ fontSize: "0.85rem", marginTop: "0.35rem" }}>Кликни на ники в списке — сравним их по скиллу, Win Rate, матчам и месту в хабе</div>
                       </div>
@@ -5698,43 +5699,43 @@ export default function Home() {
             </span>
 
             {tourStep === 0 && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center", alignItems: "center" }}>
                 <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
                   Добро пожаловать в Сигма Кибер Клуб
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7", maxWidth: "800px" }}>
                   Статистика хаба в одном месте — без лишнего. Таблица лидеров, история матчей, Leetify AI и Captain's Draft. Всё то, чего не хватало стандартному FACEIT.
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "1rem", color: "var(--text-primary)" }}>
-                  <strong>Leaderboard:</strong> очки, Win Rate, стрики и динамика по сезонам — сразу видно, кто реально тащит, а кто просто набрал матчи
+                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "1rem", color: "var(--text-primary)", maxWidth: "850px", width: "100%" }}>
+                  <strong>Leaderboard:</strong> очки, процент побед, динамика по сезонам — сразу видно, кто реально тащит, а кто просто Саша.
                 </div>
               </div>
             )}
 
             {tourStep === 1 && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center", alignItems: "center" }}>
                 <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
                   Match History & 2D Playback
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7", maxWidth: "800px" }}>
                   В каждом матче — полный разбор по раундам на 2D-карте: куда шли, откуда убили, какое оружие использовали.
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem", maxWidth: "850px", width: "100%" }}>
                   <div><strong>2D Kill Feed:</strong> трассеры выстрелов, позиции на карте, headshot'ы и иконки оружия в реальных координатах</div>
-                  <div><strong>Round-by-round stats:</strong> K/D, ADR, MVP и детальная таблица по каждому игроку</div>
+                  <div><strong>Round-by-round stats:</strong> K/D, ADR, MVP, тепловая карта с подробным разбором каждого раунда по демо-видео и детальная таблица по каждому игроку</div>
                 </div>
               </div>
             )}
 
             {tourStep === 2 && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center", alignItems: "center" }}>
                 <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
                   Профили игроков
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7", maxWidth: "800px" }}>
                   Кликни на ник — откроется профиль со всей статистикой: FACEIT, Steam и Leetify AI в одном окне.
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem", maxWidth: "850px", width: "100%" }}>
                   <div><strong>FACEIT Stats:</strong> K/D, ADR, HS%, Win Rate по картам и динамика Elo</div>
                   <div><strong>Leetify AI:</strong> оценка прицеливания, позиционирования и полезности гранат</div>
                 </div>
@@ -5742,14 +5743,14 @@ export default function Home() {
             )}
 
             {tourStep === 3 && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center", alignItems: "center" }}>
                 <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
                   Captain's Draft
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7", maxWidth: "800px" }}>
                   Делим на команды без споров — Snake Draft на 4 капитана с live-синхронизацией между устройствами.
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem", maxWidth: "850px", width: "100%" }}>
                   <div><strong>Snake Draft System:</strong> порядок пиков переключается автоматически, текущий ход подсвечивается</div>
                   <div><strong>Сохранение & экспорт:</strong> прогресс переживает F5, финальный состав скачивается в .txt</div>
                 </div>
@@ -5757,16 +5758,16 @@ export default function Home() {
             )}
 
             {tourStep === 4 && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center", alignItems: "center" }}>
                 <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
                   Фильтры, сортировка & Сравнение
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7", maxWidth: "800px" }}>
                   Ищи по нику, фильтруй по минимуму матчей, сортируй по скиллу или Win Rate — и сравнивай двух игроков напрямую.
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "left", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                  <div><strong>Skill Rating (1–100):</strong> взвешенная оценка на основе FACEIT Elo (45%) и CS2 Premier Rating (55%) — от красного до фиолетового</div>
-                  <div><strong>⚔️ Сравнение:</strong> отдельная вкладка с таблицей показателей двух игроков рядом</div>
+                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem", maxWidth: "850px", width: "100%" }}>
+                  <div><strong>Skill Rating (1–100):</strong> взвешенная оценка на основе совокупности показателей игрока.</div>
+                  <div><strong>Сравнение:</strong> отдельная вкладка со сравнительной таблицей показателей двух игроков.</div>
                 </div>
               </div>
             )}
