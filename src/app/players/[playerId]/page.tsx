@@ -165,7 +165,9 @@ export default function PlayerProfilePage() {
       border = "rgba(251, 146, 60, 0.4)";
     }
 
-    return { score, tier, color, bg, border, glow, csRating, override: ov };
+    const isRealPremier = Boolean(realPremierRating || ov.csRating);
+
+    return { score, tier, color, bg, border, glow, csRating, override: ov, isRealPremier };
   };
 
   const handleCopyProfile = () => {
@@ -696,7 +698,7 @@ export default function PlayerProfilePage() {
                       {sk.tier} — Оценка скилла
                     </span>
                     <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)", display: "block", marginTop: "0.2rem" }}>
-                      Premier CS Rating: <strong style={{ color: "#fff" }}>{(sk?.csRating ?? 0).toLocaleString("ru-RU")}</strong>
+                      Premier CS Rating {sk.isRealPremier ? "" : "(расчетный)"}: <strong style={{ color: "#fff" }}>{(sk?.csRating ?? 0).toLocaleString("ru-RU")}</strong>
                     </span>
                   </div>
                 </div>

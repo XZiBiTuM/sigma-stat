@@ -385,7 +385,8 @@ export default function Home() {
       border = "rgba(255, 145, 0, 0.4)";
     }
 
-    return { score, tier, color, bg, border, glow, csRating, elo, override: ov };
+    const isRealPremier = Boolean(realPremierRating || ov.csRating);
+    return { score, tier, color, bg, border, glow, csRating, elo, override: ov, isRealPremier };
   };
 
   // Auth & Event of Mr.Chillout States
@@ -4685,7 +4686,7 @@ export default function Home() {
                             {sk.tier} — Оценка скилла
                           </span>
                           <span style={{ fontSize: "0.76rem", color: "var(--text-secondary)", display: "block", marginTop: "0.1rem" }}>
-                            Premier CS Rating: <strong style={{ color: "#fff" }}>{(sk?.csRating ?? 0).toLocaleString("ru-RU")}</strong>
+                            Premier CS Rating {sk.isRealPremier ? "" : "(расчетный)"}: <strong style={{ color: "#fff" }}>{(sk?.csRating ?? 0).toLocaleString("ru-RU")}</strong>
                           </span>
                         </div>
                       </div>
