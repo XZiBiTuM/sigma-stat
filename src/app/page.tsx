@@ -2187,8 +2187,79 @@ export default function Home() {
         </div>
       ) : (
         /* HUB DASHBOARD VIEW */
-        <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
           
+          {/* ACTIVE EVENT ANNOUNCEMENT BANNER */}
+          {eventAnnouncement && (
+            <div className="glass-card animate-fade-in" style={{
+              width: "100%",
+              padding: "1.25rem 2rem",
+              borderRadius: "20px",
+              background: "linear-gradient(135deg, rgba(124, 77, 255, 0.18), rgba(0, 229, 255, 0.18))",
+              border: "1.5px solid rgba(0, 229, 255, 0.4)",
+              boxShadow: "0 0 35px rgba(0, 229, 255, 0.25)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: "1rem"
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
+                <div style={{
+                  fontSize: "2.2rem",
+                  background: "rgba(124, 77, 255, 0.25)",
+                  padding: "0.5rem 0.8rem",
+                  borderRadius: "16px",
+                  border: "1px solid rgba(124, 77, 255, 0.5)",
+                  boxShadow: "0 0 20px rgba(124, 77, 255, 0.3)"
+                }}>
+                  🔪
+                </div>
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.25rem" }}>
+                    <span style={{
+                      fontSize: "0.75rem",
+                      fontWeight: "800",
+                      letterSpacing: "1px",
+                      textTransform: "uppercase",
+                      color: "#00e5ff",
+                      background: "rgba(0, 229, 255, 0.15)",
+                      padding: "0.2rem 0.65rem",
+                      borderRadius: "6px",
+                      border: "1px solid rgba(0, 229, 255, 0.4)"
+                    }}>
+                      ⚡ АКТИВНЫЙ EVENT СИГМА ХАБА
+                    </span>
+                    <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
+                      Опубликовал {eventAnnouncement.author || "Администратор"}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: "1.15rem", fontWeight: "700", color: "#fff", lineHeight: "1.3" }}>
+                    {eventAnnouncement.text}
+                  </div>
+                </div>
+              </div>
+
+              {eventAnnouncement.prize && (
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.6rem",
+                  background: "rgba(124, 77, 255, 0.2)",
+                  border: "1px solid rgba(179, 136, 255, 0.5)",
+                  padding: "0.6rem 1.25rem",
+                  borderRadius: "14px",
+                  boxShadow: "0 0 20px rgba(124, 77, 255, 0.2)"
+                }}>
+                  <span style={{ fontSize: "0.85rem", color: "var(--text-secondary)", fontWeight: "600" }}>НАГРАДА / ПРИЗ:</span>
+                  <span style={{ fontSize: "1.05rem", fontWeight: "800", color: "#b388ff" }}>
+                    🎁 {eventAnnouncement.prize}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Hub Profile Banner / Card */}
           <div className="glass-card" style={{
             padding: "1.5rem 2rem",
