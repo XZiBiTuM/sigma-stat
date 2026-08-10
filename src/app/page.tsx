@@ -2228,7 +2228,7 @@ export default function Home() {
                       borderRadius: "6px",
                       border: "1px solid rgba(0, 229, 255, 0.4)"
                     }}>
-                      ⚡ АКТИВНЫЙ EVENT СИГМА ХАБА
+                      АКТИВНЫЙ EVENT СИГМА ХАБА
                     </span>
                     <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
                       Опубликовал {eventAnnouncement.author || "Администратор"}
@@ -2253,7 +2253,7 @@ export default function Home() {
                 }}>
                   <span style={{ fontSize: "0.85rem", color: "var(--text-secondary)", fontWeight: "600" }}>НАГРАДА / ПРИЗ:</span>
                   <span style={{ fontSize: "1.05rem", fontWeight: "800", color: "#b388ff" }}>
-                    🎁 {eventAnnouncement.prize}
+                    {eventAnnouncement.prize}
                   </span>
                 </div>
               )}
