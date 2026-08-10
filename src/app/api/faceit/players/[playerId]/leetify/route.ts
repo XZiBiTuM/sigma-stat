@@ -37,9 +37,10 @@ export async function GET(
     if (!leetifyRes.ok) {
       console.warn(`Leetify returned status ${leetifyRes.status} for SteamID ${steamId}`);
       return NextResponse.json({ 
+        notFound: true,
         error: `Leetify API вернул статус ${leetifyRes.status}`,
         status: leetifyRes.status 
-      }, { status: leetifyRes.status });
+      }, { status: 200 });
     }
 
     const leetifyData = await leetifyRes.json();
