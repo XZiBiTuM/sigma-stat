@@ -104,14 +104,14 @@ export default function PlayerProfilePage() {
       .catch(() => {});
   }, []);
 
-  const getPlayerSkillInfo = (playerIdVal: string, nicknameVal: string, eloVal?: number) => {
+  const getPlayerSkillInfo = (playerIdVal: string, nicknameVal: string, eloVal?: number, realPremierRating?: number) => {
     const lowerNick = (nicknameVal || "").toLowerCase();
     const ov = (playerIdVal && playerOverridesMap[playerIdVal]) || 
                (lowerNick && playerOverridesMap[lowerNick]) || 
                (nicknameVal && playerOverridesMap[nicknameVal]) || {};
 
     const baseElo = ov.customElo || eloVal || (ov.csRating ? Math.round(ov.csRating / 11.53) : 1000);
-    const csRating = ov.csRating || (baseElo ? Math.round(baseElo * 9.5) : 9500);
+    const csRating = realPremierRating || ov.csRating || (baseElo ? Math.round(baseElo * 9.5) : 9500);
     const elo = baseElo || (ov.csRating ? Math.round(ov.csRating / 11.53) : 1000);
 
     let score = ov.customSkillScore;
@@ -663,7 +663,8 @@ export default function PlayerProfilePage() {
           {/* Skill Rating & Premier CS Rating Dedicated Block */}
           {(() => {
             const eloVal = cs2Info?.faceit_elo;
-            const sk = getPlayerSkillInfo(profile.player_id, profile.nickname, eloVal);
+            const realPremier = steamStats?.premierRating;
+            const sk = getPlayerSkillInfo(profile.player_id, profile.nickname, eloVal, realPremier);
             return (
               <div className="glass-card" style={{
                 display: "flex",

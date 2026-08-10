@@ -247,6 +247,7 @@ export default function Home() {
   const [playerGameStats, setPlayerGameStats] = useState<PlayerGameStats | null>(null);
   const [playerHubStats, setPlayerHubStats] = useState<any | null>(null);
   const [leetifyStats, setLeetifyStats] = useState<any | null>(null);
+  const [playerSteamStats, setPlayerSteamStats] = useState<any | null>(null);
   const [playerModalTab, setPlayerModalTab] = useState<"general" | "tactical" | "maps">("general");
   const [playerActiveLeaderboardItem, setPlayerActiveLeaderboardItem] = useState<any | null>(null);
   const [isLoadingPlayer, setIsLoadingPlayer] = useState(false);
@@ -321,7 +322,7 @@ export default function Home() {
     fetchPlayerOverrides();
   }, []);
 
-  const getPlayerSkillInfo = (playerId: string, nickname: string, eloVal?: number) => {
+  const getPlayerSkillInfo = (playerId: string, nickname: string, eloVal?: number, realPremierRating?: number) => {
     const lowerNick = (nickname || "").toLowerCase();
     const ov = (playerId && playerOverridesMap[playerId]) || 
                (lowerNick && playerOverridesMap[lowerNick]) || 
@@ -333,7 +334,7 @@ export default function Home() {
                     (nickname && playerEloMap[nickname]) || 
                     eloVal;
 
-    const csRating = ov.csRating || (baseElo ? Math.round(baseElo * 9.5) : 9500);
+    const csRating = realPremierRating || ov.csRating || (baseElo ? Math.round(baseElo * 9.5) : 9500);
     const elo = baseElo || (ov.csRating ? Math.round(ov.csRating / 11.53) : 1000);
 
     let score = ov.customSkillScore;
@@ -1540,6 +1541,7 @@ export default function Home() {
     setPlayerGameStats(null);
     setPlayerHubStats(null);
     setLeetifyStats(null);
+    setPlayerSteamStats(null);
     setPlayerModalTab("general");
     setPlayerActiveLeaderboardItem(rankingItem || null);
     setIsLoadingPlayer(true);
@@ -1582,6 +1584,19 @@ export default function Home() {
         }
       } catch (e) {
         console.warn("Leetify stats fetch failed:", e);
+      }
+
+      // 5. Fetch Steam / Valve Premier statistics
+      try {
+        const steamRes = await fetch(`/api/faceit/players/${playerId}/steam-stats`);
+        if (steamRes.ok) {
+          const steamData = await steamRes.json();
+          if (steamData && !steamData.error) {
+            setPlayerSteamStats(steamData);
+          }
+        }
+      } catch (e) {
+        console.warn("Steam stats fetch failed:", e);
       }
     } catch (err: any) {
       console.error(err);
@@ -4636,7 +4651,8 @@ export default function Home() {
 
                 {/* Skill Rating & Premier CS Rating Dedicated Block */}
                 {(() => {
-                  const sk = getPlayerSkillInfo(playerProfile.player_id, playerProfile.nickname, playerProfile.games?.cs2?.faceit_elo || playerProfile.games?.csgo?.faceit_elo);
+                  const realPremier = playerSteamStats?.premierRating;
+                  const sk = getPlayerSkillInfo(playerProfile.player_id, playerProfile.nickname, playerProfile.games?.cs2?.faceit_elo || playerProfile.games?.csgo?.faceit_elo, realPremier);
                   return (
                     <div className="glass-card" style={{
                       display: "flex",
