@@ -3,6 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 const ANNOUNCEMENT_FILE = path.join(process.cwd(), "src/lib/event_announcement.json");
+const PERSISTENT_ANNOUNCEMENT_FILE = path.join(process.cwd(), "..", "sigma_persistent_event_announcement.json");
 
 interface Announcement {
   id: string;
@@ -15,8 +16,12 @@ interface Announcement {
 
 function getAnnouncement(): Announcement | null {
   try {
-    if (fs.existsSync(ANNOUNCEMENT_FILE)) {
-      const data = fs.readFileSync(ANNOUNCEMENT_FILE, "utf8");
+    let fileToRead = ANNOUNCEMENT_FILE;
+    if (fs.existsSync(PERSISTENT_ANNOUNCEMENT_FILE)) {
+      fileToRead = PERSISTENT_ANNOUNCEMENT_FILE;
+    }
+    if (fs.existsSync(fileToRead)) {
+      const data = fs.readFileSync(fileToRead, "utf8");
       const ann: Announcement = JSON.parse(data || "{}");
       if (ann && ann.expiresAt && Date.now() < ann.expiresAt) {
         return ann;
@@ -37,6 +42,11 @@ function saveAnnouncement(ann: Announcement | null) {
     fs.writeFileSync(ANNOUNCEMENT_FILE, JSON.stringify(ann, null, 2), "utf8");
   } catch (e) {
     console.error("Error saving announcement:", e);
+  }
+  try {
+    fs.writeFileSync(PERSISTENT_ANNOUNCEMENT_FILE, JSON.stringify(ann, null, 2), "utf8");
+  } catch (e) {
+    console.error("Error saving persistent announcement:", e);
   }
 }
 
@@ -98,6 +108,6 @@ export async function DELETE(request: NextRequest) {
     saveAnnouncement(null);
     return NextResponse.json({ success: true, message: "Анонс события сброшен" });
   } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 500 });
+    return NextResponse.json({ error: e.message || "Ошибка при сбросе события" }, { status: 500 });
   }
 }
