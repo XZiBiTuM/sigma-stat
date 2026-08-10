@@ -3,18 +3,31 @@ import { promises as fs } from "fs";
 import path from "path";
 
 const overridesFilePath = path.join(process.cwd(), "src", "lib", "player_overrides.json");
+const persistentFilePath = path.join(process.cwd(), "..", "sigma_persistent_player_overrides.json");
 
 async function readOverrides() {
+  let fileData: any = {};
   try {
     const data = await fs.readFile(overridesFilePath, "utf8");
-    return JSON.parse(data || "{}");
-  } catch {
-    return {};
-  }
+    fileData = JSON.parse(data || "{}");
+  } catch {}
+
+  let persistentData: any = {};
+  try {
+    const pData = await fs.readFile(persistentFilePath, "utf8");
+    persistentData = JSON.parse(pData || "{}");
+  } catch {}
+
+  return { ...fileData, ...persistentData };
 }
 
 async function saveOverrides(overrides: any) {
-  await fs.writeFile(overridesFilePath, JSON.stringify(overrides, null, 2), "utf8");
+  try {
+    await fs.writeFile(overridesFilePath, JSON.stringify(overrides, null, 2), "utf8");
+  } catch (e) {}
+  try {
+    await fs.writeFile(persistentFilePath, JSON.stringify(overrides, null, 2), "utf8");
+  } catch (e) {}
 }
 
 export async function GET() {
@@ -37,7 +50,7 @@ export async function POST(request: NextRequest) {
 
     const current = await readOverrides();
 
-    // Support batch update for all 33 players at once!
+    // Support batch update for all players at once!
     if (Array.isArray(batchOverrides)) {
       batchOverrides.forEach((item: any) => {
         const key = item.playerId || item.nickname;
