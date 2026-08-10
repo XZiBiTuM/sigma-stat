@@ -248,6 +248,7 @@ export default function Home() {
   const [playerHubStats, setPlayerHubStats] = useState<any | null>(null);
   const [leetifyStats, setLeetifyStats] = useState<any | null>(null);
   const [playerModalTab, setPlayerModalTab] = useState<"general" | "tactical" | "maps">("general");
+  const [playerActiveLeaderboardItem, setPlayerActiveLeaderboardItem] = useState<any | null>(null);
   const [isLoadingPlayer, setIsLoadingPlayer] = useState(false);
 
   // Onboarding Tour state
@@ -1533,14 +1534,15 @@ export default function Home() {
 };
 
   // Fetch player details modal stats
-  const loadPlayerDetails = async (playerId: string) => {
+  const loadPlayerDetails = async (playerId: string, rankingItem?: any) => {
     setSelectedPlayerId(playerId);
-    setIsLoadingPlayer(true);
     setPlayerProfile(null);
     setPlayerGameStats(null);
     setPlayerHubStats(null);
     setLeetifyStats(null);
     setPlayerModalTab("general");
+    setPlayerActiveLeaderboardItem(rankingItem || null);
+    setIsLoadingPlayer(true);
     try {
       // 1. Fetch Profile info (avatar, nickname, Elo, level)
       const profileRes = await fetch(`/api/faceit/players/${playerId}`);
@@ -4741,25 +4743,47 @@ export default function Home() {
                     ) : (
                       <>
                         {/* Lifetime Grid */}
-                        <div style={{
-                          display: "grid",
-                          gridTemplateColumns: "repeat(4, 1fr)",
-                          gap: "0.75rem"
-                        }}>
-                          {[
-                            { label: "Всего матчей", val: playerHubStats?.matchesCount ?? playerGameStats?.lifetime.Matches ?? 0, color: "#fff" },
-                            { label: "Процент побед", val: `${playerHubStats?.winrate ?? playerGameStats?.lifetime["Win Rate %"] ?? 0}%`, color: "var(--success)" },
-                            { label: "Средний K/D", val: (playerHubStats?.kd ?? parseFloat(playerGameStats?.lifetime["Average K/D Ratio"] || "0")).toFixed(2), color: "var(--accent-cyan)" },
-                            { label: "Средний HS%", val: `${playerHubStats?.hsPct ?? playerGameStats?.lifetime["Average Headshots %"] ?? 0}%`, color: "#fff" }
-                          ].map((item, idx) => (
-                            <div key={idx} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "8px", padding: "0.6rem 0.85rem" }}>
-                              <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block" }}>{item.label}</span>
-                              <span style={{ fontSize: "1.1rem", fontWeight: "700", color: item.color, display: "block", marginTop: "0.15rem" }}>
-                                {item.val}
-                              </span>
+                        {(() => {
+                          const lbPlayed = playerActiveLeaderboardItem?.played;
+                          const lbWon = playerActiveLeaderboardItem?.won;
+                          const lbWinRate = (lbPlayed && lbWon !== undefined) 
+                            ? ((lbWon / lbPlayed) * 100).toFixed(1) 
+                            : (playerActiveLeaderboardItem?.win_rate || null);
+
+                          const matchesVal = (lbPlayed !== undefined && lbPlayed !== null)
+                            ? (playerHubStats?.matchesCount && playerHubStats.matchesCount !== lbPlayed 
+                                ? `${lbPlayed} (всего: ${playerHubStats.matchesCount})` 
+                                : `${lbPlayed}`)
+                            : `${playerHubStats?.matchesCount ?? playerGameStats?.lifetime.Matches ?? 0}`;
+
+                          const winrateVal = (lbWinRate !== null && lbWinRate !== undefined)
+                            ? (playerHubStats?.winrate && Math.round(playerHubStats.winrate) !== Math.round(parseFloat(String(lbWinRate))) 
+                                ? `${lbWinRate}% (всего: ${playerHubStats.winrate}%)` 
+                                : `${lbWinRate}%`)
+                            : `${playerHubStats?.winrate ?? playerGameStats?.lifetime["Win Rate %"] ?? 0}%`;
+
+                          return (
+                            <div style={{
+                              display: "grid",
+                              gridTemplateColumns: "repeat(4, 1fr)",
+                              gap: "0.75rem"
+                            }}>
+                              {[
+                                { label: lbPlayed !== undefined ? "Матчей (в сезоне)" : "Всего матчей", val: matchesVal, color: "#fff" },
+                                { label: lbWinRate !== null ? "Win Rate (в сезоне)" : "Процент побед", val: winrateVal, color: "var(--success)" },
+                                { label: "Средний K/D", val: (playerHubStats?.kd ?? parseFloat(playerGameStats?.lifetime["Average K/D Ratio"] || "0")).toFixed(2), color: "var(--accent-cyan)" },
+                                { label: "Средний HS%", val: `${playerHubStats?.hsPct ?? playerGameStats?.lifetime["Average Headshots %"] ?? 0}%`, color: "#fff" }
+                              ].map((item, idx) => (
+                                <div key={idx} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "8px", padding: "0.6rem 0.85rem" }}>
+                                  <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block" }}>{item.label}</span>
+                                  <span style={{ fontSize: "1rem", fontWeight: "700", color: item.color, display: "block", marginTop: "0.15rem" }}>
+                                    {item.val}
+                                  </span>
+                                </div>
+                              ))}
                             </div>
-                          ))}
-                        </div>
+                          );
+                        })()}
 
                         {/* Form and Streaks */}
                         <div style={{ display: "flex", gap: "1rem" }}>
