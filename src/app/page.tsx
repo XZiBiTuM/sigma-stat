@@ -3130,18 +3130,21 @@ export default function Home() {
 
               {/* TAB CONTENT: COMPARE */}
               {activeTab === 'compare' && (() => {
-                const p1 = rankings.find(r => r.player?.player_id === comparePlayer1Id);
-                const p2 = rankings.find(r => r.player?.player_id === comparePlayer2Id);
-                const sk1 = p1 ? getPlayerSkillInfo(p1.player.player_id, p1.player.nickname) : null;
-                const sk2 = p2 ? getPlayerSkillInfo(p2.player.player_id, p2.player.nickname) : null;
+                const getItemId = (r: any) => r.player?.player_id || r.player?.user_id || r.user?.player_id || r.user?.user_id || r.player_id || r.user_id || "";
+                const getItemNick = (r: any) => r.player?.nickname || r.user?.nickname || r.nickname || "";
+                const getItemAvatar = (r: any) => r.player?.avatar || r.user?.avatar || r.avatar || "";
+                const p1 = rankings.find((r: any) => getItemId(r) === comparePlayer1Id);
+                const p2 = rankings.find((r: any) => getItemId(r) === comparePlayer2Id);
+                const sk1 = p1 ? getPlayerSkillInfo(getItemId(p1), getItemNick(p1)) : null;
+                const sk2 = p2 ? getPlayerSkillInfo(getItemId(p2), getItemNick(p2)) : null;
 
-                const filteredPlayers1 = rankings.filter(r => {
-                  const nick = r.player?.nickname?.toLowerCase() || "";
-                  return r.player?.player_id !== comparePlayer2Id && nick.includes(compareSearchQuery1.toLowerCase());
+                const filteredPlayers1 = (rankings as any[]).filter(r => {
+                  const nick = getItemNick(r).toLowerCase();
+                  return getItemId(r) !== comparePlayer2Id && nick.includes(compareSearchQuery1.toLowerCase());
                 });
-                const filteredPlayers2 = rankings.filter(r => {
-                  const nick = r.player?.nickname?.toLowerCase() || "";
-                  return r.player?.player_id !== comparePlayer1Id && nick.includes(compareSearchQuery2.toLowerCase());
+                const filteredPlayers2 = (rankings as any[]).filter(r => {
+                  const nick = getItemNick(r).toLowerCase();
+                  return getItemId(r) !== comparePlayer1Id && nick.includes(compareSearchQuery2.toLowerCase());
                 });
 
                 const statRow = (label: string, val1: React.ReactNode, val2: React.ReactNode, higherIsBetter = true) => {
@@ -3187,27 +3190,27 @@ export default function Home() {
                         <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", maxHeight: "200px", overflowY: "auto" }}>
                           {filteredPlayers1.slice(0, 8).map(r => (
                             <button
-                              key={r.player.player_id}
-                              onClick={() => { setComparePlayer1Id(r.player.player_id); setCompareSearchQuery1(""); }}
+                              key={getItemId(r)}
+                              onClick={() => { setComparePlayer1Id(getItemId(r)); setCompareSearchQuery1(""); }}
                               style={{
                                 display: "flex", alignItems: "center", gap: "0.6rem",
-                                background: comparePlayer1Id === r.player.player_id ? "rgba(0, 229, 255, 0.12)" : "rgba(255,255,255,0.03)",
-                                border: comparePlayer1Id === r.player.player_id ? "1px solid rgba(0,229,255,0.4)" : "1px solid transparent",
+                                background: comparePlayer1Id === getItemId(r) ? "rgba(0, 229, 255, 0.12)" : "rgba(255,255,255,0.03)",
+                                border: comparePlayer1Id === getItemId(r) ? "1px solid rgba(0,229,255,0.4)" : "1px solid transparent",
                                 borderRadius: "8px", padding: "0.45rem 0.75rem",
                                 cursor: "pointer", textAlign: "left"
                               }}
                             >
-                              {r.player.avatar && <img src={r.player.avatar} alt="" style={{ width: "24px", height: "24px", borderRadius: "50%", objectFit: "cover" }} />}
-                              <span style={{ fontSize: "0.85rem", color: comparePlayer1Id === r.player.player_id ? "var(--accent-cyan)" : "var(--text-primary)", fontWeight: "600" }}>{r.player.nickname}</span>
+                              {getItemAvatar(r) && <img src={getItemAvatar(r)} alt="" style={{ width: "24px", height: "24px", borderRadius: "50%", objectFit: "cover" }} />}
+                              <span style={{ fontSize: "0.85rem", color: comparePlayer1Id === getItemId(r) ? "var(--accent-cyan)" : "var(--text-primary)", fontWeight: "600" }}>{getItemNick(r)}</span>
                               <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginLeft: "auto" }}>#{r.position}</span>
                             </button>
                           ))}
                         </div>
                         {p1 && (
                           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(0,229,255,0.06)", border: "1px solid rgba(0,229,255,0.25)", borderRadius: "12px", padding: "0.75rem 1rem" }}>
-                            {p1.player.avatar && <img src={p1.player.avatar} alt="" style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(0,229,255,0.4)" }} />}
+                            {getItemAvatar(p1) && <img src={getItemAvatar(p1)} alt="" style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(0,229,255,0.4)" }} />}
                             <div>
-                              <div style={{ fontWeight: "700", fontSize: "1rem", color: "#fff" }}>{p1.player.nickname}</div>
+                              <div style={{ fontWeight: "700", fontSize: "1rem", color: "#fff" }}>{getItemNick(p1)}</div>
                               <div style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>#{p1.position} в хабе</div>
                             </div>
                             {sk1 && <span style={{ marginLeft: "auto", background: sk1.bg, color: sk1.color, border: `1px solid ${sk1.border}`, borderRadius: "6px", padding: "0.2rem 0.55rem", fontSize: "0.8rem", fontWeight: "700", boxShadow: sk1.glow || undefined }}>{sk1.score}/100</span>}
@@ -3234,27 +3237,27 @@ export default function Home() {
                         <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", maxHeight: "200px", overflowY: "auto" }}>
                           {filteredPlayers2.slice(0, 8).map(r => (
                             <button
-                              key={r.player.player_id}
-                              onClick={() => { setComparePlayer2Id(r.player.player_id); setCompareSearchQuery2(""); }}
+                              key={getItemId(r)}
+                              onClick={() => { setComparePlayer2Id(getItemId(r)); setCompareSearchQuery2(""); }}
                               style={{
                                 display: "flex", alignItems: "center", gap: "0.6rem",
-                                background: comparePlayer2Id === r.player.player_id ? "rgba(168, 85, 247, 0.12)" : "rgba(255,255,255,0.03)",
-                                border: comparePlayer2Id === r.player.player_id ? "1px solid rgba(168,85,247,0.4)" : "1px solid transparent",
+                                background: comparePlayer2Id === getItemId(r) ? "rgba(168, 85, 247, 0.12)" : "rgba(255,255,255,0.03)",
+                                border: comparePlayer2Id === getItemId(r) ? "1px solid rgba(168,85,247,0.4)" : "1px solid transparent",
                                 borderRadius: "8px", padding: "0.45rem 0.75rem",
                                 cursor: "pointer", textAlign: "left"
                               }}
                             >
-                              {r.player.avatar && <img src={r.player.avatar} alt="" style={{ width: "24px", height: "24px", borderRadius: "50%", objectFit: "cover" }} />}
-                              <span style={{ fontSize: "0.85rem", color: comparePlayer2Id === r.player.player_id ? "#c084fc" : "var(--text-primary)", fontWeight: "600" }}>{r.player.nickname}</span>
+                              {getItemAvatar(r) && <img src={getItemAvatar(r)} alt="" style={{ width: "24px", height: "24px", borderRadius: "50%", objectFit: "cover" }} />}
+                              <span style={{ fontSize: "0.85rem", color: comparePlayer2Id === getItemId(r) ? "#c084fc" : "var(--text-primary)", fontWeight: "600" }}>{getItemNick(r)}</span>
                               <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginLeft: "auto" }}>#{r.position}</span>
                             </button>
                           ))}
                         </div>
                         {p2 && (
                           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(168,85,247,0.06)", border: "1px solid rgba(168,85,247,0.25)", borderRadius: "12px", padding: "0.75rem 1rem" }}>
-                            {p2.player.avatar && <img src={p2.player.avatar} alt="" style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(168,85,247,0.4)" }} />}
+                            {getItemAvatar(p2) && <img src={getItemAvatar(p2)} alt="" style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(168,85,247,0.4)" }} />}
                             <div>
-                              <div style={{ fontWeight: "700", fontSize: "1rem", color: "#fff" }}>{p2.player.nickname}</div>
+                              <div style={{ fontWeight: "700", fontSize: "1rem", color: "#fff" }}>{getItemNick(p2)}</div>
                               <div style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>#{p2.position} в хабе</div>
                             </div>
                             {sk2 && <span style={{ marginLeft: "auto", background: sk2.bg, color: sk2.color, border: `1px solid ${sk2.border}`, borderRadius: "6px", padding: "0.2rem 0.55rem", fontSize: "0.8rem", fontWeight: "700", boxShadow: sk2.glow || undefined }}>{sk2.score}/100</span>}
@@ -3270,13 +3273,13 @@ export default function Home() {
                           {/* Header */}
                           <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", background: "rgba(255,255,255,0.04)", padding: "0.75rem 1rem", borderBottom: "1px solid var(--border-light)" }}>
                             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", justifyContent: "flex-end" }}>
-                              {p1.player.avatar && <img src={p1.player.avatar} alt="" style={{ width: "22px", height: "22px", borderRadius: "50%" }} />}
-                              <span style={{ fontWeight: "700", color: "var(--accent-cyan)", fontSize: "0.9rem" }}>{p1.player.nickname}</span>
+                              {getItemAvatar(p1) && <img src={getItemAvatar(p1)} alt="" style={{ width: "22px", height: "22px", borderRadius: "50%" }} />}
+                              <span style={{ fontWeight: "700", color: "var(--accent-cyan)", fontSize: "0.9rem" }}>{getItemNick(p1)}</span>
                             </div>
                             <div style={{ padding: "0 1.5rem", color: "var(--text-muted)", fontSize: "0.75rem", textAlign: "center", fontWeight: "600" }}>ПОКАЗАТЕЛЬ</div>
                             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                              {p2.player.avatar && <img src={p2.player.avatar} alt="" style={{ width: "22px", height: "22px", borderRadius: "50%" }} />}
-                              <span style={{ fontWeight: "700", color: "#c084fc", fontSize: "0.9rem" }}>{p2.player.nickname}</span>
+                              {getItemAvatar(p2) && <img src={getItemAvatar(p2)} alt="" style={{ width: "22px", height: "22px", borderRadius: "50%" }} />}
+                              <span style={{ fontWeight: "700", color: "#c084fc", fontSize: "0.9rem" }}>{getItemNick(p2)}</span>
                             </div>
                           </div>
                           <table style={{ width: "100%", borderCollapse: "collapse" }}>
