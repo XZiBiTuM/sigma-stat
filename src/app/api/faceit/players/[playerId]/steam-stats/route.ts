@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { faceitFetch, getPlayerProfile } from "@/lib/faceit";
+import { getPlayerProfile } from "@/lib/faceit";
 
 const mmRanksMap = [
   "Unranked",
@@ -34,103 +34,93 @@ export async function GET(
     }
 
     // 1. Fetch FACEIT player profile to get steam ID
-    const faceitProfile = await getPlayerProfile(playerId);
+    let faceitProfile: any = null;
+    try {
+      faceitProfile = await getPlayerProfile(playerId);
+    } catch (e) {
+      return NextResponse.json({ error: "Профиль FACEIT не найден" }, { status: 404 });
+    }
+
     const steamId = faceitProfile.steam_id_64 || faceitProfile.platforms?.steam;
 
     if (!steamId) {
       return NextResponse.json({ error: "Steam ID не привязан к профилю FACEIT" }, { status: 404 });
     }
 
-    // 2. Fetch from cs2tracker.gg API
-    const trackerUrl = `https://cs2tracker.gg/api/player/${steamId}`;
-    console.log(`Fetching official Valve stats from cs2tracker.gg for Steam ID: ${steamId}...`);
+    // 2. Fetch from Leetify V3 public API (does not return 403 Cloudflare block)
+    const leetifyUrl = `https://api-public.cs-prod.leetify.com/v3/profile?steam64_id=${steamId}`;
     
-    const res = await fetch(trackerUrl, {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-      }
-    });
+    let premierRating: number | null = null;
+    let mapRanks: any[] = [];
+    let vacBanned = false;
+    let gameBans = 0;
+    let totalMatchesPlayed = 0;
+    let kd = 1.0;
+    let hs = 45;
 
-    if (!res.ok) {
-      console.warn(`cs2tracker.gg returned status ${res.status} for Steam ID ${steamId}`);
-      return NextResponse.json({ error: "Не удалось получить официальный Valve рейтинг" }, { status: res.status });
-    }
+    try {
+      const res = await fetch(leetifyUrl, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+          "Accept": "application/json"
+        }
+      });
 
-    const data = await res.json();
-    
-    // 3. Extract Premier Rating
-    const csstatsRanks = data.csstatsgg?.ranks || [];
-    let premierRating = null;
-    let maxPremierSeason = -1;
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.ranks) {
+          if (data.ranks.premier && data.ranks.premier > 0) {
+            premierRating = data.ranks.premier;
+          }
 
-    // Find the latest premier season that has a rank
-    for (const r of csstatsRanks) {
-      if (r.mode?.type === "Premier" && r.rank > 0) {
-        const season = r.mode.season || 0;
-        if (season > maxPremierSeason) {
-          maxPremierSeason = season;
-          premierRating = r.rank;
+          if (Array.isArray(data.ranks.competitive)) {
+            const activeCompetitiveMaps = ["de_dust2", "de_cache", "de_nuke", "de_mirage", "de_anubis", "de_ancient", "de_inferno"];
+            mapRanks = activeCompetitiveMaps.map(mapName => {
+              const match = data.ranks.competitive.find((r: any) => r.map_name === mapName || r.map_name === `de_${mapName}`);
+              const rankVal = match ? (match.rank || 0) : 0;
+              return {
+                map: mapName,
+                rank: mmRanksMap[rankVal] || "Unranked",
+                value: rankVal
+              };
+            });
+          }
+        }
+
+        if (data.bans) {
+          vacBanned = data.bans.vac_banned || false;
+          gameBans = data.bans.number_of_game_bans || 0;
+        }
+
+        if (data.stats) {
+          kd = data.stats.kd !== undefined ? data.stats.kd : 1.0;
+          hs = data.stats.hs_percentage !== undefined ? data.stats.hs_percentage : 45;
+          totalMatchesPlayed = data.total_matches || 0;
         }
       }
+    } catch (err: any) {
+      console.warn("Leetify V3 fetch failed for Steam ID:", steamId, err.message);
     }
-
-    // 4. Extract Competitive Map Ranks
-    const activeCompetitiveMaps = ["de_dust2", "de_cache", "de_nuke", "de_mirage", "de_anubis", "de_ancient", "de_inferno"];
-    const mapRanks = activeCompetitiveMaps.map(mapName => {
-      // Find matching rank in csstatsgg
-      const match = csstatsRanks.find((r: any) => r.mode?.type === "Matchmaking" && r.mode?.map === mapName);
-      const rankVal = match ? (match.rank || 0) : 0;
-      return {
-        map: mapName,
-        rank: mmRanksMap[rankVal] || "Unranked",
-        value: rankVal
-      };
-    });
-
-    // 5. Extract Ban Info
-    const banInfo = data.ban_info || {};
-
-    // 6. Extract CSStats Career stats & recent matches
-    const csstatsStats = data.csstatsgg?.stats || {};
-    const totalMatchesPlayed = data.stats?.playerstats?.all_stats?.total_matches_played || csstatsStats.matches || 0;
-
-    // Find latest Premier season number
-    let latestPremierSeason = 5;
-    for (const r of csstatsRanks) {
-      if (r.mode?.type === "Premier" && r.mode?.season) {
-        latestPremierSeason = Math.max(latestPremierSeason, r.mode.season);
-      }
-    }
-
-    const recentMatches = (data.csstatsgg?.recent_matches || []).slice(0, 10).map((m: any) => {
-      let result = "L";
-      if (m.score_for > m.score_against) result = "W";
-      else if (m.score_for === m.score_against) result = "T";
-      return {
-        result,
-        score: `${m.score_for}:${m.score_against}`
-      };
-    });
 
     return NextResponse.json({
       steamId,
-      nickname: data.nickname || faceitProfile.nickname || "major winner",
-      avatarUrl: data.avatar_url || "",
+      nickname: faceitProfile.nickname || "Player",
+      avatarUrl: faceitProfile.avatar || "",
       premierRating,
       ranks: mapRanks,
-      vacBanned: banInfo.vac_banned || false,
-      gameBans: banInfo.number_of_game_bans || 0,
-      level: data.level || 0,
-      totalPlayHours: Math.round(data.total_time_played_hours || 0),
+      vacBanned,
+      gameBans,
+      level: 0,
+      totalPlayHours: 0,
       steamMatches: totalMatchesPlayed,
-      kd: csstatsStats.kd !== undefined ? csstatsStats.kd : 1.00,
-      hs: csstatsStats.hs !== undefined ? csstatsStats.hs : 45,
-      recentMatches,
-      latestPremierSeason
+      kd,
+      hs,
+      recentMatches: [],
+      latestPremierSeason: 5
     });
 
   } catch (error: any) {
-    console.error("Error fetching Valve stats:", error.message);
+    console.error("Error in steam-stats route:", error.message);
     return NextResponse.json({ error: error.message || "Ошибка сервера" }, { status: 500 });
   }
 }
