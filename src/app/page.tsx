@@ -3363,6 +3363,30 @@ export default function Home() {
               </div>
             ) : (
               <div>
+                {(selectedMatchId?.startsWith("cs_") ||
+                  (matches.find((m) => m.match_id === selectedMatchId) as any)?.source === "Cybershoke" ||
+                  matches.find((m) => m.match_id === selectedMatchId)?.match_id?.startsWith("cs_") ||
+                  matchDetails?.some((m: any) => m.isCustom || m.source === "Cybershoke" || (m as any).match_id?.startsWith("cs_"))) && (
+                  <div style={{
+                    background: "rgba(255, 171, 0, 0.1)",
+                    border: "1px solid rgba(255, 171, 0, 0.4)",
+                    borderRadius: "12px",
+                    padding: "0.85rem 1.25rem",
+                    marginBottom: "1.5rem",
+                    color: "#ffca28",
+                    fontSize: "0.88rem",
+                    lineHeight: "1.5",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.75rem",
+                    fontWeight: "500"
+                  }}>
+                    <span style={{ fontSize: "1.3rem" }}>⚠️</span>
+                    <div>
+                      Этот матч был сыгран вне платформы FACEIT — информация по игре является неполноценной и может быть неточной.
+                    </div>
+                  </div>
+                )}
                 {[...matchDetails].reverse().map((round, rIndex) => {
                   const winnerTeamId = round.round_stats?.Winner;
                   const winnerTeam = round.teams?.find((t) => t.team_id === winnerTeamId);
@@ -5581,7 +5605,7 @@ export default function Home() {
                   value={eventAnnText} 
                   onChange={(e) => setEventAnnText(e.target.value)} 
                   placeholder="Прим: Для выигрыша ножа нужно набрать больше всех ножевых фрагов за турнир!"
-                  style={{ width: "100%", padding: "0.75rem", borderRadius: "12px", background: "#06050c", fontSize: "0.9rem" }} 
+                  style={{ width: "100%", padding: "0.75rem", borderRadius: "12px", background: "#06050c", fontSize: "0.9rem", resize: "vertical", boxSizing: "border-box" }} 
                 />
               </div>
 
