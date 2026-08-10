@@ -769,6 +769,38 @@ export default function Home() {
     }
   }, [activeTab, tournaments.length]);
 
+  // Periodic background auto-refresh for live leaderboard and match updates (every 60 seconds)
+  useEffect(() => {
+    if (!hubId) return;
+
+    const silentRefresh = async () => {
+      try {
+        const mRes = await fetch(`/api/faceit/hubs/${hubId}/matches?limit=40`);
+        if (mRes.ok) {
+          const data = await mRes.json();
+          if (data.items) setMatches(data.items);
+        }
+
+        if (selectedLeaderboardId) {
+          const endpoint = selectedLeaderboardId === "general"
+            ? `/api/faceit/hubs/${hubId}/leaderboards/general?limit=50`
+            : `/api/faceit/leaderboards/${selectedLeaderboardId}?limit=50`;
+
+          const rRes = await fetch(endpoint);
+          if (rRes.ok) {
+            const rData = await rRes.json();
+            if (rData.items) setRankings(rData.items);
+          }
+        }
+      } catch (err) {
+        console.warn("Background auto-refresh failed:", err);
+      }
+    };
+
+    const interval = setInterval(silentRefresh, 60000);
+    return () => clearInterval(interval);
+  }, [hubId, selectedLeaderboardId]);
+
   // Fetch match details modal stats
   const loadMatchDetails = async (matchId: string) => {
     setSelectedMatchId(matchId);
