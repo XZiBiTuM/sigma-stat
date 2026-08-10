@@ -254,9 +254,6 @@ export default function Home() {
   const [showTourModal, setShowTourModal] = useState(false);
   const [tourStep, setTourStep] = useState(0);
 
-  // Hidden players toggle state
-  const [showHiddenPlayers, setShowHiddenPlayers] = useState(false);
-
   // Sorting & Min Matches filter state
   const [sortField, setSortField] = useState<"default" | "skill" | "points" | "matches" | "winrate">("default");
   const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
@@ -1590,11 +1587,6 @@ export default function Home() {
       const playerInfo = item.player || (item as any).user;
       const nickname = (playerInfo?.nickname || "").toLowerCase();
 
-      // Hide player Lynxick unless showHiddenPlayers is toggled on
-      if (nickname === "lynxick" && !showHiddenPlayers) {
-        return false;
-      }
-
       // Filter by min matches played in hub
       const matchesCount = item.played ?? (item as any).matches ?? (item as any).played_matches ?? 0;
       if (minMatchesFilter > 0 && matchesCount < minMatchesFilter) {
@@ -2229,22 +2221,6 @@ export default function Home() {
                     </div>
 
                     <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                      <button
-                        onClick={() => setShowHiddenPlayers(!showHiddenPlayers)}
-                        style={{
-                          background: showHiddenPlayers ? "rgba(255, 61, 0, 0.15)" : "rgba(255, 255, 255, 0.05)",
-                          border: showHiddenPlayers ? "1px solid rgba(255, 61, 0, 0.4)" : "1px solid var(--border-light)",
-                          borderRadius: "8px",
-                          padding: "0.45rem 0.8rem",
-                          color: showHiddenPlayers ? "#ff5252" : "var(--text-secondary)",
-                          fontSize: "0.78rem",
-                          fontWeight: "600",
-                          cursor: "pointer",
-                          transition: "all 0.2s"
-                        }}
-                      >
-                        {showHiddenPlayers ? "Скрыть скрытых" : "Показать скрытых"}
-                      </button>
                       <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
                         Показано: {filteredRankings.length}
                       </div>
@@ -5703,10 +5679,10 @@ export default function Home() {
                 <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
                   Добро пожаловать в Сигма Кибер Клуб
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7", maxWidth: "800px" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7", maxWidth: "920px" }}>
                   Статистика хаба в одном месте — без лишнего. Таблица лидеров, история матчей, Leetify AI и Captain's Draft. Всё то, чего не хватало стандартному FACEIT.
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "1rem", color: "var(--text-primary)", maxWidth: "850px", width: "100%" }}>
+                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "1rem", color: "var(--text-primary)", maxWidth: "920px", width: "100%" }}>
                   <strong>Leaderboard:</strong> очки, процент побед, динамика по сезонам — сразу видно, кто реально тащит, а кто просто Саша.
                 </div>
               </div>
@@ -5717,10 +5693,10 @@ export default function Home() {
                 <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
                   Match History & 2D Playback
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7", maxWidth: "800px" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7", maxWidth: "920px" }}>
                   В каждом матче — полный разбор по раундам на 2D-карте: куда шли, откуда убили, какое оружие использовали.
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem", maxWidth: "850px", width: "100%" }}>
+                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem", maxWidth: "920px", width: "100%" }}>
                   <div><strong>2D Kill Feed:</strong> трассеры выстрелов, позиции на карте, headshot'ы и иконки оружия в реальных координатах</div>
                   <div><strong>Round-by-round stats:</strong> K/D, ADR, MVP, тепловая карта с подробным разбором каждого раунда по демо-видео и детальная таблица по каждому игроку</div>
                 </div>
@@ -5732,10 +5708,10 @@ export default function Home() {
                 <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
                   Профили игроков
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7", maxWidth: "800px" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7", maxWidth: "920px" }}>
                   Кликни на ник — откроется профиль со всей статистикой: FACEIT, Steam и Leetify AI в одном окне.
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem", maxWidth: "850px", width: "100%" }}>
+                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem", maxWidth: "920px", width: "100%" }}>
                   <div><strong>FACEIT Stats:</strong> K/D, ADR, HS%, Win Rate по картам и динамика Elo</div>
                   <div><strong>Leetify AI:</strong> оценка прицеливания, позиционирования и полезности гранат</div>
                 </div>
@@ -5747,10 +5723,10 @@ export default function Home() {
                 <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
                   Captain's Draft
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7", maxWidth: "800px" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7", maxWidth: "920px" }}>
                   Делим на команды без споров — Snake Draft на 4 капитана с live-синхронизацией между устройствами.
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem", maxWidth: "850px", width: "100%" }}>
+                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem", maxWidth: "920px", width: "100%" }}>
                   <div><strong>Snake Draft System:</strong> порядок пиков переключается автоматически, текущий ход подсвечивается</div>
                   <div><strong>Сохранение & экспорт:</strong> прогресс переживает F5, финальный состав скачивается в .txt</div>
                 </div>
@@ -5762,10 +5738,10 @@ export default function Home() {
                 <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
                   Фильтры, сортировка & Сравнение
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7", maxWidth: "800px" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7", maxWidth: "920px" }}>
                   Ищи по нику, фильтруй по минимуму матчей, сортируй по скиллу или Win Rate — и сравнивай двух игроков напрямую.
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem", maxWidth: "850px", width: "100%" }}>
+                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem", maxWidth: "920px", width: "100%" }}>
                   <div><strong>Skill Rating (1–100):</strong> взвешенная оценка на основе совокупности показателей игрока.</div>
                   <div><strong>Сравнение:</strong> отдельная вкладка со сравнительной таблицей показателей двух игроков.</div>
                 </div>
