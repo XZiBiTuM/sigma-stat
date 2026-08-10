@@ -2240,23 +2240,50 @@ export default function Home() {
                 </div>
               </div>
 
-              {eventAnnouncement.prize && (
-                <div style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.6rem",
-                  background: "rgba(124, 77, 255, 0.2)",
-                  border: "1px solid rgba(179, 136, 255, 0.5)",
-                  padding: "0.6rem 1.25rem",
-                  borderRadius: "14px",
-                  boxShadow: "0 0 20px rgba(124, 77, 255, 0.2)"
-                }}>
-                  <span style={{ fontSize: "0.85rem", color: "var(--text-secondary)", fontWeight: "600" }}>НАГРАДА / ПРИЗ:</span>
-                  <span style={{ fontSize: "1.05rem", fontWeight: "800", color: "#b388ff" }}>
-                    {eventAnnouncement.prize}
-                  </span>
-                </div>
-              )}
+              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+                {eventAnnouncement.prize && (
+                  <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.6rem",
+                    background: "rgba(124, 77, 255, 0.2)",
+                    border: "1px solid rgba(179, 136, 255, 0.5)",
+                    padding: "0.6rem 1.25rem",
+                    borderRadius: "14px",
+                    boxShadow: "0 0 20px rgba(124, 77, 255, 0.2)"
+                  }}>
+                    <span style={{ fontSize: "0.85rem", color: "var(--text-secondary)", fontWeight: "600" }}>НАГРАДА / ПРИЗ:</span>
+                    <span style={{ fontSize: "1.05rem", fontWeight: "800", color: "#b388ff" }}>
+                      {eventAnnouncement.prize}
+                    </span>
+                  </div>
+                )}
+
+                {(userRole === "ADMIN" || userRole === "EVENT_MAKER") && (
+                  <button
+                    onClick={async () => {
+                      if (confirm("Вы точно хотите удалить этот Event?")) {
+                        const passcode = userRole === "EVENT_MAKER" ? "chillout" : "demon323161";
+                        await fetch(`/api/events/announcement?passcode=${passcode}`, { method: "DELETE" });
+                        setEventAnnouncement(null);
+                      }
+                    }}
+                    style={{
+                      background: "rgba(255, 73, 73, 0.15)",
+                      border: "1px solid rgba(255, 73, 73, 0.4)",
+                      color: "#ff4949",
+                      borderRadius: "12px",
+                      padding: "0.6rem 1rem",
+                      fontSize: "0.82rem",
+                      fontWeight: "700",
+                      cursor: "pointer",
+                      transition: "all 0.2s"
+                    }}
+                  >
+                    🗑 Удалить Event
+                  </button>
+                )}
+              </div>
             </div>
           )}
 
@@ -5857,32 +5884,68 @@ export default function Home() {
               </div>
             )}
 
-            <button 
-              className="btn btn-glow-cyan"
-              onClick={async () => {
-                try {
-                  const passcode = userRole === "EVENT_MAKER" ? "chillout" : "demon323161";
-                  const res = await fetch("/api/events/announcement", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ passcode, text: eventAnnText, prize: eventAnnPrize })
-                  });
-                  const data = await res.json();
-                  if (res.ok && data.success) {
-                    setEventAnnouncement(data.announcement);
-                    setEventAnnMsg("Анонс события опубликован на 3 дня!");
-                    setTimeout(() => { setShowEventModal(false); }, 1500);
-                  } else {
-                    setEventAnnMsg("Ошибка: " + (data.error || "Не удалось сохранить анонс"));
+            <div style={{ display: "flex", gap: "1rem", flexDirection: "column" }}>
+              <button 
+                className="btn btn-glow-cyan"
+                onClick={async () => {
+                  try {
+                    const passcode = userRole === "EVENT_MAKER" ? "chillout" : "demon323161";
+                    const res = await fetch("/api/events/announcement", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ passcode, text: eventAnnText, prize: eventAnnPrize })
+                    });
+                    const data = await res.json();
+                    if (res.ok && data.success) {
+                      setEventAnnouncement(data.announcement);
+                      setEventAnnMsg("Анонс события опубликован на 3 дня!");
+                      setTimeout(() => { setShowEventModal(false); }, 1500);
+                    } else {
+                      setEventAnnMsg("Ошибка: " + (data.error || "Не удалось сохранить анонс"));
+                    }
+                  } catch(e: any) {
+                    setEventAnnMsg("Ошибка: " + e.message);
                   }
-                } catch(e: any) {
-                  setEventAnnMsg("Ошибка: " + e.message);
-                }
-              }}
-              style={{ width: "100%", padding: "0.75rem", fontSize: "1rem", borderRadius: "12px", background: "linear-gradient(135deg, #7c4dff, #00e5ff)" }}
-            >
-              Опубликовать Event
-            </button>
+                }}
+                style={{ width: "100%", padding: "0.75rem", fontSize: "1rem", borderRadius: "12px", background: "linear-gradient(135deg, #7c4dff, #00e5ff)" }}
+              >
+                Опубликовать Event
+              </button>
+
+              {eventAnnouncement && (
+                <button
+                  onClick={async () => {
+                    try {
+                      const passcode = userRole === "EVENT_MAKER" ? "chillout" : "demon323161";
+                      const res = await fetch(`/api/events/announcement?passcode=${passcode}`, { method: "DELETE" });
+                      const data = await res.json();
+                      if (res.ok && data.success) {
+                        setEventAnnouncement(null);
+                        setEventAnnMsg("Event успешно удален!");
+                        setTimeout(() => { setShowEventModal(false); }, 1200);
+                      } else {
+                        setEventAnnMsg("Ошибка при удалении: " + (data.error || ""));
+                      }
+                    } catch (e: any) {
+                      setEventAnnMsg("Ошибка сети: " + e.message);
+                    }
+                  }}
+                  style={{
+                    width: "100%",
+                    padding: "0.75rem",
+                    fontSize: "0.95rem",
+                    fontWeight: "700",
+                    borderRadius: "12px",
+                    background: "rgba(255, 73, 73, 0.15)",
+                    border: "1px solid rgba(255, 73, 73, 0.4)",
+                    color: "#ff4949",
+                    cursor: "pointer"
+                  }}
+                >
+                  🗑 Удалить текущий Event
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}

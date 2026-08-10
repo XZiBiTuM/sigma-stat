@@ -24,6 +24,7 @@ function getAnnouncement(): Announcement | null {
       const data = fs.readFileSync(fileToRead, "utf8");
       const ann: Announcement = JSON.parse(data || "{}");
       if (ann && ann.expiresAt && Date.now() < ann.expiresAt) {
+        ann.author = "MrChillout61";
         return ann;
       }
     }
@@ -79,7 +80,7 @@ export async function POST(request: NextRequest) {
       prize: prize.trim() || "Knife",
       createdAt: now,
       expiresAt,
-      author: p.includes("chillout") ? "Mr.Chillout" : "Admin"
+      author: "MrChillout61"
     };
 
     saveAnnouncement(ann);
@@ -106,7 +107,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     saveAnnouncement(null);
-    return NextResponse.json({ success: true, message: "Анонс события сброшен" });
+    return NextResponse.json({ success: true, message: "Анонс события удален" });
   } catch (e: any) {
     return NextResponse.json({ error: e.message || "Ошибка при сбросе события" }, { status: 500 });
   }
