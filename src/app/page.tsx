@@ -4555,8 +4555,8 @@ export default function Home() {
             {/* MODAL: PLAYER STATS */}
       {selectedPlayerId && (
         <div className="modal-overlay" onClick={() => setSelectedPlayerId(null)} style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, width: "100%", height: "100%", background: "rgba(0, 0, 0, 0.88)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 999999, padding: "1rem", boxSizing: "border-box" }}>
-          <div className="modal-content glass-card" onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxWidth: "680px", maxHeight: "85vh", overflowY: "auto", padding: "2rem", margin: "auto", position: "relative", boxSizing: "border-box" }}>
-            <span className="modal-close-btn" onClick={() => setSelectedPlayerId(null)}>✕</span>
+          <div className="modal-content glass-card" onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxWidth: "680px", maxHeight: "85vh", overflowY: "auto", padding: "2.5rem 2rem 2rem 2rem", margin: "auto", position: "relative", boxSizing: "border-box" }}>
+            <span className="modal-close-btn" onClick={() => setSelectedPlayerId(null)} style={{ top: "1.5rem", right: "1.5rem" }}>✕</span>
             <ErrorBoundary>
 
             {isLoadingPlayer ? (
@@ -4568,10 +4568,10 @@ export default function Home() {
                 <h3 style={{ color: "var(--danger)" }}>Профиль не найден</h3>
               </div>
             ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
                 
                 {/* Profile header */}
-                <div style={{ display: "flex", alignItems: "center", gap: "1.25rem", borderBottom: "1px solid var(--border-light)", paddingBottom: "1.25rem" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "1.25rem", borderBottom: "1px solid var(--border-light)", paddingBottom: "1.5rem", paddingTop: "0.5rem", paddingRight: "2.5rem" }}>
                   <div style={{ width: "70px", height: "70px", borderRadius: "12px", overflow: "hidden", background: "#1c1829", border: "1px solid var(--border-light)" }}>
                     {playerProfile.avatar ? (
                       <img src={playerProfile.avatar} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
@@ -4642,12 +4642,13 @@ export default function Home() {
                       display: "flex",
                       justifyContent: "space-between",
                       alignItems: "center",
-                      padding: "0.85rem 1.25rem",
+                      padding: "1rem 1.35rem",
                       borderRadius: "12px",
                       background: "rgba(255, 255, 255, 0.02)",
                       border: "1px solid var(--border-light)",
                       gap: "1rem",
-                      marginTop: "0.25rem"
+                      marginTop: "0.75rem",
+                      marginBottom: "0.5rem"
                     }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
                         <span 
@@ -4698,7 +4699,9 @@ export default function Home() {
                   display: "flex",
                   borderBottom: "1px solid var(--border-light)",
                   gap: "0.5rem",
-                  paddingBottom: "2px"
+                  paddingBottom: "2px",
+                  marginTop: "0.75rem",
+                  marginBottom: "0.75rem"
                 }}>
                   {[
                     { id: "general", label: "Статистика (хаб)" },
