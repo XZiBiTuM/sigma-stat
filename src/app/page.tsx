@@ -2221,12 +2221,15 @@ export default function Home() {
                 >
                   История игр
                 </button>
+                {/* Hidden tab: Участники */}
+                {/* 
                 <button 
                   className={`tab-btn ${activeTab === 'members' ? 'active' : ''}`}
                   onClick={() => setActiveTab('members')}
                 >
                   Участники ({members.length})
                 </button>
+                */}
                 <button 
                   className={`tab-btn ${activeTab === 'tournaments' ? 'active' : ''}`}
                   onClick={() => setActiveTab('tournaments')}
@@ -2237,7 +2240,7 @@ export default function Home() {
                   className={`tab-btn ${activeTab === 'compare' ? 'active' : ''}`}
                   onClick={() => setActiveTab('compare')}
                 >
-                  Сравнение
+                  Сравнение игроков
                 </button>
               </div>
 
