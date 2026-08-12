@@ -2356,7 +2356,7 @@ export default function Home() {
                   className={`tab-btn ${activeTab === 'leaderboard' ? 'active' : ''}`}
                   onClick={() => setActiveTab('leaderboard')}
                 >
-                  Таблица лидеров
+                  Список игроков
                 </button>
                 <button 
                   className={`tab-btn ${activeTab === 'matches' ? 'active' : ''}`}
