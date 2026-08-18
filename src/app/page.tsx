@@ -7137,7 +7137,7 @@ export default function Home() {
               background: "rgba(8, 7, 13, 0.6)",
               border: "1px solid var(--border-light)"
             }}>
-              {[0, 1, 2, 3, 4].map((idx) => {
+              {[0, 1, 2, 3, 4, 5].map((idx) => {
                 const offset = idx - tourStep;
                 const absOffset = Math.abs(offset);
 
