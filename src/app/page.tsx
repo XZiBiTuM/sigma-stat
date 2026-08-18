@@ -3749,7 +3749,7 @@ export default function Home() {
                               )}
                               <div>
                                 <div style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff" }}>{draftSniper.nickname}</div>
-                                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Оценка скилла: <strong style={{ color: "#ff7b7b" }}>{draftSniper.skillScore}/100</strong></div>
+                                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Скилл: <strong style={{ color: "#ff7b7b" }}>{draftSniper.skillScore}</strong></div>
                               </div>
                             </div>
                           )}
@@ -3823,7 +3823,7 @@ export default function Home() {
                               )}
                               <div>
                                 <div style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff" }}>{draftSupport.nickname}</div>
-                                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Полезность и урон: <strong style={{ color: "var(--accent-cyan)" }}>{draftSupport.skillScore}/100</strong></div>
+                                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Скилл: <strong style={{ color: "var(--accent-cyan)" }}>{draftSupport.skillScore}</strong></div>
                               </div>
                             </div>
                           )}
@@ -3898,7 +3898,7 @@ export default function Home() {
                               )}
                               <div style={{ flex: 1 }}>
                                 <div style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff" }}>{draftDarkHorse.nickname}</div>
-                                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Скилл: <strong>{draftDarkHorse.skillScore}</strong></div>
+                                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Скилл: <strong style={{ color: "#ffd700" }}>{draftDarkHorse.skillScore}</strong></div>
                               </div>
                               <span style={{ fontSize: "0.78rem", fontWeight: "900", color: "#000", background: "#ffd700", padding: "0.2rem 0.5rem", borderRadius: "8px" }}>
                                 x{darkMultiplier}
