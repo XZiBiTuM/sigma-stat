@@ -424,7 +424,18 @@ export default function Home() {
         }
       })
       .catch(() => {});
+
+    // Fetch Steam / FACEIT user session
+    fetch("/api/auth/steam/me")
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.authenticated && data.user) {
+          setCurrentUser(data.user);
+        }
+      })
+      .catch(() => {});
   }, []);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
   const [showCybershokeModal, setShowCybershokeModal] = useState<boolean>(false);
   const [csMap1, setCsMap1] = useState<string>("de_mirage");
@@ -2092,6 +2103,111 @@ export default function Home() {
             >
               Вход для оргов
             </button>
+          )}
+
+          {/* STEAM OPENID AUTH / USER PROFILE WIDGET */}
+          {currentUser ? (
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.6rem",
+              background: "rgba(255, 255, 255, 0.04)",
+              border: "1px solid var(--border-light)",
+              padding: "0.2rem 0.6rem 0.2rem 0.4rem",
+              borderRadius: "12px",
+              height: "38px"
+            }}>
+              <img 
+                src={currentUser.faceit?.avatar || currentUser.steamAvatar || "/default-avatar.png"} 
+                alt="Avatar" 
+                style={{ width: "26px", height: "26px", borderRadius: "50%", objectFit: "cover", border: "1.5px solid var(--accent-cyan)" }}
+              />
+              <span style={{ fontSize: "0.82rem", fontWeight: "700", color: "#fff", maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {currentUser.faceit?.nickname || currentUser.steamName}
+              </span>
+
+              {currentUser.faceit?.elo && (
+                <span style={{
+                  fontSize: "0.72rem",
+                  fontWeight: "800",
+                  padding: "0.15rem 0.45rem",
+                  borderRadius: "6px",
+                  background: "rgba(0, 229, 255, 0.15)",
+                  color: "var(--accent-cyan)",
+                  border: "1px solid rgba(0, 229, 255, 0.3)"
+                }}>
+                  {currentUser.faceit.elo} ELO
+                </span>
+              )}
+
+              <button
+                onClick={() => {
+                  if (currentUser.faceit?.playerId) {
+                    setSelectedPlayerId(currentUser.faceit.playerId);
+                  } else {
+                    window.open(currentUser.profileUrl, "_blank");
+                  }
+                }}
+                style={{
+                  background: "rgba(0, 229, 255, 0.12)",
+                  border: "1px solid var(--accent-cyan)",
+                  color: "var(--accent-cyan)",
+                  padding: "0.25rem 0.55rem",
+                  borderRadius: "8px",
+                  fontSize: "0.75rem",
+                  fontWeight: "700",
+                  cursor: "pointer"
+                }}
+              >
+                Мой профиль
+              </button>
+
+              <button
+                onClick={async () => {
+                  await fetch("/api/auth/steam/logout", { method: "POST" });
+                  setCurrentUser(null);
+                }}
+                title="Выйти из Steam"
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  color: "var(--text-muted)",
+                  fontSize: "0.85rem",
+                  cursor: "pointer",
+                  padding: "0 0.2rem",
+                  marginLeft: "0.1rem"
+                }}
+              >
+                ✕
+              </button>
+            </div>
+          ) : (
+            <a
+              href="/api/auth/steam/login"
+              style={{
+                height: "38px",
+                padding: "0 1.1rem",
+                borderRadius: "10px",
+                fontSize: "0.82rem",
+                fontWeight: "700",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                justifyContent: "center",
+                background: "linear-gradient(135deg, rgba(23, 26, 33, 0.95), rgba(42, 71, 94, 0.8))",
+                border: "1px solid #66c0f4",
+                color: "#c7d5e0",
+                textDecoration: "none",
+                cursor: "pointer",
+                boxShadow: "0 0 15px rgba(102, 192, 244, 0.2)",
+                transition: "all 0.2s ease-in-out"
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2a10 10 0 0 0-10 10c0 4.7 3.25 8.64 7.64 9.68l2.67-3.9a3.24 3.24 0 0 1-.31-1.38c0-.44.09-.85.24-1.23L8.3 12.8a4.67 4.67 0 0 1-.3-.01 4.71 4.71 0 0 1-4.71-4.72 4.71 4.71 0 0 1 4.71-4.71 4.71 4.71 0 0 1 4.71 4.71c0 .2-.01.4-.04.59l2.36 3.4c.43-.17.9-.27 1.39-.27a3.54 3.54 0 1 1-3.54 3.54c0-.14.01-.27.03-.4l-2.67 3.88C11.13 21.96 11.56 22 12 22a10 10 0 0 0 10-10A10 10 0 0 0 12 2z"/>
+              </svg>
+              Войти через Steam
+            </a>
           )}
         </div>
       </header>
