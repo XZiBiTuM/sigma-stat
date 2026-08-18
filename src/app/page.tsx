@@ -2525,7 +2525,7 @@ export default function Home() {
                     color: activeTab === 'fantasy' ? '#b388ff' : undefined
                   }}
                 >
-                  🔮 Fantasy League
+                  Fantasy League
                 </button>
               </div>
 
@@ -3493,15 +3493,16 @@ export default function Home() {
                   }
                 }
 
-                // Available hub players sorted alphabetically
+                // Available hub players with robust ID extraction
                 const allPlayersList = [...(rankings || [])].map((item: any) => {
-                  const pId = item.player?.player_id || item.player_id || "";
-                  const nick = item.player?.nickname || item.nickname || "Player";
-                  const ov = (pId && playerOverridesMap[pId]) || (nick && playerOverridesMap[nick]) || {};
+                  const p = item.player || item.user || item;
+                  const pId = p.player_id || p.user_id || p.id || p.nickname || item.player_id || item.user_id || item.nickname || "";
+                  const nick = p.nickname || item.nickname || "Player";
+                  const ov = (pId && playerOverridesMap[pId]) || (nick && playerOverridesMap[nick]) || (nick.toLowerCase() && playerOverridesMap[nick.toLowerCase()]) || {};
                   const skill = ov.customSkillScore || 50;
-                  const avatar = item.player?.avatar || item.avatar || "";
+                  const avatar = p.avatar || item.avatar || "";
                   return { playerId: pId, nickname: nick, skillScore: skill, avatar };
-                }).sort((a, b) => a.nickname.localeCompare(b.nickname));
+                }).filter(p => p.playerId && p.nickname !== "Player").sort((a, b) => a.nickname.localeCompare(b.nickname));
 
                 const handleSaveFantasyPick = async () => {
                   if (!currentUser) {
@@ -3509,13 +3510,13 @@ export default function Home() {
                     return;
                   }
                   if (!draftSniper || !draftSupport || !draftDarkHorse) {
-                    setFantasySaveMsg("⚠️ Пожалуйста, выберите игроков для всех 3 ролей!");
+                    setFantasySaveMsg("Пожалуйста, выберите игроков для всех 3 ролей!");
                     return;
                   }
                   if (draftSniper.playerId === draftSupport.playerId || 
                       draftSniper.playerId === draftDarkHorse.playerId || 
                       draftSupport.playerId === draftDarkHorse.playerId) {
-                    setFantasySaveMsg("⚠️ Нельзя выбирать одного и того же игрока на несколько ролей!");
+                    setFantasySaveMsg("Нельзя выбирать одного и того же игрока на несколько ролей!");
                     return;
                   }
 
@@ -3537,17 +3538,17 @@ export default function Home() {
                     });
                     const d = await res.json();
                     if (res.ok) {
-                      setFantasySaveMsg("✅ Ваш состав на Fantasy League успешно сохранен!");
+                      setFantasySaveMsg("Ваш состав на Fantasy League успешно сохранен!");
                       setUserFantasyPick(d.pick);
                       // Refresh leaderboard
                       fetch("/api/fantasy/leaderboard")
                         .then(r => r.json())
                         .then(ld => { if (ld?.leaderboard) setFantasyLeaderboard(ld.leaderboard); });
                     } else {
-                      setFantasySaveMsg(`❌ ${d.error || "Ошибка сохранения"}`);
+                      setFantasySaveMsg(d.error || "Ошибка сохранения состава");
                     }
                   } catch (e: any) {
-                    setFantasySaveMsg(`❌ Ошибка сети: ${e.message}`);
+                    setFantasySaveMsg(`Ошибка сети: ${e.message}`);
                   } finally {
                     setIsSavingFantasy(false);
                   }
@@ -3575,13 +3576,13 @@ export default function Home() {
                     }}>
                       <div>
                         <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.3rem 0.8rem", borderRadius: "20px", background: "rgba(179, 136, 255, 0.2)", border: "1px solid #b388ff", color: "#d1c4e9", fontSize: "0.78rem", fontWeight: "800", marginBottom: "0.75rem", textTransform: "uppercase", letterSpacing: "1px" }}>
-                          🔮 Sigma Fantasy League
+                          SIGMA FANTASY LEAGUE
                         </div>
                         <h2 className="glow-text-purple" style={{ fontSize: "1.85rem", fontWeight: "900", margin: "0 0 0.5rem 0", color: "#fff" }}>
                           {fantasyTour?.title || "Sigma Cup: Season 3"}
                         </h2>
                         <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", margin: 0, maxWidth: "600px", lineHeight: "1.5" }}>
-                          Собери свою команду мечты из 3 ролей на турнир! Победитель фентези получает статус <strong style={{ color: "#ffd700" }}>«Фантазер»</strong> и золотую неоновую рамку на сайте!
+                          Собери свою команду из 3 ролей на турнир. Победитель фентези получает статус <strong style={{ color: "#ffd700" }}>«Фантазер»</strong> и золотую рамку на сайте.
                         </p>
                       </div>
 
@@ -3602,10 +3603,10 @@ export default function Home() {
                           color: tourStatus === "DRAFT_OPEN" ? "#00e5ff" : tourStatus === "LIVE" ? "#ffb74d" : "#ff5252",
                           marginBottom: "0.5rem"
                         }}>
-                          {tourStatus === "DRAFT_OPEN" ? "🟢 СБОР СОСТАВОВ ОТКРЫТ" : tourStatus === "LIVE" ? "🟡 ТУРНИР В ПРОЦЕССЕ" : "🔴 ТУРНИР ЗАВЕРШЕН"}
+                          {tourStatus === "DRAFT_OPEN" ? "СБОР СОСТАВОВ ОТКРЫТ" : tourStatus === "LIVE" ? "ТУРНИР В ПРОЦЕССЕ" : "ТУРНИР ЗАВЕРШЕН"}
                         </div>
                         <div style={{ fontSize: "0.82rem", color: "#fff", background: "rgba(255, 255, 255, 0.06)", padding: "0.3rem 0.6rem", borderRadius: "8px", fontWeight: "600" }}>
-                          ⏳ {countdownStr}
+                          {countdownStr}
                         </div>
                       </div>
                     </div>
@@ -3622,15 +3623,14 @@ export default function Home() {
                         alignItems: "center",
                         gap: "1.25rem"
                       }}>
-                        <div style={{ fontSize: "2.5rem" }}>👑</div>
                         <div>
                           <div style={{ fontSize: "0.75rem", color: "#ffd700", fontWeight: "800", textTransform: "uppercase", letterSpacing: "1px" }}>
                             Текущий Чемпион Fantasy League
                           </div>
-                          <div style={{ fontSize: "1.3rem", fontWeight: "900", color: "#fff", display: "flex", alignItems: "center", gap: "0.6rem" }}>
+                          <div style={{ fontSize: "1.3rem", fontWeight: "900", color: "#fff", display: "flex", alignItems: "center", gap: "0.6rem", marginTop: "0.2rem" }}>
                             {winnerNick}
                             <span style={{ fontSize: "0.75rem", padding: "0.2rem 0.6rem", borderRadius: "10px", background: "linear-gradient(135deg, #ffd700, #ff9100)", color: "#000", fontWeight: "900" }}>
-                              🔮 ФАНТАЗЕР
+                              ФАНТАЗЕР
                             </span>
                           </div>
                         </div>
@@ -3645,7 +3645,7 @@ export default function Home() {
                             Твой состав на турнир (3 слота)
                           </h3>
                           <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", margin: 0 }}>
-                            Выбери по одному игроку на каждую роль. Очки будут начисляться автоматически во время игр!
+                            Выбери по одному игроку на каждую роль. Очки начисляются автоматически по итогам матчей.
                           </p>
                         </div>
 
@@ -3694,12 +3694,9 @@ export default function Home() {
                           transition: "all 0.2s ease"
                         }}>
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-                              <span style={{ fontSize: "1.5rem" }}>🎯</span>
-                              <div>
-                                <div style={{ fontSize: "1.05rem", fontWeight: "800", color: "#ff7b7b" }}>Снайпер</div>
-                                <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Фраги (+2.5), Entry (+2.0), HS (+1.0)</div>
-                              </div>
+                            <div>
+                              <div style={{ fontSize: "1.05rem", fontWeight: "800", color: "#ff7b7b" }}>Снайпер</div>
+                              <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Фраги (+2.5), Entry (+2.0), HS (+1.0)</div>
                             </div>
                             <span style={{ fontSize: "0.72rem", fontWeight: "800", padding: "0.2rem 0.5rem", borderRadius: "6px", background: "rgba(255, 82, 82, 0.15)", color: "#ff8a80" }}>
                               СЛОТ 1
@@ -3709,9 +3706,10 @@ export default function Home() {
                           {/* Player selector */}
                           <div>
                             <select
-                              value={draftSniper?.playerId || ""}
+                              value={draftSniper?.nickname || draftSniper?.playerId || ""}
                               onChange={e => {
-                                const found = allPlayersList.find(p => p.playerId === e.target.value);
+                                const val = e.target.value;
+                                const found = allPlayersList.find(p => p.nickname === val || p.playerId === val);
                                 setDraftSniper(found || null);
                               }}
                               disabled={!isDraftOpen}
@@ -3728,17 +3726,27 @@ export default function Home() {
                               }}
                             >
                               <option value="">-- Выбери Снайпера --</option>
-                              {allPlayersList.map(p => (
-                                <option key={p.playerId} value={p.playerId} disabled={p.playerId === draftSupport?.playerId || p.playerId === draftDarkHorse?.playerId}>
-                                  {p.nickname} (Скилл: {p.skillScore})
-                                </option>
-                              ))}
+                              {allPlayersList.map(p => {
+                                const isUsedInOtherSlot = (draftSupport && (draftSupport.nickname === p.nickname || draftSupport.playerId === p.playerId)) ||
+                                                          (draftDarkHorse && (draftDarkHorse.nickname === p.nickname || draftDarkHorse.playerId === p.playerId));
+                                return (
+                                  <option key={p.playerId || p.nickname} value={p.nickname} disabled={isUsedInOtherSlot}>
+                                    {p.nickname} (Скилл: {p.skillScore})
+                                  </option>
+                                );
+                              })}
                             </select>
                           </div>
 
                           {draftSniper && (
                             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(0,0,0,0.3)", padding: "0.6rem 0.8rem", borderRadius: "12px" }}>
-                              {draftSniper.avatar && <img src={draftSniper.avatar} alt="" style={{ width: "32px", height: "32px", borderRadius: "50%" }} />}
+                              {draftSniper.avatar ? (
+                                <img src={draftSniper.avatar} alt="" style={{ width: "32px", height: "32px", borderRadius: "50%" }} />
+                              ) : (
+                                <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "rgba(255, 82, 82, 0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.8rem", fontWeight: "700", color: "#ff8a80" }}>
+                                  {draftSniper.nickname?.slice(0, 2).toUpperCase()}
+                                </div>
+                              )}
                               <div>
                                 <div style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff" }}>{draftSniper.nickname}</div>
                                 <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Оценка скилла: <strong style={{ color: "#ff7b7b" }}>{draftSniper.skillScore}/100</strong></div>
@@ -3760,12 +3768,9 @@ export default function Home() {
                           transition: "all 0.2s ease"
                         }}>
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-                              <span style={{ fontSize: "1.5rem" }}>🛡️</span>
-                              <div>
-                                <div style={{ fontSize: "1.05rem", fontWeight: "800", color: "var(--accent-cyan)" }}>Саппорт</div>
-                                <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Ассисты (+3.0), Гранаты (+0.05), Дефьюз (+2.0)</div>
-                              </div>
+                            <div>
+                              <div style={{ fontSize: "1.05rem", fontWeight: "800", color: "var(--accent-cyan)" }}>Саппорт</div>
+                              <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Ассисты (+3.0), Гранаты (+0.05), Дефьюз (+2.0)</div>
                             </div>
                             <span style={{ fontSize: "0.72rem", fontWeight: "800", padding: "0.2rem 0.5rem", borderRadius: "6px", background: "rgba(0, 229, 255, 0.15)", color: "var(--accent-cyan)" }}>
                               СЛОТ 2
@@ -3775,9 +3780,10 @@ export default function Home() {
                           {/* Player selector */}
                           <div>
                             <select
-                              value={draftSupport?.playerId || ""}
+                              value={draftSupport?.nickname || draftSupport?.playerId || ""}
                               onChange={e => {
-                                const found = allPlayersList.find(p => p.playerId === e.target.value);
+                                const val = e.target.value;
+                                const found = allPlayersList.find(p => p.nickname === val || p.playerId === val);
                                 setDraftSupport(found || null);
                               }}
                               disabled={!isDraftOpen}
@@ -3794,17 +3800,27 @@ export default function Home() {
                               }}
                             >
                               <option value="">-- Выбери Саппорта --</option>
-                              {allPlayersList.map(p => (
-                                <option key={p.playerId} value={p.playerId} disabled={p.playerId === draftSniper?.playerId || p.playerId === draftDarkHorse?.playerId}>
-                                  {p.nickname} (Скилл: {p.skillScore})
-                                </option>
-                              ))}
+                              {allPlayersList.map(p => {
+                                const isUsedInOtherSlot = (draftSniper && (draftSniper.nickname === p.nickname || draftSniper.playerId === p.playerId)) ||
+                                                          (draftDarkHorse && (draftDarkHorse.nickname === p.nickname || draftDarkHorse.playerId === p.playerId));
+                                return (
+                                  <option key={p.playerId || p.nickname} value={p.nickname} disabled={isUsedInOtherSlot}>
+                                    {p.nickname} (Скилл: {p.skillScore})
+                                  </option>
+                                );
+                              })}
                             </select>
                           </div>
 
                           {draftSupport && (
                             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(0,0,0,0.3)", padding: "0.6rem 0.8rem", borderRadius: "12px" }}>
-                              {draftSupport.avatar && <img src={draftSupport.avatar} alt="" style={{ width: "32px", height: "32px", borderRadius: "50%" }} />}
+                              {draftSupport.avatar ? (
+                                <img src={draftSupport.avatar} alt="" style={{ width: "32px", height: "32px", borderRadius: "50%" }} />
+                              ) : (
+                                <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "rgba(0, 229, 255, 0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.8rem", fontWeight: "700", color: "var(--accent-cyan)" }}>
+                                  {draftSupport.nickname?.slice(0, 2).toUpperCase()}
+                                </div>
+                              )}
                               <div>
                                 <div style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff" }}>{draftSupport.nickname}</div>
                                 <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Полезность и урон: <strong style={{ color: "var(--accent-cyan)" }}>{draftSupport.skillScore}/100</strong></div>
@@ -3826,24 +3842,22 @@ export default function Home() {
                           transition: "all 0.2s ease"
                         }}>
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-                              <span style={{ fontSize: "1.5rem" }}>🐎</span>
-                              <div>
-                                <div style={{ fontSize: "1.05rem", fontWeight: "800", color: "#ffd700" }}>Темная лошадка</div>
-                                <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Динамический множитель очков!</div>
-                              </div>
+                            <div>
+                              <div style={{ fontSize: "1.05rem", fontWeight: "800", color: "#ffd700" }}>Темная лошадка</div>
+                              <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Динамический множитель очков</div>
                             </div>
                             <span style={{ fontSize: "0.72rem", fontWeight: "800", padding: "0.2rem 0.5rem", borderRadius: "6px", background: "rgba(255, 215, 0, 0.15)", color: "#ffd700" }}>
-                              БАФФ x{darkMultiplier}
+                              БОНУС x{darkMultiplier}
                             </span>
                           </div>
 
                           {/* Player selector */}
                           <div>
                             <select
-                              value={draftDarkHorse?.playerId || ""}
+                              value={draftDarkHorse?.nickname || draftDarkHorse?.playerId || ""}
                               onChange={e => {
-                                const found = allPlayersList.find(p => p.playerId === e.target.value);
+                                const val = e.target.value;
+                                const found = allPlayersList.find(p => p.nickname === val || p.playerId === val);
                                 setDraftDarkHorse(found || null);
                               }}
                               disabled={!isDraftOpen}
@@ -3860,23 +3874,34 @@ export default function Home() {
                               }}
                             >
                               <option value="">-- Выбери Темную лошадку --</option>
-                              {allPlayersList.map(p => (
-                                <option key={p.playerId} value={p.playerId} disabled={p.playerId === draftSniper?.playerId || p.playerId === draftSupport?.playerId}>
-                                  {p.nickname} (Скилл: {p.skillScore} ➔ БАФФ: x{(1.0 + ((100 - Math.min(100, Math.max(10, p.skillScore || 50))) / 100) * 0.40).toFixed(2)})
-                                </option>
-                              ))}
+                              {allPlayersList.map(p => {
+                                const isUsedInOtherSlot = (draftSniper && (draftSniper.nickname === p.nickname || draftSniper.playerId === p.playerId)) ||
+                                                          (draftSupport && (draftSupport.nickname === p.nickname || draftSupport.playerId === p.playerId));
+                                const mult = (1.0 + ((100 - Math.min(100, Math.max(10, p.skillScore || 50))) / 100) * 0.40).toFixed(2);
+                                return (
+                                  <option key={p.playerId || p.nickname} value={p.nickname} disabled={isUsedInOtherSlot}>
+                                    {p.nickname} (Скилл: {p.skillScore} ➔ БОНУС x{mult})
+                                  </option>
+                                );
+                              })}
                             </select>
                           </div>
 
                           {draftDarkHorse && (
                             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(0,0,0,0.3)", padding: "0.6rem 0.8rem", borderRadius: "12px" }}>
-                              {draftDarkHorse.avatar && <img src={draftDarkHorse.avatar} alt="" style={{ width: "32px", height: "32px", borderRadius: "50%" }} />}
+                              {draftDarkHorse.avatar ? (
+                                <img src={draftDarkHorse.avatar} alt="" style={{ width: "32px", height: "32px", borderRadius: "50%" }} />
+                              ) : (
+                                <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "rgba(255, 215, 0, 0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.8rem", fontWeight: "700", color: "#ffd700" }}>
+                                  {draftDarkHorse.nickname?.slice(0, 2).toUpperCase()}
+                                </div>
+                              )}
                               <div style={{ flex: 1 }}>
                                 <div style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff" }}>{draftDarkHorse.nickname}</div>
                                 <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Скилл: <strong>{draftDarkHorse.skillScore}</strong></div>
                               </div>
                               <span style={{ fontSize: "0.78rem", fontWeight: "900", color: "#000", background: "#ffd700", padding: "0.2rem 0.5rem", borderRadius: "8px" }}>
-                                ⚡ x{darkMultiplier}
+                                x{darkMultiplier}
                               </span>
                             </div>
                           )}
@@ -3888,7 +3913,7 @@ export default function Home() {
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
                         <div>
                           {fantasySaveMsg && (
-                            <div style={{ fontSize: "0.9rem", fontWeight: "700", color: fantasySaveMsg.includes("✅") ? "#00e5ff" : "#ff5252" }}>
+                            <div style={{ fontSize: "0.9rem", fontWeight: "700", color: fantasySaveMsg.includes("успешно") ? "#00e5ff" : "#ff5252" }}>
                               {fantasySaveMsg}
                             </div>
                           )}
@@ -3910,7 +3935,7 @@ export default function Home() {
                             transition: "all 0.2s ease"
                           }}
                         >
-                          {isSavingFantasy ? "Сохранение..." : isDraftOpen ? "💾 Сохранить прогноз на турнир" : "🔒 Сбор составов закрыт"}
+                          {isSavingFantasy ? "Сохранение..." : isDraftOpen ? "Сохранить состав на турнир" : "Сбор составов закрыт"}
                         </button>
                       </div>
                     </div>
@@ -3920,7 +3945,7 @@ export default function Home() {
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
                         <div>
                           <h3 style={{ fontSize: "1.35rem", fontWeight: "800", color: "#fff", margin: "0 0 0.3rem 0" }}>
-                            🏆 Таблица лидеров Fantasy League
+                            Таблица лидеров Fantasy League
                           </h3>
                           <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", margin: 0 }}>
                             Рейтинг участников и набранные очки за текущий турнир
@@ -3942,9 +3967,9 @@ export default function Home() {
                               <tr style={{ borderBottom: "1px solid var(--border-light)", color: "var(--text-muted)", fontSize: "0.8rem", textTransform: "uppercase" }}>
                                 <th style={{ padding: "0.75rem 1rem" }}>#</th>
                                 <th style={{ padding: "0.75rem 1rem" }}>Участник</th>
-                                <th style={{ padding: "0.75rem 1rem" }}>🎯 Снайпер</th>
-                                <th style={{ padding: "0.75rem 1rem" }}>🛡️ Саппорт</th>
-                                <th style={{ padding: "0.75rem 1rem" }}>🐎 Темная лошадка</th>
+                                <th style={{ padding: "0.75rem 1rem" }}>Снайпер</th>
+                                <th style={{ padding: "0.75rem 1rem" }}>Саппорт</th>
+                                <th style={{ padding: "0.75rem 1rem" }}>Темная лошадка</th>
                                 <th style={{ padding: "0.75rem 1rem", textAlign: "right" }}>Всего очков</th>
                               </tr>
                             </thead>
@@ -3960,7 +3985,7 @@ export default function Home() {
                                     }}
                                   >
                                     <td style={{ padding: "1rem", fontWeight: "900", color: isFirst ? "#ffd700" : "var(--text-muted)" }}>
-                                      {isFirst ? "👑 1" : idx + 1}
+                                      {idx + 1}
                                     </td>
                                     <td style={{ padding: "1rem" }}>
                                       <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
@@ -4014,8 +4039,8 @@ export default function Home() {
                   </div>
                 );
               })()}
-
-              {activeTab === 'compare' && (() => {
+              
+{activeTab === 'compare' && (() => {
                 const DEFAULT_AVATAR = "https://assets.faceit-cdn.net/avatars/default_avatar.jpg";
                 const getItemId = (r: any) => r.player?.player_id || r.player?.user_id || r.user?.player_id || r.user?.user_id || r.player_id || r.user_id || "";
                 const getItemNick = (r: any) => r.player?.nickname || r.user?.nickname || r.nickname || "";
