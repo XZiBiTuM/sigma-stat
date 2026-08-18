@@ -2122,7 +2122,7 @@ export default function Home() {
               <button
                 onClick={() => {
                   if (currentUser.faceit?.playerId) {
-                    setSelectedPlayerId(currentUser.faceit.playerId);
+                    loadPlayerDetails(currentUser.faceit.playerId);
                   } else {
                     window.open(currentUser.profileUrl, "_blank");
                   }
