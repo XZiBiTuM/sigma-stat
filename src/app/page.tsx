@@ -3993,9 +3993,13 @@ export default function Home() {
                                         <div>
                                           <div style={{ fontWeight: "700", color: "#fff", fontSize: "0.92rem", display: "flex", alignItems: "center", gap: "0.4rem" }}>
                                             {item.userName}
-                                            {isFirst && (
+                                            {item.totalPoints > 0 && tourStatus !== "DRAFT_OPEN" && isFirst ? (
                                               <span style={{ fontSize: "0.68rem", padding: "0.15rem 0.4rem", borderRadius: "6px", background: "#ffd700", color: "#000", fontWeight: "900" }}>
                                                 TOP 1
+                                              </span>
+                                            ) : (
+                                              <span style={{ fontSize: "0.68rem", padding: "0.15rem 0.4rem", borderRadius: "6px", background: "rgba(0, 229, 255, 0.15)", color: "var(--accent-cyan)", fontWeight: "700" }}>
+                                                ГОТОВ
                                               </span>
                                             )}
                                           </div>

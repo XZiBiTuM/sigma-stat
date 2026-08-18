@@ -5,6 +5,9 @@ import path from "path";
 const PICKS_LOCAL = path.join(process.cwd(), "src", "lib", "fantasy_picks.json");
 const PICKS_PERSISTENT = path.join(process.cwd(), "..", "sigma_persistent_fantasy_picks.json");
 
+const TOUR_LOCAL = path.join(process.cwd(), "src", "lib", "fantasy_tournament.json");
+const TOUR_PERSISTENT = path.join(process.cwd(), "..", "sigma_persistent_fantasy_tournament.json");
+
 const OVERRIDES_LOCAL = path.join(process.cwd(), "src", "lib", "player_overrides.json");
 const OVERRIDES_PERSISTENT = path.join(process.cwd(), "..", "sigma_persistent_player_overrides.json");
 
@@ -23,13 +26,44 @@ async function readJsonFile(localPath: string, persistentPath: string) {
 export async function GET() {
   try {
     const picks = await readJsonFile(PICKS_LOCAL, PICKS_PERSISTENT);
+    const tour = await readJsonFile(TOUR_LOCAL, TOUR_PERSISTENT);
     const overrides = await readJsonFile(OVERRIDES_LOCAL, OVERRIDES_PERSISTENT);
 
+    const isLiveOrDone = tour?.status === "LIVE" || tour?.status === "COMPLETED";
+
     const leaderboard = Object.values(picks).map((pick: any) => {
-      // 1. Calculate Sniper Score
+      const darkSkill = pick.darkHorse?.skillScore || 50;
+      const underdogBonus = pick.darkHorse?.underdogBonus || Math.round((1.0 + ((100 - Math.min(100, Math.max(10, darkSkill))) / 100) * 0.40) * 100) / 100;
+
+      if (!isLiveOrDone) {
+        // Tournament draft is open / has not started yet -> 0 points
+        return {
+          userId: pick.userId,
+          userName: pick.userName,
+          avatar: pick.avatar || "/default-avatar.png",
+          faceitNickname: pick.faceitNickname,
+          submittedAt: pick.submittedAt,
+          status: "DRAFT_OPEN",
+          sniper: {
+            nickname: pick.sniper?.nickname,
+            points: 0
+          },
+          support: {
+            nickname: pick.support?.nickname,
+            points: 0
+          },
+          darkHorse: {
+            nickname: pick.darkHorse?.nickname,
+            multiplier: underdogBonus,
+            points: 0
+          },
+          totalPoints: 0
+        };
+      }
+
+      // 1. Calculate Sniper Score during LIVE or COMPLETED tournament
       const snipOv = overrides[pick.sniper?.playerId] || overrides[pick.sniper?.nickname] || {};
       const snipSkill = pick.sniper?.skillScore || snipOv.customSkillScore || 50;
-      // Simulated/proportional performance based on skill rating and activity
       const snipBasePoints = Math.round((snipSkill * 1.45 + 35) * 10) / 10;
 
       // 2. Calculate Support Score
@@ -37,10 +71,7 @@ export async function GET() {
       const suppSkill = pick.support?.skillScore || suppOv.customSkillScore || 50;
       const suppBasePoints = Math.round((suppSkill * 1.25 + 45) * 10) / 10;
 
-      // 3. Calculate Dark Horse Score with Underdog Multiplier!
-      const darkOv = overrides[pick.darkHorse?.playerId] || overrides[pick.darkHorse?.nickname] || {};
-      const darkSkill = pick.darkHorse?.skillScore || darkOv.customSkillScore || 40;
-      const underdogBonus = pick.darkHorse?.underdogBonus || Math.round((1.0 + ((100 - darkSkill) / 100) * 0.40) * 100) / 100;
+      // 3. Calculate Dark Horse Score with Underdog Multiplier
       const darkRawPoints = darkSkill * 1.20 + 30;
       const darkFinalPoints = Math.round((darkRawPoints * underdogBonus) * 10) / 10;
 
@@ -52,6 +83,7 @@ export async function GET() {
         avatar: pick.avatar || "/default-avatar.png",
         faceitNickname: pick.faceitNickname,
         submittedAt: pick.submittedAt,
+        status: tour?.status,
         sniper: {
           nickname: pick.sniper?.nickname,
           points: snipBasePoints
@@ -69,11 +101,12 @@ export async function GET() {
       };
     });
 
-    // Sort by total points descending
-    leaderboard.sort((a, b) => b.totalPoints - a.totalPoints);
+    // Sort by total points descending (or submittedAt if equal)
+    leaderboard.sort((a, b) => b.totalPoints - a.totalPoints || (b.submittedAt || "").localeCompare(a.submittedAt || ""));
 
     return NextResponse.json({
       success: true,
+      tourStatus: tour?.status || "DRAFT_OPEN",
       count: leaderboard.length,
       leaderboard
     });
