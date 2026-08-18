@@ -2082,28 +2082,7 @@ export default function Home() {
                 Выйти
               </button>
             </div>
-          ) : (
-            <button 
-              onClick={() => { setAuthPasscode(""); setAuthError(""); setShowAuthModal(true); }}
-              style={{
-                height: "38px",
-                padding: "0 1.1rem",
-                borderRadius: "10px",
-                fontSize: "0.82rem",
-                fontWeight: "700",
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "rgba(0, 229, 255, 0.12)",
-                border: "1px solid rgba(0, 229, 255, 0.5)",
-                color: "var(--accent-cyan)",
-                cursor: "pointer",
-                transition: "all 0.2s ease-in-out"
-              }}
-            >
-              Вход для оргов
-            </button>
-          )}
+          ) : null}
 
           {/* STEAM OPENID AUTH / USER PROFILE WIDGET */}
           {currentUser ? (
