@@ -7122,6 +7122,22 @@ export default function Home() {
               </div>
             )}
 
+            {tourStep === 5 && (
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center", alignItems: "center" }}>
+                <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
+                  Fantasy League
+                </h3>
+                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7", maxWidth: "920px" }}>
+                  Интерактивная лига прогнозов на турниры Сигма Хаба. Собери команду из 3 игроков и соревнуйся за звание лучшего аналитика.
+                </p>
+                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem", maxWidth: "920px", width: "100%" }}>
+                  <div><strong>3 роли:</strong> Снайпер (фраги и первый килл), Саппорт (ассисты, гранаты и дефьюзы) и Темная лошадка (сбалансированный множитель очков андердога).</div>
+                  <div><strong>Автоматический подсчет:</strong> очки рассчитываются по реальной статистике матчей турнира.</div>
+                  <div><strong>Награды:</strong> победитель получает официальный статус «Фантазер» и золотую рамку на сайте.</div>
+                </div>
+              </div>
+            )}
+
             {/* 3D COVERFLOW PERSPECTIVE FOLDER CAROUSEL */}
             <div style={{
               perspective: "1400px",
@@ -7202,7 +7218,7 @@ export default function Home() {
               paddingTop: "1.75rem"
             }}>
               <div style={{ display: "flex", gap: "0.65rem" }}>
-                {[0, 1, 2, 3, 4].map((idx) => (
+                {[0, 1, 2, 3, 4, 5].map((idx) => (
                   <span 
                     key={idx}
                     onClick={() => setTourStep(idx)}
@@ -7230,7 +7246,7 @@ export default function Home() {
                   </button>
                 )}
 
-                {tourStep < 4 ? (
+                {tourStep < 5 ? (
                   <button 
                     onClick={() => setTourStep(prev => prev + 1)}
                     className="btn btn-glow-cyan"
