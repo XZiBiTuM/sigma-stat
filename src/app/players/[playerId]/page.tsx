@@ -1518,56 +1518,57 @@ export default function PlayerProfilePage() {
                       }}
                     />
 
-                    {/* Left: Map & Outcome */}
-                    <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", gap: "1rem", minWidth: "180px" }}>
+                    {/* Left: Fixed-width Badge + Fixed-width Map Info */}
+                    <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", gap: "1rem", width: "240px", flexShrink: 0 }}>
                       <div 
                         style={{
                           background: m.won ? "rgba(76, 175, 80, 0.15)" : "rgba(244, 67, 54, 0.15)",
                           border: m.won ? "1px solid rgba(76, 175, 80, 0.35)" : "1px solid rgba(244, 67, 54, 0.35)",
                           color: m.won ? "#4caf50" : "#f44336",
-                          padding: "0.35rem 0.75rem",
+                          padding: "0.35rem 0",
                           borderRadius: "6px",
-                          fontSize: "0.8rem",
+                          fontSize: "0.78rem",
                           fontWeight: "800",
                           textAlign: "center",
-                          minWidth: "75px"
+                          width: "95px",
+                          flexShrink: 0
                         }}
                       >
                         {m.won ? "ПОБЕДА" : "ПОРАЖЕНИЕ"}
                       </div>
-                      <div>
+                      <div style={{ width: "135px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                         <span style={{ fontSize: "0.95rem", fontWeight: "800", color: "#fff", display: "block" }}>{m.map}</span>
                         <span style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>{m.finishedAt}</span>
                       </div>
                     </div>
 
-                    {/* Middle: Score */}
-                    <div style={{ position: "relative", zIndex: 1, textAlign: "center", minWidth: "80px" }}>
+                    {/* Middle: Score with Fixed Width */}
+                    <div style={{ position: "relative", zIndex: 1, textAlign: "center", width: "80px", flexShrink: 0 }}>
                       <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", display: "block" }}>Счет</span>
                       <span style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff" }}>{m.score}</span>
                     </div>
 
-                    {/* Right: Personal Stats Grid */}
-                    <div style={{ position: "relative", zIndex: 1, display: "flex", flex: 1, justifyContent: "space-around", gap: "1rem", flexWrap: "wrap" }}>
-                      <div>
+                    {/* Right: Personal Stats Grid with Exact Uniform Column Widths */}
+                    <div style={{ position: "relative", zIndex: 1, display: "flex", flex: 1, justifyContent: "space-between", alignItems: "center", gap: "0.5rem" }}>
+                      <div style={{ width: "95px", textAlign: "center" }}>
                         <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block" }}>K / D / A</span>
-                        <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff" }}>{m.kills} / {m.deaths} / {m.assists}</span>
+                        <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff" }}>{m.kills}/{m.deaths}/{m.assists}</span>
                       </div>
-                      <div>
+                      <div style={{ width: "80px", textAlign: "center" }}>
                         <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block" }}>K/D Ratio</span>
                         <span style={{ fontSize: "0.9rem", fontWeight: "800", color: m.kd >= 1.2 ? "var(--success)" : m.kd < 0.95 ? "var(--danger)" : "var(--text-primary)" }}>{m.kd.toFixed(2)}</span>
                       </div>
-                      <div>
+                      <div style={{ width: "80px", textAlign: "center" }}>
                         <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block" }}>Rating 2.0</span>
                         <span style={{ fontSize: "0.9rem", fontWeight: "800", color: m.rating >= 1.2 ? "var(--success)" : m.rating < 0.95 ? "var(--danger)" : "var(--accent-cyan)" }}>
                           {m.rating ? m.rating.toFixed(2) : "—"}
                         </span>
                       </div>
-                      <div>
+                      <div style={{ width: "80px", textAlign: "center" }}>
                         <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block" }}>Headshots</span>
                         <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff" }}>{m.hsPct}%</span>
                       </div>
-                      <div>
+                      <div style={{ width: "65px", textAlign: "center" }}>
                         <span style={{ fontSize: "0.68rem", color: "var(--accent-yellow)", display: "block" }}>MVPs</span>
                         <span style={{ fontSize: "0.9rem", fontWeight: "800", color: m.mvps > 0 ? "var(--accent-yellow)" : "var(--text-secondary)" }}>
                           {m.mvps > 0 ? `★ ${m.mvps}` : "—"}
