@@ -574,10 +574,10 @@ export default function PlayerProfilePage() {
         </div>
 
         {/* Profile Layout */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
           
           {/* Top Info Header */}
-          <div className="glass-card" style={{ padding: "2rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "2rem", position: "relative" }}>
+          <div className="glass-card" style={{ padding: "2rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "1.25rem", position: "relative" }}>
             {/* Top decorative line */}
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px", background: "linear-gradient(90deg, var(--accent-purple), var(--accent-cyan))" }} />
             
@@ -715,10 +715,10 @@ export default function PlayerProfilePage() {
           })()}
 
           {/* Detailed Statistics Container */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "2rem", alignItems: "stretch" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "1.25rem", alignItems: "stretch" }}>
             
             {/* Left Panel: Tabs & Metrics */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", height: "100%" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", height: "100%" }}>
               
               {/* Disclaimer */}
               <div style={{
@@ -768,7 +768,7 @@ export default function PlayerProfilePage() {
 
               {/* General Tab Content */}
               {activeTab === "general" && hubStats && (
-                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1.25rem", height: "890px", overflow: "hidden", boxSizing: "border-box" }}>
+                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1.25rem", height: "auto", overflow: "hidden", boxSizing: "border-box" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff" }}>Статистика (хаб)</h3>
                     <span style={{ fontSize: "0.72rem", padding: "0.2rem 0.5rem", background: "rgba(0, 212, 255, 0.1)", border: "1px solid rgba(0, 212, 255, 0.2)", borderRadius: "6px", color: "var(--accent-cyan)", fontWeight: "700" }}>
@@ -958,7 +958,7 @@ export default function PlayerProfilePage() {
 
               {/* Tactical Tab Content */}
               {activeTab === "tactical" && hubStats && (
-                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1.25rem", height: "890px", overflow: "hidden", boxSizing: "border-box" }}>
+                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1.25rem", height: "auto", overflow: "hidden", boxSizing: "border-box" }}>
                   
                   {/* Leetify Card */}
                   {leetify ? (
@@ -1053,7 +1053,7 @@ export default function PlayerProfilePage() {
               
               {/* Maps Stats View in Left column fallback if tab chosen */}
               {activeTab === "maps" && hubStats && (
-                <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "0.5rem", height: "890px", overflow: "hidden", boxSizing: "border-box" }}>
+                <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "0.5rem", height: "auto", overflow: "hidden", boxSizing: "border-box" }}>
                   
                   {/* Maps Summary Box at the top */}
                   <div style={{
@@ -1265,7 +1265,7 @@ export default function PlayerProfilePage() {
 
             {/* Right Panel: Advanced Tactical Breakdowns & Multi-Kills */}
             {hubStats && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", height: "100%" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", height: "100%" }}>
                 
                 {/* Est HLTV Rating Prominent Card */}
                 <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", overflow: "hidden" }}>
@@ -1380,7 +1380,7 @@ export default function PlayerProfilePage() {
                       alignItems: "center",
                       padding: "1rem 1.25rem",
                       minHeight: "75px",
-                      gap: "1.5rem"
+                      gap: "1.25rem"
                     }}
                   >
                     {/* Background Map Overlay */}
