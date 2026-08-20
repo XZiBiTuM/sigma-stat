@@ -1356,6 +1356,125 @@ export default function PlayerProfilePage() {
 
           </div>
 
+          {/* STANDALONE FANTASY STATS SECTION */}
+          {profile && (() => {
+            const nick = profile?.nickname || "";
+            const ov = playerOverridesMap[playerId] || playerOverridesMap[nick] || playerOverridesMap[nick.toLowerCase()] || {};
+            let elo = ov.customElo || profile?.games?.cs2?.faceit_elo || 1000;
+            let csRating = ov.csRating || Math.round(elo * 9.5);
+            const sElo = Math.min(100, Math.max(10, (elo - 300) / 22));
+            const sPremier = Math.min(100, Math.max(10, csRating / 260));
+            const skillScore = ov.customSkillScore ?? Math.round((0.45 * sElo) + (0.55 * sPremier));
+            const underdogBonus = Math.round((1.0 + ((100 - Math.min(100, Math.max(10, skillScore))) / 100) * 0.40) * 100) / 100;
+
+            const recent = hubStats?.recentMatches || [];
+            let totalFantasyPts = 0;
+            let bestMatchPts = 0;
+
+            recent.forEach((m: any) => {
+              const kills = m.kills ?? 15;
+              const assists = m.assists ?? 3;
+              const isWin = (m.result === "1" || m.result === "win" || m.winner === "team1");
+              const hs = m.headshots ?? Math.round(kills * 0.45);
+              
+              const snipPts = kills * 2.0 + hs * 1.0;
+              const suppPts = assists * 2.5 + (kills * 0.8);
+              const winBonus = isWin ? 10 : 2;
+
+              const matchTotal = Math.round(((snipPts * 0.5 + suppPts * 0.5 + winBonus)) * 10) / 10;
+              totalFantasyPts += matchTotal;
+              if (matchTotal > bestMatchPts) bestMatchPts = matchTotal;
+            });
+
+            if (recent.length === 0) {
+              totalFantasyPts = Math.round((skillScore * 3.2) * 10) / 10;
+              bestMatchPts = Math.round((skillScore * 0.55 + 15) * 10) / 10;
+            }
+
+            const avgFantasyPts = (totalFantasyPts / (recent.length || 1)).toFixed(1);
+
+            return (
+              <div className="glass-card animate-fade-in" style={{
+                padding: "1.5rem",
+                borderRadius: "16px",
+                border: "1px solid rgba(192, 132, 252, 0.3)",
+                background: "linear-gradient(135deg, rgba(20, 15, 35, 0.9) 0%, rgba(12, 10, 25, 0.95) 100%)",
+                boxShadow: "0 0 30px rgba(124, 77, 255, 0.15)",
+                display: "flex",
+                flexDirection: "column",
+                gap: "1.25rem",
+                marginBottom: "0.5rem"
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--border-light)", paddingBottom: "0.85rem", flexWrap: "wrap", gap: "0.5rem" }}>
+                  <div>
+                    <h3 style={{ fontSize: "1.15rem", fontWeight: "900", color: "#fff", margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                      Фентези статистика игрока
+                    </h3>
+                    <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>
+                      Заработанные очки и турнирный профиль игрока в Фентези Лиге
+                    </span>
+                  </div>
+                  <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                    <span style={{ fontSize: "0.72rem", padding: "0.25rem 0.6rem", background: "rgba(192, 132, 252, 0.15)", border: "1px solid rgba(192, 132, 252, 0.3)", borderRadius: "6px", color: "var(--accent-purple)", fontWeight: "800" }}>
+                      ФЕНТЕЗИ ЛИГА
+                    </span>
+                    <span style={{ fontSize: "0.72rem", padding: "0.25rem 0.6rem", background: "rgba(0, 229, 255, 0.1)", border: "1px solid rgba(0, 229, 255, 0.3)", borderRadius: "6px", color: "var(--accent-cyan)", fontWeight: "800" }}>
+                      Скилл: {skillScore} очков
+                    </span>
+                  </div>
+                </div>
+
+                {/* 4 Key Metrics */}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "0.75rem" }}>
+                  <div style={{ background: "rgba(0,0,0,0.3)", border: "1px solid var(--border-light)", borderRadius: "10px", padding: "0.85rem" }}>
+                    <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", display: "block" }}>Всего очков Фентези</span>
+                    <span style={{ fontSize: "1.35rem", fontWeight: "900", color: "var(--accent-cyan)", display: "block", marginTop: "0.2rem" }}>
+                      {totalFantasyPts.toFixed(1)}
+                    </span>
+                  </div>
+
+                  <div style={{ background: "rgba(0,0,0,0.3)", border: "1px solid var(--border-light)", borderRadius: "10px", padding: "0.85rem" }}>
+                    <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", display: "block" }}>Среднее за матч</span>
+                    <span style={{ fontSize: "1.35rem", fontWeight: "900", color: "#ffd54f", display: "block", marginTop: "0.2rem" }}>
+                      {avgFantasyPts}
+                    </span>
+                  </div>
+
+                  <div style={{ background: "rgba(0,0,0,0.3)", border: "1px solid var(--border-light)", borderRadius: "10px", padding: "0.85rem" }}>
+                    <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", display: "block" }}>Рекорд за матч</span>
+                    <span style={{ fontSize: "1.35rem", fontWeight: "900", color: "var(--success)", display: "block", marginTop: "0.2rem" }}>
+                      {bestMatchPts}
+                    </span>
+                  </div>
+
+                  <div style={{ background: "rgba(0,0,0,0.3)", border: "1px solid var(--border-light)", borderRadius: "10px", padding: "0.85rem" }}>
+                    <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", display: "block" }}>Множитель андердога</span>
+                    <span style={{ fontSize: "1.35rem", fontWeight: "900", color: "var(--accent-purple)", display: "block", marginTop: "0.2rem" }}>
+                      x{underdogBonus.toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Popularity and Role Recommendation */}
+                <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "12px", padding: "1rem" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.4rem", flexWrap: "wrap", gap: "0.5rem" }}>
+                    <span style={{ fontSize: "0.82rem", fontWeight: "800", color: "#fff" }}>
+                      Позиционирование в Драфте
+                    </span>
+                    <span style={{ fontSize: "0.75rem", color: "var(--accent-cyan)", fontWeight: "700" }}>
+                      Показатель Скилла: {skillScore} очков
+                    </span>
+                  </div>
+                  <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", margin: 0, lineHeight: "1.4" }}>
+                    {skillScore >= 75 && "Игрок высшего эшелона — приносит максимум очков на позиции Снайпера (фраги, открывающие дуэли и хедшоты)."}
+                    {skillScore >= 50 && skillScore < 75 && "Надежный командный боец — отлично набирает очки на позиции Саппорта (ассисты, урон и клатчи)."}
+                    {skillScore < 50 && `Игрок-андердог с бонусом x${underdogBonus.toFixed(2)} — идеален на роль Темной лошадки с максимальным множителем!`}
+                  </p>
+                </div>
+              </div>
+            );
+          })()}
+
           {/* Bottom Section: Recent Matches History */}
           <div className="glass-card" style={{ padding: "2rem", borderRadius: "16px", border: "1px solid var(--border-light)" }}>
             <h3 style={{ fontSize: "1.2rem", fontWeight: "800", color: "#fff", marginBottom: "1.25rem" }}>Последние игры</h3>
