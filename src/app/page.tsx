@@ -248,7 +248,7 @@ export default function Home() {
   const [playerHubStats, setPlayerHubStats] = useState<any | null>(null);
   const [leetifyStats, setLeetifyStats] = useState<any | null>(null);
   const [playerSteamStats, setPlayerSteamStats] = useState<any | null>(null);
-  const [playerModalTab, setPlayerModalTab] = useState<"general" | "tactical" | "maps">("general");
+  const [playerModalTab, setPlayerModalTab] = useState<"general" | "tactical" | "maps" | "fantasy">("general");
   const [playerActiveLeaderboardItem, setPlayerActiveLeaderboardItem] = useState<any | null>(null);
   const [isLoadingPlayer, setIsLoadingPlayer] = useState(false);
 
@@ -5671,7 +5671,8 @@ export default function Home() {
                   {[
                     { id: "general", label: "Статистика (хаб)" },
                     { id: "tactical", label: "Статистика (все игры)" },
-                    { id: "maps", label: "Статистика по картам" }
+                    { id: "maps", label: "Статистика по картам" },
+                    { id: "fantasy", label: "Фентези" }
                   ].map((tab) => (
                     <button
                       key={tab.id}
