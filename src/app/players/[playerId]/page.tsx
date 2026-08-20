@@ -1525,14 +1525,19 @@ export default function PlayerProfilePage() {
                           background: m.won ? "rgba(76, 175, 80, 0.15)" : "rgba(244, 67, 54, 0.15)",
                           border: m.won ? "1px solid rgba(76, 175, 80, 0.35)" : "1px solid rgba(244, 67, 54, 0.35)",
                           color: m.won ? "#4caf50" : "#f44336",
-                          padding: "0.4rem 0.6rem",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          width: "116px",
+                          height: "32px",
+                          boxSizing: "border-box",
+                          padding: "0",
                           borderRadius: "6px",
                           fontSize: "0.8rem",
                           fontWeight: "800",
-                          textAlign: "center",
-                          width: "115px",
-                          flexShrink: 0,
-                          letterSpacing: "0.5px"
+                          lineHeight: "1",
+                          letterSpacing: "0px",
+                          flexShrink: 0
                         }}
                       >
                         {m.won ? "ПОБЕДА" : "ПОРАЖЕНИЕ"}
