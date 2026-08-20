@@ -64,7 +64,13 @@ export async function POST(request: NextRequest) {
       const captains = body.captains || ["Капитан 1", "Капитан 2", "Капитан 3", "Капитан 4"];
       const poolInput = body.poolInput || "";
       const availablePlayers: string[] = body.availablePlayers || [];
-      const turnSequence: number[] = body.turnSequence || [];
+      // Standard 5v5 Snake Draft (4 captains + 4 picks per team = 16 total picks)
+      const turnSequence: number[] = [
+        0, 1, 2, 3,
+        3, 2, 1, 0,
+        0, 1, 2, 3,
+        3, 2, 1, 0
+      ];
 
       const newState: DraftState = {
         step: "picking",
@@ -97,7 +103,8 @@ export async function POST(request: NextRequest) {
       currentState.teams[activeCapIdx].push(playerPick);
       currentState.availablePlayers = currentState.availablePlayers.filter(p => p !== playerPick);
 
-      if (currentState.availablePlayers.length === 0 || currentState.currentStepIndex + 1 >= currentState.turnSequence.length) {
+      const allTeamsFull = currentState.teams.every(t => t.length >= 5);
+      if (currentState.availablePlayers.length === 0 || currentState.currentStepIndex + 1 >= currentState.turnSequence.length || allTeamsFull) {
         currentState.step = "finished";
       } else {
         currentState.currentStepIndex += 1;
