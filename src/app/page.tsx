@@ -284,6 +284,8 @@ export default function Home() {
   const [draftTeams, setDraftTeams] = useState<[string[], string[], string[], string[]]>([[], [], [], []]);
   const [draftTurnSequence, setDraftTurnSequence] = useState<number[]>([]);
   const [draftCurrentStepIndex, setDraftCurrentStepIndex] = useState(0);
+  const [draftRoomAssignment, setDraftRoomAssignment] = useState<{ vip: number[]; main: number[] } | null>(null);
+  const [isRollingRooms, setIsRollingRooms] = useState(false);
 
   // Player Overrides & Skill Rating States
   const [playerOverridesMap, setPlayerOverridesMap] = useState<Record<string, any>>({});
@@ -541,6 +543,7 @@ export default function Home() {
         if (data.teams) setDraftTeams(data.teams);
         if (data.turnSequence) setDraftTurnSequence(data.turnSequence);
         if (data.currentStepIndex !== undefined) setDraftCurrentStepIndex(data.currentStepIndex);
+        setDraftRoomAssignment(null);
       }
     } catch (err) {
       console.error("Failed to sync draft state", err);
@@ -648,25 +651,64 @@ export default function Home() {
     }
   };
 
+  const getPlayerSkillNumber = (name: string): number => {
+    if (!name) return 50;
+    const p = members.find(m => (m.nickname || "").toLowerCase() === name.toLowerCase()) || {};
+    const pId = p.user_id || p.player_id || p.id || "";
+    const info = getPlayerSkillInfo(pId, name);
+    return info?.score || 50;
+  };
+
+  const handleRollRooms = () => {
+    setIsRollingRooms(true);
+    setTimeout(() => {
+      const indices = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
+      setDraftRoomAssignment({
+        vip: [indices[0], indices[1]],
+        main: [indices[2], indices[3]]
+      });
+      setIsRollingRooms(false);
+    }, 800);
+  };
+
   const downloadDraftResultsFile = () => {
     const dateStr = new Date().toLocaleString("ru-RU");
-    let content = `=================================================\n`;
-    content += `   РЕЗУЛЬТАТЫ КАПИТАНСКОГО ДРАФТА (СИГМА КИБЕР КЛУБ)\n`;
+    let content = "=================================================\n";
+    content += "   РЕЗУЛЬТАТЫ КАПИТАНСКОГО ДРАФТА (СИГМА КИБЕР КЛУБ)\n";
+    content += "   Лимит очков на команду: 300 PTS (+- 10 PTS)\n";
     content += `   Дата: ${dateStr}\n`;
-    content += `=================================================\n\n`;
+    content += "=================================================\n\n";
 
     draftCaptains.forEach((cap, idx) => {
-      content += `--- КОМАНДА ${idx + 1} (Капитан: ${cap}) ---\n`;
       const roster = draftTeams[idx] || [];
+      const teamPts = roster.reduce((sum, pName) => sum + getPlayerSkillNumber(pName), 0);
+      const remainingPts = 300 - teamPts;
+      let roomTag = "";
+      if (draftRoomAssignment) {
+        if (draftRoomAssignment.vip.includes(idx)) roomTag = " [ВИП-ЗАЛ]";
+        if (draftRoomAssignment.main.includes(idx)) roomTag = " [ОБЩИЙ ЗАЛ]";
+      }
+
+      content += `--- КОМАНДА ${idx + 1} (Капитан: ${cap})${roomTag} ---\n`;
+      content += `Суммарный скилл: ${teamPts} / 300 PTS (Остаток: ${remainingPts} PTS)\n`;
       roster.forEach((member, i) => {
-        content += `  ${i + 1}. ${member}${i === 0 ? " (Капитан)" : ""}\n`;
+        const pSkill = getPlayerSkillNumber(member);
+        content += `  ${i + 1}. ${member} [${pSkill} PTS]${i === 0 ? " (Капитан)" : ""}\n`;
       });
-      content += `\n`;
+      content += "\n";
     });
 
-    content += `-------------------------------------------------\n`;
-    content += `Сформировано на сайте СИГМА КИБЕР КЛУБ\n`;
-    content += `Powered by XZiBiTuM\n`;
+    if (draftRoomAssignment) {
+      content += "=================================================\n";
+      content += "   РАСПРЕДЕЛЕНИЕ ИГРОВЫХ ЗОН:\n";
+      content += "=================================================\n";
+      content += `ВИП-ЗАЛ: Команда ${draftRoomAssignment.vip[0] + 1} (${draftCaptains[draftRoomAssignment.vip[0]]}) и Команда ${draftRoomAssignment.vip[1] + 1} (${draftCaptains[draftRoomAssignment.vip[1]]})\n`;
+      content += `ОБЩИЙ ЗАЛ: Команда ${draftRoomAssignment.main[0] + 1} (${draftCaptains[draftRoomAssignment.main[0]]}) и Команда ${draftRoomAssignment.main[1] + 1} (${draftCaptains[draftRoomAssignment.main[1]]})\n\n`;
+    }
+
+    content += "-------------------------------------------------\n";
+    content += "Сформировано на сайте СИГМА КИБЕР КЛУБ\n";
+    content += "Powered by XZiBiTuM\n";
 
     const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
@@ -7294,25 +7336,32 @@ export default function Home() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          padding: "1.5rem",
-          overflow: "hidden"
+          padding: "1rem",
+          overflowY: "auto"
         }}>
           <div className="glass-card animate-fade-in" style={{
-            maxWidth: "950px",
+            maxWidth: "1050px",
             width: "100%",
-            margin: "0 auto",
+            margin: "auto",
             padding: "1.75rem",
             borderRadius: "20px",
             border: "1px solid var(--accent-cyan)",
-            boxShadow: "0 0 40px rgba(0, 229, 255, 0.2)"
+            boxShadow: "0 0 40px rgba(0, 229, 255, 0.2)",
+            maxHeight: "92vh",
+            overflowY: "auto"
           }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--border-light)", paddingBottom: "1rem", marginBottom: "1.25rem" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--border-light)", paddingBottom: "1rem", marginBottom: "1.25rem", flexWrap: "wrap", gap: "0.5rem" }}>
               <div>
-                <h3 style={{ fontSize: "1.3rem", color: "#fff", fontWeight: "900" }}>
-                  Captain's Draft
-                </h3>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                  <h3 style={{ fontSize: "1.3rem", color: "#fff", fontWeight: "900", margin: 0 }}>
+                    Captain's Draft
+                  </h3>
+                  <span style={{ fontSize: "0.72rem", padding: "0.2rem 0.5rem", borderRadius: "6px", background: "rgba(0, 229, 255, 0.15)", color: "var(--accent-cyan)", fontWeight: "800" }}>
+                    ЛИМИТ: 300 PTS (+- 10)
+                  </span>
+                </div>
                 <span style={{ fontSize: "0.78rem", color: "var(--text-secondary)" }}>
-                  Пошаговый выбор игроков в реальном времени с синхронизацией между ПК
+                  Пошаговый выбор игроков в реальном времени с балансировкой по очкам скилла
                 </span>
               </div>
               <button 
@@ -7337,34 +7386,45 @@ export default function Home() {
                   <h4 style={{ color: "var(--accent-cyan)", fontSize: "0.95rem", marginBottom: "0.75rem", fontWeight: "800" }}>
                     1. Укажите никнеймы 4 Капитанов:
                   </h4>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "0.75rem" }}>
-                    {[0, 1, 2, 3].map((idx) => (
-                      <div key={idx} className="input-group">
-                        <label style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginBottom: "0.25rem", display: "block" }}>
-                          Капитан {idx + 1}
-                        </label>
-                        <input 
-                          type="text"
-                          className="input-field"
-                          value={draftCaptains[idx]}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            setDraftCaptains(prev => {
-                              const next = [...prev] as [string, string, string, string];
-                              next[idx] = val;
-                              return next;
-                            });
-                          }}
-                          placeholder={`Капитан ${idx + 1}`}
-                        />
-                      </div>
-                    ))}
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: "0.75rem" }}>
+                    {[0, 1, 2, 3].map((idx) => {
+                      const capName = draftCaptains[idx] || "";
+                      const capSkill = capName ? getPlayerSkillNumber(capName) : 50;
+                      return (
+                        <div key={idx} className="input-group">
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.25rem" }}>
+                            <label style={{ fontSize: "0.75rem", color: "var(--text-secondary)", display: "block" }}>
+                              Капитан {idx + 1}
+                            </label>
+                            {capName && (
+                              <span style={{ fontSize: "0.7rem", color: "#ffd54f", fontWeight: "700" }}>
+                                {capSkill} PTS
+                              </span>
+                            )}
+                          </div>
+                          <input 
+                            type="text"
+                            className="input-field"
+                            value={draftCaptains[idx]}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setDraftCaptains(prev => {
+                                const next = [...prev] as [string, string, string, string];
+                                next[idx] = val;
+                                return next;
+                              });
+                            }}
+                            placeholder={`Капитан ${idx + 1}`}
+                          />
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
                 <div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-                    <h4 style={{ color: "var(--accent-cyan)", fontSize: "0.95rem", fontWeight: "800" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem", flexWrap: "wrap", gap: "0.5rem" }}>
+                    <h4 style={{ color: "var(--accent-cyan)", fontSize: "0.95rem", fontWeight: "800", margin: 0 }}>
                       2. Пул доступных игроков:
                     </h4>
                     {members.length > 0 && (
@@ -7395,7 +7455,7 @@ export default function Home() {
                     onChange={(e) => setDraftPoolInput(e.target.value)}
                   />
                   <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "0.25rem", display: "block" }}>
-                    Капитаны исключаются из общего пула выбора автоматически.
+                    Капитаны исключаются из общего пула выбора автоматически. Максимальный бюджет каждой команды — 300 PTS (+- 10 PTS).
                   </span>
                 </div>
 
@@ -7430,11 +7490,13 @@ export default function Home() {
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    boxShadow: "0 0 20px rgba(0, 229, 255, 0.2)"
+                    boxShadow: "0 0 20px rgba(0, 229, 255, 0.2)",
+                    flexWrap: "wrap",
+                    gap: "0.75rem"
                   }}>
                     <div>
                       <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", textTransform: "uppercase", fontWeight: "700", letterSpacing: "0.05em" }}>
-                        Текущий ход (Snake Draft #${draftCurrentStepIndex + 1})
+                        Текущий ход (Snake Draft #{draftCurrentStepIndex + 1})
                       </span>
                       <div style={{ fontSize: "1.2rem", fontWeight: "900", color: "#fff", marginTop: "0.1rem" }}>
                         Выбирает: <span style={{ color: "var(--accent-cyan)" }}>{draftCaptains[draftTurnSequence[draftCurrentStepIndex]]}</span>
@@ -7447,148 +7509,307 @@ export default function Home() {
                   </div>
                 )}
 
-                {draftStep === "finished" && (
-                  <div style={{
-                    background: "rgba(0, 230, 118, 0.12)",
-                    border: "1.5px solid var(--success)",
-                    borderRadius: "12px",
-                    padding: "1rem 1.25rem",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center"
-                  }}>
-                    <div>
-                      <span style={{ fontSize: "0.75rem", color: "var(--success)", fontWeight: "800", textTransform: "uppercase" }}>
-                        Драфт успешно завершен!
-                      </span>
-                      <div style={{ fontSize: "1.1rem", fontWeight: "900", color: "#fff", marginTop: "0.1rem" }}>
-                        Все игроки распределены по 4 командам
-                      </div>
-                    </div>
-
-                    <button 
-                      onClick={downloadDraftResultsFile}
-                      style={{
-                        background: "var(--success)",
-                        border: "none",
-                        borderRadius: "8px",
-                        padding: "0.6rem 1.2rem",
-                        color: "#000",
-                        fontWeight: "900",
-                        fontSize: "0.85rem",
-                        cursor: "pointer",
-                        boxShadow: "0 0 15px rgba(0, 230, 118, 0.4)"
-                      }}
-                    >
-                      Скачать файл команд (.txt)
-                    </button>
-                  </div>
-                )}
-
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
+                {/* 4 TEAMS ROSTER WITH PTS BUDGET */}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))", gap: "1rem" }}>
                   {draftCaptains.map((cap, cIdx) => {
                     const isMyTurn = draftStep === "picking" && draftTurnSequence[draftCurrentStepIndex] === cIdx;
                     const roster = draftTeams[cIdx] || [];
+                    const teamPts = roster.reduce((sum, pName) => sum + getPlayerSkillNumber(pName), 0);
+                    const remainingPts = 300 - teamPts;
+                    const isOverLimit = teamPts > 310;
+                    const isUnderLimit = roster.length === 5 && teamPts < 290;
+                    const isBalanced = roster.length === 5 && teamPts >= 290 && teamPts <= 310;
+
+                    let roomLabel = "";
+                    if (draftRoomAssignment) {
+                      if (draftRoomAssignment.vip.includes(cIdx)) roomLabel = "ВИП-ЗАЛ";
+                      if (draftRoomAssignment.main.includes(cIdx)) roomLabel = "ОБЩИЙ ЗАЛ";
+                    }
 
                     return (
                       <div 
                         key={cIdx} 
                         style={{
                           background: isMyTurn ? "rgba(0, 229, 255, 0.08)" : "rgba(255,255,255,0.02)",
-                          border: isMyTurn ? "2px solid var(--accent-cyan)" : "1px solid var(--border-light)",
-                          borderRadius: "12px",
-                          padding: "1rem",
-                          boxShadow: isMyTurn ? "0 0 15px rgba(0, 229, 255, 0.25)" : "none",
+                          border: isMyTurn ? "2px solid var(--accent-cyan)" : roomLabel === "ВИП-ЗАЛ" ? "1.5px solid #ffd700" : "1px solid var(--border-light)",
+                          borderRadius: "14px",
+                          padding: "1.1rem",
+                          boxShadow: isMyTurn ? "0 0 20px rgba(0, 229, 255, 0.25)" : roomLabel === "ВИП-ЗАЛ" ? "0 0 15px rgba(255, 215, 0, 0.2)" : "none",
                           transition: "all 0.2s"
                         }}
                       >
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--border-light)", paddingBottom: "0.5rem", marginBottom: "0.75rem" }}>
-                          <span style={{ fontWeight: "900", fontSize: "0.9rem", color: isMyTurn ? "var(--accent-cyan)" : "#fff" }}>
+                          <span style={{ fontWeight: "900", fontSize: "0.95rem", color: isMyTurn ? "var(--accent-cyan)" : "#fff" }}>
                             Команда {cIdx + 1}
                           </span>
-                          {isMyTurn && <span style={{ fontSize: "0.6rem", background: "var(--accent-cyan)", color: "#000", padding: "0.1rem 0.4rem", borderRadius: "3px", fontWeight: "900" }}>ХОД</span>}
+                          <div style={{ display: "flex", gap: "0.3rem" }}>
+                            {roomLabel && (
+                              <span style={{ fontSize: "0.65rem", background: roomLabel === "ВИП-ЗАЛ" ? "linear-gradient(135deg, #ffd700, #ff9100)" : "rgba(0, 229, 255, 0.2)", color: roomLabel === "ВИП-ЗАЛ" ? "#000" : "var(--accent-cyan)", padding: "0.15rem 0.45rem", borderRadius: "4px", fontWeight: "900" }}>
+                                {roomLabel}
+                              </span>
+                            )}
+                            {isMyTurn && <span style={{ fontSize: "0.6rem", background: "var(--accent-cyan)", color: "#000", padding: "0.15rem 0.4rem", borderRadius: "3px", fontWeight: "900" }}>ХОД</span>}
+                          </div>
                         </div>
 
-                        <div style={{ fontSize: "0.78rem", color: "var(--text-muted)", marginBottom: "0.5rem" }}>
-                          Капитан: <strong style={{ color: "#fff" }}>{cap}</strong>
-                        </div>
-
-                        <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", minHeight: "120px" }}>
-                          {roster.map((player, pIdx) => (
-                            <div 
-                              key={pIdx} 
-                              style={{
-                                padding: "0.35rem 0.6rem",
-                                background: pIdx === 0 ? "rgba(255, 213, 79, 0.12)" : "rgba(255,255,255,0.04)",
-                                border: pIdx === 0 ? "1px solid rgba(255, 213, 79, 0.3)" : "1px solid rgba(255,255,255,0.05)",
-                                borderRadius: "6px",
-                                fontSize: "0.8rem",
-                                color: pIdx === 0 ? "#ffd54f" : "#fff",
-                                fontWeight: pIdx === 0 ? "700" : "500",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center"
-                              }}
-                            >
-                              <span>{pIdx + 1}. {player}</span>
-                              {pIdx === 0 && <span style={{ fontSize: "0.6rem", opacity: 0.85, fontWeight: "700" }}>[КАПИТАН]</span>}
+                        {/* PTS Tracker Header */}
+                        <div style={{ background: "rgba(0,0,0,0.35)", padding: "0.5rem 0.75rem", borderRadius: "8px", marginBottom: "0.75rem", border: "1px solid rgba(255,255,255,0.06)" }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.78rem" }}>
+                            <span style={{ color: "var(--text-secondary)" }}>Сумма PTS:</span>
+                            <strong style={{ color: isOverLimit ? "#ff5252" : isBalanced ? "#00e676" : "#fff", fontSize: "0.85rem" }}>
+                              {teamPts} / 300
+                            </strong>
+                          </div>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.72rem", marginTop: "0.2rem" }}>
+                            <span style={{ color: "var(--text-muted)" }}>Осталось PTS:</span>
+                            <span style={{ color: remainingPts < -10 ? "#ff5252" : remainingPts < 0 ? "#ffb74d" : "var(--accent-cyan)", fontWeight: "700" }}>
+                              {remainingPts >= 0 ? `${remainingPts} PTS` : `Перебор: +${Math.abs(remainingPts)} PTS`}
+                            </span>
+                          </div>
+                          {isBalanced && (
+                            <div style={{ fontSize: "0.68rem", color: "#00e676", fontWeight: "800", marginTop: "0.25rem", textAlign: "center" }}>
+                              Баланс соблюден (300 +- 10 PTS)
                             </div>
-                          ))}
+                          )}
+                          {isOverLimit && (
+                            <div style={{ fontSize: "0.68rem", color: "#ff5252", fontWeight: "800", marginTop: "0.25rem", textAlign: "center" }}>
+                              Превышен лимит скилла
+                            </div>
+                          )}
+                          {isUnderLimit && (
+                            <div style={{ fontSize: "0.68rem", color: "#ffb74d", fontWeight: "800", marginTop: "0.25rem", textAlign: "center" }}>
+                              Недобор очков
+                            </div>
+                          )}
+                        </div>
+
+                        <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", minHeight: "140px" }}>
+                          {roster.map((player, pIdx) => {
+                            const pSkill = getPlayerSkillNumber(player);
+                            return (
+                              <div 
+                                key={pIdx} 
+                                style={{
+                                  padding: "0.4rem 0.6rem",
+                                  background: pIdx === 0 ? "rgba(255, 213, 79, 0.12)" : "rgba(255,255,255,0.04)",
+                                  border: pIdx === 0 ? "1px solid rgba(255, 213, 79, 0.3)" : "1px solid rgba(255,255,255,0.05)",
+                                  borderRadius: "6px",
+                                  fontSize: "0.8rem",
+                                  color: pIdx === 0 ? "#ffd54f" : "#fff",
+                                  fontWeight: pIdx === 0 ? "700" : "500",
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center"
+                                }}
+                              >
+                                <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "130px" }}>
+                                  {pIdx + 1}. {player} {pIdx === 0 && <span style={{ fontSize: "0.6rem", opacity: 0.85 }}>[КЭП]</span>}
+                                </span>
+                                <span style={{ fontSize: "0.72rem", fontWeight: "800", padding: "0.1rem 0.35rem", borderRadius: "4px", background: "rgba(255,255,255,0.08)", color: pSkill >= 80 ? "#c084fc" : pSkill >= 60 ? "var(--accent-cyan)" : "#fff" }}>
+                                  {pSkill} PTS
+                                </span>
+                              </div>
+                            );
+                          })}
                         </div>
                       </div>
                     );
                   })}
                 </div>
 
+                {/* AVAILABLE PLAYERS POOL WITH SKILL POINTS */}
                 {draftStep === "picking" && (
-                  <div style={{ marginTop: "1rem" }}>
-                    <h4 style={{ color: "#fff", fontSize: "0.95rem", fontWeight: "800", marginBottom: "0.75rem" }}>
-                      Доступные игроки для выбора:
-                    </h4>
+                  <div style={{ marginTop: "0.5rem" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
+                      <h4 style={{ color: "#fff", fontSize: "0.95rem", fontWeight: "800", margin: 0 }}>
+                        Доступные игроки для выбора:
+                      </h4>
+                      <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
+                        Нажмите «Пикнуть» для выбора игрока в текущую команду
+                      </span>
+                    </div>
 
                     {draftAvailablePlayers.length === 0 ? (
                       <div style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>Все игроки выбраны.</div>
                     ) : (
-                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(170px, 1fr))", gap: "0.6rem", maxHeight: "250px", overflowY: "auto", padding: "0.25rem" }}>
-                        {draftAvailablePlayers.map((pName) => (
-                          <div 
-                            key={pName} 
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                              background: "rgba(255,255,255,0.03)",
-                              border: "1px solid var(--border-light)",
-                              borderRadius: "8px",
-                              padding: "0.5rem 0.75rem"
-                            }}
-                          >
-                            <span style={{ fontSize: "0.82rem", fontWeight: "600", color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100px" }}>
-                              {pName}
-                            </span>
-                            <button 
-                              onClick={() => handlePickPlayer(pName)}
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(185px, 1fr))", gap: "0.6rem", maxHeight: "260px", overflowY: "auto", padding: "0.25rem" }}>
+                        {[...draftAvailablePlayers].sort((a, b) => getPlayerSkillNumber(b) - getPlayerSkillNumber(a)).map((pName) => {
+                          const pSkill = getPlayerSkillNumber(pName);
+                          return (
+                            <div 
+                              key={pName} 
                               style={{
-                                background: "var(--accent-cyan)",
-                                border: "none",
-                                borderRadius: "6px",
-                                padding: "0.25rem 0.55rem",
-                                color: "#000",
-                                fontSize: "0.72rem",
-                                fontWeight: "800",
-                                cursor: "pointer"
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                background: "rgba(255,255,255,0.03)",
+                                border: "1px solid var(--border-light)",
+                                borderRadius: "8px",
+                                padding: "0.5rem 0.75rem"
                               }}
                             >
-                              Пикнуть
-                            </button>
-                          </div>
-                        ))}
+                              <div style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "90px" }}>
+                                <div style={{ fontSize: "0.82rem", fontWeight: "700", color: "#fff" }}>
+                                  {pName}
+                                </div>
+                                <div style={{ fontSize: "0.7rem", color: pSkill >= 80 ? "#c084fc" : pSkill >= 60 ? "var(--accent-cyan)" : "var(--text-muted)", fontWeight: "800" }}>
+                                  {pSkill} PTS
+                                </div>
+                              </div>
+                              <button 
+                                onClick={() => handlePickPlayer(pName)}
+                                style={{
+                                  background: "var(--accent-cyan)",
+                                  border: "none",
+                                  borderRadius: "6px",
+                                  padding: "0.3rem 0.6rem",
+                                  color: "#000",
+                                  fontSize: "0.72rem",
+                                  fontWeight: "800",
+                                  cursor: "pointer"
+                                }}
+                              >
+                                Пикнуть
+                              </button>
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
                   </div>
                 )}
 
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid var(--border-light)", paddingTop: "1rem", marginTop: "1rem" }}>
+                {/* FINISHED STAGE: ROOM ROLL SYSTEM (VIP vs MAIN HALL) */}
+                {draftStep === "finished" && (
+                  <div style={{
+                    background: "linear-gradient(135deg, rgba(0, 230, 118, 0.08) 0%, rgba(12, 10, 23, 0.95) 100%)",
+                    border: "1.5px solid var(--success)",
+                    borderRadius: "16px",
+                    padding: "1.5rem",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "1.25rem"
+                  }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+                      <div>
+                        <span style={{ fontSize: "0.75rem", color: "var(--success)", fontWeight: "800", textTransform: "uppercase", letterSpacing: "1px" }}>
+                          Драфт успешно завершен
+                        </span>
+                        <div style={{ fontSize: "1.2rem", fontWeight: "900", color: "#fff", marginTop: "0.1rem" }}>
+                          Все 4 команды укомплектованы
+                        </div>
+                      </div>
+
+                      <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+                        <button 
+                          onClick={handleRollRooms}
+                          disabled={isRollingRooms}
+                          style={{
+                            background: isRollingRooms ? "rgba(255,255,255,0.1)" : "linear-gradient(135deg, #ffd700, #ff9100)",
+                            border: "none",
+                            borderRadius: "10px",
+                            padding: "0.65rem 1.25rem",
+                            color: "#000",
+                            fontWeight: "900",
+                            fontSize: "0.85rem",
+                            cursor: isRollingRooms ? "not-allowed" : "pointer",
+                            boxShadow: "0 0 20px rgba(255, 215, 0, 0.4)",
+                            transition: "all 0.2s"
+                          }}
+                        >
+                          {isRollingRooms ? "Идет розыгрыш..." : draftRoomAssignment ? "Переиграть игровые зоны" : "Разыграть игровые зоны (VIP / Общий зал)"}
+                        </button>
+
+                        <button 
+                          onClick={downloadDraftResultsFile}
+                          style={{
+                            background: "var(--success)",
+                            border: "none",
+                            borderRadius: "10px",
+                            padding: "0.65rem 1.25rem",
+                            color: "#000",
+                            fontWeight: "900",
+                            fontSize: "0.85rem",
+                            cursor: "pointer",
+                            boxShadow: "0 0 15px rgba(0, 230, 118, 0.4)"
+                          }}
+                        >
+                          Скачать файл команд (.txt)
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Room Allocation Result Cards */}
+                    {draftRoomAssignment && (
+                      <div style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                        gap: "1rem",
+                        paddingTop: "0.5rem"
+                      }}>
+                        {/* VIP ROOM */}
+                        <div style={{
+                          background: "linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(20, 15, 5, 0.9) 100%)",
+                          border: "1.5px solid rgba(255, 215, 0, 0.5)",
+                          borderRadius: "12px",
+                          padding: "1.25rem",
+                          boxShadow: "0 0 25px rgba(255, 215, 0, 0.15)"
+                        }}>
+                          <div style={{ fontSize: "0.75rem", color: "#ffd700", fontWeight: "900", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "0.5rem" }}>
+                            ИГРОВАЯ ЗОНА: ВИП-ЗАЛ (2 КОМАНДЫ)
+                          </div>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+                            {draftRoomAssignment.vip.map((teamIdx) => {
+                              const roster = draftTeams[teamIdx] || [];
+                              const teamPts = roster.reduce((s, p) => s + getPlayerSkillNumber(p), 0);
+                              return (
+                                <div key={teamIdx} style={{ background: "rgba(0,0,0,0.4)", padding: "0.6rem 0.8rem", borderRadius: "8px", border: "1px solid rgba(255, 215, 0, 0.2)" }}>
+                                  <div style={{ fontWeight: "800", color: "#fff", fontSize: "0.9rem" }}>
+                                    Команда {teamIdx + 1} ({draftCaptains[teamIdx]})
+                                  </div>
+                                  <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "0.2rem" }}>
+                                    Сумма: <strong style={{ color: "#ffd700" }}>{teamPts} PTS</strong> | Состав: {roster.join(", ")}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* MAIN HALL */}
+                        <div style={{
+                          background: "linear-gradient(135deg, rgba(0, 229, 255, 0.08) 0%, rgba(5, 15, 25, 0.9) 100%)",
+                          border: "1.5px solid rgba(0, 229, 255, 0.4)",
+                          borderRadius: "12px",
+                          padding: "1.25rem",
+                          boxShadow: "0 0 25px rgba(0, 229, 255, 0.15)"
+                        }}>
+                          <div style={{ fontSize: "0.75rem", color: "var(--accent-cyan)", fontWeight: "900", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "0.5rem" }}>
+                            ИГРОВАЯ ЗОНА: ОБЩИЙ ЗАЛ (2 КОМАНДЫ)
+                          </div>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+                            {draftRoomAssignment.main.map((teamIdx) => {
+                              const roster = draftTeams[teamIdx] || [];
+                              const teamPts = roster.reduce((s, p) => s + getPlayerSkillNumber(p), 0);
+                              return (
+                                <div key={teamIdx} style={{ background: "rgba(0,0,0,0.4)", padding: "0.6rem 0.8rem", borderRadius: "8px", border: "1px solid rgba(0, 229, 255, 0.2)" }}>
+                                  <div style={{ fontWeight: "800", color: "#fff", fontSize: "0.9rem" }}>
+                                    Команда {teamIdx + 1} ({draftCaptains[teamIdx]})
+                                  </div>
+                                  <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "0.2rem" }}>
+                                    Сумма: <strong style={{ color: "var(--accent-cyan)" }}>{teamPts} PTS</strong> | Состав: {roster.join(", ")}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid var(--border-light)", paddingTop: "1rem", marginTop: "0.5rem" }}>
                   <button 
                     onClick={handleResetDraft}
                     style={{
@@ -7629,8 +7850,6 @@ export default function Home() {
           </div>
         </div>
       )}
-
-
 
       {/* Pulse Animation Keyframes */}
       <style jsx global>{`
