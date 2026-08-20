@@ -544,7 +544,7 @@ export default function Home() {
         if (data.teams) setDraftTeams(data.teams);
         if (data.turnSequence) setDraftTurnSequence(data.turnSequence);
         if (data.currentStepIndex !== undefined) setDraftCurrentStepIndex(data.currentStepIndex);
-        setDraftRoomAssignment(null);
+        if (data.roomAssignment !== undefined) setDraftRoomAssignment(data.roomAssignment);
       }
     } catch (err) {
       console.error("Failed to sync draft state", err);
@@ -602,6 +602,8 @@ export default function Home() {
         setDraftTurnSequence(data.turnSequence);
         setDraftCurrentStepIndex(data.currentStepIndex);
         setDraftStep(data.step);
+        setDraftRoomAssignment(null);
+        setDraftErrorMsg("");
       }
     } catch (err) {
       console.error("Draft setup failed", err);
@@ -646,6 +648,8 @@ export default function Home() {
         setDraftAvailablePlayers(data.availablePlayers);
         setDraftTeams(data.teams);
         setDraftCurrentStepIndex(data.currentStepIndex);
+        setDraftRoomAssignment(null);
+        setDraftErrorMsg("");
       }
     } catch (err) {
       console.error("Draft reset failed", err);
