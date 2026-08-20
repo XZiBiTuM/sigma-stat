@@ -1519,24 +1519,25 @@ export default function PlayerProfilePage() {
                     />
 
                     {/* Left: Fixed-width Badge + Fixed-width Map Info */}
-                    <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", gap: "1rem", width: "240px", flexShrink: 0 }}>
+                    <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", gap: "1.1rem", width: "270px", flexShrink: 0 }}>
                       <div 
                         style={{
                           background: m.won ? "rgba(76, 175, 80, 0.15)" : "rgba(244, 67, 54, 0.15)",
                           border: m.won ? "1px solid rgba(76, 175, 80, 0.35)" : "1px solid rgba(244, 67, 54, 0.35)",
                           color: m.won ? "#4caf50" : "#f44336",
-                          padding: "0.35rem 0",
+                          padding: "0.4rem 0.6rem",
                           borderRadius: "6px",
-                          fontSize: "0.78rem",
+                          fontSize: "0.8rem",
                           fontWeight: "800",
                           textAlign: "center",
-                          width: "95px",
-                          flexShrink: 0
+                          width: "115px",
+                          flexShrink: 0,
+                          letterSpacing: "0.5px"
                         }}
                       >
                         {m.won ? "ПОБЕДА" : "ПОРАЖЕНИЕ"}
                       </div>
-                      <div style={{ width: "135px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      <div style={{ width: "140px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                         <span style={{ fontSize: "0.95rem", fontWeight: "800", color: "#fff", display: "block" }}>{m.map}</span>
                         <span style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>{m.finishedAt}</span>
                       </div>
