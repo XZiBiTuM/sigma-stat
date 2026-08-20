@@ -3,6 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 const DRAFT_FILE = path.join(process.cwd(), "src/lib/draft_state.json");
+const DRAFT_PERSISTENT = path.join(process.cwd(), "..", "sigma_persistent_draft_state.json");
 
 interface DraftState {
   step: "setup" | "picking" | "finished";
@@ -12,6 +13,7 @@ interface DraftState {
   teams: [string[], string[], string[], string[]];
   turnSequence: number[];
   currentStepIndex: number;
+  roomAssignment: { vip: number[]; main: number[] } | null;
   updatedAt: number;
 }
 
@@ -23,13 +25,18 @@ const defaultState: DraftState = {
   teams: [[], [], [], []],
   turnSequence: [],
   currentStepIndex: 0,
+  roomAssignment: null,
   updatedAt: Date.now()
 };
 
 function readDraftState(): DraftState {
   try {
-    if (fs.existsSync(DRAFT_FILE)) {
-      const content = fs.readFileSync(DRAFT_FILE, "utf8");
+    let target = DRAFT_FILE;
+    if (fs.existsSync(DRAFT_PERSISTENT)) {
+      target = DRAFT_PERSISTENT;
+    }
+    if (fs.existsSync(target)) {
+      const content = fs.readFileSync(target, "utf8");
       return JSON.parse(content || "{}") as DraftState;
     }
   } catch (e) {
@@ -45,6 +52,9 @@ function writeDraftState(data: DraftState) {
       fs.mkdirSync(dir, { recursive: true });
     }
     fs.writeFileSync(DRAFT_FILE, JSON.stringify(data, null, 2), "utf8");
+    try {
+      fs.writeFileSync(DRAFT_PERSISTENT, JSON.stringify(data, null, 2), "utf8");
+    } catch {}
   } catch (e) {
     console.error("Failed to write draft state file:", e);
   }
@@ -80,6 +90,7 @@ export async function POST(request: NextRequest) {
         teams: [[captains[0]], [captains[1]], [captains[2]], [captains[3]]],
         turnSequence,
         currentStepIndex: 0,
+        roomAssignment: null,
         updatedAt: Date.now()
       };
 
@@ -100,6 +111,12 @@ export async function POST(request: NextRequest) {
       }
 
       const activeCapIdx = currentState.turnSequence[currentState.currentStepIndex];
+      
+      // If active team already has 5 players, don't add
+      if (currentState.teams[activeCapIdx].length >= 5) {
+        return NextResponse.json(currentState);
+      }
+
       currentState.teams[activeCapIdx].push(playerPick);
       currentState.availablePlayers = currentState.availablePlayers.filter(p => p !== playerPick);
 
@@ -110,6 +127,17 @@ export async function POST(request: NextRequest) {
         currentState.currentStepIndex += 1;
       }
 
+      currentState.updatedAt = Date.now();
+      writeDraftState(currentState);
+      return NextResponse.json(currentState);
+    }
+
+    if (body.action === "roll_rooms") {
+      const indices = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
+      currentState.roomAssignment = {
+        vip: [indices[0], indices[1]],
+        main: [indices[2], indices[3]]
+      };
       currentState.updatedAt = Date.now();
       writeDraftState(currentState);
       return NextResponse.json(currentState);

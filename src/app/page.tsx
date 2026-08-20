@@ -286,6 +286,7 @@ export default function Home() {
   const [draftCurrentStepIndex, setDraftCurrentStepIndex] = useState(0);
   const [draftRoomAssignment, setDraftRoomAssignment] = useState<{ vip: number[]; main: number[] } | null>(null);
   const [isRollingRooms, setIsRollingRooms] = useState(false);
+  const [draftErrorMsg, setDraftErrorMsg] = useState("");
 
   // Player Overrides & Skill Rating States
   const [playerOverridesMap, setPlayerOverridesMap] = useState<Record<string, any>>({});
@@ -659,16 +660,23 @@ export default function Home() {
     return info?.score || 50;
   };
 
-  const handleRollRooms = () => {
+  const handleRollRooms = async () => {
     setIsRollingRooms(true);
-    setTimeout(() => {
-      const indices = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
-      setDraftRoomAssignment({
-        vip: [indices[0], indices[1]],
-        main: [indices[2], indices[3]]
+    try {
+      const res = await fetch("/api/faceit/draft", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "roll_rooms" })
       });
+      if (res.ok) {
+        const data = await res.json();
+        setDraftRoomAssignment(data.roomAssignment);
+      }
+    } catch (e) {
+      console.error("Room roll failed", e);
+    } finally {
       setIsRollingRooms(false);
-    }, 800);
+    }
   };
 
   const downloadDraftResultsFile = () => {
@@ -7357,7 +7365,7 @@ export default function Home() {
                     Captain's Draft
                   </h3>
                   <span style={{ fontSize: "0.72rem", padding: "0.2rem 0.5rem", borderRadius: "6px", background: "rgba(0, 229, 255, 0.15)", color: "var(--accent-cyan)", fontWeight: "800" }}>
-                    ЛИМИТ: 300 PTS (+- 10)
+                    ЛИМИТ: 300 ОЧКОВ СКИЛЛА (+- 10)
                   </span>
                 </div>
                 <span style={{ fontSize: "0.78rem", color: "var(--text-secondary)" }}>
@@ -7398,7 +7406,7 @@ export default function Home() {
                             </label>
                             {capName && (
                               <span style={{ fontSize: "0.7rem", color: "#ffd54f", fontWeight: "700" }}>
-                                {capSkill} PTS
+                                {capSkill} очков Скилла
                               </span>
                             )}
                           </div>
@@ -7455,7 +7463,7 @@ export default function Home() {
                     onChange={(e) => setDraftPoolInput(e.target.value)}
                   />
                   <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "0.25rem", display: "block" }}>
-                    Капитаны исключаются из общего пула выбора автоматически. Максимальный бюджет каждой команды — 300 PTS (+- 10 PTS).
+                    Капитаны исключаются из общего пула выбора автоматически. Максимальный бюджет каждой команды — 300 очков Скилла (+- 10 очков).
                   </span>
                 </div>
 
@@ -7496,7 +7504,7 @@ export default function Home() {
                   }}>
                     <div>
                       <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", textTransform: "uppercase", fontWeight: "700", letterSpacing: "0.05em" }}>
-                        Текущий ход (Snake Draft #{draftCurrentStepIndex + 1})
+                        Текущий ход (Snake Draft #{draftCurrentStepIndex + 1} из 16)
                       </span>
                       <div style={{ fontSize: "1.2rem", fontWeight: "900", color: "#fff", marginTop: "0.1rem" }}>
                         Выбирает: <span style={{ color: "var(--accent-cyan)" }}>{draftCaptains[draftTurnSequence[draftCurrentStepIndex]]}</span>
@@ -7509,7 +7517,23 @@ export default function Home() {
                   </div>
                 )}
 
-                {/* 4 TEAMS ROSTER WITH PTS BUDGET */}
+                {/* Error Banner when pick exceeds budget */}
+                {draftErrorMsg && (
+                  <div style={{
+                    background: "rgba(255, 82, 82, 0.15)",
+                    border: "1.5px solid #ff5252",
+                    borderRadius: "10px",
+                    padding: "0.75rem 1.25rem",
+                    color: "#ff8a80",
+                    fontWeight: "800",
+                    fontSize: "0.85rem",
+                    textAlign: "center"
+                  }}>
+                    {draftErrorMsg}
+                  </div>
+                )}
+
+                {/* 4 TEAMS ROSTER WITH SKILL POINTS BUDGET */}
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))", gap: "1rem" }}>
                   {draftCaptains.map((cap, cIdx) => {
                     const isMyTurn = draftStep === "picking" && draftTurnSequence[draftCurrentStepIndex] === cIdx;
@@ -7552,33 +7576,33 @@ export default function Home() {
                           </div>
                         </div>
 
-                        {/* PTS Tracker Header */}
+                        {/* Skill Tracker Header */}
                         <div style={{ background: "rgba(0,0,0,0.35)", padding: "0.5rem 0.75rem", borderRadius: "8px", marginBottom: "0.75rem", border: "1px solid rgba(255,255,255,0.06)" }}>
                           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.78rem" }}>
-                            <span style={{ color: "var(--text-secondary)" }}>Сумма PTS:</span>
+                            <span style={{ color: "var(--text-secondary)" }}>Сумма очков:</span>
                             <strong style={{ color: isOverLimit ? "#ff5252" : isBalanced ? "#00e676" : "#fff", fontSize: "0.85rem" }}>
                               {teamPts} / 300
                             </strong>
                           </div>
                           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.72rem", marginTop: "0.2rem" }}>
-                            <span style={{ color: "var(--text-muted)" }}>Осталось PTS:</span>
+                            <span style={{ color: "var(--text-muted)" }}>Осталось:</span>
                             <span style={{ color: remainingPts < -10 ? "#ff5252" : remainingPts < 0 ? "#ffb74d" : "var(--accent-cyan)", fontWeight: "700" }}>
-                              {remainingPts >= 0 ? `${remainingPts} PTS` : `Перебор: +${Math.abs(remainingPts)} PTS`}
+                              {remainingPts >= 0 ? `${remainingPts} очков` : `Перебор: +${Math.abs(remainingPts)} очков`}
                             </span>
                           </div>
                           {isBalanced && (
                             <div style={{ fontSize: "0.68rem", color: "#00e676", fontWeight: "800", marginTop: "0.25rem", textAlign: "center" }}>
-                              Баланс соблюден (300 +- 10 PTS)
+                              Баланс соблюден
                             </div>
                           )}
                           {isOverLimit && (
                             <div style={{ fontSize: "0.68rem", color: "#ff5252", fontWeight: "800", marginTop: "0.25rem", textAlign: "center" }}>
-                              Превышен лимит скилла
+                              Превышен лимит очков Скилла
                             </div>
                           )}
                           {isUnderLimit && (
                             <div style={{ fontSize: "0.68rem", color: "#ffb74d", fontWeight: "800", marginTop: "0.25rem", textAlign: "center" }}>
-                              Недобор очков
+                              Недобор очков Скилла
                             </div>
                           )}
                         </div>
@@ -7606,7 +7630,7 @@ export default function Home() {
                                   {pIdx + 1}. {player} {pIdx === 0 && <span style={{ fontSize: "0.6rem", opacity: 0.85 }}>[КЭП]</span>}
                                 </span>
                                 <span style={{ fontSize: "0.72rem", fontWeight: "800", padding: "0.1rem 0.35rem", borderRadius: "4px", background: "rgba(255,255,255,0.08)", color: pSkill >= 80 ? "#c084fc" : pSkill >= 60 ? "var(--accent-cyan)" : "#fff" }}>
-                                  {pSkill} PTS
+                                  {pSkill} очков
                                 </span>
                               </div>
                             );
@@ -7635,6 +7659,11 @@ export default function Home() {
                       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(185px, 1fr))", gap: "0.6rem", maxHeight: "260px", overflowY: "auto", padding: "0.25rem" }}>
                         {[...draftAvailablePlayers].sort((a, b) => getPlayerSkillNumber(b) - getPlayerSkillNumber(a)).map((pName) => {
                           const pSkill = getPlayerSkillNumber(pName);
+                          const activeCapIdx = draftTurnSequence[draftCurrentStepIndex];
+                          const currentRoster = draftTeams[activeCapIdx] || [];
+                          const currentTeamPts = currentRoster.reduce((sum, p) => sum + getPlayerSkillNumber(p), 0);
+                          const wouldExceedLimit = currentTeamPts + pSkill > 310;
+
                           return (
                             <div 
                               key={pName} 
@@ -7642,34 +7671,37 @@ export default function Home() {
                                 display: "flex",
                                 justifyContent: "space-between",
                                 alignItems: "center",
-                                background: "rgba(255,255,255,0.03)",
-                                border: "1px solid var(--border-light)",
+                                background: wouldExceedLimit ? "rgba(255, 82, 82, 0.04)" : "rgba(255,255,255,0.03)",
+                                border: wouldExceedLimit ? "1px solid rgba(255, 82, 82, 0.3)" : "1px solid var(--border-light)",
                                 borderRadius: "8px",
-                                padding: "0.5rem 0.75rem"
+                                padding: "0.5rem 0.75rem",
+                                opacity: wouldExceedLimit ? 0.6 : 1.0,
+                                transition: "all 0.2s"
                               }}
                             >
                               <div style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "90px" }}>
                                 <div style={{ fontSize: "0.82rem", fontWeight: "700", color: "#fff" }}>
                                   {pName}
                                 </div>
-                                <div style={{ fontSize: "0.7rem", color: pSkill >= 80 ? "#c084fc" : pSkill >= 60 ? "var(--accent-cyan)" : "var(--text-muted)", fontWeight: "800" }}>
-                                  {pSkill} PTS
+                                <div style={{ fontSize: "0.7rem", color: wouldExceedLimit ? "#ff8a80" : pSkill >= 80 ? "#c084fc" : pSkill >= 60 ? "var(--accent-cyan)" : "var(--text-muted)", fontWeight: "800" }}>
+                                  {pSkill} очков
                                 </div>
                               </div>
                               <button 
                                 onClick={() => handlePickPlayer(pName)}
+                                disabled={wouldExceedLimit}
                                 style={{
-                                  background: "var(--accent-cyan)",
+                                  background: wouldExceedLimit ? "rgba(255,255,255,0.08)" : "var(--accent-cyan)",
                                   border: "none",
                                   borderRadius: "6px",
                                   padding: "0.3rem 0.6rem",
-                                  color: "#000",
+                                  color: wouldExceedLimit ? "var(--text-muted)" : "#000",
                                   fontSize: "0.72rem",
                                   fontWeight: "800",
-                                  cursor: "pointer"
+                                  cursor: wouldExceedLimit ? "not-allowed" : "pointer"
                                 }}
                               >
-                                Пикнуть
+                                {wouldExceedLimit ? "Лимит" : "Пикнуть"}
                               </button>
                             </div>
                           );
@@ -7696,7 +7728,7 @@ export default function Home() {
                           Драфт успешно завершен
                         </span>
                         <div style={{ fontSize: "1.2rem", fontWeight: "900", color: "#fff", marginTop: "0.1rem" }}>
-                          Все 4 команды укомплектованы
+                          Все 4 команды укомплектованы по 5 игроков
                         </div>
                       </div>
 
@@ -7768,7 +7800,7 @@ export default function Home() {
                                     Команда {teamIdx + 1} ({draftCaptains[teamIdx]})
                                   </div>
                                   <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "0.2rem" }}>
-                                    Сумма: <strong style={{ color: "#ffd700" }}>{teamPts} PTS</strong> | Состав: {roster.join(", ")}
+                                    Сумма: <strong style={{ color: "#ffd700" }}>{teamPts} очков Скилла</strong> | Состав: {roster.join(", ")}
                                   </div>
                                 </div>
                               );
@@ -7797,7 +7829,7 @@ export default function Home() {
                                     Команда {teamIdx + 1} ({draftCaptains[teamIdx]})
                                   </div>
                                   <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "0.2rem" }}>
-                                    Сумма: <strong style={{ color: "var(--accent-cyan)" }}>{teamPts} PTS</strong> | Состав: {roster.join(", ")}
+                                    Сумма: <strong style={{ color: "var(--accent-cyan)" }}>{teamPts} очков Скилла</strong> | Состав: {roster.join(", ")}
                                   </div>
                                 </div>
                               );
