@@ -122,48 +122,45 @@ export default function PlayerProfilePage() {
       score = Math.round((0.45 * sElo) + (0.55 * sPremier));
     }
 
+    // Rainbow Tier Hierarchy (Red = lowest/worst, Purple/Glowing Purple = highest/best)
     let tier = "D Tier";
-    let color = "#ff4d4d";
+    let color = "#ff4d4d"; // Red
     let bg = "rgba(255, 77, 77, 0.15)";
     let border = "rgba(255, 77, 77, 0.4)";
     let glow = "";
 
     if (score >= 90) {
       tier = "S+ Tier";
-      color = "#c084fc";
-      bg = "rgba(192, 132, 252, 0.18)";
-      border = "rgba(192, 132, 252, 0.5)";
-      glow = "0 0 16px rgba(192, 132, 252, 0.6)";
+      color = "#e9d5ff"; // Light Glowing Purple
+      bg = "rgba(168, 85, 247, 0.25)";
+      border = "rgba(192, 132, 252, 0.8)";
+      glow = "0 0 16px rgba(192, 132, 252, 0.7), 0 0 4px rgba(168, 85, 247, 0.9)";
     } else if (score >= 80) {
       tier = "S Tier";
-      color = "#a855f7";
-      bg = "rgba(168, 85, 247, 0.15)";
-      border = "rgba(168, 85, 247, 0.4)";
+      color = "#c084fc"; // Vibrant Purple
+      bg = "rgba(168, 85, 247, 0.18)";
+      border = "rgba(168, 85, 247, 0.6)";
+      glow = "0 0 12px rgba(168, 85, 247, 0.5)";
     } else if (score >= 70) {
       tier = "A+ Tier";
-      color = "#38bdf8";
-      bg = "rgba(56, 189, 248, 0.15)";
-      border = "rgba(56, 189, 248, 0.4)";
+      color = "#00e5ff"; // Cyan / Neon Aqua
+      bg = "rgba(0, 229, 255, 0.15)";
+      border = "rgba(0, 229, 255, 0.4)";
     } else if (score >= 60) {
       tier = "A Tier";
-      color = "#06b6d4";
-      bg = "rgba(6, 182, 212, 0.15)";
-      border = "rgba(6, 182, 212, 0.4)";
+      color = "#4caf50"; // Green
+      bg = "rgba(76, 175, 80, 0.15)";
+      border = "rgba(76, 175, 80, 0.4)";
     } else if (score >= 50) {
       tier = "B Tier";
-      color = "#4ade80";
-      bg = "rgba(74, 222, 128, 0.15)";
-      border = "rgba(74, 222, 128, 0.4)";
+      color = "#ffca28"; // Yellow
+      bg = "rgba(255, 202, 40, 0.15)";
+      border = "rgba(255, 202, 40, 0.4)";
     } else if (score >= 40) {
       tier = "C Tier";
-      color = "#facc15";
-      bg = "rgba(250, 204, 21, 0.15)";
-      border = "rgba(250, 204, 21, 0.4)";
-    } else if (score >= 30) {
-      tier = "D+ Tier";
-      color = "#fb923c";
-      bg = "rgba(251, 146, 60, 0.15)";
-      border = "rgba(251, 146, 60, 0.4)";
+      color = "#ff9100"; // Orange
+      bg = "rgba(255, 145, 0, 0.15)";
+      border = "rgba(255, 145, 0, 0.4)";
     }
 
     const isRealPremier = Boolean(realPremierRating || ov.csRating);
