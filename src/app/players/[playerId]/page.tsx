@@ -674,7 +674,8 @@ export default function PlayerProfilePage() {
           {(() => {
             const eloVal = cs2Info?.faceit_elo;
             const realPremier = steamStats?.premierRating;
-            const sk = getPlayerSkillInfo(profile.player_id, profile.nickname, eloVal, realPremier);
+            const pId = profile?.player_id || profile?.user_id || profile?.id || playerId;
+            const sk = getPlayerSkillInfo(pId, profile?.nickname, eloVal, realPremier);
             return (
               <div className="glass-card" style={{
                 display: "flex",
@@ -1358,8 +1359,9 @@ export default function PlayerProfilePage() {
 
           {/* STANDALONE FANTASY STATS SECTION */}
           {profile && (() => {
+            const pId = profile?.player_id || profile?.user_id || profile?.id || playerId;
             const nick = profile?.nickname || "";
-            const ov = playerOverridesMap[playerId] || playerOverridesMap[nick] || playerOverridesMap[nick.toLowerCase()] || {};
+            const ov = playerOverridesMap[pId] || playerOverridesMap[playerId] || playerOverridesMap[nick] || playerOverridesMap[nick.toLowerCase()] || {};
             let elo = ov.customElo || profile?.games?.cs2?.faceit_elo || 1000;
             let csRating = ov.csRating || Math.round(elo * 9.5);
             const sElo = Math.min(100, Math.max(10, (elo - 300) / 22));
@@ -1408,15 +1410,15 @@ export default function PlayerProfilePage() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--border-light)", paddingBottom: "0.85rem", flexWrap: "wrap", gap: "0.5rem" }}>
                   <div>
                     <h3 style={{ fontSize: "1.15rem", fontWeight: "900", color: "#fff", margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                      Фентези статистика игрока
+                      Fantasy Player Profile
                     </h3>
                     <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>
-                      Заработанные очки и турнирный профиль игрока в Фентези Лиге
+                      Fantasy points and tournament performance breakdown
                     </span>
                   </div>
                   <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
                     <span style={{ fontSize: "0.72rem", padding: "0.25rem 0.6rem", background: "rgba(192, 132, 252, 0.15)", border: "1px solid rgba(192, 132, 252, 0.3)", borderRadius: "6px", color: "var(--accent-purple)", fontWeight: "800" }}>
-                      ФЕНТЕЗИ ЛИГА
+                      FANTASY LEAGUE
                     </span>
                     <span style={{ fontSize: "0.72rem", padding: "0.25rem 0.6rem", background: "rgba(0, 229, 255, 0.1)", border: "1px solid rgba(0, 229, 255, 0.3)", borderRadius: "6px", color: "var(--accent-cyan)", fontWeight: "800" }}>
                       Скилл: {skillScore} очков
@@ -1427,28 +1429,28 @@ export default function PlayerProfilePage() {
                 {/* 4 Key Metrics */}
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "0.75rem" }}>
                   <div style={{ background: "rgba(0,0,0,0.3)", border: "1px solid var(--border-light)", borderRadius: "10px", padding: "0.85rem" }}>
-                    <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", display: "block" }}>Всего очков Фентези</span>
+                    <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", display: "block" }}>Total Fantasy Points</span>
                     <span style={{ fontSize: "1.35rem", fontWeight: "900", color: "var(--accent-cyan)", display: "block", marginTop: "0.2rem" }}>
                       {totalFantasyPts.toFixed(1)}
                     </span>
                   </div>
 
                   <div style={{ background: "rgba(0,0,0,0.3)", border: "1px solid var(--border-light)", borderRadius: "10px", padding: "0.85rem" }}>
-                    <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", display: "block" }}>Среднее за матч</span>
+                    <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", display: "block" }}>Avg Fantasy / Match</span>
                     <span style={{ fontSize: "1.35rem", fontWeight: "900", color: "#ffd54f", display: "block", marginTop: "0.2rem" }}>
                       {avgFantasyPts}
                     </span>
                   </div>
 
                   <div style={{ background: "rgba(0,0,0,0.3)", border: "1px solid var(--border-light)", borderRadius: "10px", padding: "0.85rem" }}>
-                    <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", display: "block" }}>Рекорд за матч</span>
+                    <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", display: "block" }}>Match Record</span>
                     <span style={{ fontSize: "1.35rem", fontWeight: "900", color: "var(--success)", display: "block", marginTop: "0.2rem" }}>
                       {bestMatchPts}
                     </span>
                   </div>
 
                   <div style={{ background: "rgba(0,0,0,0.3)", border: "1px solid var(--border-light)", borderRadius: "10px", padding: "0.85rem" }}>
-                    <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", display: "block" }}>Множитель андердога</span>
+                    <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", display: "block" }}>Underdog Multiplier</span>
                     <span style={{ fontSize: "1.35rem", fontWeight: "900", color: "var(--accent-purple)", display: "block", marginTop: "0.2rem" }}>
                       x{underdogBonus.toFixed(2)}
                     </span>
@@ -1459,7 +1461,7 @@ export default function PlayerProfilePage() {
                 <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "12px", padding: "1rem" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.4rem", flexWrap: "wrap", gap: "0.5rem" }}>
                     <span style={{ fontSize: "0.82rem", fontWeight: "800", color: "#fff" }}>
-                      Позиционирование в Драфте
+                      Fantasy Draft Positioning
                     </span>
                     <span style={{ fontSize: "0.75rem", color: "var(--accent-cyan)", fontWeight: "700" }}>
                       Показатель Скилла: {skillScore} очков
