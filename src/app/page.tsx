@@ -6914,14 +6914,15 @@ export default function Home() {
               color: "var(--text-secondary)",
               lineHeight: "1.45"
             }}>
-              <strong style={{ color: "var(--accent-cyan)", display: "block", marginBottom: "0.35rem", fontSize: "0.88rem" }}>
-                📐 Формула расчёта рейтинга скилла (1–100):
+              <strong style={{ color: "var(--accent-cyan)", display: "block", marginBottom: "0.45rem", fontSize: "0.88rem" }}>
+                Формула расчёта динамического скилла (1–100):
               </strong>
-              <div>▫️ <strong>FACEIT ELO (вклад 45%):</strong> <code style={{ background: "rgba(0,0,0,0.3)", padding: "0.1rem 0.35rem", borderRadius: "4px", color: "#e0e0e0" }}>(ELO - 300) / 22</code></div>
-              <div>▫️ <strong>Premier CS (вклад 55%):</strong> <code style={{ background: "rgba(0,0,0,0.3)", padding: "0.1rem 0.35rem", borderRadius: "4px", color: "#e0e0e0" }}>PTS / 260</code></div>
-              <div>▫️ <strong>Итоговый балл скилла:</strong> <code style={{ color: "#00e5ff", fontWeight: "700" }}>Math.round(0.45 × S_ELO + 0.55 × S_Premier)</code></div>
-              <div style={{ marginTop: "0.4rem", color: "#ffb74d", fontSize: "0.78rem" }}>
-                💡 <em>При вводе поля «Скилл (1–100)» значение фиксируется и напрямую задает балл игрока!</em>
+              <div>• <strong>Базовый скилл (Faceit ELO + Premier PTS):</strong> взвешивается в пользу платформы с большей активностью (50/50, 70/30 или 30/70).</div>
+              <div>• <strong>Глобальные метрики Faceit:</strong> корректировка по K/D (±12 pts за 1.0), Win Rate (±0.20 pts за 1%) и HS%.</div>
+              <div>• <strong>Статистика в Хабе:</strong> плавный учёт K/D и ADR в хабе с защитой от малого количества игр: <code style={{ color: "#00e5ff", fontWeight: "700" }}>K_hub = min(0.35, N_матчей / 20 × 0.35)</code>.</div>
+              <div>• <strong>Итог:</strong> <code style={{ color: "#00e5ff", fontWeight: "700" }}>Skill = Math.round((1 - K_hub) × S_Global + K_hub × S_Hub)</code></div>
+              <div style={{ marginTop: "0.45rem", color: "#ffb74d", fontSize: "0.78rem" }}>
+                <em>При вводе поля «Скилл (1–100)» значение фиксируется и напрямую задает итоговый балл игрока.</em>
               </div>
             </div>
 
