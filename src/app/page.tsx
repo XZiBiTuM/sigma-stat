@@ -2204,7 +2204,7 @@ export default function Home() {
                   color: "var(--accent-cyan)",
                   border: "1px solid rgba(0, 229, 255, 0.3)"
                 }}>
-                  {currentUser.faceit.elo} ELO
+                  {(currentUser.faceit?.playerId && playerEloMap[currentUser.faceit.playerId]) || (currentUser.faceit?.nickname && playerEloMap[currentUser.faceit.nickname.toLowerCase()]) || currentUser.faceit.elo} ELO
                 </span>
               )}
 
