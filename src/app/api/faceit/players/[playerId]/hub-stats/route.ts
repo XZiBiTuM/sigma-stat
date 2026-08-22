@@ -297,8 +297,8 @@ export async function GET(
     const overallApr = totalRounds > 0 ? totalAssists / totalRounds : 0;
     const careerHLTV = (0.36 * overallKpr) - (0.53 * overallDpr) + (0.1 * overallApr) + (0.003 * avgAdr) + 0.85;
 
-    // Build recent results representation (1 for win, 0 for loss), sorted most recent first
-    const recentResults = playerMatchesList.slice(0, 5).map((m: any) => m.won ? "1" : "0");
+    // Build recent results representation (1 for win, 0 for loss), chronological left-to-right (newest on the right)
+    const recentResults = playerMatchesList.slice(0, 5).map((m: any) => m.won ? "1" : "0").reverse();
 
     // Streaks calculation
     let currentStreak = 0;
