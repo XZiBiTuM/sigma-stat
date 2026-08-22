@@ -28,22 +28,33 @@ export async function GET(
       console.warn("Failed to read match cache file:", e);
     }
 
-    // 2. Fetch player history from FACEIT to get match timestamps
-    let playerHistory: any[] = [];
-    try {
-      const historyRes = await faceitFetch(`/players/${uuid}/history?game=cs2&limit=100`);
-      playerHistory = historyRes.items || [];
-    } catch (e) {
-      console.warn("Failed to fetch player history for timestamps:", e);
-    }
-
-    // Map match ID to its finished_at timestamp
+    // 2. Fetch Hub matches & player history from FACEIT to get exact match timestamps
     const matchTimestamps: Record<string, number> = {};
-    playerHistory.forEach((h: any) => {
-      if (h.match_id) {
-        matchTimestamps[h.match_id] = h.finished_at || h.started_at;
-      }
-    });
+    const HUB_ID = "d0701937-8eba-4df9-8830-22137001c0bd";
+
+    try {
+      const [hubMatchesRes, historyRes] = await Promise.all([
+        faceitFetch(`/hubs/${HUB_ID}/matches?limit=100`).catch(() => ({ items: [] })),
+        faceitFetch(`/players/${uuid}/history?game=cs2&limit=100`).catch(() => ({ items: [] }))
+      ]);
+
+      const hubMatches = hubMatchesRes?.items || [];
+      const playerHistory = historyRes?.items || [];
+
+      hubMatches.forEach((m: any) => {
+        if (m.match_id) {
+          matchTimestamps[m.match_id] = m.finished_at || m.started_at || m.created_at || 0;
+        }
+      });
+
+      playerHistory.forEach((h: any) => {
+        if (h.match_id && !matchTimestamps[h.match_id]) {
+          matchTimestamps[h.match_id] = h.finished_at || h.started_at || 0;
+        }
+      });
+    } catch (e) {
+      console.warn("Failed to fetch match timestamps:", e);
+    }
 
     // 3. Aggregate stats only for matches in the hub cache
     let matchesCount = 0;
