@@ -3825,7 +3825,7 @@ export default function Home() {
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                             <div>
                               <div style={{ fontSize: "1.05rem", fontWeight: "800", color: "var(--accent-cyan)" }}>Саппорт</div>
-                              <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Ассисты (+3.0), Гранаты (+0.05), Дефьюз (+2.0)</div>
+                              <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Ассисты (+3.0), Гранаты / Флешки (+0.5), Дефьюз (+2.5)</div>
                             </div>
                             <span style={{ fontSize: "0.72rem", fontWeight: "800", padding: "0.2rem 0.5rem", borderRadius: "6px", background: "rgba(0, 229, 255, 0.15)", color: "var(--accent-cyan)" }}>
                               СЛОТ 2
