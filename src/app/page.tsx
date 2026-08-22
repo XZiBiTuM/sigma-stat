@@ -335,11 +335,11 @@ export default function Home() {
                (lowerNick && playerOverridesMap[lowerNick]) || 
                (nickname && playerOverridesMap[nickname]) || {};
 
-    const baseElo = ov.customElo || 
-                    (playerId && playerEloMap[playerId]) || 
+    const baseElo = (playerId && playerEloMap[playerId]) || 
                     (lowerNick && playerEloMap[lowerNick]) || 
                     (nickname && playerEloMap[nickname]) || 
-                    eloVal;
+                    eloVal || 
+                    ov.customElo;
 
     const csRating = realPremierRating || ov.csRating || (baseElo ? Math.round(baseElo * 9.5) : 9500);
     const elo = baseElo || (ov.csRating ? Math.round(ov.csRating / 11.53) : 1000);

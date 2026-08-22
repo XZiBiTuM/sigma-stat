@@ -4,6 +4,15 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+interface AnalyticsData {
+  totalViews: number;
+  totalUniques: number;
+  todayViews: number;
+  todayUniques: number;
+  topPages: Record<string, number>;
+  dailyHistory: Array<{ date: string; views: number; uniques: number }>;
+}
+
 export default function AdminLoginPage() {
   const router = useRouter();
   const [passcode, setPasscode] = useState("");
@@ -19,11 +28,34 @@ export default function AdminLoginPage() {
   const [isSavingTour, setIsSavingTour] = useState(false);
   const [tourSaveMsg, setTourSaveMsg] = useState("");
 
+  // Analytics state
+  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
+  const [isLoadingAnalytics, setIsLoadingAnalytics] = useState(false);
+  const [syncStatusMsg, setSyncStatusMsg] = useState("");
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  const fetchAnalytics = (code?: string) => {
+    setIsLoadingAnalytics(true);
+    const pass = code || passcode || localStorage.getItem("sigma_admin_pass") || "demon323161";
+    fetch(`/api/analytics?passcode=${encodeURIComponent(pass)}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data && !data.error) {
+          setAnalytics(data);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setIsLoadingAnalytics(false));
+  };
+
   useEffect(() => {
     try {
       const saved = localStorage.getItem("sigma_user_role");
       if (saved && saved !== "GUEST") {
         setCurrentRole(saved);
+        if (saved === "ADMIN") {
+          fetchAnalytics();
+        }
       }
     } catch (e) {}
 
@@ -48,9 +80,11 @@ export default function AdminLoginPage() {
     if (p === "demon323161" || p === "sigmaadmin" || p === "admin") {
       localStorage.setItem("sigma_user_role", "ADMIN");
       localStorage.setItem("sigma_user_name", "Admin");
+      localStorage.setItem("sigma_admin_pass", p);
       setCurrentRole("ADMIN");
       setSuccessMsg("Успешный вход в систему с правами Администратора!");
       setError("");
+      fetchAnalytics(p);
     } else if (p === "chillout" || p === "mrchillout") {
       localStorage.setItem("sigma_user_role", "EVENT_MAKER");
       localStorage.setItem("sigma_user_name", "Mr.Chillout");
@@ -66,7 +100,9 @@ export default function AdminLoginPage() {
   const handleLogout = () => {
     localStorage.removeItem("sigma_user_role");
     localStorage.removeItem("sigma_user_name");
+    localStorage.removeItem("sigma_admin_pass");
     setCurrentRole(null);
+    setAnalytics(null);
     setSuccessMsg("Вы вышли из системы администратора.");
   };
 
@@ -79,7 +115,7 @@ export default function AdminLoginPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          passcode: passcode || "demon323161",
+          passcode: passcode || localStorage.getItem("sigma_admin_pass") || "demon323161",
           title: tourTitle,
           startTime: tourDate,
           status: tourStatus,
@@ -88,12 +124,12 @@ export default function AdminLoginPage() {
       });
       const data = await res.json();
       if (res.ok) {
-        setTourSaveMsg("✅ Настройки турнира и Fantasy League успешно сохранены!");
+        setTourSaveMsg("Настройки турнира и Fantasy League успешно сохранены!");
       } else {
-        setTourSaveMsg(`❌ Ошибка: ${data.error || "Не удалось сохранить"}`);
+        setTourSaveMsg(`Ошибка: ${data.error || "Не удалось сохранить"}`);
       }
     } catch (e: any) {
-      setTourSaveMsg(`❌ Ошибка сети: ${e.message}`);
+      setTourSaveMsg(`Ошибка сети: ${e.message}`);
     } finally {
       setIsSavingTour(false);
     }
@@ -111,7 +147,7 @@ export default function AdminLoginPage() {
       fontFamily: "var(--font-sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif)"
     }}>
       <div className="glass-card animate-fade-in" style={{
-        maxWidth: "560px",
+        maxWidth: "680px",
         width: "100%",
         padding: "2.5rem 2rem",
         borderRadius: "24px",
@@ -138,10 +174,10 @@ export default function AdminLoginPage() {
         </div>
 
         <h2 className="glow-text-cyan" style={{ fontSize: "1.6rem", fontWeight: "800", margin: "0 0 0.5rem 0" }}>
-          Панель Организатора
+          Панель Администратора
         </h2>
         <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem", marginBottom: "1.75rem", lineHeight: "1.4" }}>
-          Управление хабом СИГМА, турнирами и Fantasy League
+          Управление хабом СИГМА, турнирами, Fantasy League и статистика посещаемости
         </p>
 
         {currentRole ? (
@@ -196,10 +232,92 @@ export default function AdminLoginPage() {
               </div>
             </div>
 
+            {/* ADMIN-ONLY VISITOR ANALYTICS SECTION */}
+            {currentRole === "ADMIN" && (
+              <div style={{
+                marginTop: "1.5rem",
+                background: "rgba(0, 229, 255, 0.03)",
+                border: "1px solid rgba(0, 229, 255, 0.25)",
+                borderRadius: "18px",
+                padding: "1.5rem",
+                textAlign: "left"
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <span style={{ fontSize: "1.25rem" }}>📊</span>
+                    <h3 style={{ margin: 0, fontSize: "1.1rem", color: "#00e5ff" }}>
+                      Статистика посещаемости сайта
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => fetchAnalytics()}
+                    disabled={isLoadingAnalytics}
+                    style={{
+                      padding: "0.4rem 0.75rem",
+                      borderRadius: "8px",
+                      background: "rgba(0, 229, 255, 0.15)",
+                      border: "1px solid var(--accent-cyan)",
+                      color: "#00e5ff",
+                      fontSize: "0.75rem",
+                      fontWeight: "700",
+                      cursor: "pointer"
+                    }}
+                  >
+                    {isLoadingAnalytics ? "Загрузка..." : "Обновить"}
+                  </button>
+                </div>
+
+                {analytics ? (
+                  <div>
+                    {/* 4 Metric Tiles */}
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "0.75rem", marginBottom: "1.25rem" }}>
+                      <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border-light)", borderRadius: "12px", padding: "0.85rem", textAlign: "center" }}>
+                        <div style={{ fontSize: "0.72rem", color: "var(--text-secondary)", marginBottom: "0.3rem" }}>Всего просмотров</div>
+                        <div style={{ fontSize: "1.35rem", fontWeight: "800", color: "#00e5ff" }}>{analytics.totalViews.toLocaleString()}</div>
+                      </div>
+                      <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border-light)", borderRadius: "12px", padding: "0.85rem", textAlign: "center" }}>
+                        <div style={{ fontSize: "0.72rem", color: "var(--text-secondary)", marginBottom: "0.3rem" }}>Уникальных всего</div>
+                        <div style={{ fontSize: "1.35rem", fontWeight: "800", color: "#7c4dff" }}>{analytics.totalUniques.toLocaleString()}</div>
+                      </div>
+                      <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border-light)", borderRadius: "12px", padding: "0.85rem", textAlign: "center" }}>
+                        <div style={{ fontSize: "0.72rem", color: "var(--text-secondary)", marginBottom: "0.3rem" }}>Просмотры сегодня</div>
+                        <div style={{ fontSize: "1.35rem", fontWeight: "800", color: "#4caf50" }}>{analytics.todayViews.toLocaleString()}</div>
+                      </div>
+                      <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border-light)", borderRadius: "12px", padding: "0.85rem", textAlign: "center" }}>
+                        <div style={{ fontSize: "0.72rem", color: "var(--text-secondary)", marginBottom: "0.3rem" }}>Уникальные сегодня</div>
+                        <div style={{ fontSize: "1.35rem", fontWeight: "800", color: "#ffb74d" }}>{analytics.todayUniques.toLocaleString()}</div>
+                      </div>
+                    </div>
+
+                    {/* Daily History Table */}
+                    {analytics.dailyHistory && analytics.dailyHistory.length > 0 && (
+                      <div style={{ background: "rgba(0,0,0,0.2)", borderRadius: "10px", padding: "0.75rem", border: "1px solid var(--border-light)", marginBottom: "1rem" }}>
+                        <div style={{ fontSize: "0.78rem", fontWeight: "700", color: "var(--text-secondary)", marginBottom: "0.5rem" }}>
+                          История посещений по дням:
+                        </div>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", maxHeight: "150px", overflowY: "auto" }}>
+                          {analytics.dailyHistory.slice().reverse().map((day, idx) => (
+                            <div key={idx} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", padding: "0.25rem 0.5rem", borderRadius: "6px", background: idx === 0 ? "rgba(0, 229, 255, 0.08)" : "transparent" }}>
+                              <span style={{ color: idx === 0 ? "#00e5ff" : "var(--text-secondary)", fontWeight: idx === 0 ? "700" : "500" }}>{day.date} {idx === 0 ? "(Сегодня)" : ""}</span>
+                              <span style={{ color: "#fff", fontWeight: "600" }}>{day.views} просмотров ({day.uniques} уник.)</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div style={{ color: "var(--text-muted)", fontSize: "0.85rem", textAlign: "center", padding: "1rem" }}>
+                    {isLoadingAnalytics ? "Загрузка аналитики..." : "Нажмите «Обновить» для получения статистики"}
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* FANTASY LEAGUE TOURNAMENT MANAGEMENT SECTION */}
             {currentRole === "ADMIN" && (
               <div style={{
-                marginTop: "2rem",
+                marginTop: "1.5rem",
                 background: "rgba(124, 77, 255, 0.05)",
                 border: "1px solid rgba(124, 77, 255, 0.3)",
                 borderRadius: "18px",
@@ -250,9 +368,9 @@ export default function AdminLoginPage() {
                       onChange={e => setTourStatus(e.target.value as any)}
                       style={{ width: "100%", padding: "0.6rem 0.8rem", borderRadius: "10px", background: "#06050c", border: "1px solid var(--border-light)", color: "#fff", boxSizing: "border-box" }}
                     >
-                      <option value="DRAFT_OPEN">🟢 DRAFT OPEN (Прием прогнозов открыт)</option>
-                      <option value="LIVE">🟡 LIVE (Турнир идет, пики зафиксированы)</option>
-                      <option value="COMPLETED">🔴 COMPLETED (Завершен, итоги подведены)</option>
+                      <option value="DRAFT_OPEN">DRAFT OPEN (Прием прогнозов открыт)</option>
+                      <option value="LIVE">LIVE (Турнир идет, пики зафиксированы)</option>
+                      <option value="COMPLETED">COMPLETED (Завершен, итоги подведены)</option>
                     </select>
                   </div>
 
@@ -290,7 +408,7 @@ export default function AdminLoginPage() {
                       cursor: "pointer"
                     }}
                   >
-                    {isSavingTour ? "Сохранение..." : "💾 Сохранить турнир и Fantasy"}
+                    {isSavingTour ? "Сохранение..." : "Сохранить турнир и Fantasy"}
                   </button>
                 </form>
               </div>

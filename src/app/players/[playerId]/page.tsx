@@ -111,7 +111,7 @@ export default function PlayerProfilePage() {
                (lowerNick && playerOverridesMap[lowerNick]) || 
                (nicknameVal && playerOverridesMap[nicknameVal]) || {};
 
-    const baseElo = ov.customElo || eloVal || (ov.csRating ? Math.round(ov.csRating / 11.53) : 1000);
+    const baseElo = eloVal || ov.customElo || (ov.csRating ? Math.round(ov.csRating / 11.53) : 1000);
     const csRating = realPremierRating || ov.csRating || (baseElo ? Math.round(baseElo * 9.5) : 9500);
     const elo = baseElo || (ov.csRating ? Math.round(ov.csRating / 11.53) : 1000);
 
@@ -470,6 +470,7 @@ export default function PlayerProfilePage() {
 
   useEffect(() => {
     if (!playerId) return;
+    try { fetch("/api/analytics", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ path: `/players/${playerId}` }) }).catch(() => {}); } catch(e) {}
 
     const loadData = async () => {
       setIsLoading(true);

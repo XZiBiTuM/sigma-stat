@@ -55,7 +55,20 @@ async function syncAll() {
       }
     }
 
-    console.log(`[SYNC COMPLETE] ${r1} | ${r3} | ${r4} | Synced ${statsPings} match stats`);
+    // Fetch and refresh all hub members profiles & Elo
+    const membersData = await fetchJson(`/api/faceit/hubs/${HUB_ID}/members`);
+    let playerPings = 0;
+    if (membersData && Array.isArray(membersData.items)) {
+      for (const member of membersData.items) {
+        const pid = member.user_id || member.player_id;
+        if (pid) {
+          await pingEndpoint(`/api/faceit/players/${pid}`);
+          playerPings++;
+        }
+      }
+    }
+
+    console.log(`[SYNC COMPLETE] ${r1} | ${r3} | ${r4} | Refreshed ${playerPings} players | Synced ${statsPings} match stats`);
   } catch (e) {
     console.error("Sync error:", e);
   }

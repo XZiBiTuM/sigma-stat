@@ -29,7 +29,8 @@ export async function GET(
     const nicknameKey = data.nickname;
     const override = overrides[playerKey] || overrides[nicknameKey] || {};
 
-    const elo = override.customElo || data.games?.cs2?.faceit_elo || data.games?.csgo?.faceit_elo || 1000;
+    const realFaceitElo = data.games?.cs2?.faceit_elo || data.games?.csgo?.faceit_elo;
+    const elo = realFaceitElo || override.customElo || 1000;
     const csRating = override.csRating || Math.round(elo * 9.5);
 
     let skillScore = override.customSkillScore;
