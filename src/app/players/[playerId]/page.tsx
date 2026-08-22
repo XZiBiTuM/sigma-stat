@@ -794,7 +794,7 @@ export default function PlayerProfilePage() {
                     <div style={{ flex: 1, background: "rgba(0,0,0,0.2)", border: "1px solid var(--border-light)", borderRadius: "10px", padding: "1rem", textAlign: "center" }}>
                       <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", display: "block" }}>Текущий стрик</span>
                       <span style={{ fontSize: "1.3rem", fontWeight: "800", color: "var(--success)", display: "block", marginTop: "0.25rem" }}>
-                        +{hubStats.streaks?.current || 0} побед
+                        {(hubStats.streaks?.current || 0) > 0 ? `+${hubStats.streaks?.current} побед` : "0 побед"}
                       </span>
                     </div>
                     <div style={{ flex: 1, background: "rgba(0,0,0,0.2)", border: "1px solid var(--border-light)", borderRadius: "10px", padding: "1rem", textAlign: "center" }}>

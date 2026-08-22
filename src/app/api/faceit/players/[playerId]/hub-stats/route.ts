@@ -32,11 +32,19 @@ export async function GET(
     const matchTimestamps: Record<string, number> = {};
     const HUB_ID = "d0701937-8eba-4df9-8830-22137001c0bd";
 
+    let officialStreak: number | null = null;
     try {
-      const [hubMatchesRes, historyRes] = await Promise.all([
+      const [hubMatchesRes, historyRes, leaderboardRes] = await Promise.all([
         faceitFetch(`/hubs/${HUB_ID}/matches?limit=100`).catch(() => ({ items: [] })),
-        faceitFetch(`/players/${uuid}/history?game=cs2&limit=100`).catch(() => ({ items: [] }))
+        faceitFetch(`/players/${uuid}/history?game=cs2&limit=100`).catch(() => ({ items: [] })),
+        faceitFetch(`/leaderboards/hubs/${HUB_ID}/general?limit=50`).catch(() => ({ items: [] }))
       ]);
+
+      const lbItems = leaderboardRes?.items || [];
+      const userLb = lbItems.find((i: any) => i.player?.user_id === uuid || i.player?.nickname?.toLowerCase() === (playerProfile.nickname || "").toLowerCase());
+      if (userLb && typeof userLb.current_streak === 'number') {
+        officialStreak = userLb.current_streak;
+      }
 
       const hubMatches = hubMatchesRes?.items || [];
       const playerHistory = historyRes?.items || [];
@@ -373,8 +381,8 @@ export async function GET(
         entrySuccessRate: hubAvgEntry
       },
       streaks: {
-        current: currentStreak,
-        longest: longestStreak
+        current: officialStreak !== null ? officialStreak : currentStreak,
+        longest: Math.max(longestStreak, officialStreak || 0)
       },
       recentResults,
       multiKills: {

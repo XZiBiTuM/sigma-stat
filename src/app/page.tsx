@@ -5790,7 +5790,7 @@ export default function Home() {
                             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.72rem", color: "var(--text-secondary)" }}>
                               <span>Текущий стрик:</span>
                               <span style={{ fontWeight: "700", color: "var(--success)" }}>
-                                +{playerHubStats?.streaks?.current ?? playerGameStats?.lifetime["Current Win Streak"] ?? 0} побед
+                                {(playerHubStats?.streaks?.current ?? playerGameStats?.lifetime["Current Win Streak"] ?? 0) > 0 ? `+${playerHubStats?.streaks?.current ?? playerGameStats?.lifetime["Current Win Streak"]} побед` : "0 побед"}
                               </span>
                             </div>
                             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.72rem", color: "var(--text-secondary)", marginTop: "0.35rem" }}>
