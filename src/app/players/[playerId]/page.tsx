@@ -475,43 +475,41 @@ export default function PlayerProfilePage() {
     const loadData = async () => {
       setIsLoading(true);
       try {
-        const profileRes = await fetch(`/api/faceit/players/${playerId}`);
+        // Fetch core profile and hub stats in parallel
+        const [profileRes, hubStatsRes] = await Promise.all([
+          fetch(`/api/faceit/players/${playerId}`),
+          fetch(`/api/faceit/players/${playerId}/hub-stats`, { cache: "no-store" })
+        ]);
+
         if (!profileRes.ok) throw new Error("Профиль не найден");
         const profileData = await profileRes.json();
         setProfile(profileData);
 
-        const hubStatsRes = await fetch(`/api/faceit/players/${playerId}/hub-stats`, { cache: "no-store" });
         if (hubStatsRes.ok) {
           const statsData = await hubStatsRes.json();
           setHubStats(statsData);
         }
 
-        try {
-          const leetifyRes = await fetch(`/api/faceit/players/${playerId}/leetify`);
-          if (leetifyRes.ok) {
-            const leetifyData = await leetifyRes.json();
-            if (leetifyData && !leetifyData.error) {
-              setLeetify(leetifyData);
-            }
-          }
-        } catch (e) {
-          console.warn("Leetify stats load failed", e);
-        }
+        // Immediately unlock the UI for ultra-fast instant render
+        setIsLoading(false);
 
-        try {
-          const steamStatsRes = await fetch(`/api/faceit/players/${playerId}/steam-stats`);
-          if (steamStatsRes.ok) {
-            const steamData = await steamStatsRes.json();
-            if (steamData && !steamData.error) {
-              setSteamStats(steamData);
-            }
-          }
-        } catch (e) {
-          console.warn("Steam stats load failed", e);
-        }
+        // Fetch secondary third-party stats (Leetify, Steam) asynchronously in background
+        fetch(`/api/faceit/players/${playerId}/leetify`)
+          .then(r => r.ok ? r.json() : null)
+          .then(data => {
+            if (data && !data.error) setLeetify(data);
+          })
+          .catch(() => {});
+
+        fetch(`/api/faceit/players/${playerId}/steam-stats`)
+          .then(r => r.ok ? r.json() : null)
+          .then(data => {
+            if (data && !data.error) setSteamStats(data);
+          })
+          .catch(() => {});
+
       } catch (err) {
         console.error(err);
-      } finally {
         setIsLoading(false);
       }
     };

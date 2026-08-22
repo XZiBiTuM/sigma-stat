@@ -35,13 +35,34 @@ export async function GET(
     // 2. Fetch Hub matches & player history from FACEIT to get exact match timestamps
     const matchTimestamps: Record<string, number> = {};
     const HUB_ID = "d0701937-8eba-4df9-8830-22137001c0bd";
+let cachedHubMatches: any = null;
+let lastHubMatchesFetch = 0;
+let cachedLeaderboard: any = null;
+let lastLeaderboardFetch = 0;
 
     let officialStreak: number | null = null;
     try {
+      const now = Date.now();
+      const getHubMatches = async () => {
+        if (cachedHubMatches && (now - lastHubMatchesFetch < 30000)) return cachedHubMatches;
+        const res = await faceitFetch(`/hubs/${HUB_ID}/matches?limit=100`).catch(() => ({ items: [] }));
+        cachedHubMatches = res;
+        lastHubMatchesFetch = Date.now();
+        return res;
+      };
+
+      const getLeaderboard = async () => {
+        if (cachedLeaderboard && (now - lastLeaderboardFetch < 30000)) return cachedLeaderboard;
+        const res = await faceitFetch(`/leaderboards/hubs/${HUB_ID}/general?limit=50`).catch(() => ({ items: [] }));
+        cachedLeaderboard = res;
+        lastLeaderboardFetch = Date.now();
+        return res;
+      };
+
       const [hubMatchesRes, historyRes, leaderboardRes] = await Promise.all([
-        faceitFetch(`/hubs/${HUB_ID}/matches?limit=100`).catch(() => ({ items: [] })),
-        faceitFetch(`/players/${uuid}/history?game=cs2&limit=100`).catch(() => ({ items: [] })),
-        faceitFetch(`/leaderboards/hubs/${HUB_ID}/general?limit=50`).catch(() => ({ items: [] }))
+        getHubMatches(),
+        faceitFetch(`/players/${uuid}/history?game=cs2&limit=50`).catch(() => ({ items: [] })),
+        getLeaderboard()
       ]);
 
       const lbItems = leaderboardRes?.items || [];
