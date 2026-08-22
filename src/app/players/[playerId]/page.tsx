@@ -479,7 +479,7 @@ export default function PlayerProfilePage() {
         const profileData = await profileRes.json();
         setProfile(profileData);
 
-        const hubStatsRes = await fetch(`/api/faceit/players/${playerId}/hub-stats`);
+        const hubStatsRes = await fetch(`/api/faceit/players/${playerId}/hub-stats`, { cache: "no-store" });
         if (hubStatsRes.ok) {
           const statsData = await hubStatsRes.json();
           setHubStats(statsData);
