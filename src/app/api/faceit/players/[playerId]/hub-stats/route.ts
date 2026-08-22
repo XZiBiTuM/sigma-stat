@@ -139,11 +139,19 @@ export async function GET(
         let isWin = false;
         
         if (Array.isArray(round.teams)) {
+          const playerNick = (playerProfile.nickname || "").toLowerCase();
           for (const team of round.teams) {
-            const foundPlayer = (team.players || []).find((p: any) => p.player_id === uuid);
+            const foundPlayer = (team.players || []).find((p: any) => 
+              p.player_id === uuid || 
+              (p.nickname && p.nickname.toLowerCase() === playerNick)
+            );
             if (foundPlayer) {
               playerStats = foundPlayer.player_stats || {};
-              isWin = team.team_stats?.TeamWin === "1" || team.team_stats?.["Team Win"] === "1" || playerStats.Result === "1";
+              const roundWinner = round.round_stats?.Winner;
+              isWin = (Boolean(roundWinner) && team.team_id === roundWinner) || 
+                      team.team_stats?.TeamWin === "1" || 
+                      team.team_stats?.["Team Win"] === "1" || 
+                      playerStats.Result === "1";
               break;
             }
           }
@@ -288,8 +296,8 @@ export async function GET(
     const overallApr = totalRounds > 0 ? totalAssists / totalRounds : 0;
     const careerHLTV = (0.36 * overallKpr) - (0.53 * overallDpr) + (0.1 * overallApr) + (0.003 * avgAdr) + 0.85;
 
-    // Build recent results representation (1 for win, 0 for loss)
-    const recentResults = playerMatchesList.slice(0, 5).map((m: any) => m.won ? "1" : "0").reverse();
+    // Build recent results representation (1 for win, 0 for loss), sorted most recent first
+    const recentResults = playerMatchesList.slice(0, 5).map((m: any) => m.won ? "1" : "0");
 
     // Streaks calculation
     let currentStreak = 0;
