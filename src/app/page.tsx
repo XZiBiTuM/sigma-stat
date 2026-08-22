@@ -2702,7 +2702,7 @@ export default function Home() {
                           </tr>
                         </thead>
                         <tbody>
-                          {filteredRankings.map((item) => {
+                          {filteredRankings.map((item, idx) => {
                             const playerInfo = (item.player || (item as any).user) as any;
                             const playerId = playerInfo?.player_id || playerInfo?.user_id || playerInfo?.id || "";
                             const nickname = playerInfo?.nickname || "Игрок";
@@ -2714,14 +2714,15 @@ export default function Home() {
                             const lost = item.lost ?? "-";
                             const points = item.points ?? (item as any).elo ?? "-";
                             const currentStreak = item.current_streak;
+                            const displayRank = idx + 1;
 
                             return (
-                              <tr key={playerId}>
-                                <td style={{ textAlign: "center", fontWeight: "700", color: item.position <= 3 ? "var(--accent-cyan)" : "var(--text-primary)" }}>
-                                  {item.position === 1 && <span className="rank-badge gold">1</span>}
-                                  {item.position === 2 && <span className="rank-badge silver">2</span>}
-                                  {item.position === 3 && <span className="rank-badge bronze">3</span>}
-                                  {item.position > 3 && item.position}
+                              <tr key={playerId || idx}>
+                                <td style={{ textAlign: "center", fontWeight: "700", color: displayRank <= 3 ? "var(--accent-cyan)" : "var(--text-primary)" }}>
+                                  {displayRank === 1 && <span className="rank-badge gold">1</span>}
+                                  {displayRank === 2 && <span className="rank-badge silver">2</span>}
+                                  {displayRank === 3 && <span className="rank-badge bronze">3</span>}
+                                  {displayRank > 3 && displayRank}
                                 </td>
                                 <td>
                                   <div 
