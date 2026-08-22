@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPlayerProfile } from "@/lib/faceit";
+import { getStoragePath } from "@/lib/storage";
 import { promises as fs } from "fs";
 import path from "path";
 
-const overridesFilePath = path.join(process.cwd(), "src", "lib", "player_overrides.json");
+const overridesFilePath = getStoragePath("player_overrides.json");
 
 export async function GET(
   request: NextRequest,

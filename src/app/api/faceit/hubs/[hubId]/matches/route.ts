@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { faceitFetch } from "@/lib/faceit";
+import { getStoragePath } from "@/lib/storage";
 import { promises as fs } from "fs";
 import path from "path";
 
-const cacheFilePath = path.join(process.cwd(), "src", "lib", "match_stats_cache.json");
-const customMatchesFilePath = path.join(process.cwd(), "src", "lib", "custom_matches.json");
+const cacheFilePath = getStoragePath("match_stats_cache.json");
+const customMatchesFilePath = getStoragePath("custom_matches.json");
 
 async function readStatsCache(): Promise<Record<string, any>> {
   try {

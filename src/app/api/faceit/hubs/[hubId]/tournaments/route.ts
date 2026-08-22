@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { faceitFetch } from "@/lib/faceit";
+import { getStoragePath } from "@/lib/storage";
 import { promises as fs } from "fs";
 import path from "path";
 
 // Path to stats cache file
-const cacheFilePath = path.join(process.cwd(), "src", "lib", "match_stats_cache.json");
+const cacheFilePath = getStoragePath("match_stats_cache.json");
 
 // Local helper to read cache
 async function readStatsCache(): Promise<Record<string, any>> {
