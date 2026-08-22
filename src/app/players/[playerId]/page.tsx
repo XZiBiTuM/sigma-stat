@@ -78,6 +78,8 @@ export default function PlayerProfilePage() {
   const [leetify, setLeetify] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<"general" | "tactical" | "maps">("general");
   const [fantasyPickData, setFantasyPickData] = useState<{ count: number; roles: string[] }>({ count: 0, roles: [] });
+  const [fantasyWinnerNick, setFantasyWinnerNick] = useState<string>("");
+  const [fantasyWinnerSteamId, setFantasyWinnerSteamId] = useState<string>("");
   const [visibleMatches, setVisibleMatches] = useState(10);
   const [steamStats, setSteamStats] = useState<any>(null);
   const [copied, setCopied] = useState(false);
@@ -475,6 +477,15 @@ export default function PlayerProfilePage() {
     const loadData = async () => {
       setIsLoading(true);
       try {
+        // Fetch active fantasy tournament winner
+        fetch("/api/fantasy/tournament")
+          .then(r => r.ok ? r.json() : null)
+          .then(d => {
+            if (d?.tournament?.winnerNickname) setFantasyWinnerNick(d.tournament.winnerNickname);
+            if (d?.tournament?.winnerSteamId) setFantasyWinnerSteamId(d.tournament.winnerSteamId);
+          })
+          .catch(() => {});
+
         // Fetch core profile and hub stats in parallel
         const [profileRes, hubStatsRes] = await Promise.all([
           fetch(`/api/faceit/players/${playerId}`),
@@ -578,7 +589,24 @@ export default function PlayerProfilePage() {
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px", background: "linear-gradient(90deg, var(--accent-purple), var(--accent-cyan))" }} />
             
             {/* Avatar */}
-            <div style={{ width: "100px", height: "100px", borderRadius: "16px", overflow: "hidden", background: "#1c1829", border: "2px solid var(--border-light)", boxShadow: "0 4px 20px rgba(0,0,0,0.4)" }}>
+            {(() => {
+              const isChamp = Boolean(
+                fantasyWinnerNick && (
+                  profile.nickname?.toLowerCase() === fantasyWinnerNick.toLowerCase() ||
+                  profile.player_id === fantasyWinnerNick ||
+                  (fantasyWinnerSteamId && profile.steam_id_64 === fantasyWinnerSteamId)
+                )
+              );
+              return (
+                <div style={{
+                  width: "100px",
+                  height: "100px",
+                  borderRadius: "16px",
+                  overflow: "hidden",
+                  background: "#1c1829",
+                  border: isChamp ? "2.5px solid #ffd700" : "2px solid var(--border-light)",
+                  boxShadow: isChamp ? "0 0 25px rgba(255, 215, 0, 0.4), 0 4px 20px rgba(0,0,0,0.4)" : "0 4px 20px rgba(0,0,0,0.4)"
+                }}>
               {profile.avatar ? (
                 <img src={profile.avatar} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               ) : (
@@ -587,10 +615,33 @@ export default function PlayerProfilePage() {
                 </div>
               )}
             </div>
+            );
+            })()}
 
             {/* Name and Links */}
             <div>
-              <h1 style={{ fontSize: "2.2rem", fontWeight: "900", color: "#fff", letterSpacing: "-0.03em" }}>{profile.nickname}</h1>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+                <h1 style={{ fontSize: "2.2rem", fontWeight: "900", color: "#fff", letterSpacing: "-0.03em", margin: 0 }}>{profile.nickname}</h1>
+                {Boolean(
+                  fantasyWinnerNick && (
+                    profile.nickname?.toLowerCase() === fantasyWinnerNick.toLowerCase() ||
+                    profile.player_id === fantasyWinnerNick ||
+                    (fantasyWinnerSteamId && profile.steam_id_64 === fantasyWinnerSteamId)
+                  )
+                ) && (
+                  <span style={{
+                    fontSize: "0.75rem",
+                    padding: "0.25rem 0.65rem",
+                    borderRadius: "10px",
+                    background: "linear-gradient(135deg, #ffd700, #ff9100)",
+                    color: "#000",
+                    fontWeight: "900",
+                    letterSpacing: "0.5px"
+                  }}>
+                    ФАНТАЗЕР СЕЗОНА
+                  </span>
+                )}
+              </div>
               <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "1rem", marginTop: "0.5rem" }}>
                 {profile.country && (
                   <span style={{ color: "var(--text-secondary)", fontSize: "0.9rem" }}>
