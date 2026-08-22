@@ -1,5 +1,10 @@
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 import { NextRequest, NextResponse } from "next/server";
 import { getPlayerProfile } from "@/lib/faceit";
+
+const cache: Record<string, { data: any; ts: number }> = {};
 
 export async function GET(
   request: NextRequest,
@@ -8,49 +13,44 @@ export async function GET(
   try {
     const { playerId } = await params;
     if (!playerId) {
-      return NextResponse.json({ error: "Не указан ID игрока" }, { status: 400 });
+      return NextResponse.json({ error: "Missing playerId" }, { status: 400 });
     }
 
-    // 1. Get player profile from FACEIT to get their Steam ID 64
-    const playerProfile = await getPlayerProfile(playerId);
-    const steamId = playerProfile.steam_id_64 || playerProfile.platforms?.steam;
-
-    if (!steamId) {
-      return NextResponse.json({ error: "Steam ID не найден для этого профиля FACEIT" }, { status: 404 });
+    const now = Date.now();
+    if (cache[playerId] && now - cache[playerId].ts < 60000) {
+      return NextResponse.json(cache[playerId].data);
     }
 
-    // 2. Fetch from Leetify public API
-    const leetifyUrl = `https://api-public.cs-prod.leetify.com/v3/profile?steam64_id=${steamId}`;
-    const leetifyKey = process.env.LEETIFY_API_KEY;
+    // Resolve Faceit player to get Steam64 ID
+    const profile = await getPlayerProfile(playerId);
+    const steam64Id = profile?.steam_id_64 || profile?.games?.cs2?.game_player_id || profile?.games?.csgo?.game_player_id;
 
-    const headers: Record<string, string> = {
-      Accept: "application/json",
-    };
-
-    if (leetifyKey) {
-      headers["Authorization"] = `Bearer ${leetifyKey}`;
+    if (!steam64Id) {
+      return NextResponse.json({ error: "Steam ID not found" }, { status: 404 });
     }
 
-    console.log(`Fetching Leetify statistics for SteamID ${steamId}...`);
-    const leetifyRes = await fetch(leetifyUrl, { headers });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 1200);
 
-    if (!leetifyRes.ok) {
-      console.warn(`Leetify returned status ${leetifyRes.status} for SteamID ${steamId}`);
-      return NextResponse.json({ 
-        notFound: true,
-        error: `Leetify API вернул статус ${leetifyRes.status}`,
-        status: leetifyRes.status 
-      }, { status: 200 });
+    try {
+      const leetifyRes = await fetch(`https://api.leetify.com/api/profile/id/${steam64Id}`, {
+        signal: controller.signal,
+        headers: { "User-Agent": "Mozilla/5.0" }
+      });
+      clearTimeout(timeout);
+
+      if (!leetifyRes.ok) {
+        return NextResponse.json({ error: "Leetify profile not found" }, { status: 404 });
+      }
+
+      const leetifyData = await leetifyRes.json();
+      cache[playerId] = { data: leetifyData, ts: Date.now() };
+      return NextResponse.json(leetifyData);
+    } catch (fetchErr) {
+      clearTimeout(timeout);
+      return NextResponse.json({ error: "Leetify timeout" }, { status: 504 });
     }
-
-    const leetifyData = await leetifyRes.json();
-    return NextResponse.json(leetifyData);
-
-  } catch (error: any) {
-    console.error("Error fetching Leetify profile:", error.message);
-    return NextResponse.json(
-      { error: error.message || "Не удалось загрузить Leetify профиль" },
-      { status: 500 }
-    );
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }

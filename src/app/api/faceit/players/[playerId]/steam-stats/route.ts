@@ -1,27 +1,11 @@
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 import { NextRequest, NextResponse } from "next/server";
 import { getPlayerProfile } from "@/lib/faceit";
 
-const mmRanksMap = [
-  "Unranked",
-  "Silver I",
-  "Silver II",
-  "Silver III",
-  "Silver IV",
-  "Silver Elite",
-  "Silver Elite Master",
-  "Gold Nova I",
-  "Gold Nova II",
-  "Gold Nova III",
-  "Gold Nova Master",
-  "Master Guardian I",
-  "Master Guardian II",
-  "Master Guardian Elite",
-  "Distinguished Master Guardian",
-  "Legendary Eagle",
-  "Legendary Eagle Master",
-  "Supreme Master First Class",
-  "Global Elite"
-];
+const STEAM_API_KEY = process.env.STEAM_API_KEY || "15536CB4CFFE33DA56F57B1F3CF07CCF";
+const cache: Record<string, { data: any; ts: number }> = {};
 
 export async function GET(
   request: NextRequest,
@@ -30,97 +14,45 @@ export async function GET(
   try {
     const { playerId } = await params;
     if (!playerId) {
-      return NextResponse.json({ error: "Не указан ID игрока" }, { status: 400 });
+      return NextResponse.json({ error: "Missing playerId" }, { status: 400 });
     }
 
-    // 1. Fetch FACEIT player profile to get steam ID
-    let faceitProfile: any = null;
-    try {
-      faceitProfile = await getPlayerProfile(playerId);
-    } catch (e) {
-      return NextResponse.json({ error: "Профиль FACEIT не найден" }, { status: 404 });
+    const now = Date.now();
+    if (cache[playerId] && now - cache[playerId].ts < 60000) {
+      return NextResponse.json(cache[playerId].data);
     }
 
-    const steamId = faceitProfile.steam_id_64 || faceitProfile.platforms?.steam;
+    const profile = await getPlayerProfile(playerId);
+    const steam64Id = profile?.steam_id_64 || profile?.games?.cs2?.game_player_id || profile?.games?.csgo?.game_player_id;
 
-    if (!steamId) {
-      return NextResponse.json({ error: "Steam ID не привязан к профилю FACEIT" }, { status: 404 });
+    if (!steam64Id) {
+      return NextResponse.json({ error: "Steam ID not found" }, { status: 404 });
     }
 
-    // 2. Fetch from Leetify V3 public API (does not return 403 Cloudflare block)
-    const leetifyUrl = `https://api-public.cs-prod.leetify.com/v3/profile?steam64_id=${steamId}`;
-    
-    let premierRating: number | null = null;
-    let mapRanks: any[] = [];
-    let vacBanned = false;
-    let gameBans = 0;
-    let totalMatchesPlayed = 0;
-    let kd = 1.0;
-    let hs = 45;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 1200);
 
     try {
-      const res = await fetch(leetifyUrl, {
-        headers: {
-          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-          "Accept": "application/json"
-        }
-      });
+      const steamRes = await fetch(
+        `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${STEAM_API_KEY}&steamids=${steam64Id}`,
+        { signal: controller.signal }
+      );
+      clearTimeout(timeout);
 
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.ranks) {
-          if (data.ranks.premier && data.ranks.premier > 0) {
-            premierRating = data.ranks.premier;
-          }
-
-          if (Array.isArray(data.ranks.competitive)) {
-            const activeCompetitiveMaps = ["de_dust2", "de_cache", "de_nuke", "de_mirage", "de_anubis", "de_ancient", "de_inferno"];
-            mapRanks = activeCompetitiveMaps.map(mapName => {
-              const match = data.ranks.competitive.find((r: any) => r.map_name === mapName || r.map_name === `de_${mapName}`);
-              const rankVal = match ? (match.rank || 0) : 0;
-              return {
-                map: mapName,
-                rank: mmRanksMap[rankVal] || "Unranked",
-                value: rankVal
-              };
-            });
-          }
-        }
-
-        if (data.bans) {
-          vacBanned = data.bans.vac_banned || false;
-          gameBans = data.bans.number_of_game_bans || 0;
-        }
-
-        if (data.stats) {
-          kd = data.stats.kd !== undefined ? data.stats.kd : 1.0;
-          hs = data.stats.hs_percentage !== undefined ? data.stats.hs_percentage : 45;
-          totalMatchesPlayed = data.total_matches || 0;
-        }
+      if (!steamRes.ok) {
+        return NextResponse.json({ error: "Steam profile not found" }, { status: 404 });
       }
-    } catch (err: any) {
-      console.warn("Leetify V3 fetch failed for Steam ID:", steamId, err.message);
+
+      const steamData = await steamRes.json();
+      const playerSummary = steamData?.response?.players?.[0] || null;
+      const result = { steamProfile: playerSummary };
+      cache[playerId] = { data: result, ts: Date.now() };
+      return NextResponse.json(result);
+    } catch (fetchErr) {
+      clearTimeout(timeout);
+      return NextResponse.json({ error: "Steam timeout" }, { status: 504 });
     }
-
-    return NextResponse.json({
-      steamId,
-      nickname: faceitProfile.nickname || "Player",
-      avatarUrl: faceitProfile.avatar || "",
-      premierRating,
-      ranks: mapRanks,
-      vacBanned,
-      gameBans,
-      level: 0,
-      totalPlayHours: 0,
-      steamMatches: totalMatchesPlayed,
-      kd,
-      hs,
-      recentMatches: [],
-      latestPremierSeason: 5
-    });
-
-  } catch (error: any) {
-    console.error("Error in steam-stats route:", error.message);
-    return NextResponse.json({ error: error.message || "Ошибка сервера" }, { status: 500 });
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }

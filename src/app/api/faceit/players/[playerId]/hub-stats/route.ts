@@ -9,6 +9,11 @@ import { getStoragePath } from "@/lib/storage";
 
 const cacheFilePath = getStoragePath("match_stats_cache.json");
 
+let cachedHubMatches: any = null;
+let lastHubMatchesFetch = 0;
+let cachedLeaderboard: any = null;
+let lastLeaderboardFetch = 0;
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ playerId: string }> }
@@ -35,10 +40,7 @@ export async function GET(
     // 2. Fetch Hub matches & player history from FACEIT to get exact match timestamps
     const matchTimestamps: Record<string, number> = {};
     const HUB_ID = "d0701937-8eba-4df9-8830-22137001c0bd";
-let cachedHubMatches: any = null;
-let lastHubMatchesFetch = 0;
-let cachedLeaderboard: any = null;
-let lastLeaderboardFetch = 0;
+
 
     let officialStreak: number | null = null;
     try {
