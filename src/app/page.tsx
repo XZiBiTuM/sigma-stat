@@ -2015,6 +2015,50 @@ export default function Home() {
           width: "100%",
           marginTop: "1rem"
         }}>
+          {/* TOURNAMENT COUNTDOWN TICKER */}
+          {fantasyTour?.startTime && (
+            <div 
+              onClick={() => setActiveTab("fantasy")}
+              style={{
+                height: "38px",
+                padding: "0 0.95rem",
+                borderRadius: "10px",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.55rem",
+                background: "linear-gradient(135deg, rgba(255, 215, 0, 0.12) 0%, rgba(255, 145, 0, 0.08) 100%)",
+                border: "1px solid rgba(255, 215, 0, 0.45)",
+                cursor: "pointer",
+                boxShadow: "0 0 15px rgba(255, 215, 0, 0.15)",
+                transition: "all 0.2s ease",
+                userSelect: "none"
+              }}
+              title="Нажмите, чтобы перейти к составлению Fantasy-пиков на турнир"
+            >
+              <span style={{
+                width: "8px",
+                height: "8px",
+                borderRadius: "50%",
+                background: "#ffd700",
+                boxShadow: "0 0 8px #ffd700",
+                display: "inline-block"
+              }} />
+              <span style={{ fontSize: "0.75rem", color: "#ffd700", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                ДО ТУРНИРА:
+              </span>
+              <span style={{ fontSize: "0.85rem", color: "#fff", fontWeight: "900", letterSpacing: "0.02em" }}>
+                {(() => {
+                  const diff = new Date(fantasyTour.startTime).getTime() - Date.now();
+                  if (diff <= 0) return fantasyTour.status === "LIVE" ? "ТУРНИР ИДЕТ" : "СКОРО СТАРТ";
+                  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                  const mins = Math.floor((diff / (1000 * 60)) % 60);
+                  return `${days > 0 ? `${days}д ` : ''}${hours}ч ${mins}м`;
+                })()}
+              </span>
+            </div>
+          )}
+
           <button 
             onClick={() => setShowDraftModal(true)}
             style={{
