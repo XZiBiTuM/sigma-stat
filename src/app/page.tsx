@@ -4372,6 +4372,11 @@ export default function Home() {
                           <table style={{ width: "100%", borderCollapse: "collapse" }}>
                             <tbody>
                               {sk1 && sk2 && statRow("Скилл (1–100)", sk1.score, sk2.score)}
+                              {statRow("HLTV 2.0 Rating", (p1 as any).hubStats?.hltv ?? "—", (p2 as any).hubStats?.hltv ?? "—")}
+                              {statRow("K/D Ratio", (p1 as any).hubStats?.kd ?? "—", (p2 as any).hubStats?.kd ?? "—")}
+                              {statRow("AVG Kills", (p1 as any).hubStats?.avgKills ?? "—", (p2 as any).hubStats?.avgKills ?? "—")}
+                              {statRow("ADR (Damage)", (p1 as any).hubStats?.adr ?? "—", (p2 as any).hubStats?.adr ?? "—")}
+                              {statRow("HS% (Headshots)", (p1 as any).hubStats?.hsPct !== undefined ? `${(p1 as any).hubStats.hsPct}%` : "—", (p2 as any).hubStats?.hsPct !== undefined ? `${(p2 as any).hubStats.hsPct}%` : "—")}
                               {statRow("Очки в хабе", p1.points, p2.points)}
                               {statRow("Матчи в хабе", p1.played, p2.played)}
                               {statRow("Победы", p1.won, p2.won)}
