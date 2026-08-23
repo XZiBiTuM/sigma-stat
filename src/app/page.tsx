@@ -2840,6 +2840,39 @@ export default function Home() {
                                         [{country.toUpperCase()}]
                                       </span>
                                     )}
+                                    {/* Mini Achievement Badges */}
+                                    {(() => {
+                                      const st = (item as any).hubStats;
+                                      if (!st) return null;
+                                      const badges = [];
+                                      if (st.hsPct >= 55) badges.push({ text: "HS", color: "#ff4b4b", bg: "rgba(255,75,75,0.15)", border: "rgba(255,75,75,0.35)", title: `Мастер хэдшотов: ${st.hsPct}%` });
+                                      if (st.hltv >= 1.20) badges.push({ text: "IMPACT", color: "#00e5ff", bg: "rgba(0,229,255,0.15)", border: "rgba(0,229,255,0.35)", title: `Импакт лидер: ${st.hltv} HLTV` });
+                                      if (st.streak >= 3) badges.push({ text: `${st.streak}W`, color: "#00e676", bg: "rgba(0,230,118,0.15)", border: "rgba(0,230,118,0.35)", title: `Стрик: ${st.streak} побед подряд` });
+                                      if (st.kd >= 1.30) badges.push({ text: "K/D", color: "#ff9100", bg: "rgba(255,145,0,0.15)", border: "rgba(255,145,0,0.35)", title: `Машина фрагов: ${st.kd} KD` });
+                                      if (badges.length === 0) return null;
+                                      return (
+                                        <div style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem", marginLeft: "0.25rem" }}>
+                                          {badges.slice(0, 2).map((b, bi) => (
+                                            <span
+                                              key={bi}
+                                              title={b.title}
+                                              style={{
+                                                fontSize: "0.62rem",
+                                                fontWeight: "800",
+                                                padding: "0.08rem 0.35rem",
+                                                borderRadius: "4px",
+                                                color: b.color,
+                                                background: b.bg,
+                                                border: `1px solid ${b.border}`,
+                                                letterSpacing: "0.03em"
+                                              }}
+                                            >
+                                              {b.text}
+                                            </span>
+                                          ))}
+                                        </div>
+                                      );
+                                    })()}
                                   </div>
                                 </td>
                                 <td style={{ textAlign: "center" }}>

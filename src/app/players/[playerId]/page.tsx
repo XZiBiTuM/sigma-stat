@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import PlayerAchievements, { computePlayerAchievements } from "@/components/PlayerAchievements";
+import PlayerCommentsWall from "@/components/PlayerCommentsWall";
 
 // Normalized map name to match public/maps/ file names (e.g. Mirage -> de_mirage)
 const getMapFileName = (mapNameStr: string) => {
@@ -87,8 +89,14 @@ export default function PlayerProfilePage() {
   const [faceitHover, setFaceitHover] = useState(false);
   const [copyHover, setCopyHover] = useState(false);
   const [playerOverridesMap, setPlayerOverridesMap] = useState<Record<string, any>>({});
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
   useEffect(() => {
+    fetch("/api/auth/steam/me")
+      .then(res => res.json())
+      .then(data => { if (data?.authenticated && data?.user) setCurrentUser(data.user); })
+      .catch(() => {});
+
     fetch("/api/admin/players/override")
       .then(res => res.json())
       .then(data => {
@@ -1523,6 +1531,34 @@ export default function PlayerProfilePage() {
               </div>
             );
           })()}
+
+          {/* ACHIEVEMENTS & MEDALS SECTION */}
+          {profile && (
+            <div className="glass-card" style={{ padding: "1.75rem 2rem", borderRadius: "16px", border: "1px solid var(--border-light)" }}>
+              <PlayerAchievements
+                achievements={computePlayerAchievements({
+                  hubStats,
+                  profile,
+                  leetify,
+                  currentStreak: hubStats?.streak || 0,
+                  hubPlayed: hubStats?.matches || 0,
+                  hubWon: hubStats?.wins || 0
+                })}
+              />
+            </div>
+          )}
+
+          {/* COMMENTS & VOUCHES WALL */}
+          {profile && (
+            <div className="glass-card" style={{ padding: "1.75rem 2rem", borderRadius: "16px", border: "1px solid var(--border-light)" }}>
+              <PlayerCommentsWall
+                targetPlayerId={profile?.player_id || profile?.id || playerId}
+                targetPlayerNick={profile?.nickname || ""}
+                currentUser={currentUser}
+                isAdmin={currentUser?.role === "ADMIN"}
+              />
+            </div>
+          )}
 
           {/* Bottom Section: Recent Matches History */}
           <div className="glass-card" style={{ padding: "2rem", borderRadius: "16px", border: "1px solid var(--border-light)" }}>
