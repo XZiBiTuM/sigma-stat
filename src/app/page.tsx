@@ -2414,7 +2414,7 @@ export default function Home() {
                   border: "1px solid rgba(124, 77, 255, 0.5)",
                   boxShadow: "0 0 20px rgba(124, 77, 255, 0.3)"
                 }}>
-                  
+                  🔪
                 </div>
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.25rem" }}>
