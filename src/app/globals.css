@@ -470,3 +470,97 @@ html, body {
 }
 
 
+
+/* Responsive Tour Modal (Default: 1080p Full HD & Laptops) */
+.tour-modal-card {
+  max-width: 980px;
+  width: 92vw;
+  margin: auto;
+  padding: 1.75rem 2rem;
+  border-radius: 20px;
+}
+
+.tour-modal-title {
+  font-size: 1.55rem;
+  color: #fff;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.tour-modal-desc {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  max-width: 860px;
+}
+
+.tour-modal-box {
+  background: rgba(255, 255, 255, 0.02);
+  padding: 0.75rem 1.25rem;
+  border-radius: 14px;
+  border: 1px solid var(--border-light);
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  max-width: 860px;
+  width: 100%;
+}
+
+.tour-modal-carousel {
+  perspective: 1200px;
+  position: relative;
+  height: 340px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1.25rem 0;
+  overflow: hidden;
+  border-radius: 16px;
+  background: rgba(8, 7, 13, 0.6);
+  border: 1px solid var(--border-light);
+}
+
+.tour-modal-slide {
+  position: absolute;
+  width: 600px;
+  height: 310px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #080612;
+  cursor: pointer;
+}
+
+/* 2K / QHD (2560x1440) and 4K Displays */
+@media (min-width: 2100px), (min-width: 1600px) and (min-height: 1081px) {
+  .tour-modal-card {
+    max-width: 1380px;
+    padding: 2.5rem 3rem;
+    border-radius: 28px;
+  }
+  .tour-modal-title {
+    font-size: 2.2rem;
+  }
+  .tour-modal-desc {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    max-width: 920px;
+  }
+  .tour-modal-box {
+    padding: 1.1rem 1.5rem;
+    font-size: 1rem;
+    max-width: 920px;
+  }
+  .tour-modal-carousel {
+    perspective: 1400px;
+    height: 520px;
+    margin: 2rem 0;
+    border-radius: 22px;
+  }
+  .tour-modal-slide {
+    width: 920px;
+    height: 480px;
+    border-radius: 20px;
+  }
+}
