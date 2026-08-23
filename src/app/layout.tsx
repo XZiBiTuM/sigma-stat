@@ -4,6 +4,14 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Sigma Zadrots",
   description: "Удобный дашборд статистики FACEIT хабов. Таблицы лидеров, статистика матчей и профили игроков на русском языке.",
+  icons: {
+    icon: [
+      { url: "/sigma-logo.png", type: "image/png" },
+      { url: "/favicon.ico" }
+    ],
+    shortcut: "/sigma-logo.png",
+    apple: "/sigma-logo.png"
+  }
 };
 
 export default function RootLayout({
