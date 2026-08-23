@@ -4383,32 +4383,121 @@ export default function Home() {
                           </table>
                         </div>
 
-                        {/* H2H matches */}
+                        {/* H2H & Teammate Chemistry Analysis */}
                         {(() => {
-                          const h2hMatches = matches.filter(m => {
-                            const allRounds = (m as any)._rounds as MatchRound[] | undefined;
-                            if (!allRounds) return false;
-                            const allPlayerIds = allRounds.flatMap(r => r.teams?.flatMap(t => t.players?.map(p => p.player_id) || []) || []);
-                            return allPlayerIds.includes(comparePlayer1Id) && allPlayerIds.includes(comparePlayer2Id);
+                          const nick1 = (getItemNick(p1) || "").toLowerCase();
+                          const nick2 = (getItemNick(p2) || "").toLowerCase();
+                          const id1 = ((p1.player?.player_id || (p1 as any).user_id || (p1 as any).player_id) || "").toLowerCase();
+                          const id2 = ((p2.player?.player_id || (p2 as any).user_id || (p2 as any).player_id) || "").toLowerCase();
+
+                          let rivalsCount = 0;
+                          let p1RivalWins = 0;
+                          let p2RivalWins = 0;
+
+                          let teammateCount = 0;
+                          let teamWins = 0;
+                          let teamLosses = 0;
+
+                          matches.forEach((m: any) => {
+                            const rounds = (m._rounds || (m.stats && m.stats.rounds) || (m as any).rounds) as any[] | undefined;
+                            if (!rounds || !Array.isArray(rounds)) return;
+
+                            rounds.forEach((r: any) => {
+                              const roundWinner = r.round_stats?.Winner;
+                              let t1 = null;
+                              let t2 = null;
+
+                              (r.teams || []).forEach((team: any) => {
+                                (team.players || []).forEach((player: any) => {
+                                  const pn = (player.nickname || "").toLowerCase();
+                                  const pid = (player.player_id || "").toLowerCase();
+                                  if (pn === nick1 || (id1 && pid === id1)) t1 = team.team_id;
+                                  if (pn === nick2 || (id2 && pid === id2)) t2 = team.team_id;
+                                });
+                              });
+
+                              if (t1 && t2) {
+                                if (t1 === t2) {
+                                  teammateCount++;
+                                  if (roundWinner && t1 === roundWinner) teamWins++;
+                                  else teamLosses++;
+                                } else {
+                                  rivalsCount++;
+                                  if (roundWinner === t1) p1RivalWins++;
+                                  else if (roundWinner === t2) p2RivalWins++;
+                                }
+                              }
+                            });
                           });
 
-                          // simpler: look in finished matches with player stats already known
-                          const finishedMatches = matches.filter(m => m.status === "FINISHED");
-                          
+                          const totalTogether = rivalsCount + teammateCount;
+                          const duoWinRate = teammateCount > 0 ? ((teamWins / teammateCount) * 100).toFixed(1) : "0.0";
+
                           return (
-                            <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "16px", padding: "1.25rem 1.5rem" }}>
-                              <h4 style={{ fontSize: "1rem", color: "#fff", marginBottom: "0.5rem" }}>Матчи в хабе вместе</h4>
-                              <p style={{ fontSize: "0.82rem", color: "var(--text-muted)", marginBottom: "1rem" }}>
-                                Данные по составам матчей загружаются только при открытии матча — для точного H2H кликни на нужный матч во вкладке «История игр» и возвращайся сюда.
-                              </p>
-                              <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-                                <div style={{ background: "rgba(0,229,255,0.06)", border: "1px solid rgba(0,229,255,0.2)", borderRadius: "10px", padding: "0.75rem 1.25rem", textAlign: "center" }}>
-                                  <div style={{ fontSize: "1.4rem", fontWeight: "900", color: "var(--accent-cyan)" }}>{finishedMatches.length}</div>
-                                  <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>матчей в хабе всего</div>
+                            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                              <h4 style={{ fontSize: "1.1rem", color: "#fff", fontWeight: "800", margin: 0 }}>
+                                Совместная история в матчах хаба
+                              </h4>
+
+                              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1rem" }}>
+                                
+                                {/* CARD 1: RIVALS (HEAD TO HEAD) */}
+                                <div style={{
+                                  background: "rgba(255, 73, 73, 0.05)",
+                                  border: "1px solid rgba(255, 73, 73, 0.25)",
+                                  borderRadius: "14px",
+                                  padding: "1.25rem"
+                                }}>
+                                  <div style={{ fontSize: "0.75rem", color: "#ff8a80", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                                    Личные встречи (Друг против друга)
+                                  </div>
+                                  <div style={{ fontSize: "1.6rem", fontWeight: "900", color: "#fff", marginTop: "0.4rem", display: "flex", alignItems: "baseline", gap: "0.5rem" }}>
+                                    <span style={{ color: p1RivalWins > p2RivalWins ? "var(--success)" : "#fff" }}>{p1RivalWins}</span>
+                                    <span style={{ fontSize: "1rem", color: "var(--text-muted)" }}>:</span>
+                                    <span style={{ color: p2RivalWins > p1RivalWins ? "var(--success)" : "#fff" }}>{p2RivalWins}</span>
+                                  </div>
+                                  <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginTop: "0.3rem" }}>
+                                    Всего матчей соперниками: <strong>{rivalsCount}</strong>
+                                  </div>
                                 </div>
-                                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flex: 1, color: "var(--text-secondary)", fontSize: "0.85rem", lineHeight: "1.5" }}>
-                                  💡 В следующей версии здесь появится автоматический поиск матчей где оба игрока были в разных командах и счёт побед/поражений в дуэлях между ними.
+
+                                {/* CARD 2: TEAMMATES (IN SAME TEAM) */}
+                                <div style={{
+                                  background: "rgba(0, 229, 255, 0.05)",
+                                  border: "1px solid rgba(0, 229, 255, 0.25)",
+                                  borderRadius: "14px",
+                                  padding: "1.25rem"
+                                }}>
+                                  <div style={{ fontSize: "0.75rem", color: "var(--accent-cyan)", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                                    В одной команде (Тиммейты)
+                                  </div>
+                                  <div style={{ fontSize: "1.6rem", fontWeight: "900", color: "#fff", marginTop: "0.4rem", display: "flex", alignItems: "baseline", gap: "0.5rem" }}>
+                                    <span>{duoWinRate}%</span>
+                                    <span style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: "600" }}>({teamWins}W / {teamLosses}L)</span>
+                                  </div>
+                                  <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginTop: "0.3rem" }}>
+                                    Матчей в одном составе: <strong>{teammateCount}</strong>
+                                  </div>
                                 </div>
+
+                                {/* CARD 3: TOTAL HUB SHARED MATCHES */}
+                                <div style={{
+                                  background: "rgba(255, 255, 255, 0.03)",
+                                  border: "1px solid var(--border-light)",
+                                  borderRadius: "14px",
+                                  padding: "1.25rem"
+                                }}>
+                                  <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                                    Всего совместных игр на сервере
+                                  </div>
+                                  <div style={{ fontSize: "1.6rem", fontWeight: "900", color: "#fff", marginTop: "0.4rem" }}>
+                                    {totalTogether}
+                                  </div>
+                                  <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginTop: "0.3rem" }}>
+                                    Матчей в хабе сыграно вместе
+                                  </div>
+                                </div>
+
                               </div>
                             </div>
                           );

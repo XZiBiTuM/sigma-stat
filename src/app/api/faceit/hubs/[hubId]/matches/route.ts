@@ -50,11 +50,12 @@ export async function GET(
       data.items = [];
     }
 
-    // Enrich FACEIT matches with maps from cache if available
+    // Enrich FACEIT matches with maps and rounds from cache if available
     const statsCache = await readStatsCache();
     for (const match of data.items) {
       const stats = statsCache[match.match_id];
       if (stats && stats.rounds) {
+        match._rounds = stats.rounds;
         match.maps = stats.rounds.map((r: any) => r.round_stats?.Map || "Неизвестно");
       } else {
         match.maps = match.voting?.map?.entities?.slice(0, 1).map((e: any) => e.name) || ["Голосование..."];
