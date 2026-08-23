@@ -2015,50 +2015,6 @@ export default function Home() {
           width: "100%",
           marginTop: "1rem"
         }}>
-          {/* TOURNAMENT COUNTDOWN TICKER */}
-          {fantasyTour?.startTime && (
-            <div 
-              onClick={() => setActiveTab("fantasy")}
-              style={{
-                height: "38px",
-                padding: "0 0.95rem",
-                borderRadius: "10px",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.55rem",
-                background: "linear-gradient(135deg, rgba(255, 215, 0, 0.12) 0%, rgba(255, 145, 0, 0.08) 100%)",
-                border: "1px solid rgba(255, 215, 0, 0.45)",
-                cursor: "pointer",
-                boxShadow: "0 0 15px rgba(255, 215, 0, 0.15)",
-                transition: "all 0.2s ease",
-                userSelect: "none"
-              }}
-              title="Нажмите, чтобы перейти к составлению Fantasy-пиков на турнир"
-            >
-              <span style={{
-                width: "8px",
-                height: "8px",
-                borderRadius: "50%",
-                background: "#ffd700",
-                boxShadow: "0 0 8px #ffd700",
-                display: "inline-block"
-              }} />
-              <span style={{ fontSize: "0.75rem", color: "#ffd700", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                ДО ТУРНИРА:
-              </span>
-              <span style={{ fontSize: "0.85rem", color: "#fff", fontWeight: "900", letterSpacing: "0.02em" }}>
-                {(() => {
-                  const diff = new Date(fantasyTour.startTime).getTime() - Date.now();
-                  if (diff <= 0) return fantasyTour.status === "LIVE" ? "ТУРНИР ИДЕТ" : "СКОРО СТАРТ";
-                  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-                  const mins = Math.floor((diff / (1000 * 60)) % 60);
-                  return `${days > 0 ? `${days}д ` : ''}${hours}ч ${mins}м`;
-                })()}
-              </span>
-            </div>
-          )}
-
           <button 
             onClick={() => setShowDraftModal(true)}
             style={{
@@ -2458,7 +2414,7 @@ export default function Home() {
                   border: "1px solid rgba(124, 77, 255, 0.5)",
                   boxShadow: "0 0 20px rgba(124, 77, 255, 0.3)"
                 }}>
-                  🔪
+                  
                 </div>
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.25rem" }}>
@@ -2569,6 +2525,50 @@ export default function Home() {
                   {hubDetails.description || "FACEIT HUB"}
                 </p>
               </div>
+
+              {/* Tournament countdown widget (Option 2) */}
+              {fantasyTour?.startTime && (
+                <div 
+                  onClick={() => setActiveTab("fantasy")}
+                  style={{
+                    background: "linear-gradient(135deg, rgba(255, 215, 0, 0.08) 0%, rgba(255, 145, 0, 0.03) 100%)",
+                    border: "1px solid rgba(255, 215, 0, 0.35)",
+                    borderRadius: "12px",
+                    padding: "0.75rem 1.35rem",
+                    textAlign: "center",
+                    minWidth: "160px",
+                    cursor: "pointer",
+                    boxShadow: "0 0 25px rgba(255, 215, 0, 0.12)",
+                    transition: "all 0.2s ease",
+                    userSelect: "none"
+                  }}
+                  title="Нажмите, чтобы перейти в Fantasy League"
+                >
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.45rem" }}>
+                    <span style={{
+                      width: "7px",
+                      height: "7px",
+                      borderRadius: "50%",
+                      background: "#ffd700",
+                      boxShadow: "0 0 8px #ffd700",
+                      display: "inline-block"
+                    }} />
+                    <span style={{ fontSize: "0.72rem", color: "#ffd700", textTransform: "uppercase", fontWeight: "800", letterSpacing: "0.05em" }}>
+                      {fantasyTour.status === "LIVE" ? "ТУРНИР" : "ДО ТУРНИРА"}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: "1.6rem", fontWeight: "900", color: "#fff", marginTop: "0.15rem", letterSpacing: "0.02em" }}>
+                    {(() => {
+                      const diff = new Date(fantasyTour.startTime).getTime() - Date.now();
+                      if (diff <= 0) return fantasyTour.status === "LIVE" ? "ИДЕТ СЕЙЧАС" : "СКОРО СТАРТ";
+                      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                      const mins = Math.floor((diff / (1000 * 60)) % 60);
+                      return `${days > 0 ? `${days}д ` : ''}${hours}ч ${mins}м`;
+                    })()}
+                  </div>
+                </div>
+              )}
 
               {/* Members stats widget */}
               <div style={{
