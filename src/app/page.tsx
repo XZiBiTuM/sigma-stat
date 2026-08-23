@@ -2682,8 +2682,8 @@ export default function Home() {
                       <table className="custom-table">
                         <thead>
                           <tr>
-                            <th style={{ width: "60px", textAlign: "center" }}>#</th>
-                            <th>Игрок</th>
+                            <th style={{ width: "50px", textAlign: "center", whiteSpace: "nowrap" }}>#</th>
+                            <th style={{ whiteSpace: "nowrap" }}>Игрок</th>
                             <th
                               onClick={() => handleSort("skill")}
                               style={{ textAlign: "center", cursor: "pointer", userSelect: "none", color: sortField === "skill" ? "var(--accent-cyan)" : undefined, whiteSpace: "nowrap" }}
@@ -2705,7 +2705,7 @@ export default function Home() {
                             >
                               Матчи {sortField === "matches" ? (sortOrder === "desc" ? "▼" : "▲") : "⇅"}
                             </th>
-                            <th style={{ textAlign: "center" }}>В / П</th>
+                            <th style={{ textAlign: "center", whiteSpace: "nowrap" }}>В / П</th>
                             <th
                               onClick={() => handleSort("kd")}
                               style={{ textAlign: "center", cursor: "pointer", userSelect: "none", color: sortField === "kd" ? "var(--accent-cyan)" : undefined, whiteSpace: "nowrap" }}
@@ -2748,7 +2748,7 @@ export default function Home() {
                             >
                               Win Rate {sortField === "winrate" ? (sortOrder === "desc" ? "▼" : "▲") : "⇅"}
                             </th>
-                            <th style={{ textAlign: "center" }}>Стрик</th>
+                            <th style={{ textAlign: "center", whiteSpace: "nowrap" }}>Стрик</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -2826,7 +2826,7 @@ export default function Home() {
                                 <td style={{ textAlign: "center", color: "var(--text-secondary)" }}>
                                   {played}
                                 </td>
-                                <td style={{ textAlign: "center", fontSize: "0.85rem" }}>
+                                <td style={{ textAlign: "center", fontSize: "0.85rem", whiteSpace: "nowrap" }}>
                                   {item.played !== undefined ? (
                                     <>
                                       <span style={{ color: "var(--success)" }}>{won}</span>
