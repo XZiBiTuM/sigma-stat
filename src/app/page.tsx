@@ -257,11 +257,11 @@ export default function Home() {
   const [tourStep, setTourStep] = useState(0);
 
   // Sorting & Min Matches filter state
-  const [sortField, setSortField] = useState<"default" | "skill" | "points" | "matches" | "winrate">("default");
+  const [sortField, setSortField] = useState<"default" | "skill" | "points" | "matches" | "kd" | "avg" | "adr" | "hs" | "hltv" | "winrate">("default");
   const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
   const [minMatchesFilter, setMinMatchesFilter] = useState<number>(10);
 
-  const handleSort = (field: "skill" | "points" | "matches" | "winrate") => {
+  const handleSort = (field: "skill" | "points" | "matches" | "kd" | "avg" | "adr" | "hs" | "hltv" | "winrate") => {
     if (sortField === field) {
       if (sortOrder === "desc") {
         setSortOrder("asc");
@@ -1782,6 +1782,21 @@ export default function Home() {
         const wB = (b as any).win_rate !== undefined ? parseFloat(String((b as any).win_rate)) : (b.won && b.played ? (b.won / b.played) * 100 : 0);
         valA = isNaN(wA) ? 0 : wA;
         valB = isNaN(wB) ? 0 : wB;
+      } else if (sortField === "kd") {
+        valA = (a as any).hubStats?.kd ?? 0;
+        valB = (b as any).hubStats?.kd ?? 0;
+      } else if (sortField === "avg") {
+        valA = (a as any).hubStats?.avgKills ?? 0;
+        valB = (b as any).hubStats?.avgKills ?? 0;
+      } else if (sortField === "adr") {
+        valA = (a as any).hubStats?.adr ?? 0;
+        valB = (b as any).hubStats?.adr ?? 0;
+      } else if (sortField === "hs") {
+        valA = (a as any).hubStats?.hsPct ?? 0;
+        valB = (b as any).hubStats?.hsPct ?? 0;
+      } else if (sortField === "hltv") {
+        valA = (a as any).hubStats?.hltv ?? 0;
+        valB = (b as any).hubStats?.hltv ?? 0;
       }
 
       if (valA === valB) return 0;
@@ -2667,14 +2682,14 @@ export default function Home() {
                       <table className="custom-table">
                         <thead>
                           <tr>
-                            <th style={{ width: "70px", textAlign: "center" }}>Место</th>
+                            <th style={{ width: "60px", textAlign: "center" }}>#</th>
                             <th>Игрок</th>
                             <th
                               onClick={() => handleSort("skill")}
                               style={{ textAlign: "center", cursor: "pointer", userSelect: "none", color: sortField === "skill" ? "var(--accent-cyan)" : undefined, whiteSpace: "nowrap" }}
                               title="Нажмите для сортировки по скиллу"
                             >
-                              Скилл (1-100) {sortField === "skill" ? (sortOrder === "desc" ? "▼" : "▲") : "⇅"}
+                              Скилл {sortField === "skill" ? (sortOrder === "desc" ? "▼" : "▲") : "⇅"}
                             </th>
                             <th
                               onClick={() => handleSort("points")}
@@ -2691,6 +2706,41 @@ export default function Home() {
                               Матчи {sortField === "matches" ? (sortOrder === "desc" ? "▼" : "▲") : "⇅"}
                             </th>
                             <th style={{ textAlign: "center" }}>В / П</th>
+                            <th
+                              onClick={() => handleSort("kd")}
+                              style={{ textAlign: "center", cursor: "pointer", userSelect: "none", color: sortField === "kd" ? "var(--accent-cyan)" : undefined, whiteSpace: "nowrap" }}
+                              title="Нажмите для сортировки по K/D"
+                            >
+                              K/D {sortField === "kd" ? (sortOrder === "desc" ? "▼" : "▲") : "⇅"}
+                            </th>
+                            <th
+                              onClick={() => handleSort("avg")}
+                              style={{ textAlign: "center", cursor: "pointer", userSelect: "none", color: sortField === "avg" ? "var(--accent-cyan)" : undefined, whiteSpace: "nowrap" }}
+                              title="Нажмите для сортировки по AVG Kills"
+                            >
+                              AVG {sortField === "avg" ? (sortOrder === "desc" ? "▼" : "▲") : "⇅"}
+                            </th>
+                            <th
+                              onClick={() => handleSort("adr")}
+                              style={{ textAlign: "center", cursor: "pointer", userSelect: "none", color: sortField === "adr" ? "var(--accent-cyan)" : undefined, whiteSpace: "nowrap" }}
+                              title="Нажмите для сортировки по ADR"
+                            >
+                              ADR {sortField === "adr" ? (sortOrder === "desc" ? "▼" : "▲") : "⇅"}
+                            </th>
+                            <th
+                              onClick={() => handleSort("hs")}
+                              style={{ textAlign: "center", cursor: "pointer", userSelect: "none", color: sortField === "hs" ? "var(--accent-cyan)" : undefined, whiteSpace: "nowrap" }}
+                              title="Нажмите для сортировки по % Headshots"
+                            >
+                              HS% {sortField === "hs" ? (sortOrder === "desc" ? "▼" : "▲") : "⇅"}
+                            </th>
+                            <th
+                              onClick={() => handleSort("hltv")}
+                              style={{ textAlign: "center", cursor: "pointer", userSelect: "none", color: sortField === "hltv" ? "var(--accent-cyan)" : undefined, whiteSpace: "nowrap" }}
+                              title="Нажмите для сортировки по HLTV 2.0 Rating"
+                            >
+                              HLTV 2.0 {sortField === "hltv" ? (sortOrder === "desc" ? "▼" : "▲") : "⇅"}
+                            </th>
                             <th
                               onClick={() => handleSort("winrate")}
                               style={{ textAlign: "center", cursor: "pointer", userSelect: "none", color: sortField === "winrate" ? "var(--accent-cyan)" : undefined, whiteSpace: "nowrap" }}
@@ -2787,6 +2837,72 @@ export default function Home() {
                                     <span style={{ color: "var(--text-muted)" }}>-</span>
                                   )}
                                 </td>
+
+                                {/* K/D */}
+                                <td style={{ textAlign: "center", fontWeight: "700" }}>
+                                  {(item as any).hubStats?.kd !== undefined ? (
+                                    <span style={{ color: (item as any).hubStats.kd >= 1.0 ? "#4caf50" : "#f44336" }}>
+                                      {(item as any).hubStats.kd.toFixed(2)}
+                                    </span>
+                                  ) : (
+                                    <span style={{ color: "var(--text-muted)" }}>—</span>
+                                  )}
+                                </td>
+
+                                {/* AVG */}
+                                <td style={{ textAlign: "center", color: "#e0e0e0", fontWeight: "600", fontSize: "0.88rem" }}>
+                                  {(item as any).hubStats?.avgKills !== undefined ? (item as any).hubStats.avgKills.toFixed(1) : "—"}
+                                </td>
+
+                                {/* ADR */}
+                                <td style={{ textAlign: "center", color: "var(--text-secondary)", fontWeight: "600", fontSize: "0.88rem" }}>
+                                  {(item as any).hubStats?.adr !== undefined ? (item as any).hubStats.adr.toFixed(1) : "—"}
+                                </td>
+
+                                {/* HS% */}
+                                <td style={{ textAlign: "center", color: "var(--text-secondary)", fontSize: "0.85rem" }}>
+                                  {(item as any).hubStats?.hsPct !== undefined ? `${(item as any).hubStats.hsPct}%` : "—"}
+                                </td>
+
+                                {/* HLTV 2.0 Rating */}
+                                <td style={{ textAlign: "center" }}>
+                                  {(item as any).hubStats?.hltv !== undefined ? (
+                                    <span 
+                                      style={{
+                                        fontSize: "0.82rem",
+                                        fontWeight: "800",
+                                        padding: "0.2rem 0.5rem",
+                                        borderRadius: "6px",
+                                        background: (item as any).hubStats.hltv >= 1.20 
+                                          ? "rgba(255, 215, 0, 0.15)" 
+                                          : (item as any).hubStats.hltv >= 1.05 
+                                          ? "rgba(76, 175, 80, 0.15)" 
+                                          : (item as any).hubStats.hltv >= 0.95 
+                                          ? "rgba(0, 229, 255, 0.15)" 
+                                          : "rgba(255, 255, 255, 0.05)",
+                                        border: (item as any).hubStats.hltv >= 1.20 
+                                          ? "1px solid rgba(255, 215, 0, 0.4)" 
+                                          : (item as any).hubStats.hltv >= 1.05 
+                                          ? "1px solid rgba(76, 175, 80, 0.4)" 
+                                          : (item as any).hubStats.hltv >= 0.95 
+                                          ? "1px solid rgba(0, 229, 255, 0.4)" 
+                                          : "1px solid var(--border-light)",
+                                        color: (item as any).hubStats.hltv >= 1.20 
+                                          ? "#ffd700" 
+                                          : (item as any).hubStats.hltv >= 1.05 
+                                          ? "#4caf50" 
+                                          : (item as any).hubStats.hltv >= 0.95 
+                                          ? "#00e5ff" 
+                                          : "var(--text-muted)"
+                                      }}
+                                    >
+                                      {(item as any).hubStats.hltv.toFixed(2)}
+                                    </span>
+                                  ) : (
+                                    <span style={{ color: "var(--text-muted)" }}>—</span>
+                                  )}
+                                </td>
+
                                 <td style={{ textAlign: "center", fontWeight: "600" }}>
                                   {winRate ? (
                                     <span className={parseFloat(winRate) >= 55 ? "badge badge-success" : parseFloat(winRate) < 48 ? "badge badge-danger" : "badge badge-warning"}>
