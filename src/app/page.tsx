@@ -1174,7 +1174,7 @@ export default function Home() {
           maxWidth: "450px",
           width: "100%"
         }}>
-          <h4 style={{ fontSize: "1rem", fontWeight: "800", color: "#fff", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          <h4 style={{ fontSize: "0.85rem", fontWeight: "800", color: "#fff", display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <span style={{ display: "inline-block", width: "8px", height: "8px", borderRadius: "50%", background: "var(--accent-cyan)" }} />
             {showAllMatchDeaths ? "Интерактивная тепловая карта смертей" : `Интерактивная карта убийств`}
           </h4>
@@ -2367,7 +2367,7 @@ export default function Home() {
 
           {/* Quick selects */}
           <div>
-            <h3 style={{ fontSize: "1.1rem", marginBottom: "1rem", color: "var(--text-secondary)" }}>Быстрый выбор для тестирования:</h3>
+            <h3 style={{ fontSize: "0.92rem", marginBottom: "1rem", color: "var(--text-secondary)" }}>Быстрый выбор для тестирования:</h3>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1rem" }}>
               {POPULAR_HUBS.map((hub) => (
                 <div 
@@ -2407,7 +2407,7 @@ export default function Home() {
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
                 <div style={{
-                  fontSize: "2.2rem",
+                  fontSize: "1.5rem",
                   background: "rgba(124, 77, 255, 0.25)",
                   padding: "0.5rem 0.8rem",
                   borderRadius: "16px",
@@ -3187,7 +3187,7 @@ export default function Home() {
                                 color: isFinished ? "#fff" : "var(--accent-cyan)"
                               }}>
                                 <span>{match.results?.score?.faction1 ?? match.teams.faction1.score ?? "-"}</span>
-                                <span style={{ color: "var(--text-muted)", fontSize: "1rem" }}>:</span>
+                                <span style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>:</span>
                                 <span>{match.results?.score?.faction2 ?? match.teams.faction2.score ?? "-"}</span>
                               </div>
 
@@ -3231,7 +3231,7 @@ export default function Home() {
               {/* TAB CONTENT: MEMBERS */}
               {activeTab === 'members' && (
                 <div className="glass-card animate-fade-in" style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-                  <h3 style={{ fontSize: "1.1rem", color: "#fff", marginBottom: "0.5rem" }}>
+                  <h3 style={{ fontSize: "0.92rem", color: "#fff", marginBottom: "0.5rem" }}>
                     Участники клуба ({members.length})
                   </h3>
                   
@@ -3495,7 +3495,7 @@ export default function Home() {
 
                         {/* Tournament Leaderboard Table */}
                         <div>
-                          <h4 style={{ fontSize: "1.1rem", color: "#fff", marginBottom: "1rem" }}>
+                          <h4 style={{ fontSize: "0.92rem", color: "#fff", marginBottom: "1rem" }}>
                             Рейтинг участников турнира
                           </h4>
                           <div className="custom-table-container">
@@ -3557,7 +3557,7 @@ export default function Home() {
 
                         {/* Tournament Matches */}
                         <div>
-                          <h4 style={{ fontSize: "1.1rem", color: "#fff", marginBottom: "1rem" }}>
+                          <h4 style={{ fontSize: "0.92rem", color: "#fff", marginBottom: "1rem" }}>
                             Сыгранные матчи ({currentTournament.matchesCount})
                           </h4>
                           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "0.75rem" }}>
@@ -4341,7 +4341,7 @@ export default function Home() {
                           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(0,229,255,0.06)", border: "1px solid rgba(0,229,255,0.25)", borderRadius: "12px", padding: "0.75rem 1rem" }}>
                             {getItemAvatar(p1) && <img src={getItemAvatar(p1)} alt="" style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(0,229,255,0.4)" }} />}
                             <div>
-                              <div style={{ fontWeight: "700", fontSize: "1rem", color: "#fff" }}>{getItemNick(p1)}</div>
+                              <div style={{ fontWeight: "700", fontSize: "0.85rem", color: "#fff" }}>{getItemNick(p1)}</div>
                               <div style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>#{p1.position} в хабе</div>
                             </div>
                             {sk1 && <span style={{ marginLeft: "auto", background: sk1.bg, color: sk1.color, border: `1px solid ${sk1.border}`, borderRadius: "6px", padding: "0.2rem 0.55rem", fontSize: "0.8rem", fontWeight: "700", boxShadow: sk1.glow || undefined }}>{sk1.score}/100</span>}
@@ -4388,7 +4388,7 @@ export default function Home() {
                           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(168,85,247,0.06)", border: "1px solid rgba(168,85,247,0.25)", borderRadius: "12px", padding: "0.75rem 1rem" }}>
                             {getItemAvatar(p2) && <img src={getItemAvatar(p2)} alt="" style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(168,85,247,0.4)" }} />}
                             <div>
-                              <div style={{ fontWeight: "700", fontSize: "1rem", color: "#fff" }}>{getItemNick(p2)}</div>
+                              <div style={{ fontWeight: "700", fontSize: "0.85rem", color: "#fff" }}>{getItemNick(p2)}</div>
                               <div style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>#{p2.position} в хабе</div>
                             </div>
                             {sk2 && <span style={{ marginLeft: "auto", background: sk2.bg, color: sk2.color, border: `1px solid ${sk2.border}`, borderRadius: "6px", padding: "0.2rem 0.55rem", fontSize: "0.8rem", fontWeight: "700", boxShadow: sk2.glow || undefined }}>{sk2.score}/100</span>}
@@ -4484,7 +4484,7 @@ export default function Home() {
 
                           return (
                             <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                              <h4 style={{ fontSize: "1.1rem", color: "#fff", fontWeight: "800", margin: 0 }}>
+                              <h4 style={{ fontSize: "0.92rem", color: "#fff", fontWeight: "800", margin: 0 }}>
                                 Совместная история в матчах хаба
                               </h4>
 
@@ -4502,7 +4502,7 @@ export default function Home() {
                                   </div>
                                   <div style={{ fontSize: "1.6rem", fontWeight: "900", color: "#fff", marginTop: "0.4rem", display: "flex", alignItems: "baseline", gap: "0.5rem" }}>
                                     <span style={{ color: p1RivalWins > p2RivalWins ? "var(--success)" : "#fff" }}>{p1RivalWins}</span>
-                                    <span style={{ fontSize: "1rem", color: "var(--text-muted)" }}>:</span>
+                                    <span style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>:</span>
                                     <span style={{ color: p2RivalWins > p1RivalWins ? "var(--success)" : "#fff" }}>{p2RivalWins}</span>
                                   </div>
                                   <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginTop: "0.3rem" }}>
@@ -4555,7 +4555,7 @@ export default function Home() {
                     ) : (
                       <div style={{ textAlign: "center", padding: "3rem", border: "1px dashed var(--border-light)", borderRadius: "16px", color: "var(--text-muted)" }}>
                         <div style={{ fontSize: "2rem", fontWeight: "900", color: "var(--accent-cyan)", marginBottom: "0.75rem" }}>VS</div>
-                        <div style={{ fontSize: "1rem", color: "var(--text-secondary)", fontWeight: "600" }}>Выбери двух игроков выше</div>
+                        <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", fontWeight: "600" }}>Выбери двух игроков выше</div>
                         <div style={{ fontSize: "0.85rem", marginTop: "0.35rem" }}>Кликни на ники в списке — сравним их по скиллу, Win Rate, матчам и месту в хабе</div>
                       </div>
                     )}
@@ -4794,7 +4794,7 @@ export default function Home() {
                                 WebkitBackgroundClip: "text",
                                 WebkitTextFillColor: "transparent",
                                 fontWeight: "900",
-                                fontSize: "1.1rem",
+                                fontSize: "0.92rem",
                                 letterSpacing: "0.05em"
                               }}>
                                 ★ MVP МАТЧА
@@ -4926,7 +4926,7 @@ export default function Home() {
                                   <span style={{ fontWeight: "600", color: "#fff", fontSize: "0.9rem" }}>{leaderKills.nickname}</span>
                                 </div>
                                 <div style={{ textAlign: "right" }}>
-                                  <div style={{ fontWeight: "800", color: "var(--accent-cyan)", fontSize: "1rem" }}>
+                                  <div style={{ fontWeight: "800", color: "var(--accent-cyan)", fontSize: "0.85rem" }}>
                                     {leaderKills.player_stats?.Kills}
                                   </div>
                                   <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Наибольшее кол-во убийств</div>
@@ -4968,7 +4968,7 @@ export default function Home() {
                                   <span style={{ fontWeight: "600", color: "#fff", fontSize: "0.9rem" }}>{leaderDamage.nickname}</span>
                                 </div>
                                 <div style={{ textAlign: "right" }}>
-                                  <div style={{ fontWeight: "800", color: "var(--accent-cyan)", fontSize: "1rem" }}>
+                                  <div style={{ fontWeight: "800", color: "var(--accent-cyan)", fontSize: "0.85rem" }}>
                                     {leaderDamage.player_stats?.Damage}
                                   </div>
                                   <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Наибольший урон</div>
@@ -5010,7 +5010,7 @@ export default function Home() {
                                   <span style={{ fontWeight: "600", color: "#fff", fontSize: "0.9rem" }}>{leaderFirstKills.nickname}</span>
                                 </div>
                                 <div style={{ textAlign: "right" }}>
-                                  <div style={{ fontWeight: "800", color: "var(--accent-cyan)", fontSize: "1rem" }}>
+                                  <div style={{ fontWeight: "800", color: "var(--accent-cyan)", fontSize: "0.85rem" }}>
                                     {leaderFirstKills.player_stats?.["First Kills"] || leaderFirstKills.player_stats?.["Entry Wins"] || "0"}
                                   </div>
                                   <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Первые убийства</div>
@@ -5052,7 +5052,7 @@ export default function Home() {
                                   <span style={{ fontWeight: "600", color: "#fff", fontSize: "0.9rem" }}>{leaderAssists.nickname}</span>
                                 </div>
                                 <div style={{ textAlign: "right" }}>
-                                  <div style={{ fontWeight: "800", color: "var(--accent-cyan)", fontSize: "1rem" }}>
+                                  <div style={{ fontWeight: "800", color: "var(--accent-cyan)", fontSize: "0.85rem" }}>
                                     {leaderAssists.player_stats?.Assists}
                                   </div>
                                   <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Наибольшее кол-во ассистов</div>
@@ -5094,7 +5094,7 @@ export default function Home() {
                                   <span style={{ fontWeight: "600", color: "#fff", fontSize: "0.9rem" }}>{leaderHS.nickname}</span>
                                 </div>
                                 <div style={{ textAlign: "right" }}>
-                                  <div style={{ fontWeight: "800", color: "var(--accent-cyan)", fontSize: "1rem" }}>
+                                  <div style={{ fontWeight: "800", color: "var(--accent-cyan)", fontSize: "0.85rem" }}>
                                     {leaderHS.player_stats?.["Headshots %"]}%
                                   </div>
                                   <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Наибольший % хедшотов</div>
@@ -5829,7 +5829,7 @@ export default function Home() {
                         {playerHubStats?.hltvRating !== undefined && (
                           <div style={{ textAlign: "right", paddingRight: "0.75rem", borderRight: "1px solid var(--border-light)" }}>
                             <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block" }}>HLTV 2.0</span>
-                            <span className="glow-text-cyan" style={{ fontWeight: "900", color: "var(--accent-cyan)", fontSize: "1rem" }}>
+                            <span className="glow-text-cyan" style={{ fontWeight: "900", color: "var(--accent-cyan)", fontSize: "0.85rem" }}>
                               {playerHubStats.hltvRating.toFixed(2)}
                             </span>
                           </div>
@@ -5999,7 +5999,7 @@ export default function Home() {
                               ].map((item, idx) => (
                                 <div key={idx} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "8px", padding: "0.6rem 0.85rem" }}>
                                   <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block" }}>{item.label}</span>
-                                  <span style={{ fontSize: "1rem", fontWeight: "700", color: item.color, display: "block", marginTop: "0.15rem" }}>
+                                  <span style={{ fontSize: "0.85rem", fontWeight: "700", color: item.color, display: "block", marginTop: "0.15rem" }}>
                                     {item.val}
                                   </span>
                                 </div>
@@ -6066,7 +6066,7 @@ export default function Home() {
                                 <span style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>Убийств со снайперских винтовок</span>
                               </div>
                               <div style={{ textAlign: "right" }}>
-                                <span style={{ fontSize: "1.1rem", fontWeight: "700", color: "var(--accent-yellow)", display: "block" }}>
+                                <span style={{ fontSize: "0.92rem", fontWeight: "700", color: "var(--accent-yellow)", display: "block" }}>
                                   {playerHubStats?.sniper?.kills ?? playerGameStats?.lifetime["Total Sniper Kills"]}
                                 </span>
                                 <span style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>
@@ -6109,7 +6109,7 @@ export default function Home() {
                                 padding: "0.25rem 0.75rem",
                                 borderRadius: "6px",
                                 fontWeight: "800",
-                                fontSize: "1rem"
+                                fontSize: "0.85rem"
                               }}>
                                 {isPos ? `+${val.toFixed(2)}` : val.toFixed(2)}
                               </div>
@@ -6484,7 +6484,7 @@ export default function Home() {
                     setAuthError("Неверный пароль доступа! Для Event Maker: chillout, для Admin: admin");
                   }
                 }}
-                style={{ padding: "0.75rem", fontSize: "1rem", borderRadius: "12px", marginTop: "0.5rem" }}
+                style={{ padding: "0.75rem", fontSize: "0.85rem", borderRadius: "12px", marginTop: "0.5rem" }}
               >
                 Войти в систему
               </button>
@@ -6591,7 +6591,7 @@ export default function Home() {
                   setEventAnnMsg("Ошибка: " + e.message);
                 }
               }}
-              style={{ width: "100%", padding: "0.75rem", fontSize: "1rem", borderRadius: "12px", background: "linear-gradient(135deg, #7c4dff, #00e5ff)" }}
+              style={{ width: "100%", padding: "0.75rem", fontSize: "0.85rem", borderRadius: "12px", background: "linear-gradient(135deg, #7c4dff, #00e5ff)" }}
             >
               Опубликовать Event
             </button>
@@ -6823,7 +6823,7 @@ export default function Home() {
                   setCsSubmitMsg("Ошибка: " + e.message);
                 }
               }}
-              style={{ width: "100%", padding: "0.75rem", fontSize: "1rem", borderRadius: "12px", background: "linear-gradient(135deg, #ff9100, #ff1744)" }}
+              style={{ width: "100%", padding: "0.75rem", fontSize: "0.85rem", borderRadius: "12px", background: "linear-gradient(135deg, #ff9100, #ff1744)" }}
             >
               Сохранить матч Cybershoke
             </button>
@@ -6930,7 +6930,7 @@ export default function Home() {
                     setEventAnnMsg("Ошибка: " + e.message);
                   }
                 }}
-                style={{ width: "100%", padding: "0.75rem", fontSize: "1rem", borderRadius: "12px", background: "linear-gradient(135deg, #7c4dff, #00e5ff)" }}
+                style={{ width: "100%", padding: "0.75rem", fontSize: "0.85rem", borderRadius: "12px", background: "linear-gradient(135deg, #7c4dff, #00e5ff)" }}
               >
                 Опубликовать Event
               </button>
@@ -7333,15 +7333,15 @@ export default function Home() {
           display: "flex",
           alignItems: "flex-start",
           justifyContent: "center",
-          padding: "2.5rem 1.5rem",
+          padding: "1.5rem 1rem",
           overflowY: "auto"
         }}>
           <div className="glass-card animate-fade-in" style={{
-            maxWidth: "1380px",
-            width: "95vw",
-            margin: "0 auto",
-            padding: "2.5rem 3rem",
-            borderRadius: "28px",
+            maxWidth: "960px",
+            width: "92vw",
+            margin: "auto",
+            padding: "1.75rem 2rem",
+            borderRadius: "20px",
             border: "1px solid var(--border-light)",
             boxShadow: "0 20px 70px rgba(0, 0, 0, 0.9), 0 0 40px rgba(0, 229, 255, 0.2)",
             position: "relative",
@@ -7360,13 +7360,13 @@ export default function Home() {
 
             {tourStep === 0 && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center", alignItems: "center" }}>
-                <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
+                <h3 className="glow-text-cyan" style={{ fontSize: "1.5rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
                   Добро пожаловать в Сигма Кибер Клуб
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7", maxWidth: "920px" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "0.92rem", lineHeight: "1.7", maxWidth: "920px" }}>
                   Статистика хаба в одном месте — без лишнего. Таблица лидеров, история матчей, Leetify AI и Captain's Draft. Всё то, чего не хватало стандартному FACEIT.
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "1rem", color: "var(--text-primary)", maxWidth: "920px", width: "100%" }}>
+                <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.75rem 1.1rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "0.85rem", color: "var(--text-primary)", maxWidth: "920px", width: "100%" }}>
                   <strong>Leaderboard:</strong> очки, процент побед, динамика по сезонам — сразу видно, кто реально тащит, а кто просто Саша.
                 </div>
               </div>
@@ -7374,13 +7374,13 @@ export default function Home() {
 
             {tourStep === 1 && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center", alignItems: "center" }}>
-                <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
+                <h3 className="glow-text-cyan" style={{ fontSize: "1.5rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
                   Match History & 2D Playback
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7", maxWidth: "920px" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "0.92rem", lineHeight: "1.7", maxWidth: "920px" }}>
                   В каждом матче — полный разбор по раундам на 2D-карте: куда шли, откуда убили, какое оружие использовали.
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem", maxWidth: "920px", width: "100%" }}>
+                <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.75rem 1.1rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "0.85rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem", maxWidth: "920px", width: "100%" }}>
                   <div><strong>2D Kill Feed:</strong> трассеры выстрелов, позиции на карте, headshot'ы и иконки оружия в реальных координатах</div>
                   <div><strong>Round-by-round stats:</strong> K/D, ADR, MVP, тепловая карта с подробным разбором каждого раунда по демо-видео и детальная таблица по каждому игроку</div>
                 </div>
@@ -7389,13 +7389,13 @@ export default function Home() {
 
             {tourStep === 2 && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center", alignItems: "center" }}>
-                <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
+                <h3 className="glow-text-cyan" style={{ fontSize: "1.5rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
                   Профили игроков
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7", maxWidth: "920px" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "0.92rem", lineHeight: "1.7", maxWidth: "920px" }}>
                   Кликни на ник — откроется профиль со всей статистикой: FACEIT, Steam и Leetify AI в одном окне.
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem", maxWidth: "920px", width: "100%" }}>
+                <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.75rem 1.1rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "0.85rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem", maxWidth: "920px", width: "100%" }}>
                   <div><strong>FACEIT Stats:</strong> K/D, ADR, HS%, Win Rate по картам и динамика Elo</div>
                   <div><strong>Leetify AI:</strong> оценка прицеливания, позиционирования и полезности гранат</div>
                 </div>
@@ -7404,13 +7404,13 @@ export default function Home() {
 
             {tourStep === 3 && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center", alignItems: "center" }}>
-                <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
+                <h3 className="glow-text-cyan" style={{ fontSize: "1.5rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
                   Captain's Draft
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7", maxWidth: "920px" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "0.92rem", lineHeight: "1.7", maxWidth: "920px" }}>
                   Делим на команды без споров — Snake Draft на 4 капитана с live-синхронизацией между устройствами.
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem", maxWidth: "920px", width: "100%" }}>
+                <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.75rem 1.1rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "0.85rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem", maxWidth: "920px", width: "100%" }}>
                   <div><strong>Snake Draft System:</strong> порядок пиков переключается автоматически, текущий ход подсвечивается</div>
                   <div><strong>Сохранение & экспорт:</strong> прогресс переживает F5, финальный состав скачивается в .txt</div>
                 </div>
@@ -7419,13 +7419,13 @@ export default function Home() {
 
             {tourStep === 4 && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center", alignItems: "center" }}>
-                <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
+                <h3 className="glow-text-cyan" style={{ fontSize: "1.5rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
                   Фильтры, сортировка & Сравнение
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7", maxWidth: "920px" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "0.92rem", lineHeight: "1.7", maxWidth: "920px" }}>
                   Ищи по нику, фильтруй по минимуму матчей, сортируй по скиллу или Win Rate — и сравнивай двух игроков напрямую.
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem", maxWidth: "920px", width: "100%" }}>
+                <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.75rem 1.1rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "0.85rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem", maxWidth: "920px", width: "100%" }}>
                   <div><strong>Skill Rating (1–100):</strong> взвешенная оценка на основе совокупности показателей игрока.</div>
                   <div><strong>Сравнение:</strong> отдельная вкладка со сравнительной таблицей показателей двух игроков.</div>
                 </div>
@@ -7434,13 +7434,13 @@ export default function Home() {
 
             {tourStep === 5 && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "center", alignItems: "center" }}>
-                <h3 className="glow-text-cyan" style={{ fontSize: "2.2rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
+                <h3 className="glow-text-cyan" style={{ fontSize: "1.5rem", color: "#fff", fontWeight: "900", letterSpacing: "0.04em", textTransform: "uppercase" }}>
                   Fantasy League
                 </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "1.1rem", lineHeight: "1.7", maxWidth: "920px" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "0.92rem", lineHeight: "1.7", maxWidth: "920px" }}>
                   Интерактивная лига прогнозов на турниры Сигма Хаба. Собери команду из 3 игроков и соревнуйся за звание лучшего аналитика.
                 </p>
-                <div style={{ background: "rgba(255,255,255,0.02)", padding: "1.1rem 1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "1rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem", maxWidth: "920px", width: "100%" }}>
+                <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.75rem 1.1rem", borderRadius: "16px", border: "1px solid var(--border-light)", textAlign: "center", fontSize: "0.85rem", color: "var(--text-primary)", display: "flex", flexDirection: "column", gap: "0.4rem", maxWidth: "920px", width: "100%" }}>
                   <div><strong>Выберите 3 роли:</strong> Снайпер (фраги и первый килл), Саппорт (ассисты, гранаты и дефьюзы) и Темная лошадка (сбалансированный множитель очков).</div>
                   <div><strong>Автоматический подсчет:</strong> очки рассчитываются по реальной статистике матчей турнира.</div>
                   <div><strong>Награды:</strong> победитель получает официальный статус «Фантазер» и золотую рамку на сайте.</div>
@@ -7450,16 +7450,16 @@ export default function Home() {
 
             {/* 3D COVERFLOW PERSPECTIVE FOLDER CAROUSEL */}
             <div style={{
-              perspective: "1400px",
+              perspective: "1200px",
               position: "relative",
-              height: "520px",
+              height: "330px",
               width: "100%",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              margin: "2rem 0",
+              margin: "1.25rem 0",
               overflow: "hidden",
-              borderRadius: "22px",
+              borderRadius: "16px",
               background: "rgba(8, 7, 13, 0.6)",
               border: "1px solid var(--border-light)"
             }}>
@@ -7468,18 +7468,18 @@ export default function Home() {
                 const absOffset = Math.abs(offset);
 
                 let rotateY = 0;
-                let translateX = offset * 280;
-                let translateZ = -absOffset * 220;
-                let scale = 1 - absOffset * 0.16;
+                let translateX = offset * 190;
+                let translateZ = -absOffset * 150;
+                let scale = 1 - absOffset * 0.14;
                 let opacity = 1 - absOffset * 0.45;
                 let zIndex = 10 - absOffset;
 
                 if (offset < 0) {
-                  rotateY = 36;
-                  translateX = offset * 260 - 80;
+                  rotateY = 32;
+                  translateX = offset * 180 - 50;
                 } else if (offset > 0) {
-                  rotateY = -36;
-                  translateX = offset * 260 + 80;
+                  rotateY = -32;
+                  translateX = offset * 180 + 50;
                 }
 
                 if (absOffset > 2) opacity = 0;
@@ -7490,9 +7490,9 @@ export default function Home() {
                     onClick={() => setTourStep(idx)}
                     style={{
                       position: "absolute",
-                      width: "920px",
-                      height: "480px",
-                      borderRadius: "20px",
+                      width: "580px",
+                      height: "300px",
+                      borderRadius: "14px",
                       overflow: "hidden",
                       border: idx === tourStep ? "2.5px solid var(--accent-cyan)" : "1px solid rgba(255, 255, 255, 0.12)",
                       boxShadow: idx === tourStep ? "0 20px 60px rgba(0, 229, 255, 0.4)" : "0 15px 40px rgba(0, 0, 0, 0.8)",
@@ -7523,9 +7523,9 @@ export default function Home() {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              marginTop: "1.75rem",
+              marginTop: "1rem",
               borderTop: "1px solid var(--border-light)",
-              paddingTop: "1.75rem"
+              paddingTop: "1rem"
             }}>
               <div style={{ display: "flex", gap: "0.65rem" }}>
                 {[0, 1, 2, 3, 4, 5].map((idx) => (
@@ -7550,7 +7550,7 @@ export default function Home() {
                   <button 
                     onClick={() => setTourStep(prev => prev - 1)}
                     className="btn btn-secondary"
-                    style={{ padding: "0.75rem 1.75rem", fontSize: "1rem", borderRadius: "12px" }}
+                    style={{ padding: "0.75rem 1.75rem", fontSize: "0.85rem", borderRadius: "12px" }}
                   >
                     Назад
                   </button>
@@ -7560,7 +7560,7 @@ export default function Home() {
                   <button 
                     onClick={() => setTourStep(prev => prev + 1)}
                     className="btn btn-glow-cyan"
-                    style={{ padding: "0.75rem 2.25rem", fontSize: "1rem", fontWeight: "800", borderRadius: "12px" }}
+                    style={{ padding: "0.75rem 2.25rem", fontSize: "0.85rem", fontWeight: "800", borderRadius: "12px" }}
                   >
                     Далее
                   </button>
