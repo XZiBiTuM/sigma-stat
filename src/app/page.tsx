@@ -2863,7 +2863,13 @@ export default function Home() {
                                 </td>
                                 <td style={{ textAlign: "center" }}>
                                   {(() => {
-                                    const sk = getPlayerSkillInfo(playerId, nickname, (item.player as any)?.faceit_elo || (item as any).elo || (item.player as any)?.elo);
+                                    const sk = getPlayerSkillInfo(
+                                      playerId,
+                                      nickname,
+                                      (item.player as any)?.faceit_elo || (item as any).elo || (item.player as any)?.elo,
+                                      undefined,
+                                      (item as any).hubStats
+                                    );
                                     return (
                                       <span 
                                         className="badge" 
