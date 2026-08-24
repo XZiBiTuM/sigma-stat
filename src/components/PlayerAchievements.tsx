@@ -41,7 +41,9 @@ export function computePlayerAchievements(params: {
   const c1v1 = hubStats?.duels?.clutch1v1Wins || 0;
   const c1v2 = hubStats?.duels?.clutch1v2Wins || 0;
   const c1v3 = hubStats?.duels?.clutch1v3Wins || 0;
-  const clutchWins = c1v1 + c1v2 + c1v3;
+  const c1v4 = hubStats?.duels?.clutch1v4Wins || 0;
+  const c1v5 = hubStats?.duels?.clutch1v5Wins || 0;
+  const clutchWins = c1v1 + c1v2 + c1v3 + c1v4 + c1v5;
   const clutchKills = hubStats?.duels?.clutchKills || 0;
   const clutchUnlocked = clutchWins >= 10 || (clutchWins >= 5 && (hubStats?.duels?.clutch1v1Rate || 0) >= 50);
   const clutchPercent = Math.min(100, Math.round((clutchWins / 10) * 100));
