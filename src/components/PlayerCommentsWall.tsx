@@ -112,7 +112,7 @@ export default function PlayerCommentsWall({
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
           <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", margin: 0, textTransform: "uppercase", letterSpacing: "0.03em" }}>
-            Стена комментариев и респектов
+            Комментарии
           </h3>
           <span style={{
             fontSize: "0.75rem",
