@@ -43,6 +43,7 @@ export async function GET(
 
 
     let officialStreak: number | null = null;
+    let userLb: any = null;
     try {
       const now = Date.now();
       const getHubMatches = async () => {
@@ -68,7 +69,7 @@ export async function GET(
       ]);
 
       const lbItems = leaderboardRes?.items || [];
-      const userLb = lbItems.find((i: any) => i.player?.user_id === uuid || i.player?.nickname?.toLowerCase() === (playerProfile.nickname || "").toLowerCase());
+      userLb = lbItems.find((i: any) => i.player?.user_id === uuid || i.player?.nickname?.toLowerCase() === (playerProfile.nickname || "").toLowerCase());
       if (userLb && typeof userLb.current_streak === 'number') {
         officialStreak = userLb.current_streak;
       }
@@ -94,6 +95,10 @@ export async function GET(
     // 3. Aggregate stats only for matches in the hub cache
     let matchesCount = 0;
     let winsCount = 0;
+    let mapsCount = 0;
+    let mapsWinsCount = 0;
+    const uniqueMatchIds = new Set<string>();
+    const uniqueWinMatchIds = new Set<string>();
     let totalKills = 0;
     let totalDeaths = 0;
     let totalAssists = 0;
@@ -182,8 +187,10 @@ export async function GET(
         }
 
         if (playerStats) {
-          matchesCount++;
-          if (isWin) winsCount++;
+          mapsCount++;
+          if (isWin) mapsWinsCount++;
+          uniqueMatchIds.add(matchId);
+          if (isWin) uniqueWinMatchIds.add(matchId);
 
           const kills = parseInt(playerStats.Kills || "0", 10);
           const deaths = parseInt(playerStats.Deaths || "0", 10);
@@ -311,7 +318,9 @@ export async function GET(
 
     // Overall metrics calculation
     const avgKd = totalDeaths > 0 ? totalKills / totalDeaths : totalKills;
-    const winrateOverall = matchesCount > 0 ? Math.round((winsCount / matchesCount) * 100) : 0;
+    const finalMatchesCount = typeof userLb?.played === "number" ? userLb.played : (typeof userLb?.matches === "number" ? userLb.matches : uniqueMatchIds.size);
+    const finalWinsCount = typeof userLb?.won === "number" ? userLb.won : (typeof userLb?.wins === "number" ? userLb.wins : uniqueWinMatchIds.size);
+    const winrateOverall = typeof userLb?.winrate === "number" ? userLb.winrate : (typeof userLb?.winRate === "number" ? userLb.winRate : (finalMatchesCount > 0 ? Math.round((finalWinsCount / finalMatchesCount) * 100) : 0));
     const avgHs = totalKills > 0 ? Math.round((totalHeadshots / totalKills) * 100) : 0;
     const avgAdr = totalRounds > 0 ? totalDamage / totalRounds : 0;
     
@@ -399,8 +408,10 @@ export async function GET(
 
     return NextResponse.json({
       playerId,
-      matchesCount,
-      winsCount,
+      matchesCount: finalMatchesCount,
+      winsCount: finalWinsCount,
+      mapsCount,
+      mapsWinsCount,
       winrate: winrateOverall,
       kd: parseFloat(avgKd.toFixed(2)),
       hsPct: avgHs,

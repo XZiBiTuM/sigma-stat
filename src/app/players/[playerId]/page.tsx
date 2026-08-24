@@ -835,13 +835,20 @@ export default function PlayerProfilePage() {
                   {/* Grid */}
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "1rem" }}>
                     {[
-                      { label: "Всего матчей", val: hubStats.matchesCount, color: "#fff" },
-                      { label: "Процент побед", val: `${hubStats.winrate}%`, color: "var(--success)" },
-                      { label: "Средний K/D", val: hubStats.kd.toFixed(2), color: "var(--accent-cyan)" },
-                      { label: "Средний HS%", val: `${hubStats.hsPct}%`, color: "#fff" }
+                      { label: "Всего матчей", val: hubStats.matchesCount, sub: hubStats.mapsCount ? `${hubStats.mapsCount} карт` : null, color: "#fff" },
+                      { label: "Процент побед", val: `${hubStats.winrate}%`, sub: hubStats.winsCount ? `${hubStats.winsCount} побед` : null, color: "var(--success)" },
+                      { label: "Средний K/D", val: hubStats.kd.toFixed(2), sub: null, color: "var(--accent-cyan)" },
+                      { label: "Средний HS%", val: `${hubStats.hsPct}%`, sub: null, color: "#fff" }
                     ].map((item, idx) => (
                       <div key={idx} style={{ background: "rgba(0,0,0,0.2)", border: "1px solid var(--border-light)", borderRadius: "10px", padding: "1rem" }}>
-                        <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)", display: "block" }}>{item.label}</span>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                          <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>{item.label}</span>
+                          {item.sub && (
+                            <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", background: "rgba(255,255,255,0.04)", padding: "0.1rem 0.35rem", borderRadius: "4px" }}>
+                              {item.sub}
+                            </span>
+                          )}
+                        </div>
                         <span style={{ fontSize: "1.4rem", fontWeight: "800", color: item.color, display: "block", marginTop: "0.25rem" }}>{item.val}</span>
                       </div>
                     ))}
