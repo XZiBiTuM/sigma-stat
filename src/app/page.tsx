@@ -292,6 +292,7 @@ export default function Home() {
   // Player Overrides & Skill Rating States
   const [playerOverridesMap, setPlayerOverridesMap] = useState<Record<string, any>>({});
   const [playerEloMap, setPlayerEloMap] = useState<Record<string, number>>({});
+  const [weeklySkillMap, setWeeklySkillMap] = useState<Record<string, any>>({});
   const [showAdminPlayerEditModal, setShowAdminPlayerEditModal] = useState<boolean>(false);
   const [adminEditingPlayer, setAdminEditingPlayer] = useState<any>(null);
   const [adminCsRatingInput, setAdminCsRatingInput] = useState<string>("");
@@ -326,8 +327,23 @@ export default function Home() {
     }
   };
 
+  const fetchWeeklySkill = async () => {
+    try {
+      const res = await fetch("/api/faceit/weekly-skill?checkAuto=1");
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.players) {
+          setWeeklySkillMap(data.players);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to fetch weekly skill snapshots", err);
+    }
+  };
+
   useEffect(() => {
     fetchPlayerOverrides();
+    fetchWeeklySkill();
   }, []);
 
   const getPlayerSkillInfo = (
@@ -2871,22 +2887,45 @@ export default function Home() {
                                       undefined,
                                       (item as any).hubStats
                                     );
+                                    const wRecord = (playerId && weeklySkillMap[playerId]) || 
+                                                    (nickname && weeklySkillMap[nickname.toLowerCase()]) || 
+                                                    (nickname && weeklySkillMap[nickname]);
+                                    const delta = wRecord?.weeklyDelta;
                                     return (
-                                      <span 
-                                        className="badge" 
-                                        style={{ 
-                                          fontSize: "0.78rem", 
-                                          fontWeight: "800", 
-                                          background: sk.bg, 
-                                          border: `1px solid ${sk.border}`, 
-                                          color: sk.color,
-                                          padding: "0.25rem 0.6rem",
-                                          borderRadius: "6px"
-                                        }}
-                                        title={`CS2 Premier Rating: ${(sk?.csRating ?? 0).toLocaleString('ru-RU')}`}
-                                      >
-                                        {sk.score} / 100
-                                      </span>
+                                      <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "0.35rem" }}>
+                                        <span 
+                                          className="badge" 
+                                          style={{ 
+                                            fontSize: "0.78rem", 
+                                            fontWeight: "800", 
+                                            background: sk.bg, 
+                                            border: `1px solid ${sk.border}`, 
+                                            color: sk.color,
+                                            padding: "0.25rem 0.6rem",
+                                            borderRadius: "6px"
+                                          }}
+                                          title={`Рейтинг скилла (Пересчет каждую неделю)\nCS2 Premier: ${(sk?.csRating ?? 0).toLocaleString('ru-RU')}${delta !== undefined && delta !== 0 ? `\nДинамика за неделю: ${delta > 0 ? `+${delta}` : delta} очков` : ''}`}
+                                        >
+                                          {sk.score} / 100
+                                        </span>
+                                        {delta !== undefined && delta !== 0 && (
+                                          <span 
+                                            style={{
+                                              fontSize: "0.68rem",
+                                              fontWeight: "800",
+                                              color: delta > 0 ? "var(--success)" : "var(--danger)",
+                                              background: delta > 0 ? "rgba(0, 230, 118, 0.14)" : "rgba(255, 77, 77, 0.14)",
+                                              padding: "0.15rem 0.35rem",
+                                              borderRadius: "4px",
+                                              border: `1px solid ${delta > 0 ? "rgba(0, 230, 118, 0.35)" : "rgba(255, 77, 77, 0.35)"}`,
+                                              lineHeight: 1
+                                            }}
+                                            title={`Изменение за неделю: ${delta > 0 ? `+${delta}` : delta} очков`}
+                                          >
+                                            {delta > 0 ? `▲+${delta}` : `▼${delta}`}
+                                          </span>
+                                        )}
+                                      </div>
                                     );
                                   })()}
                                 </td>

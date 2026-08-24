@@ -91,12 +91,20 @@ export default function PlayerProfilePage() {
   const [faceitHover, setFaceitHover] = useState(false);
   const [copyHover, setCopyHover] = useState(false);
   const [playerOverridesMap, setPlayerOverridesMap] = useState<Record<string, any>>({});
+  const [weeklySkillMap, setWeeklySkillMap] = useState<Record<string, any>>({});
   const [currentUser, setCurrentUser] = useState<any>(null);
 
   useEffect(() => {
     fetch("/api/auth/steam/me")
       .then(res => res.json())
       .then(data => { if (data?.authenticated && data?.user) setCurrentUser(data.user); })
+      .catch(() => {});
+
+    fetch("/api/faceit/weekly-skill?checkAuto=1")
+      .then(res => res.json())
+      .then(data => {
+        if (data?.players) setWeeklySkillMap(data.players);
+      })
       .catch(() => {});
 
     fetch("/api/admin/players/override")
@@ -918,6 +926,12 @@ export default function PlayerProfilePage() {
             const faceitMatches = (profile?.games?.cs2 as any)?.matches || (profile?.lifetime as any)?.Matches || 500;
             const premierMatches = steamStats?.premierMatches || 0;
             const sk = getPlayerSkillInfo(pId, profile?.nickname, eloVal, realPremier, combatStats, faceitMatches, premierMatches);
+            const wRecord = (pId && weeklySkillMap[pId]) || 
+                            (profile?.nickname && weeklySkillMap[profile.nickname.toLowerCase()]) || 
+                            (profile?.nickname && weeklySkillMap[profile.nickname]);
+            const delta = wRecord?.weeklyDelta;
+            const prevScore = wRecord?.previousScore;
+
             return (
               <div className="glass-card" style={{
                 display: "flex",
@@ -927,7 +941,8 @@ export default function PlayerProfilePage() {
                 borderRadius: "16px",
                 background: "rgba(255, 255, 255, 0.02)",
                 border: "1px solid var(--border-light)",
-                gap: "1rem"
+                gap: "1rem",
+                flexWrap: "wrap"
               }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
                   <span 
@@ -950,6 +965,41 @@ export default function PlayerProfilePage() {
                     </span>
                     <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)", display: "block", marginTop: "0.2rem" }}>
                       Premier CS Rating {sk.isRealPremier ? "" : "(расчетный)"}: <strong style={{ color: "#fff" }}>{(sk?.csRating ?? 0).toLocaleString("ru-RU")}</strong>
+                    </span>
+                  </div>
+                </div>
+
+                {/* Weekly Skill Calibration Badge */}
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.85rem",
+                  background: "rgba(0,0,0,0.25)",
+                  border: "1px solid var(--border-light)",
+                  padding: "0.5rem 1rem",
+                  borderRadius: "10px"
+                }}>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "0.4rem" }}>
+                      <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "700" }}>
+                        Еженедельный пересчет
+                      </span>
+                      {delta !== undefined && delta !== 0 && (
+                        <span style={{
+                          fontSize: "0.75rem",
+                          fontWeight: "800",
+                          color: delta > 0 ? "var(--success)" : "var(--danger)",
+                          background: delta > 0 ? "rgba(0,230,118,0.15)" : "rgba(255,77,77,0.15)",
+                          padding: "0.1rem 0.4rem",
+                          borderRadius: "4px",
+                          border: `1px solid ${delta > 0 ? "rgba(0,230,118,0.3)" : "rgba(255,77,77,0.3)"}`
+                        }}>
+                          {delta > 0 ? `▲ +${delta}` : `▼ ${delta}`}
+                        </span>
+                      )}
+                    </div>
+                    <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)", display: "block", marginTop: "0.15rem" }}>
+                      {prevScore !== undefined ? `Прошлая неделя: ${prevScore} баллов` : "Обновление: каждый понедельник"}
                     </span>
                   </div>
                 </div>
