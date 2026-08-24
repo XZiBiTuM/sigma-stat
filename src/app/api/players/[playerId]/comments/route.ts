@@ -5,13 +5,25 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 
-const commentsFilePath = path.join(process.cwd(), "src", "lib", "player_comments.json");
+import { getPersistentPath, getStoragePath } from "@/lib/storage";
+
+const persistentCommentsPath = getPersistentPath("player_comments.json");
+const fallbackCommentsPath = getStoragePath("player_comments.json");
+
+function getActiveCommentsPath(): string {
+  if (fs.existsSync(persistentCommentsPath)) return persistentCommentsPath;
+  if (fs.existsSync(fallbackCommentsPath)) return fallbackCommentsPath;
+  return persistentCommentsPath;
+}
 
 function readComments(): Record<string, any[]> {
   try {
-    if (!fs.existsSync(commentsFilePath)) return {};
-    const raw = fs.readFileSync(commentsFilePath, "utf8");
-    return JSON.parse(raw || "{}");
+    const targetPath = getActiveCommentsPath();
+    if (fs.existsSync(targetPath)) {
+      const raw = fs.readFileSync(targetPath, "utf8");
+      return JSON.parse(raw || "{}");
+    }
+    return {};
   } catch (err) {
     console.error("Error reading player_comments.json:", err);
     return {};
@@ -20,7 +32,13 @@ function readComments(): Record<string, any[]> {
 
 function writeComments(data: Record<string, any[]>) {
   try {
-    fs.writeFileSync(commentsFilePath, JSON.stringify(data, null, 2), "utf8");
+    const jsonStr = JSON.stringify(data, null, 2);
+    // Write to persistent path outside git
+    fs.writeFileSync(persistentCommentsPath, jsonStr, "utf8");
+    // Also write to local project path if exists
+    try {
+      fs.writeFileSync(fallbackCommentsPath, jsonStr, "utf8");
+    } catch {}
   } catch (err) {
     console.error("Error writing player_comments.json:", err);
   }
