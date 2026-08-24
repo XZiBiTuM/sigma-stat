@@ -145,18 +145,18 @@ export function computePlayerAchievements(params: {
     for (const m of hubStats.recentMatches) {
       const k = m.kills || 0;
       const a = m.assists || 0;
-      const d = m.deaths || 0;
       const hs = Math.round((m.hsPct || 0) * k / 100);
-      const mvp = m.mvps || 0;
-      const winBonus = m.won ? 10 : 0;
-      const fScore = (k * 2) + (a * 1) - (d * 1) + (hs * 0.5) + (mvp * 3) + winBonus;
-      if (fScore > maxFantasyScore) maxFantasyScore = Math.round(fScore);
+      const isWin = Boolean(m.won === true || m.result === "WIN" || m.result === "1" || m.result === "win");
+
+      const snipPts = k * 2.0 + hs * 1.0;
+      const suppPts = a * 2.5 + (k * 0.8);
+      const winBonus = isWin ? 10 : 2;
+
+      const matchTotal = Math.round((snipPts * 0.5 + suppPts * 0.5 + winBonus) * 10) / 10;
+      if (matchTotal > maxFantasyScore) maxFantasyScore = matchTotal;
     }
   }
-  if (maxFantasyScore === 0 && (hubStats?.matchesCount || 0) > 0) {
-    const bestK = hubStats.bestMatch?.kills || Math.round((hubStats.kd || 1) * 20);
-    maxFantasyScore = Math.max(75, bestK * 2 + 15);
-  }
+
   const fantasyUnlocked = maxFantasyScore >= 75;
   const fantasyPercent = Math.min(100, Math.round((maxFantasyScore / 75) * 100));
 
