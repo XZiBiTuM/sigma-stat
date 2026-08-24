@@ -2444,7 +2444,7 @@ export default function Home() {
               <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
                 {eventAnnouncement.prize && (
                   <div style={{
-                    display: "flex",
+                    display: "inline-flex",
                     alignItems: "center",
                     gap: "0.6rem",
                     background: "rgba(124, 77, 255, 0.2)",
@@ -2453,8 +2453,10 @@ export default function Home() {
                     borderRadius: "14px",
                     boxShadow: "0 0 20px rgba(124, 77, 255, 0.2)"
                   }}>
-                    <span style={{ fontSize: "0.85rem", color: "var(--text-secondary)", fontWeight: "600" }}>НАГРАДА / ПРИЗ:</span>
-                    <span style={{ fontSize: "1.05rem", fontWeight: "800", color: "#b388ff" }}>
+                    <span style={{ fontSize: "0.82rem", color: "var(--text-secondary)", fontWeight: "700", letterSpacing: "0.04em", lineHeight: "1", display: "inline-flex", alignItems: "center" }}>
+                      НАГРАДА / ПРИЗ:
+                    </span>
+                    <span style={{ fontSize: "0.95rem", fontWeight: "900", color: "#b388ff", lineHeight: "1", display: "inline-flex", alignItems: "center" }}>
                       {eventAnnouncement.prize}
                     </span>
                   </div>
