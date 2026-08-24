@@ -46,13 +46,17 @@ export function computePlayerAchievements(params: {
   const clutchPercent = played < 5 ? Math.round((played / 5) * 50) : Math.min(100, Math.round((winRate / 60) * 100));
 
   // 4. Grand Slam -> "Победитель по жизни" (5 consecutive wins in hub)
-  let maxConsecutiveWins = currentStreak || hubStats?.streak || 0;
-  if (hubStats?.longestStreak) {
-    maxConsecutiveWins = Math.max(maxConsecutiveWins, hubStats.longestStreak);
-  }
+  let maxConsecutiveWins = 0;
   if (Array.isArray(hubStats?.recentMatches) && hubStats.recentMatches.length > 0) {
+    const seenMatches = new Set<string>();
     let curr = 0;
-    for (const m of hubStats.recentMatches) {
+    // Walk through matches in chronological order (oldest to newest)
+    const sorted = [...hubStats.recentMatches].sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+    for (const m of sorted) {
+      const mId = m.matchId || m.match_id;
+      if (mId && seenMatches.has(mId)) continue;
+      if (mId) seenMatches.add(mId);
+
       const isWin = Boolean(m.result === "WIN" || m.won === true || m.winner === m.teamId || m.isWin === true);
       if (isWin) {
         curr++;
@@ -62,6 +66,12 @@ export function computePlayerAchievements(params: {
       }
     }
   }
+
+  // Fallback to hub current streak if no matches array
+  if (maxConsecutiveWins === 0 && currentStreak) {
+    maxConsecutiveWins = currentStreak;
+  }
+
   const grandSlamUnlocked = maxConsecutiveWins >= 5;
   const grandSlamPercent = Math.min(100, Math.round((maxConsecutiveWins / 5) * 100));
 
