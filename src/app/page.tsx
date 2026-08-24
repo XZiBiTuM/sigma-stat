@@ -329,7 +329,7 @@ export default function Home() {
     fetchPlayerOverrides();
   }, []);
 
-  const getPlayerSkillInfo = (playerId: string, nickname: string, eloVal?: number, realPremierRating?: number) => {
+  const getPlayerSkillInfo = (playerId: string, nickname: string, eloVal?: number, realPremierRating?: number, statsObj?: any) => {
     const lowerNick = (nickname || "").toLowerCase();
     const ov = (playerId && playerOverridesMap[playerId]) || 
                (lowerNick && playerOverridesMap[lowerNick]) || 
@@ -346,9 +346,33 @@ export default function Home() {
 
     let score = ov.customSkillScore;
     if (score === undefined || score === null) {
-      const sElo = Math.min(100, Math.max(10, (elo - 300) / 22));
-      const sPremier = Math.min(100, Math.max(10, csRating / 260));
-      score = Math.round((0.45 * sElo) + (0.55 * sPremier));
+      if (statsObj) {
+        const kd = parseFloat(String(statsObj?.kd || statsObj?.["Average K/D Ratio"] || 1.0)) || 1.0;
+        const adr = parseFloat(String(statsObj?.adr || 75.0)) || 75.0;
+        const hsPct = parseFloat(String(statsObj?.hsPct || statsObj?.["Average Headshots %"] || 45.0)) || 45.0;
+        const avgKills = parseFloat(String(statsObj?.avgKills || statsObj?.["Average Kills"] || (kd * 16))) || 16.0;
+        const winRate = parseFloat(String(statsObj?.winrate || statsObj?.["Win Rate %"] || 50.0)) || 50.0;
+
+        const sKd = Math.min(100, Math.max(10, 40 + (kd - 0.8) * 50));
+        const sAdr = Math.min(100, Math.max(10, 40 + (adr - 50) * 1.3));
+        const sHs = Math.min(100, Math.max(10, 40 + (hsPct - 35) * 2.0));
+        const sAvg = Math.min(100, Math.max(10, 40 + (avgKills - 12) * 4.2));
+        const sWr = Math.min(100, Math.max(10, 40 + (winRate - 40) * 1.6));
+        const sElo = Math.min(100, Math.max(10, 40 + (elo - 1000) / 22));
+
+        score = Math.min(99, Math.max(15, Math.round(
+          (sKd * 0.28) + 
+          (sAdr * 0.22) + 
+          (sAvg * 0.20) + 
+          (sHs * 0.12) + 
+          (sWr * 0.10) + 
+          (sElo * 0.08)
+        )));
+      } else {
+        const sElo = Math.min(100, Math.max(10, (elo - 300) / 22));
+        const sPremier = Math.min(100, Math.max(10, csRating / 260));
+        score = Math.round((0.45 * sElo) + (0.55 * sPremier));
+      }
     }
 
     // Rainbow Tier Hierarchy (Red = lowest/worst, Purple/Glowing Purple = highest/best)
