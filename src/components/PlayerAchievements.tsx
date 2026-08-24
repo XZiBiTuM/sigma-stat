@@ -7,6 +7,7 @@ export interface AchievementItem {
   title: string;
   subtitle: string;
   description: string;
+  category?: "combat" | "maps" | "special";
   unlocked: boolean;
   progressText: string;
   percent: number;
@@ -37,14 +38,13 @@ export function computePlayerAchievements(params: {
   const impactPercent = Math.min(100, Math.round((hltv / 1.20) * 100));
 
   // 3. Clutch Minister -> "Клач-министр" (Based on clutches won in hub)
-  const played = hubPlayed || hubStats?.matches || hubStats?.matchesCount || 0;
+  const played = hubPlayed || hubStats?.matchesCount || hubStats?.matches || 0;
   const c1v1 = hubStats?.duels?.clutch1v1Wins || 0;
   const c1v2 = hubStats?.duels?.clutch1v2Wins || 0;
   const c1v3 = hubStats?.duels?.clutch1v3Wins || 0;
   const c1v4 = hubStats?.duels?.clutch1v4Wins || 0;
   const c1v5 = hubStats?.duels?.clutch1v5Wins || 0;
   const clutchWins = c1v1 + c1v2 + c1v3 + c1v4 + c1v5;
-  const clutchKills = hubStats?.duels?.clutchKills || 0;
   const clutchUnlocked = clutchWins >= 10 || (clutchWins >= 5 && (hubStats?.duels?.clutch1v1Rate || 0) >= 50);
   const clutchPercent = Math.min(100, Math.round((clutchWins / 10) * 100));
 
@@ -53,7 +53,6 @@ export function computePlayerAchievements(params: {
   if (Array.isArray(hubStats?.recentMatches) && hubStats.recentMatches.length > 0) {
     const seenMatches = new Set<string>();
     let curr = 0;
-    // Walk through matches in chronological order (oldest to newest)
     const sorted = [...hubStats.recentMatches].sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
     for (const m of sorted) {
       const mId = m.matchId || m.match_id;
@@ -70,7 +69,6 @@ export function computePlayerAchievements(params: {
     }
   }
 
-  // Fallback to hub current streak if no matches array
   if (maxConsecutiveWins === 0 && currentStreak) {
     maxConsecutiveWins = currentStreak;
   }
@@ -87,12 +85,91 @@ export function computePlayerAchievements(params: {
   const vetUnlocked = played >= 15;
   const vetPercent = Math.min(100, Math.round((played / 15) * 100));
 
+  // Helper to extract map stats from hubStats.maps
+  const getMapInfo = (mapSlug: string) => {
+    if (Array.isArray(hubStats?.maps)) {
+      const found = hubStats.maps.find((m: any) => (m.map || "").toLowerCase().includes(mapSlug));
+      if (found) {
+        const matches = found.matches || 0;
+        const wins = found.wins || 0;
+        const wr = matches > 0 ? Math.round((wins / matches) * 100) : 0;
+        return { matches, wins, wr };
+      }
+    }
+    return { matches: 0, wins: 0, wr: 0 };
+  };
+
+  // 7. Mirage Enjoyer -> "Сын Миража" (Win Rate >= 50% with >= 6 matches)
+  const mirage = getMapInfo("mirage");
+  const mirageUnlocked = mirage.matches >= 6 && mirage.wr >= 50;
+  const miragePercent = mirage.matches < 6 ? Math.round((mirage.matches / 6) * 50) : Math.min(100, Math.round((mirage.wr / 50) * 100));
+
+  // 8. Dust2 Master -> "Сын Даста" (Win Rate >= 50% with >= 6 matches)
+  const dust2 = getMapInfo("dust2");
+  const dust2Unlocked = dust2.matches >= 6 && dust2.wr >= 50;
+  const dust2Percent = dust2.matches < 6 ? Math.round((dust2.matches / 6) * 50) : Math.min(100, Math.round((dust2.wr / 50) * 100));
+
+  // 9. Inferno Pizza -> "Итальянский Мастер" (Win Rate >= 50% with >= 6 matches)
+  const inferno = getMapInfo("inferno");
+  const infernoUnlocked = inferno.matches >= 6 && inferno.wr >= 50;
+  const infernoPercent = inferno.matches < 6 ? Math.round((inferno.matches / 6) * 50) : Math.min(100, Math.round((inferno.wr / 50) * 100));
+
+  // 10. Nuke Specialist -> "Ядерный Удар" (Win Rate >= 50% with >= 6 matches)
+  const nuke = getMapInfo("nuke");
+  const nukeUnlocked = nuke.matches >= 6 && nuke.wr >= 50;
+  const nukePercent = nuke.matches < 6 ? Math.round((nuke.matches / 6) * 50) : Math.min(100, Math.round((nuke.wr / 50) * 100));
+
+  // 11. Anubis Pharaoh -> "Фараон Анубиса" (Win Rate >= 50% with >= 6 matches)
+  const anubis = getMapInfo("anubis");
+  const anubisUnlocked = anubis.matches >= 6 && anubis.wr >= 50;
+  const anubisPercent = anubis.matches < 6 ? Math.round((anubis.matches / 6) * 50) : Math.min(100, Math.round((anubis.wr / 50) * 100));
+
+  // 12. Ancient Warrior -> "Жрец Древних" (Win Rate >= 50% with >= 6 matches)
+  const ancient = getMapInfo("ancient");
+  const ancientUnlocked = ancient.matches >= 6 && ancient.wr >= 50;
+  const ancientPercent = ancient.matches < 6 ? Math.round((ancient.matches / 6) * 50) : Math.min(100, Math.round((ancient.wr / 50) * 100));
+
+  // 13. Cache Trucker -> "Водитель ЗИЛа" (Win Rate >= 50% with >= 6 matches)
+  const cache = getMapInfo("cache");
+  const cacheUnlocked = cache.matches >= 6 && cache.wr >= 50;
+  const cachePercent = cache.matches < 6 ? Math.round((cache.matches / 6) * 50) : Math.min(100, Math.round((cache.wr / 50) * 100));
+
+  // 14. Flash -> "Ослепительная улыбка" (Flash Success Rate >= 35%)
+  const flashRate = parseFloat(String(hubStats?.utility?.flashSuccessRate ?? (hubStats?.utility?.flashCount > 0 ? (hubStats.utility.flashSuccesses / hubStats.utility.flashCount) * 100 : 0))) || 0;
+  const flashUnlocked = flashRate >= 35;
+  const flashPercent = Math.min(100, Math.round((flashRate / 35) * 100));
+
+  // 15. Fantasy Farmer -> "Фантастический прорыв" (Max fantasy score >= 75)
+  // Calculate max single match fantasy points from recentMatches
+  let maxFantasyScore = 0;
+  if (Array.isArray(hubStats?.recentMatches) && hubStats.recentMatches.length > 0) {
+    for (const m of hubStats.recentMatches) {
+      const k = m.kills || 0;
+      const a = m.assists || 0;
+      const d = m.deaths || 0;
+      const hs = Math.round((m.hsPct || 0) * k / 100);
+      const mvp = m.mvps || 0;
+      const winBonus = m.won ? 10 : 0;
+      const fScore = (k * 2) + (a * 1) - (d * 1) + (hs * 0.5) + (mvp * 3) + winBonus;
+      if (fScore > maxFantasyScore) maxFantasyScore = Math.round(fScore);
+    }
+  }
+  if (maxFantasyScore === 0 && (hubStats?.matchesCount || 0) > 0) {
+    // Estimate from best rating match
+    const bestK = hubStats.bestMatch?.kills || Math.round((hubStats.kd || 1) * 20);
+    maxFantasyScore = Math.max(75, bestK * 2 + 15);
+  }
+  const fantasyUnlocked = maxFantasyScore >= 75;
+  const fantasyPercent = Math.min(100, Math.round((maxFantasyScore / 75) * 100));
+
   return [
+    // --- Combat / Core Achievements ---
     {
       id: "hs_master",
       title: "HEADSHOT MASTER",
       subtitle: "Охотник за головами",
       description: "Процент попаданий в голову ≥ 55%",
+      category: "combat",
       unlocked: hsUnlocked,
       progressText: `${hsPct.toFixed(1)}% / 55%`,
       percent: hsPercent,
@@ -115,6 +192,7 @@ export function computePlayerAchievements(params: {
       title: "CARRY",
       subtitle: "Самый ценный игрок",
       description: "Рейтинг HLTV 2.0 ≥ 1.20 в хабе",
+      category: "combat",
       unlocked: impactUnlocked,
       progressText: `${hltv.toFixed(2)} / 1.20 HLTV`,
       percent: impactPercent,
@@ -132,6 +210,7 @@ export function computePlayerAchievements(params: {
       title: "CLUTCH MINISTER",
       subtitle: "Клач-министр",
       description: "Выиграно ≥ 10 клатчей (1vX) в хабе",
+      category: "combat",
       unlocked: clutchUnlocked,
       progressText: `${clutchWins} / 10 клатчей`,
       percent: clutchPercent,
@@ -149,6 +228,7 @@ export function computePlayerAchievements(params: {
       title: "GRAND SLAM",
       subtitle: "Победитель по жизни",
       description: "Серия из 5 побед подряд в хабе",
+      category: "combat",
       unlocked: grandSlamUnlocked,
       progressText: `${maxConsecutiveWins} / 5 побед подряд`,
       percent: grandSlamPercent,
@@ -167,6 +247,7 @@ export function computePlayerAchievements(params: {
       title: "DEADLY K/D",
       subtitle: "Серийный убийца",
       description: "Коэффициент K/D Ratio ≥ 1.30",
+      category: "combat",
       unlocked: kdUnlocked,
       progressText: `${kd.toFixed(2)} K/D`,
       percent: kdPercent,
@@ -188,6 +269,7 @@ export function computePlayerAchievements(params: {
       title: "VETERAN",
       subtitle: "Ветеран",
       description: "Сыграно ≥ 15 матчей в хабе",
+      category: "combat",
       unlocked: vetUnlocked,
       progressText: `${played} / 15 матчей`,
       percent: vetPercent,
@@ -199,17 +281,233 @@ export function computePlayerAchievements(params: {
           <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
         </svg>
       )
+    },
+
+    // --- Map-Specific Achievements ---
+    {
+      id: "mirage_enjoyer",
+      title: "MIRAGE ENJOYER",
+      subtitle: "Сын Миража",
+      description: "Win Rate ≥ 50% на Mirage при ≥ 6 матчах",
+      category: "maps",
+      unlocked: mirageUnlocked,
+      progressText: mirage.matches < 6 ? `${mirage.matches}/6 игр` : `${mirage.wr}% WR (${mirage.matches} игр)`,
+      percent: miragePercent,
+      color: "#f59e0b",
+      glowColor: "rgba(245, 158, 11, 0.4)",
+      bgGradient: "linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(180, 100, 0, 0.05) 100%)",
+      iconSvg: (
+        // Hookah / Shisha vector icon
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="9" y="2" width="6" height="3" rx="1" />
+          <path d="M12 5v6" />
+          <path d="M8 11h8" />
+          <path d="M10 11l-3 7a4 4 0 0 0 4 4h2a4 4 0 0 0 4-4l-3-7" />
+          <path d="M15 8c2.5 0 4 1.5 4 4v3" />
+        </svg>
+      )
+    },
+    {
+      id: "dust2_master",
+      title: "DUST2 MASTER",
+      subtitle: "Сын Даста",
+      description: "Win Rate ≥ 50% на Dust2 при ≥ 6 матчах",
+      category: "maps",
+      unlocked: dust2Unlocked,
+      progressText: dust2.matches < 6 ? `${dust2.matches}/6 игр` : `${dust2.wr}% WR (${dust2.matches} игр)`,
+      percent: dust2Percent,
+      color: "#fb923c",
+      glowColor: "rgba(251, 146, 60, 0.4)",
+      bgGradient: "linear-gradient(135deg, rgba(251, 146, 60, 0.15) 0%, rgba(190, 80, 0, 0.05) 100%)",
+      iconSvg: (
+        // Palm & Desert Sun vector icon
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 22v-9" />
+          <path d="M12 13c-2-3-6-3-8-1 1.5 3 4 3.5 8 1z" />
+          <path d="M12 13c2-3 6-3 8-1-1.5 3-4 3.5-8 1z" />
+          <path d="M12 13c0-4 3-7 6-7-.5 3-2 6-6 7z" />
+          <path d="M12 13c0-4-3-7-6-7 .5 3 2 6 6 7z" />
+          <circle cx="18" cy="4" r="2" />
+        </svg>
+      )
+    },
+    {
+      id: "inferno_pizza",
+      title: "INFERNO PIZZA",
+      subtitle: "Итальянский Мастер",
+      description: "Win Rate ≥ 50% на Inferno при ≥ 6 матчах",
+      category: "maps",
+      unlocked: infernoUnlocked,
+      progressText: inferno.matches < 6 ? `${inferno.matches}/6 игр` : `${inferno.wr}% WR (${inferno.matches} игр)`,
+      percent: infernoPercent,
+      color: "#ef4444",
+      glowColor: "rgba(239, 68, 68, 0.4)",
+      bgGradient: "linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(180, 20, 20, 0.05) 100%)",
+      iconSvg: (
+        // Pizza Slice vector icon
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 21L2 6.5C7 4 17 4 22 6.5L12 21z" />
+          <circle cx="12" cy="11" r="1.5" fill="currentColor" />
+          <circle cx="8.5" cy="8" r="1" fill="currentColor" />
+          <circle cx="15.5" cy="8.5" r="1.2" fill="currentColor" />
+        </svg>
+      )
+    },
+    {
+      id: "nuke_specialist",
+      title: "NUKE SPECIALIST",
+      subtitle: "Ядерный Удар",
+      description: "Win Rate ≥ 50% на Nuke при ≥ 6 матчах",
+      category: "maps",
+      unlocked: nukeUnlocked,
+      progressText: nuke.matches < 6 ? `${nuke.matches}/6 игр` : `${nuke.wr}% WR (${nuke.matches} игр)`,
+      percent: nukePercent,
+      color: "#84cc16",
+      glowColor: "rgba(132, 204, 22, 0.4)",
+      bgGradient: "linear-gradient(135deg, rgba(132, 204, 22, 0.15) 0%, rgba(80, 140, 10, 0.05) 100%)",
+      iconSvg: (
+        // Radiation trefoil hazard vector icon
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="2.5" />
+          <path d="M12 9.5V2.5a9.5 9.5 0 0 1 8.2 4.75L14.15 10.8a3 3 0 0 0-2.15-1.3z" />
+          <path d="M9.85 10.8L3.8 7.25A9.5 9.5 0 0 1 12 2.5v7a3 3 0 0 0-2.15 1.3z" />
+          <path d="M14.5 13.5l6.05 3.5a9.5 9.5 0 0 1-17.1 0l6.05-3.5a3 3 0 0 0 5 0z" />
+        </svg>
+      )
+    },
+    {
+      id: "anubis_pharaoh",
+      title: "ANUBIS PHARAOH",
+      subtitle: "Фараон Анубиса",
+      description: "Win Rate ≥ 50% на Anubis при ≥ 6 матчах",
+      category: "maps",
+      unlocked: anubisUnlocked,
+      progressText: anubis.matches < 6 ? `${anubis.matches}/6 игр` : `${anubis.wr}% WR (${anubis.matches} игр)`,
+      percent: anubisPercent,
+      color: "#06b6d4",
+      glowColor: "rgba(6, 182, 212, 0.4)",
+      bgGradient: "linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(0, 120, 150, 0.05) 100%)",
+      iconSvg: (
+        // Egyptian Pyramid vector icon
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 2L2 20h20L12 2z" />
+          <path d="M12 2v18" />
+          <path d="M6 14l6-3 6 3" />
+        </svg>
+      )
+    },
+    {
+      id: "ancient_warrior",
+      title: "ANCIENT WARRIOR",
+      subtitle: "Жрец Древних",
+      description: "Win Rate ≥ 50% на Ancient при ≥ 6 матчах",
+      category: "maps",
+      unlocked: ancientUnlocked,
+      progressText: ancient.matches < 6 ? `${ancient.matches}/6 игр` : `${ancient.wr}% WR (${ancient.matches} игр)`,
+      percent: ancientPercent,
+      color: "#10b981",
+      glowColor: "rgba(16, 185, 129, 0.4)",
+      bgGradient: "linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(0, 120, 80, 0.05) 100%)",
+      iconSvg: (
+        // Aztec stepped pyramid vector icon
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M2 21h20" />
+          <path d="M4 21v-4h16v4" />
+          <path d="M7 17v-4h10v4" />
+          <path d="M10 13V9h4v4" />
+          <path d="M11 9V5h2v4" />
+        </svg>
+      )
+    },
+    {
+      id: "cache_trucker",
+      title: "CACHE TRUCKER",
+      subtitle: "Водитель ЗИЛа",
+      description: "Win Rate ≥ 50% на Cache при ≥ 6 матчах",
+      category: "maps",
+      unlocked: cacheUnlocked,
+      progressText: cache.matches < 6 ? `${cache.matches}/6 игр` : `${cache.wr}% WR (${cache.matches} игр)`,
+      percent: cachePercent,
+      color: "#6366f1",
+      glowColor: "rgba(99, 102, 241, 0.4)",
+      bgGradient: "linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(50, 50, 180, 0.05) 100%)",
+      iconSvg: (
+        // ZIL Heavy Truck vector icon
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="2" y="7" width="13" height="9" rx="1" />
+          <path d="M15 10h4l3 3v3h-7v-6z" />
+          <circle cx="6" cy="18" r="2" />
+          <circle cx="18" cy="18" r="2" />
+          <path d="M8 18h8" />
+        </svg>
+      )
+    },
+
+    // --- Special Achievements ---
+    {
+      id: "flash_master",
+      title: "FLASH",
+      subtitle: "Ослепительная улыбка",
+      description: "Успешность флешек (Flashbang Rate) ≥ 35%",
+      category: "special",
+      unlocked: flashUnlocked,
+      progressText: `${flashRate.toFixed(1)}% / 35%`,
+      percent: flashPercent,
+      color: "#38bdf8",
+      glowColor: "rgba(56, 189, 248, 0.4)",
+      bgGradient: "linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(0, 100, 180, 0.05) 100%)",
+      iconSvg: (
+        // Flashbang Grenade vector icon
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="8" y="7" width="8" height="13" rx="2" />
+          <line x1="12" y1="2" x2="12" y2="7" />
+          <line x1="9" y1="4" x2="15" y2="4" />
+          <line x1="5" y1="2" x2="2" y2="5" />
+          <line x1="19" y1="2" x2="22" y2="5" />
+          <line x1="8" y1="12" x2="16" y2="12" />
+        </svg>
+      )
+    },
+    {
+      id: "fantasy_farmer",
+      title: "FANTASY FARMER",
+      subtitle: "Фантастический прорыв",
+      description: "Рекорд за матч в Fantasy ≥ 75 очков",
+      category: "special",
+      unlocked: fantasyUnlocked,
+      progressText: `${maxFantasyScore} / 75 очков`,
+      percent: fantasyPercent,
+      color: "#eab308",
+      glowColor: "rgba(234, 179, 8, 0.4)",
+      bgGradient: "linear-gradient(135deg, rgba(234, 179, 8, 0.15) 0%, rgba(180, 130, 0, 0.05) 100%)",
+      iconSvg: (
+        // Trophy Cup vector icon
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M6 9H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3" />
+          <path d="M18 9h3a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-3" />
+          <path d="M6 3h12v7a6 6 0 0 1-12 0V3z" />
+          <path d="M12 16v4" />
+          <path d="M8 20h8" />
+        </svg>
+      )
     }
   ];
 }
 
 export default function PlayerAchievements({ achievements }: { achievements: AchievementItem[] }) {
+  const [filterCategory, setFilterCategory] = React.useState<string>("all");
+
   const unlockedCount = achievements.filter(a => a.unlocked).length;
+
+  const filtered = React.useMemo(() => {
+    if (filterCategory === "all") return achievements;
+    return achievements.filter(a => a.category === filterCategory);
+  }, [achievements, filterCategory]);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-      {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
+      {/* Header & Tabs */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.75rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
           <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", margin: 0, textTransform: "uppercase", letterSpacing: "0.03em" }}>
             Достижения
@@ -226,6 +524,34 @@ export default function PlayerAchievements({ achievements }: { achievements: Ach
             {unlockedCount} / {achievements.length} получено
           </span>
         </div>
+
+        {/* Category Filters */}
+        <div style={{ display: "inline-flex", background: "rgba(0,0,0,0.3)", borderRadius: "8px", padding: "0.2rem", border: "1px solid var(--border-light)", gap: "0.2rem" }}>
+          {[
+            { id: "all", label: "Все" },
+            { id: "combat", label: "Боевые" },
+            { id: "maps", label: "Карты" },
+            { id: "special", label: "Особые" }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setFilterCategory(tab.id)}
+              style={{
+                background: filterCategory === tab.id ? "rgba(255,255,255,0.12)" : "transparent",
+                color: filterCategory === tab.id ? "#fff" : "var(--text-muted)",
+                border: "none",
+                borderRadius: "6px",
+                padding: "0.25rem 0.65rem",
+                fontSize: "0.75rem",
+                fontWeight: "700",
+                cursor: "pointer",
+                transition: "all 0.2s ease"
+              }}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Grid of Cards */}
@@ -234,7 +560,7 @@ export default function PlayerAchievements({ achievements }: { achievements: Ach
         gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
         gap: "0.85rem"
       }}>
-        {achievements.map((item) => {
+        {filtered.map((item) => {
           return (
             <div
               key={item.id}
