@@ -26,36 +26,51 @@ export function computePlayerAchievements(params: {
 }): AchievementItem[] {
   const { hubStats, profile, leetify, currentStreak = 0, hubPlayed = 0, hubWon = 0 } = params;
 
-  // 1. Headshot Master (HS% >= 55%)
+  // 1. Headshot Master (HS% >= 55%) -> "Охотник за головами"
   const hsPct = parseFloat(String(hubStats?.hsPct ?? profile?.lifetime?.["Average Headshots %"] ?? profile?.stats?.["Average Headshots %"] ?? 0)) || 0;
   const hsUnlocked = hsPct >= 55;
   const hsPercent = Math.min(100, Math.round((hsPct / 55) * 100));
 
-  // 2. Impact Carry (HLTV >= 1.20 or ADR >= 85)
+  // 2. Carry -> "Самый ценный игрок" (HLTV >= 1.20 or ADR >= 85)
   const hltv = parseFloat(String(hubStats?.hltv ?? 0)) || 0;
   const adr = parseFloat(String(hubStats?.adr ?? 0)) || 0;
   const impactUnlocked = hltv >= 1.20 || adr >= 85;
   const impactVal = hltv > 0 ? hltv : (adr / 70);
   const impactPercent = Math.min(100, Math.round((impactVal / 1.20) * 100));
 
-  // 3. Clutch Minister (Hub WR >= 60% with >= 5 matches)
+  // 3. Clutch Minister -> "Клач-министр" (Hub WR >= 60% with >= 5 matches)
   const played = hubPlayed || hubStats?.matches || 0;
   const won = hubWon || hubStats?.wins || 0;
   const winRate = played > 0 ? (won / played) * 100 : 0;
   const clutchUnlocked = played >= 5 && winRate >= 60;
   const clutchPercent = played < 5 ? Math.round((played / 5) * 50) : Math.min(100, Math.round((winRate / 60) * 100));
 
-  // 4. Win Streak Dominator (Streak >= 3)
-  const streak = currentStreak || hubStats?.streak || 0;
-  const streakUnlocked = streak >= 3;
-  const streakPercent = Math.min(100, Math.round((streak / 3) * 100));
+  // 4. Grand Slam -> "Победитель по жизни" (5 consecutive wins in hub)
+  let maxConsecutiveWins = currentStreak || hubStats?.streak || 0;
+  if (hubStats?.longestStreak) {
+    maxConsecutiveWins = Math.max(maxConsecutiveWins, hubStats.longestStreak);
+  }
+  if (Array.isArray(hubStats?.recentMatches) && hubStats.recentMatches.length > 0) {
+    let curr = 0;
+    for (const m of hubStats.recentMatches) {
+      const isWin = Boolean(m.result === "WIN" || m.won === true || m.winner === m.teamId || m.isWin === true);
+      if (isWin) {
+        curr++;
+        if (curr > maxConsecutiveWins) maxConsecutiveWins = curr;
+      } else {
+        curr = 0;
+      }
+    }
+  }
+  const grandSlamUnlocked = maxConsecutiveWins >= 5;
+  const grandSlamPercent = Math.min(100, Math.round((maxConsecutiveWins / 5) * 100));
 
-  // 5. Deadly K/D (K/D >= 1.30)
+  // 5. Deadly K/D -> "Серийный убийца" (K/D >= 1.30)
   const kd = parseFloat(String(hubStats?.kd ?? profile?.lifetime?.["Average K/D Ratio"] ?? profile?.stats?.["Average K/D Ratio"] ?? 0)) || 0;
   const kdUnlocked = kd >= 1.30;
   const kdPercent = Math.min(100, Math.round((kd / 1.30) * 100));
 
-  // 6. Hub Veteran (Matches >= 15)
+  // 6. Veteran -> "Ветеран" (Matches >= 15)
   const vetUnlocked = played >= 15;
   const vetPercent = Math.min(100, Math.round((played / 15) * 100));
 
@@ -63,7 +78,7 @@ export function computePlayerAchievements(params: {
     {
       id: "hs_master",
       title: "HEADSHOT MASTER",
-      subtitle: "Мастер хэдшотов",
+      subtitle: "Охотник за головами",
       description: "Процент попаданий в голову ≥ 55%",
       unlocked: hsUnlocked,
       progressText: `${hsPct.toFixed(1)}% / 55%`,
@@ -84,8 +99,8 @@ export function computePlayerAchievements(params: {
     },
     {
       id: "impact_carry",
-      title: "IMPACT CARRY",
-      subtitle: "Импакт лидер",
+      title: "CARRY",
+      subtitle: "Самый ценный игрок",
       description: "HLTV 2.0 Rating ≥ 1.20 или ADR ≥ 85",
       unlocked: impactUnlocked,
       progressText: hltv > 0 ? `${hltv.toFixed(2)} HLTV` : `${adr.toFixed(0)} ADR`,
@@ -117,13 +132,13 @@ export function computePlayerAchievements(params: {
       )
     },
     {
-      id: "win_streak",
-      title: "STREAK DOMINATOR",
-      subtitle: "Серийный победитель",
-      description: "Активная серия ≥ 3 побед подряд",
-      unlocked: streakUnlocked,
-      progressText: `${streak} побед подряд`,
-      percent: streakPercent,
+      id: "grand_slam",
+      title: "GRAND SLAM",
+      subtitle: "Победитель по жизни",
+      description: "Серия из 5 побед подряд в хабе",
+      unlocked: grandSlamUnlocked,
+      progressText: `${maxConsecutiveWins} / 5 побед подряд`,
+      percent: grandSlamPercent,
       color: "#00e676",
       glowColor: "rgba(0, 230, 118, 0.4)",
       bgGradient: "linear-gradient(135deg, rgba(0, 230, 118, 0.15) 0%, rgba(0, 160, 80, 0.05) 100%)",
@@ -137,7 +152,7 @@ export function computePlayerAchievements(params: {
     {
       id: "deadly_kd",
       title: "DEADLY K/D",
-      subtitle: "Машина фрагов",
+      subtitle: "Серийный убийца",
       description: "Коэффициент K/D Ratio ≥ 1.30",
       unlocked: kdUnlocked,
       progressText: `${kd.toFixed(2)} K/D`,
@@ -156,9 +171,9 @@ export function computePlayerAchievements(params: {
       )
     },
     {
-      id: "hub_veteran",
-      title: "HUB VETERAN",
-      subtitle: "Ветеран Сигмы",
+      id: "veteran",
+      title: "VETERAN",
+      subtitle: "Ветеран",
       description: "Сыграно ≥ 15 матчей в хабе",
       unlocked: vetUnlocked,
       progressText: `${played} / 15 матчей`,
