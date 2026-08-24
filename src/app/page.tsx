@@ -6045,7 +6045,7 @@ export default function Home() {
                         {/* Form and Streaks */}
                         <div style={{ display: "flex", gap: "1rem" }}>
                           <div style={{ flex: 1, background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "8px", padding: "0.75rem 1rem" }}>
-                            <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", display: "block", marginBottom: "0.5rem" }}>Текущая форма (Последние 5 матчей)</span>
+                            <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", display: "block", marginBottom: "0.5rem" }}>Текущая форма (Последние 5 игр)</span>
                             <div style={{ display: "flex", gap: "0.5rem" }}>
                               {(() => {
                                 const recentList = playerHubStats?.recentResults || playerGameStats?.lifetime["Recent Results"] || [];
