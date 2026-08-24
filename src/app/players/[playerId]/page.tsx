@@ -156,7 +156,7 @@ export default function PlayerProfilePage() {
         hltv: statsObj.hltv || statsObj.hltvRating,
         avgKills: statsObj.avgKills,
         hsPct: statsObj.hsPct,
-        winrate: statsObj.winrate,
+        winrate: statsObj.winrate !== undefined ? parseFloat(String(statsObj.winrate)) : (statsObj.wins !== undefined && statsObj.matches ? (statsObj.wins / statsObj.matches) * 100 : 50.0),
         matchesCount: statsObj.matchesCount || statsObj.matches || 0
       } : null,
       overrides: ov
