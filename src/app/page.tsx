@@ -1740,8 +1740,9 @@ export default function Home() {
         const p = item.player || item.user || item;
         const id = p.player_id || p.user_id || p.id || item.player_id || item.user_id || item.id || "";
         const nick = p.nickname || item.nickname || "";
-        const elo = p.faceit_elo || p.elo || item.faceit_elo || item.elo;
-        return { id, nick, elo };
+        const elo = (item.player as any)?.faceit_elo || (item as any).elo || (item.player as any)?.elo || p.faceit_elo || p.elo || item.faceit_elo;
+        const hubStats = item.hubStats || (item.player as any)?.hubStats;
+        return { id, nick, elo, hubStats };
       };
 
       const itemA = extractInfo(a);
@@ -1751,8 +1752,8 @@ export default function Home() {
       let valB = 0;
 
       if (sortField === "skill") {
-        const skA = getPlayerSkillInfo(itemA.id, itemA.nick, itemA.elo);
-        const skB = getPlayerSkillInfo(itemB.id, itemB.nick, itemB.elo);
+        const skA = getPlayerSkillInfo(itemA.id, itemA.nick, itemA.elo, undefined, itemA.hubStats);
+        const skB = getPlayerSkillInfo(itemB.id, itemB.nick, itemB.elo, undefined, itemB.hubStats);
         valA = skA.score;
         valB = skB.score;
       } else if (sortField === "points") {
