@@ -63,7 +63,7 @@ export async function GET(
                   deaths += parseInt(st.Deaths || "0", 10);
                   damage += parseInt(st.Damage || "0", 10);
                   headshots += parseInt(st.Headshots || "0", 10);
-                  rounds += (parseInt(round.round_stats?.Score || "0", 10) || 0) + (parseInt(round.round_stats?.["Score (1)"] || "0", 10) || 24);
+                  rounds += parseInt(round.round_stats?.Rounds || "22", 10);
                   if (round.round_stats?.Winner && t.team_id === round.round_stats?.Winner) wins++;
                   hltvSum += parseFloat(st["HLTV 2.0 Rating"] || st["Rating"] || "1.0") || 1.0;
                   matches++;

@@ -660,7 +660,8 @@ export default function Home() {
     if (!name) return 50;
     const p = members.find(m => (m.nickname || "").toLowerCase() === name.toLowerCase()) || {};
     const pId = p.user_id || p.player_id || p.id || "";
-    const info = getPlayerSkillInfo(pId, name);
+    const elo = p.faceit_elo || p.elo || (p.games?.cs2?.faceit_elo);
+    const info = getPlayerSkillInfo(pId, name, elo);
     return info?.score || 50;
   };
 
@@ -1756,7 +1757,7 @@ export default function Home() {
         const p = item.player || item.user || item;
         const id = p.player_id || p.user_id || p.id || item.player_id || item.user_id || item.id || "";
         const nick = p.nickname || item.nickname || "";
-        const elo = (item.player as any)?.faceit_elo || (item as any).elo || (item.player as any)?.elo || p.faceit_elo || p.elo || item.faceit_elo;
+        const elo = (item.player as any)?.faceit_elo || (item.player as any)?.games?.cs2?.faceit_elo || (item.player as any)?.elo || p.faceit_elo;
         const hubStats = item.hubStats || (item.player as any)?.hubStats;
         return { id, nick, elo, hubStats };
       };
@@ -2883,7 +2884,7 @@ export default function Home() {
                                     const sk = getPlayerSkillInfo(
                                       playerId,
                                       nickname,
-                                      (item.player as any)?.faceit_elo || (item as any).elo || (item.player as any)?.elo,
+                                      (item.player as any)?.faceit_elo || (item.player as any)?.games?.cs2?.faceit_elo || (item.player as any)?.elo,
                                       undefined,
                                       (item as any).hubStats
                                     );
@@ -4331,8 +4332,8 @@ export default function Home() {
                 const getItemAvatar = (r: any) => r.player?.avatar || r.user?.avatar || r.avatar || DEFAULT_AVATAR;
                 const p1 = rankings.find((r: any) => getItemId(r) === comparePlayer1Id);
                 const p2 = rankings.find((r: any) => getItemId(r) === comparePlayer2Id);
-                const sk1 = p1 ? getPlayerSkillInfo(getItemId(p1), getItemNick(p1)) : null;
-                const sk2 = p2 ? getPlayerSkillInfo(getItemId(p2), getItemNick(p2)) : null;
+                const sk1 = p1 ? getPlayerSkillInfo(getItemId(p1), getItemNick(p1), (p1.player as any)?.faceit_elo || (p1.player as any)?.games?.cs2?.faceit_elo || (p1.player as any)?.elo, undefined, (p1 as any).hubStats) : null;
+                const sk2 = p2 ? getPlayerSkillInfo(getItemId(p2), getItemNick(p2), (p2.player as any)?.faceit_elo || (p2.player as any)?.games?.cs2?.faceit_elo || (p2.player as any)?.elo, undefined, (p2 as any).hubStats) : null;
 
                 const filteredPlayers1 = (rankings as any[]).filter(r => {
                   const nick = getItemNick(r).toLowerCase();

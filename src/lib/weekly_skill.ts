@@ -168,7 +168,7 @@ export async function performWeeklyRecalibration(force: boolean = false): Promis
           const d = parseInt(st.Deaths || "0", 10);
           const dmg = parseInt(st.Damage || "0", 10);
           const hs = parseInt(st.Headshots || "0", 10);
-          const rnds = (parseInt(round.round_stats?.Score || "0", 10) || 0) + (parseInt(round.round_stats?.["Score (1)"] || "0", 10) || 24);
+          const rnds = parseInt(round.round_stats?.Rounds || "22", 10);
           const isWin = Boolean(round.round_stats?.Winner && t.team_id === round.round_stats?.Winner);
           const hltv = parseFloat(st["HLTV 2.0 Rating"] || st["Rating"] || "1.0") || 1.0;
 

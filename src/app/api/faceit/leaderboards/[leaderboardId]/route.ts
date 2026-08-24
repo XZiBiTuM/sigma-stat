@@ -119,12 +119,14 @@ export async function GET(
           const adrNum = st.rounds > 0 ? st.damage / st.rounds : 0;
           const hltv = parseFloat(Math.max(0.1, (0.36 * kpr) - (0.53 * dpr) + (0.1 * apr) + (0.003 * adrNum) + 0.85).toFixed(2));
 
+          const winrate = st.matches > 0 ? parseFloat(((st.wins / st.matches) * 100).toFixed(1)) : 50.0;
           item.hubStats = {
             kd,
             avgKills,
             adr,
             hsPct,
             hltv,
+            winrate,
             matches: st.matches,
             wins: st.wins,
             rounds: st.rounds
