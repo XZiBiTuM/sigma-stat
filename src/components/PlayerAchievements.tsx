@@ -76,10 +76,10 @@ export function computePlayerAchievements(params: {
   const grandSlamUnlocked = maxConsecutiveWins >= 5;
   const grandSlamPercent = Math.min(100, Math.round((maxConsecutiveWins / 5) * 100));
 
-  // 5. Deadly K/D -> "Серийный убийца" (K/D >= 1.30)
+  // 5. Deadly K/D -> "Серийный убийца" (K/D >= 1.20)
   const kd = parseFloat(String(hubStats?.kd ?? profile?.lifetime?.["Average K/D Ratio"] ?? profile?.stats?.["Average K/D Ratio"] ?? 0)) || 0;
-  const kdUnlocked = kd >= 1.30;
-  const kdPercent = Math.min(100, Math.round((kd / 1.30) * 100));
+  const kdUnlocked = kd >= 1.20;
+  const kdPercent = Math.min(100, Math.round((kd / 1.20) * 100));
 
   // 6. Ace of Spades -> "Одиночка" (Aces / Pentas >= 1 in hub)
   const pentas = hubStats?.multiKills?.pentas || 0;
@@ -265,10 +265,10 @@ export function computePlayerAchievements(params: {
       id: "deadly_kd",
       title: "DEADLY K/D",
       subtitle: "Серийный убийца",
-      description: "Коэффициент K/D Ratio ≥ 1.30",
+      description: "Коэффициент K/D Ratio ≥ 1.20",
       category: "combat",
       unlocked: kdUnlocked,
-      progressText: `${kd.toFixed(2)} K/D`,
+      progressText: `${kd.toFixed(2)} / 1.20 K/D`,
       percent: kdPercent,
       color: "#ff9100",
       glowColor: "rgba(255, 145, 0, 0.4)",
