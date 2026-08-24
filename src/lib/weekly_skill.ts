@@ -1,5 +1,6 @@
 import { getStoragePath, getPersistentPath } from "@/lib/storage";
 import { computeAdaptiveSkillScore } from "@/lib/skill";
+import { faceitFetch } from "@/lib/faceit";
 import { promises as fs } from "fs";
 import fsSync from "fs";
 
@@ -185,6 +186,33 @@ export async function performWeeklyRecalibration(force: boolean = false): Promis
     }
   }
 
+  // Fetch live member Elo and general leaderboard items
+  const HUB_ID = "d0701937-8eba-4df9-8830-22137001c0bd";
+  let membersEloMap: Record<string, number> = {};
+  try {
+    const memRes = await faceitFetch(`/hubs/${HUB_ID}/members?limit=50`).catch(() => ({ items: [] }));
+    (memRes?.items || []).forEach((m: any) => {
+      const elo = m.faceit_elo || m.elo || m.games?.cs2?.faceit_elo || m.games?.csgo?.faceit_elo;
+      if (elo) {
+        if (m.user_id) membersEloMap[m.user_id.toLowerCase()] = elo;
+        if (m.nickname) membersEloMap[m.nickname.toLowerCase()] = elo;
+      }
+    });
+  } catch {}
+
+  let lbMap: Record<string, { winrate: number; played: number }> = {};
+  try {
+    const lbRes = await faceitFetch(`/leaderboards/hubs/${HUB_ID}/general?limit=50`).catch(() => ({ items: [] }));
+    (lbRes?.items || []).forEach((i: any) => {
+      const pid = (i.player?.user_id || "").toLowerCase();
+      const nick = (i.player?.nickname || "").toLowerCase();
+      const winrate = typeof i.win_rate === "number" ? (i.win_rate <= 1 ? i.win_rate * 100 : i.win_rate) : (i.played > 0 && typeof i.won === "number" ? (i.won / i.played) * 100 : 50);
+      const played = typeof i.played === "number" ? i.played : 0;
+      if (pid) lbMap[pid] = { winrate, played };
+      if (nick) lbMap[nick] = { winrate, played };
+    });
+  } catch {}
+
   const updatedPlayers: Record<string, PlayerWeeklyRecord> = {};
 
   for (const [key, p] of Object.entries(playerStats)) {
@@ -195,10 +223,12 @@ export async function performWeeklyRecalibration(force: boolean = false): Promis
     const adr = p.rounds > 0 ? p.damage / p.rounds : 75;
     const hsPct = p.kills > 0 ? (p.headshots / p.kills) * 100 : 45;
     const avgKills = p.matches > 0 ? p.kills / p.matches : 16;
-    const winrate = p.matches > 0 ? (p.wins / p.matches) * 100 : 50;
+    const defaultWinrate = p.matches > 0 ? (p.wins / p.matches) * 100 : 50;
+    const winrate = (p.id && lbMap[p.id.toLowerCase()]?.winrate) || (p.nickname && lbMap[p.nickname.toLowerCase()]?.winrate) || defaultWinrate;
+    const matchesCount = (p.id && lbMap[p.id.toLowerCase()]?.played) || (p.nickname && lbMap[p.nickname.toLowerCase()]?.played) || p.matches;
     const hltv = p.matches > 0 ? p.hltvSum / p.matches : 1.0;
 
-    const baseElo = ov.customElo || 1200;
+    const baseElo = (p.id && membersEloMap[p.id.toLowerCase()]) || (p.nickname && membersEloMap[p.nickname.toLowerCase()]) || ov.customElo || 1200;
     const skillRes = computeAdaptiveSkillScore({
       playerId: p.id,
       nickname: p.nickname,
@@ -210,7 +240,7 @@ export async function performWeeklyRecalibration(force: boolean = false): Promis
         avgKills,
         hsPct,
         winrate,
-        matchesCount: p.matches
+        matchesCount
       },
       overrides: ov
     });
@@ -231,7 +261,7 @@ export async function performWeeklyRecalibration(force: boolean = false): Promis
       updatedWeek: currentWeekKey,
       updatedAt: new Date().toISOString(),
       faceitElo: baseElo,
-      matchesInWeek: p.matches
+      matchesInWeek: matchesCount
     };
 
     if (p.id) updatedPlayers[p.id] = record;
