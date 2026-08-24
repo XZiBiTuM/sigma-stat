@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPlayerProfile } from "@/lib/faceit";
 import { getStoragePath } from "@/lib/storage";
+import { computeAdaptiveSkillScore } from "@/lib/skill";
 import { promises as fs } from "fs";
 import path from "path";
 
@@ -31,30 +32,22 @@ export async function GET(
 
     const realFaceitElo = data.games?.cs2?.faceit_elo || data.games?.csgo?.faceit_elo;
     const elo = realFaceitElo || override.customElo || 1000;
-    const csRating = override.csRating || Math.round(elo * 9.5);
+    const faceitMatches = data.games?.cs2?.matches || data.lifetime?.Matches || 500;
 
-    let skillScore = override.customSkillScore;
-    if (skillScore === undefined || skillScore === null) {
-      const sElo = Math.min(100, Math.max(10, (elo - 300) / 22));
-      const sPremier = Math.min(100, Math.max(10, csRating / 260));
-      // Base calculation
-      skillScore = Math.round((0.45 * sElo) + (0.55 * sPremier));
-    }
-
-    let skillTier = "C Tier";
-    if (skillScore >= 90) skillTier = "S+ Tier";
-    else if (skillScore >= 80) skillTier = "S Tier";
-    else if (skillScore >= 70) skillTier = "A+ Tier";
-    else if (skillScore >= 60) skillTier = "A Tier";
-    else if (skillScore >= 50) skillTier = "B Tier";
-    else if (skillScore >= 40) skillTier = "C Tier";
-    else skillTier = "D Tier";
+    const skillObj = computeAdaptiveSkillScore({
+      playerId,
+      nickname: data.nickname,
+      elo,
+      faceitMatches,
+      premierRating: override.csRating,
+      overrides: override
+    });
 
     return NextResponse.json({
       ...data,
-      csRating,
-      skillScore,
-      skillTier,
+      csRating: skillObj.csRating,
+      skillScore: skillObj.score,
+      skillTier: skillObj.tier,
       override
     });
   } catch (error: any) {

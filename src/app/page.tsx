@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useTransition, Component, ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { computeAdaptiveSkillScore } from "@/lib/skill";
 
 class ErrorBoundary extends Component<
   { children: ReactNode },
@@ -329,7 +330,15 @@ export default function Home() {
     fetchPlayerOverrides();
   }, []);
 
-  const getPlayerSkillInfo = (playerId: string, nickname: string, eloVal?: number, realPremierRating?: number, statsObj?: any) => {
+  const getPlayerSkillInfo = (
+    playerId: string, 
+    nickname: string, 
+    eloVal?: number, 
+    realPremierRating?: number, 
+    statsObj?: any,
+    faceitMatchesCount?: number,
+    premierMatchesCount?: number
+  ) => {
     const lowerNick = (nickname || "").toLowerCase();
     const ov = (playerId && playerOverridesMap[playerId]) || 
                (lowerNick && playerOverridesMap[lowerNick]) || 
@@ -339,85 +348,36 @@ export default function Home() {
                     (lowerNick && playerEloMap[lowerNick]) || 
                     (nickname && playerEloMap[nickname]) || 
                     eloVal || 
-                    ov.customElo;
-
-    const csRating = realPremierRating || ov.csRating || (baseElo ? Math.round(baseElo * 9.5) : 9500);
-    const elo = baseElo || (ov.csRating ? Math.round(ov.csRating / 11.53) : 1000);
-
-    let score = ov.customSkillScore;
-    if (score === undefined || score === null) {
-      if (statsObj) {
-        const kd = parseFloat(String(statsObj?.kd || statsObj?.["Average K/D Ratio"] || 1.0)) || 1.0;
-        const adr = parseFloat(String(statsObj?.adr || 75.0)) || 75.0;
-        const hsPct = parseFloat(String(statsObj?.hsPct || statsObj?.["Average Headshots %"] || 45.0)) || 45.0;
-        const avgKills = parseFloat(String(statsObj?.avgKills || statsObj?.["Average Kills"] || (kd * 16))) || 16.0;
-        const winRate = parseFloat(String(statsObj?.winrate || statsObj?.["Win Rate %"] || 50.0)) || 50.0;
-
-        const sKd = Math.min(100, Math.max(10, 40 + (kd - 0.8) * 50));
-        const sAdr = Math.min(100, Math.max(10, 40 + (adr - 50) * 1.3));
-        const sHs = Math.min(100, Math.max(10, 40 + (hsPct - 35) * 2.0));
-        const sAvg = Math.min(100, Math.max(10, 40 + (avgKills - 12) * 4.2));
-        const sWr = Math.min(100, Math.max(10, 40 + (winRate - 40) * 1.6));
-        const sElo = Math.min(100, Math.max(10, 40 + (elo - 1000) / 22));
-
-        score = Math.min(99, Math.max(15, Math.round(
-          (sKd * 0.28) + 
-          (sAdr * 0.22) + 
-          (sAvg * 0.20) + 
-          (sHs * 0.12) + 
-          (sWr * 0.10) + 
-          (sElo * 0.08)
-        )));
-      } else {
-        const sElo = Math.min(100, Math.max(10, (elo - 300) / 22));
-        const sPremier = Math.min(100, Math.max(10, csRating / 260));
-        score = Math.round((0.45 * sElo) + (0.55 * sPremier));
-      }
-    }
-
-    // Rainbow Tier Hierarchy (Red = lowest/worst, Purple/Glowing Purple = highest/best)
-    let tier = "D Tier";
-    let color = "#ff4d4d"; // Red
-    let bg = "rgba(255, 77, 77, 0.15)";
-    let border = "rgba(255, 77, 77, 0.4)";
-    let glow = "";
-
-    if (score >= 90) {
-      tier = "S+ Tier";
-      color = "#e9d5ff"; // Light Glowing Purple
-      bg = "rgba(168, 85, 247, 0.25)";
-      border = "rgba(192, 132, 252, 0.8)";
-      glow = "0 0 16px rgba(192, 132, 252, 0.7), 0 0 4px rgba(168, 85, 247, 0.9)";
-    } else if (score >= 80) {
-      tier = "S Tier";
-      color = "#c084fc"; // Vibrant Purple
-      bg = "rgba(168, 85, 247, 0.18)";
-      border = "rgba(168, 85, 247, 0.6)";
-      glow = "0 0 12px rgba(168, 85, 247, 0.5)";
-    } else if (score >= 70) {
-      tier = "A+ Tier";
-      color = "#00e5ff"; // Cyan / Neon Aqua
-      bg = "rgba(0, 229, 255, 0.15)";
-      border = "rgba(0, 229, 255, 0.4)";
-    } else if (score >= 60) {
-      tier = "A Tier";
-      color = "#4caf50"; // Green
-      bg = "rgba(76, 175, 80, 0.15)";
-      border = "rgba(76, 175, 80, 0.4)";
-    } else if (score >= 50) {
-      tier = "B Tier";
-      color = "#ffca28"; // Yellow
-      bg = "rgba(255, 202, 40, 0.15)";
-      border = "rgba(255, 202, 40, 0.4)";
-    } else if (score >= 40) {
-      tier = "C Tier";
-      color = "#ff9100"; // Orange
-      bg = "rgba(255, 145, 0, 0.15)";
-      border = "rgba(255, 145, 0, 0.4)";
-    }
+                    ov.customElo || 
+                    (ov.csRating ? Math.round(ov.csRating / 11.53) : 1000);
 
     const isRealPremier = Boolean(realPremierRating || ov.csRating);
-    return { score, tier, color, bg, border, glow, csRating, elo, override: ov, isRealPremier };
+
+    const skillRes = computeAdaptiveSkillScore({
+      playerId,
+      nickname,
+      elo: baseElo,
+      faceitMatches: faceitMatchesCount || 500,
+      premierRating: realPremierRating || ov.csRating,
+      premierMatches: premierMatchesCount || 0,
+      isRealPremier,
+      combatStats: statsObj ? {
+        kd: statsObj.kd,
+        adr: statsObj.adr,
+        hltv: statsObj.hltv || statsObj.hltvRating,
+        avgKills: statsObj.avgKills,
+        hsPct: statsObj.hsPct,
+        winrate: statsObj.winrate,
+        matchesCount: statsObj.matchesCount || statsObj.matches || 0
+      } : null,
+      overrides: ov
+    });
+
+    return {
+      ...skillRes,
+      elo: baseElo,
+      override: ov
+    };
   };
 
   // Auth & Event of Mr.Chillout States
@@ -5910,7 +5870,16 @@ export default function Home() {
                 {/* Skill Rating & Premier CS Rating Dedicated Block */}
                 {(() => {
                   const realPremier = playerSteamStats?.premierRating;
-                  const sk = getPlayerSkillInfo(playerProfile.player_id, playerProfile.nickname, playerProfile.games?.cs2?.faceit_elo || playerProfile.games?.csgo?.faceit_elo, realPremier);
+                  const eloVal = playerProfile.games?.cs2?.faceit_elo || playerProfile.games?.csgo?.faceit_elo;
+                  const combatStats = playerHubStats || (playerProfile?.lifetime ? {
+                    kd: playerProfile.lifetime["Average K/D Ratio"],
+                    hsPct: playerProfile.lifetime["Average Headshots %"],
+                    winrate: playerProfile.lifetime["Win Rate %"],
+                    avgKills: playerProfile.lifetime["Average Kills"]
+                  } : null);
+                  const faceitMatches = (playerProfile.games?.cs2 as any)?.matches || (playerProfile?.lifetime as any)?.Matches || 500;
+                  const premierMatches = playerSteamStats?.premierMatches || 0;
+                  const sk = getPlayerSkillInfo(playerProfile.player_id, playerProfile.nickname, eloVal, realPremier, combatStats, faceitMatches, premierMatches);
                   return (
                     <div className="glass-card" style={{
                       display: "flex",
