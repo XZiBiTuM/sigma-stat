@@ -84,6 +84,7 @@ export default function PlayerProfilePage() {
   const [fantasyWinnerNick, setFantasyWinnerNick] = useState<string>("");
   const [fantasyWinnerSteamId, setFantasyWinnerSteamId] = useState<string>("");
   const [visibleMatches, setVisibleMatches] = useState(10);
+  const [chartMetricIndex, setChartMetricIndex] = useState<number>(0);
   const [steamStats, setSteamStats] = useState<any>(null);
   const [copied, setCopied] = useState(false);
   const [steamHover, setSteamHover] = useState(false);
@@ -278,21 +279,101 @@ export default function PlayerProfilePage() {
     );
   };
 
+  const CHART_METRICS = [
+    {
+      id: "hltv",
+      label: "HLTV 2.0",
+      shortName: "HLTV Rating 2.0",
+      color: "#ffd700",
+      lineColor: "#ffc837",
+      gradStart: "rgba(255, 200, 55, 0.35)",
+      gradEnd: "rgba(255, 200, 55, 0.0)",
+      getValue: (m: any) => typeof m.rating === "number" ? m.rating : (parseFloat(m.rating) || 1.0),
+      formatValue: (v: number) => v.toFixed(2),
+      formatAxis: (v: number) => v.toFixed(2),
+      minRange: 0.3,
+      unit: ""
+    },
+    {
+      id: "kd",
+      label: "K/D",
+      shortName: "K/D Ratio",
+      color: "#00e5ff",
+      lineColor: "#00e5ff",
+      gradStart: "rgba(0, 229, 255, 0.35)",
+      gradEnd: "rgba(0, 229, 255, 0.0)",
+      getValue: (m: any) => typeof m.kd === "number" ? m.kd : (parseFloat(m.kd) || (m.deaths > 0 ? m.kills / m.deaths : m.kills) || 1.0),
+      formatValue: (v: number) => v.toFixed(2),
+      formatAxis: (v: number) => v.toFixed(2),
+      minRange: 0.4,
+      unit: ""
+    },
+    {
+      id: "adr",
+      label: "ADR",
+      shortName: "Урон за раунд (ADR)",
+      color: "#ff9100",
+      lineColor: "#ff9100",
+      gradStart: "rgba(255, 145, 0, 0.35)",
+      gradEnd: "rgba(255, 145, 0, 0.0)",
+      getValue: (m: any) => typeof m.adr === "number" ? m.adr : (parseFloat(m.adr) || (m.damage && m.rounds ? m.damage / m.rounds : 75)),
+      formatValue: (v: number) => `${Math.round(v)}`,
+      formatAxis: (v: number) => `${Math.round(v)}`,
+      minRange: 20,
+      unit: " HP"
+    },
+    {
+      id: "avg",
+      label: "AVG",
+      shortName: "Фраги (AVG)",
+      color: "#00e676",
+      lineColor: "#00e676",
+      gradStart: "rgba(0, 230, 118, 0.35)",
+      gradEnd: "rgba(0, 230, 118, 0.0)",
+      getValue: (m: any) => typeof m.kills === "number" ? m.kills : (parseInt(m.kills, 10) || 16),
+      formatValue: (v: number) => `${Math.round(v)}`,
+      formatAxis: (v: number) => `${Math.round(v)}`,
+      minRange: 6,
+      unit: " киллов"
+    },
+    {
+      id: "hs",
+      label: "HS%",
+      shortName: "Хедшоты (HS%)",
+      color: "#e040fb",
+      lineColor: "#e040fb",
+      gradStart: "rgba(224, 64, 251, 0.35)",
+      gradEnd: "rgba(224, 64, 251, 0.0)",
+      getValue: (m: any) => typeof m.hsPct === "number" ? m.hsPct : (parseFloat(m.hsPct) || 45),
+      formatValue: (v: number) => `${Math.round(v)}%`,
+      formatAxis: (v: number) => `${Math.round(v)}%`,
+      minRange: 15,
+      unit: "%"
+    }
+  ];
+
   const renderRatingChart = () => {
     if (!hubStats || !Array.isArray(hubStats.recentMatches) || hubStats.recentMatches.length === 0) return null;
 
+    const activeMetric = CHART_METRICS[chartMetricIndex] || CHART_METRICS[0];
     const chartData = [...hubStats.recentMatches].slice(0, 10).reverse();
     const width = 500;
     const height = 260;
-    const paddingLeft = 35;
+    const paddingLeft = 38;
     const paddingRight = 15;
-    const paddingTop = 35;
+    const paddingTop = 38;
     const paddingBottom = 30;
 
-    const ratings = chartData.map((m: any) => m.rating || 1.0);
-    const minRating = Math.max(0.2, Math.min(...ratings) - 0.15);
-    const maxRating = Math.min(3.0, Math.max(...ratings) + 0.15);
-    const ratingRange = maxRating - minRating;
+    const values = chartData.map((m: any) => activeMetric.getValue(m));
+    const rawMin = Math.min(...values);
+    const rawMax = Math.max(...values);
+    const rawRange = rawMax - rawMin;
+
+    const effectiveRange = Math.max(activeMetric.minRange, rawRange);
+    const pad = effectiveRange * 0.15;
+    const minValue = Math.max(0, rawMin - pad);
+    const maxValue = rawMax + pad;
+    const valRange = maxValue - minValue || 1;
 
     const getX = (idx: number) => {
       if (chartData.length <= 1) return paddingLeft;
@@ -300,17 +381,23 @@ export default function PlayerProfilePage() {
     };
 
     const getY = (val: number) => {
-      return height - paddingBottom - ((val - minRating) / ratingRange) * (height - paddingTop - paddingBottom);
+      return height - paddingBottom - ((val - minValue) / valRange) * (height - paddingTop - paddingBottom);
     };
 
     // Construct path coordinates
-    const points = chartData.map((m: any, idx: number) => ({
-      x: getX(idx),
-      y: getY(m.rating || 1.0),
-      rating: m.rating,
-      won: m.won,
-      mapName: m.map
-    }));
+    const points = chartData.map((m: any, idx: number) => {
+      const v = activeMetric.getValue(m);
+      return {
+        x: getX(idx),
+        y: getY(v),
+        rawVal: v,
+        displayVal: activeMetric.formatValue(v),
+        won: m.won,
+        mapName: m.map,
+        score: m.score,
+        finishedAt: m.finishedAt
+      };
+    });
 
     let linePath = "";
     let areaPath = "";
@@ -319,21 +406,114 @@ export default function PlayerProfilePage() {
       areaPath = `${linePath} L ${points[points.length - 1].x} ${height - paddingBottom} L ${points[0].x} ${height - paddingBottom} Z`;
     }
 
+    const handlePrev = () => {
+      setChartMetricIndex((prev) => (prev - 1 + CHART_METRICS.length) % CHART_METRICS.length);
+    };
+
+    const handleNext = () => {
+      setChartMetricIndex((prev) => (prev + 1) % CHART_METRICS.length);
+    };
+
     return (
-      <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "0.75rem", marginTop: "0rem", flex: 1, minHeight: "280px", justifyContent: "space-between", boxSizing: "border-box" }}>
-        <div>
-          <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff", display: "block" }}>Динамика перформанса (HLTV Rating 2.0)</span>
-          <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", display: "block" }}>Последние {chartData.length} игр</span>
+      <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "0.85rem", marginTop: "0rem", flex: 1, minHeight: "280px", justifyContent: "space-between", boxSizing: "border-box" }}>
+        
+        {/* Header with Switcher Tabs & Arrows */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.6rem" }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <span style={{ fontSize: "0.92rem", fontWeight: "800", color: "#fff", display: "inline-block" }}>
+                Динамика перформанса
+              </span>
+              <span style={{ fontSize: "0.8rem", fontWeight: "800", color: activeMetric.color, background: `${activeMetric.color}18`, padding: "0.15rem 0.5rem", borderRadius: "6px", border: `1px solid ${activeMetric.color}40` }}>
+                {activeMetric.shortName}
+              </span>
+            </div>
+            <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", display: "block", marginTop: "0.15rem" }}>
+              Последние {chartData.length} игр (Хаб)
+            </span>
+          </div>
+
+          {/* Metric Selector Buttons + Leaf Arrows */}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", background: "rgba(0,0,0,0.3)", padding: "0.25rem 0.35rem", borderRadius: "10px", border: "1px solid var(--border-light)" }}>
+            <button
+              onClick={handlePrev}
+              title="Предыдущий график"
+              style={{
+                background: "rgba(255,255,255,0.05)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                color: "#fff",
+                borderRadius: "6px",
+                width: "24px",
+                height: "24px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                fontSize: "0.85rem",
+                fontWeight: "bold",
+                transition: "all 0.15s ease"
+              }}
+            >
+              ‹
+            </button>
+
+            {CHART_METRICS.map((met, idx) => {
+              const isActive = idx === chartMetricIndex;
+              return (
+                <button
+                  key={met.id}
+                  onClick={() => setChartMetricIndex(idx)}
+                  style={{
+                    background: isActive ? `${met.color}25` : "transparent",
+                    color: isActive ? met.color : "var(--text-secondary)",
+                    border: isActive ? `1px solid ${met.color}70` : "1px solid transparent",
+                    boxShadow: isActive ? `0 0 10px ${met.color}35` : "none",
+                    borderRadius: "6px",
+                    padding: "0.2rem 0.55rem",
+                    fontSize: "0.72rem",
+                    fontWeight: isActive ? "800" : "600",
+                    cursor: "pointer",
+                    transition: "all 0.2s ease"
+                  }}
+                >
+                  {met.label}
+                </button>
+              );
+            })}
+
+            <button
+              onClick={handleNext}
+              title="Следующий график"
+              style={{
+                background: "rgba(255,255,255,0.05)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                color: "#fff",
+                borderRadius: "6px",
+                width: "24px",
+                height: "24px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                fontSize: "0.85rem",
+                fontWeight: "bold",
+                transition: "all 0.15s ease"
+              }}
+            >
+              ›
+            </button>
+          </div>
         </div>
 
+        {/* Dynamic SVG Chart */}
         <div style={{ width: "100%", display: "flex", alignItems: "center", overflow: "hidden" }}>
           <svg viewBox={`0 0 ${width} ${height}`} style={{ width: "100%", height: "100%", overflow: "visible" }}>
             <defs>
-              <linearGradient id="chartAreaGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="var(--accent-cyan)" stopOpacity="0.25" />
-                <stop offset="100%" stopColor="var(--accent-cyan)" stopOpacity="0.0" />
+              <linearGradient id={`chartAreaGrad_${activeMetric.id}`} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={activeMetric.color} stopOpacity="0.28" />
+                <stop offset="100%" stopColor={activeMetric.color} stopOpacity="0.0" />
               </linearGradient>
-              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+              <filter id={`glow_${activeMetric.id}`} x="-20%" y="-20%" width="140%" height="140%">
                 <feGaussianBlur stdDeviation="3" result="blur" />
                 <feComposite in="SourceGraphic" in2="blur" operator="over" />
               </filter>
@@ -341,13 +521,13 @@ export default function PlayerProfilePage() {
 
             {/* Horizontal Grid lines */}
             {[0, 0.25, 0.5, 0.75, 1.0].map((t, idx) => {
-              const yVal = minRating + t * ratingRange;
+              const yVal = minValue + t * valRange;
               const y = getY(yVal);
               return (
                 <g key={idx}>
-                  <line x1={paddingLeft} y1={y} x2={width - paddingRight} y2={y} stroke="rgba(255,255,255,0.05)" strokeWidth="1" strokeDasharray="4,4" />
-                  <text x={paddingLeft - 8} y={y + 3} fill="var(--text-muted)" fontSize="8" fontWeight="600" textAnchor="end">
-                    {yVal.toFixed(2)}
+                  <line x1={paddingLeft} y1={y} x2={width - paddingRight} y2={y} stroke="rgba(255,255,255,0.06)" strokeWidth="1" strokeDasharray="4,4" />
+                  <text x={paddingLeft - 6} y={y + 3} fill="var(--text-muted)" fontSize="8" fontWeight="600" textAnchor="end">
+                    {activeMetric.formatAxis(yVal)}
                   </text>
                 </g>
               );
@@ -355,38 +535,56 @@ export default function PlayerProfilePage() {
 
             {/* Area Path */}
             {points.length > 0 && (
-              <path d={areaPath} fill="url(#chartAreaGrad)" />
+              <path d={areaPath} fill={`url(#chartAreaGrad_${activeMetric.id})`} />
             )}
 
             {/* Line Path */}
             {points.length > 0 && (
-              <path d={linePath} fill="none" stroke="var(--accent-cyan)" strokeWidth="2.5" filter="url(#glow)" strokeLinecap="round" strokeLinejoin="round" />
+              <path 
+                d={linePath} 
+                fill="none" 
+                stroke={activeMetric.lineColor} 
+                strokeWidth="2.5" 
+                filter={`url(#glow_${activeMetric.id})`} 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+              />
             )}
 
             {/* Dots */}
             {points.map((p, idx) => (
               <g key={idx}>
+                {/* Glow ring */}
                 <circle 
                   cx={p.x} 
                   cy={p.y} 
-                  r="4.5" 
+                  r="5.5" 
+                  fill={activeMetric.color} 
+                  opacity="0.35"
+                />
+                {/* Dot */}
+                <circle 
+                  cx={p.x} 
+                  cy={p.y} 
+                  r="4" 
                   fill={p.won ? "var(--success)" : "var(--danger)"} 
                   stroke="#fff" 
                   strokeWidth="1.5" 
                   style={{ cursor: "pointer" }}
                 />
+                {/* Invisible hit target for hover tooltip */}
                 <circle 
                   cx={p.x} 
                   cy={p.y} 
-                  r="9" 
+                  r="10" 
                   fill="transparent" 
                   style={{ cursor: "pointer" }}
                 >
-                  <title>{`${p.mapName}\nРейтинг: ${p.rating.toFixed(2)}\nРезультат: ${p.won ? "Победа" : "Поражение"}`}</title>
+                  <title>{`${p.mapName} (${p.score || "Счет"})\n${activeMetric.shortName}: ${p.displayVal}\nРезультат: ${p.won ? "Победа" : "Поражение"}\n${p.finishedAt || ""}`}</title>
                 </circle>
-                {/* Rating labels above dots */}
+                {/* Value label above dots */}
                 <text x={p.x} y={p.y - 8} fill="#fff" fontSize="8" fontWeight="800" textAnchor="middle">
-                  {p.rating.toFixed(2)}
+                  {p.displayVal}
                 </text>
               </g>
             ))}

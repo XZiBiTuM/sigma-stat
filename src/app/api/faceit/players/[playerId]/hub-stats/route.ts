@@ -285,6 +285,7 @@ export async function GET(
             assists,
             kd: deaths > 0 ? parseFloat((kills / deaths).toFixed(2)) : kills,
             hsPct: kills > 0 ? Math.round((headshots / kills) * 100) : 0,
+            adr: parseFloat(adr.toFixed(1)),
             mvps,
             rating: parseFloat(Math.max(0.1, matchRating).toFixed(2))
           });
