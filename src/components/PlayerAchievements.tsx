@@ -31,19 +31,20 @@ export function computePlayerAchievements(params: {
   const hsUnlocked = hsPct >= 55;
   const hsPercent = Math.min(100, Math.round((hsPct / 55) * 100));
 
-  // 2. Carry -> "Самый ценный игрок" (HLTV >= 1.20 or ADR >= 85)
-  const hltv = parseFloat(String(hubStats?.hltv ?? 0)) || 0;
-  const adr = parseFloat(String(hubStats?.adr ?? 0)) || 0;
-  const impactUnlocked = hltv >= 1.20 || adr >= 85;
-  const impactVal = hltv > 0 ? hltv : (adr / 70);
-  const impactPercent = Math.min(100, Math.round((impactVal / 1.20) * 100));
+  // 2. Carry -> "Самый ценный игрок" (Strictly HLTV >= 1.20)
+  const hltv = parseFloat(String(hubStats?.hltv ?? hubStats?.hltvRating ?? 0)) || 0;
+  const impactUnlocked = hltv >= 1.20;
+  const impactPercent = Math.min(100, Math.round((hltv / 1.20) * 100));
 
-  // 3. Clutch Minister -> "Клач-министр" (Hub WR >= 60% with >= 5 matches)
-  const played = hubPlayed || hubStats?.matches || 0;
-  const won = hubWon || hubStats?.wins || 0;
-  const winRate = played > 0 ? (won / played) * 100 : 0;
-  const clutchUnlocked = played >= 5 && winRate >= 60;
-  const clutchPercent = played < 5 ? Math.round((played / 5) * 50) : Math.min(100, Math.round((winRate / 60) * 100));
+  // 3. Clutch Minister -> "Клач-министр" (Based on clutches won in hub)
+  const played = hubPlayed || hubStats?.matches || hubStats?.matchesCount || 0;
+  const c1v1 = hubStats?.duels?.clutch1v1Wins || 0;
+  const c1v2 = hubStats?.duels?.clutch1v2Wins || 0;
+  const c1v3 = hubStats?.duels?.clutch1v3Wins || 0;
+  const clutchWins = c1v1 + c1v2 + c1v3;
+  const clutchKills = hubStats?.duels?.clutchKills || 0;
+  const clutchUnlocked = clutchWins >= 10 || (clutchWins >= 5 && (hubStats?.duels?.clutch1v1Rate || 0) >= 50);
+  const clutchPercent = Math.min(100, Math.round((clutchWins / 10) * 100));
 
   // 4. Grand Slam -> "Победитель по жизни" (5 consecutive wins in hub)
   let maxConsecutiveWins = 0;
@@ -111,9 +112,9 @@ export function computePlayerAchievements(params: {
       id: "impact_carry",
       title: "CARRY",
       subtitle: "Самый ценный игрок",
-      description: "HLTV 2.0 Rating ≥ 1.20 или ADR ≥ 85",
+      description: "Рейтинг HLTV 2.0 ≥ 1.20 в хабе",
       unlocked: impactUnlocked,
-      progressText: hltv > 0 ? `${hltv.toFixed(2)} HLTV` : `${adr.toFixed(0)} ADR`,
+      progressText: `${hltv.toFixed(2)} / 1.20 HLTV`,
       percent: impactPercent,
       color: "#00e5ff",
       glowColor: "rgba(0, 229, 255, 0.4)",
@@ -128,9 +129,9 @@ export function computePlayerAchievements(params: {
       id: "clutch_minister",
       title: "CLUTCH MINISTER",
       subtitle: "Клач-министр",
-      description: "Win Rate ≥ 60% при 5+ сыгранных матчах",
+      description: "Выиграно ≥ 10 клатчей (1vX) в хабе",
       unlocked: clutchUnlocked,
-      progressText: played < 5 ? `${played} / 5 игр` : `${winRate.toFixed(1)}% WR`,
+      progressText: `${clutchWins} / 10 клатчей`,
       percent: clutchPercent,
       color: "#b388ff",
       glowColor: "rgba(179, 136, 255, 0.4)",
