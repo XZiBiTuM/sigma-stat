@@ -81,7 +81,12 @@ export function computePlayerAchievements(params: {
   const kdUnlocked = kd >= 1.30;
   const kdPercent = Math.min(100, Math.round((kd / 1.30) * 100));
 
-  // 6. Veteran -> "Ветеран" (Matches >= 15)
+  // 6. Ace of Spades -> "Одиночка" (Aces / Pentas >= 1 in hub)
+  const pentas = hubStats?.multiKills?.pentas || 0;
+  const aceUnlocked = pentas >= 1;
+  const acePercent = pentas >= 1 ? 100 : 0;
+
+  // 7. Veteran -> "Ветеран" (Matches >= 15)
   const vetUnlocked = played >= 15;
   const vetPercent = Math.min(100, Math.round((played / 15) * 100));
 
@@ -99,47 +104,57 @@ export function computePlayerAchievements(params: {
     return { matches: 0, wins: 0, wr: 0 };
   };
 
-  // 7. Mirage Enjoyer -> "Сын Миража" (Win Rate >= 50% with >= 6 matches) - I
+  // 8. Mirage Enjoyer -> "Сын Миража" (Win Rate >= 50% with >= 6 matches) - I
   const mirage = getMapInfo("mirage");
   const mirageUnlocked = mirage.matches >= 6 && mirage.wr >= 50;
   const miragePercent = mirage.matches < 6 ? Math.round((mirage.matches / 6) * 50) : Math.min(100, Math.round((mirage.wr / 50) * 100));
 
-  // 8. Dust2 Master -> "Казах" (Win Rate >= 50% with >= 6 matches) - II
+  // 9. Dust2 Master -> "Казах" (Win Rate >= 50% with >= 6 matches) - II
   const dust2 = getMapInfo("dust2");
   const dust2Unlocked = dust2.matches >= 6 && dust2.wr >= 50;
   const dust2Percent = dust2.matches < 6 ? Math.round((dust2.matches / 6) * 50) : Math.min(100, Math.round((dust2.wr / 50) * 100));
 
-  // 9. Inferno Defender -> "Итальянский Мастер" (Win Rate >= 50% with >= 6 matches) - III
+  // 10. Inferno Defender -> "Итальянский Мастер" (Win Rate >= 50% with >= 6 matches) - III
   const inferno = getMapInfo("inferno");
   const infernoUnlocked = inferno.matches >= 6 && inferno.wr >= 50;
   const infernoPercent = inferno.matches < 6 ? Math.round((inferno.matches / 6) * 50) : Math.min(100, Math.round((inferno.wr / 50) * 100));
 
-  // 10. Nuke Specialist -> "Гомер Симпсон" (Win Rate >= 50% with >= 6 matches) - IV
+  // 11. Nuke Specialist -> "Гомер Симпсон" (Win Rate >= 50% with >= 6 matches) - IV
   const nuke = getMapInfo("nuke");
   const nukeUnlocked = nuke.matches >= 6 && nuke.wr >= 50;
   const nukePercent = nuke.matches < 6 ? Math.round((nuke.matches / 6) * 50) : Math.min(100, Math.round((nuke.wr / 50) * 100));
 
-  // 11. Anubis Pharaoh -> "Фараон" (Win Rate >= 50% with >= 6 matches) - V
+  // 12. Anubis Pharaoh -> "Фараон" (Win Rate >= 50% with >= 6 matches) - V
   const anubis = getMapInfo("anubis");
   const anubisUnlocked = anubis.matches >= 6 && anubis.wr >= 50;
   const anubisPercent = anubis.matches < 6 ? Math.round((anubis.matches / 6) * 50) : Math.min(100, Math.round((anubis.wr / 50) * 100));
 
-  // 12. Ancient Fan -> "Тлатоани" (Win Rate >= 50% with >= 6 matches) - VI
+  // 13. Ancient Fan -> "Тлатоани" (Win Rate >= 50% with >= 6 matches) - VI
   const ancient = getMapInfo("ancient");
   const ancientUnlocked = ancient.matches >= 6 && ancient.wr >= 50;
   const ancientPercent = ancient.matches < 6 ? Math.round((ancient.matches / 6) * 50) : Math.min(100, Math.round((ancient.wr / 50) * 100));
 
-  // 13. Cache Owner -> "Сталкер" (Win Rate >= 50% with >= 6 matches) - VII
+  // 14. Cache Owner -> "Сталкер" (Win Rate >= 50% with >= 6 matches) - VII
   const cache = getMapInfo("cache");
   const cacheUnlocked = cache.matches >= 6 && cache.wr >= 50;
   const cachePercent = cache.matches < 6 ? Math.round((cache.matches / 6) * 50) : Math.min(100, Math.round((cache.wr / 50) * 100));
 
-  // 14. Blind Master -> "Ослепительная улыбка" (Flash Success Rate >= 35%)
+  // 15. Blind Master -> "Ослепительная улыбка" (Flash Success Rate >= 35%)
   const flashRate = parseFloat(String(hubStats?.utility?.flashSuccessRate ?? (hubStats?.utility?.flashCount > 0 ? (hubStats.utility.flashSuccesses / hubStats.utility.flashCount) * 100 : 0))) || 0;
   const flashUnlocked = flashRate >= 35;
   const flashPercent = Math.min(100, Math.round((flashRate / 35) * 100));
 
-  // 15. Fantasy Farmer -> "Фантастический прорыв" (Max fantasy score >= 75)
+  // 16. Commentator -> "Комментатор" (Leave comments to >= 7 different players)
+  const commentedCount = hubStats?.commentedPlayersCount || 0;
+  const commentatorUnlocked = commentedCount >= 7;
+  const commentatorPercent = Math.min(100, Math.round((commentedCount / 7) * 100));
+
+  // 17. Fantasy Winner -> "Фантазер" (Win Fantasy League >= 1 time)
+  const isFantasyWinner = Boolean(hubStats?.isFantasyWinner || profile?.isFantasyWinner || profile?.customRole === "CHAMPION");
+  const fantasyWinnerUnlocked = isFantasyWinner;
+  const fantasyWinnerPercent = isFantasyWinner ? 100 : 0;
+
+  // 18. Fantasy Farmer -> "Фантастический прорыв" (Max fantasy score >= 75)
   let maxFantasyScore = 0;
   if (Array.isArray(hubStats?.recentMatches) && hubStats.recentMatches.length > 0) {
     for (const m of hubStats.recentMatches) {
@@ -269,6 +284,26 @@ export function computePlayerAchievements(params: {
       )
     },
     {
+      id: "ace_of_spades",
+      title: "ACE OF SPADES",
+      subtitle: "Одиночка",
+      description: "Сделать минимум 1 эйс (5 киллов) в хабе",
+      category: "combat",
+      unlocked: aceUnlocked,
+      progressText: `${pentas} / 1 эйс`,
+      percent: acePercent,
+      color: "#f43f5e",
+      glowColor: "rgba(244, 63, 94, 0.4)",
+      bgGradient: "linear-gradient(135deg, rgba(244, 63, 94, 0.15) 0%, rgba(180, 20, 50, 0.05) 100%)",
+      iconSvg: (
+        // Ace of Spades vector icon
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 2C9 7 4 9 4 14a6 6 0 0 0 10.5 4l-2.5 4h0l4 0-2.5-4A6 6 0 0 0 20 14c0-5-5-7-8-12z" />
+          <circle cx="12" cy="13" r="1.5" fill="currentColor" />
+        </svg>
+      )
+    },
+    {
       id: "veteran",
       title: "VETERAN",
       subtitle: "Ветеран",
@@ -281,7 +316,7 @@ export function computePlayerAchievements(params: {
       glowColor: "rgba(255, 215, 0, 0.4)",
       bgGradient: "linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(180, 140, 0, 0.05) 100%)",
       iconSvg: (
-        // Military Veteran Shield / Badge with crossed blades
+        // Military Veteran Shield / Badge with star
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z" />
           <circle cx="12" cy="12" r="2.5" />
@@ -407,6 +442,50 @@ export function computePlayerAchievements(params: {
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z" fill="currentColor" fillOpacity="0.25" />
           <circle cx="12" cy="12" r="2" fill="currentColor" />
+        </svg>
+      )
+    },
+    {
+      id: "commentator",
+      title: "COMMENTATOR",
+      subtitle: "Комментатор",
+      description: "Оставить комментарии ≥ 7 разным игрокам",
+      category: "special",
+      unlocked: commentatorUnlocked,
+      progressText: `${commentedCount} / 7 игроков`,
+      percent: commentatorPercent,
+      color: "#c084fc",
+      glowColor: "rgba(192, 132, 252, 0.4)",
+      bgGradient: "linear-gradient(135deg, rgba(192, 132, 252, 0.15) 0%, rgba(120, 50, 200, 0.05) 100%)",
+      iconSvg: (
+        // Chat bubble with microphone / speech waves vector icon
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          <path d="M12 7v4" />
+          <circle cx="12" cy="14" r="0.5" fill="currentColor" />
+        </svg>
+      )
+    },
+    {
+      id: "fantasy_winner",
+      title: "FANTASY WINNER",
+      subtitle: "Фантазер",
+      description: "Победитель Fantasy-лиги (1-е место) ≥ 1 раза",
+      category: "special",
+      unlocked: fantasyWinnerUnlocked,
+      progressText: isFantasyWinner ? "1 / 1 победа" : "0 / 1 победа",
+      percent: fantasyWinnerPercent,
+      color: "#fbbf24",
+      glowColor: "rgba(251, 191, 36, 0.4)",
+      bgGradient: "linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(200, 140, 0, 0.05) 100%)",
+      iconSvg: (
+        // Tournament Ladder / Podium with Crown vector icon
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M4 21h16" />
+          <path d="M8 21v-7h8v7" />
+          <path d="M4 21v-4h4v4" />
+          <path d="M16 21v-4h4v4" />
+          <path d="M10 5l2-3 2 3 3-1-2 5H9L7 4z" fill="currentColor" fillOpacity="0.3" />
         </svg>
       )
     },

@@ -3,9 +3,10 @@ export const revalidate = 0;
 
 import { NextRequest, NextResponse } from "next/server";
 import { promises as fs } from "fs";
+import fsSync from "fs";
 import path from "path";
 import { faceitFetch, getPlayerProfile } from "@/lib/faceit";
-import { getStoragePath } from "@/lib/storage";
+import { getStoragePath, getPersistentPath } from "@/lib/storage";
 
 const cacheFilePath = getStoragePath("match_stats_cache.json");
 
@@ -406,6 +407,46 @@ export async function GET(
       }
     });
 
+    // Calculate unique commented players count
+    let commentedCount = 0;
+    try {
+      const commPath = getPersistentPath("player_comments.json");
+      const fallbackComm = getStoragePath("player_comments.json");
+      const activeCommPath = fsSync.existsSync(commPath) ? commPath : fallbackComm;
+      if (fsSync.existsSync(activeCommPath)) {
+        const commData = JSON.parse(fsSync.readFileSync(activeCommPath, "utf8") || "{}");
+        const uniqueTargets = new Set();
+        const pNick = (playerProfile.nickname || "").toLowerCase();
+        for (const [tKey, cList] of Object.entries(commData)) {
+          if (!Array.isArray(cList)) continue;
+          for (const c of (cList as any[])) {
+            const mFaceitId = c.authorFaceitId === uuid || c.authorFaceitId === playerId;
+            const mNick = (c.authorFaceitNick && c.authorFaceitNick.toLowerCase() === pNick) || (c.authorName && c.authorName.toLowerCase() === pNick);
+            if (mFaceitId || mNick) {
+              uniqueTargets.add(tKey.toLowerCase());
+              break;
+            }
+          }
+        }
+        commentedCount = uniqueTargets.size;
+      }
+    } catch {}
+
+    // Check if player is Fantasy Champion
+    let isFantasyWinner = false;
+    try {
+      const ovPath = getPersistentPath("player_overrides.json");
+      const fallbackOv = getStoragePath("player_overrides.json");
+      const activeOvPath = fsSync.existsSync(ovPath) ? ovPath : fallbackOv;
+      if (fsSync.existsSync(activeOvPath)) {
+        const ovData = JSON.parse(fsSync.readFileSync(activeOvPath, "utf8") || "{}");
+        const pOv = ovData[uuid] || ovData[playerId] || ovData[playerProfile.nickname || ""] || {};
+        if (pOv.customRole === "CHAMPION" || pOv.isFantasyChampion === true || pOv.fantasyWinner === true) {
+          isFantasyWinner = true;
+        }
+      }
+    } catch {}
+
     return NextResponse.json({
       playerId,
       matchesCount: finalMatchesCount,
@@ -469,7 +510,9 @@ export async function GET(
         rate: totalKills > 0 ? Math.round((totalSniperKills / totalKills) * 100) : 0
       },
       maps: mapStatsList,
-      recentMatches: playerMatchesList
+      recentMatches: playerMatchesList,
+      commentedPlayersCount: commentedCount,
+      isFantasyWinner
     });
 
   } catch (error: any) {
