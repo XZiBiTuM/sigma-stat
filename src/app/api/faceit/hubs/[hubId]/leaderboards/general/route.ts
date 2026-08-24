@@ -121,7 +121,17 @@ export async function GET(
           const adrNum = st.rounds > 0 ? st.damage / st.rounds : 0;
           const hltv = parseFloat(Math.max(0.1, (0.36 * kpr) - (0.53 * dpr) + (0.1 * apr) + (0.003 * adrNum) + 0.85).toFixed(2));
 
-          const winrate = st.matches > 0 ? parseFloat(((st.wins / st.matches) * 100).toFixed(1)) : 50.0;
+          const tableWinRate = typeof item.win_rate === "number" 
+            ? (item.win_rate <= 1 ? item.win_rate * 100 : item.win_rate)
+            : (typeof item.played === "number" && item.played > 0 && typeof item.won === "number" ? (item.won / item.played) * 100 : undefined);
+
+          const winrate = tableWinRate !== undefined 
+            ? parseFloat(tableWinRate.toFixed(1)) 
+            : (st.matches > 0 ? parseFloat(((st.wins / st.matches) * 100).toFixed(1)) : 50.0);
+
+          const matchesCount = typeof item.played === "number" ? item.played : st.matches;
+          const winsCount = typeof item.won === "number" ? item.won : st.wins;
+
           item.hubStats = {
             kd,
             avgKills,
@@ -129,8 +139,8 @@ export async function GET(
             hsPct,
             hltv,
             winrate,
-            matches: st.matches,
-            wins: st.wins,
+            matches: matchesCount,
+            wins: winsCount,
             rounds: st.rounds
           };
         } else {
