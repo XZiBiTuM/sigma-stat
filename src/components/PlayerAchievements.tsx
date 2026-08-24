@@ -99,48 +99,47 @@ export function computePlayerAchievements(params: {
     return { matches: 0, wins: 0, wr: 0 };
   };
 
-  // 7. Mirage Enjoyer -> "Сын Миража" (Win Rate >= 50% with >= 6 matches)
+  // 7. Mirage Enjoyer -> "Сын Миража" (Win Rate >= 50% with >= 6 matches) - I
   const mirage = getMapInfo("mirage");
   const mirageUnlocked = mirage.matches >= 6 && mirage.wr >= 50;
   const miragePercent = mirage.matches < 6 ? Math.round((mirage.matches / 6) * 50) : Math.min(100, Math.round((mirage.wr / 50) * 100));
 
-  // 8. Dust2 Master -> "Сын Даста" (Win Rate >= 50% with >= 6 matches)
+  // 8. Dust2 Master -> "Казах" (Win Rate >= 50% with >= 6 matches) - II
   const dust2 = getMapInfo("dust2");
   const dust2Unlocked = dust2.matches >= 6 && dust2.wr >= 50;
   const dust2Percent = dust2.matches < 6 ? Math.round((dust2.matches / 6) * 50) : Math.min(100, Math.round((dust2.wr / 50) * 100));
 
-  // 9. Inferno Pizza -> "Итальянский Мастер" (Win Rate >= 50% with >= 6 matches)
+  // 9. Inferno Defender -> "Итальянский Мастер" (Win Rate >= 50% with >= 6 matches) - III
   const inferno = getMapInfo("inferno");
   const infernoUnlocked = inferno.matches >= 6 && inferno.wr >= 50;
   const infernoPercent = inferno.matches < 6 ? Math.round((inferno.matches / 6) * 50) : Math.min(100, Math.round((inferno.wr / 50) * 100));
 
-  // 10. Nuke Specialist -> "Ядерный Удар" (Win Rate >= 50% with >= 6 matches)
+  // 10. Nuke Specialist -> "Гомер Симпсон" (Win Rate >= 50% with >= 6 matches) - IV
   const nuke = getMapInfo("nuke");
   const nukeUnlocked = nuke.matches >= 6 && nuke.wr >= 50;
   const nukePercent = nuke.matches < 6 ? Math.round((nuke.matches / 6) * 50) : Math.min(100, Math.round((nuke.wr / 50) * 100));
 
-  // 11. Anubis Pharaoh -> "Фараон Анубиса" (Win Rate >= 50% with >= 6 matches)
+  // 11. Anubis Pharaoh -> "Фараон" (Win Rate >= 50% with >= 6 matches) - V
   const anubis = getMapInfo("anubis");
   const anubisUnlocked = anubis.matches >= 6 && anubis.wr >= 50;
   const anubisPercent = anubis.matches < 6 ? Math.round((anubis.matches / 6) * 50) : Math.min(100, Math.round((anubis.wr / 50) * 100));
 
-  // 12. Ancient Warrior -> "Жрец Древних" (Win Rate >= 50% with >= 6 matches)
+  // 12. Ancient Fan -> "Тлатоани" (Win Rate >= 50% with >= 6 matches) - VI
   const ancient = getMapInfo("ancient");
   const ancientUnlocked = ancient.matches >= 6 && ancient.wr >= 50;
   const ancientPercent = ancient.matches < 6 ? Math.round((ancient.matches / 6) * 50) : Math.min(100, Math.round((ancient.wr / 50) * 100));
 
-  // 13. Cache Trucker -> "Водитель ЗИЛа" (Win Rate >= 50% with >= 6 matches)
+  // 13. Cache Owner -> "Сталкер" (Win Rate >= 50% with >= 6 matches) - VII
   const cache = getMapInfo("cache");
   const cacheUnlocked = cache.matches >= 6 && cache.wr >= 50;
   const cachePercent = cache.matches < 6 ? Math.round((cache.matches / 6) * 50) : Math.min(100, Math.round((cache.wr / 50) * 100));
 
-  // 14. Flash -> "Ослепительная улыбка" (Flash Success Rate >= 35%)
+  // 14. Blind Master -> "Ослепительная улыбка" (Flash Success Rate >= 35%)
   const flashRate = parseFloat(String(hubStats?.utility?.flashSuccessRate ?? (hubStats?.utility?.flashCount > 0 ? (hubStats.utility.flashSuccesses / hubStats.utility.flashCount) * 100 : 0))) || 0;
   const flashUnlocked = flashRate >= 35;
   const flashPercent = Math.min(100, Math.round((flashRate / 35) * 100));
 
   // 15. Fantasy Farmer -> "Фантастический прорыв" (Max fantasy score >= 75)
-  // Calculate max single match fantasy points from recentMatches
   let maxFantasyScore = 0;
   if (Array.isArray(hubStats?.recentMatches) && hubStats.recentMatches.length > 0) {
     for (const m of hubStats.recentMatches) {
@@ -155,12 +154,17 @@ export function computePlayerAchievements(params: {
     }
   }
   if (maxFantasyScore === 0 && (hubStats?.matchesCount || 0) > 0) {
-    // Estimate from best rating match
     const bestK = hubStats.bestMatch?.kills || Math.round((hubStats.kd || 1) * 20);
     maxFantasyScore = Math.max(75, bestK * 2 + 15);
   }
   const fantasyUnlocked = maxFantasyScore >= 75;
   const fantasyPercent = Math.min(100, Math.round((maxFantasyScore / 75) * 100));
+
+  const renderRoman = (text: string) => (
+    <span style={{ fontSize: "1.05rem", fontWeight: "900", fontFamily: "system-ui, -apple-system, sans-serif", letterSpacing: "0.02em" }}>
+      {text}
+    </span>
+  );
 
   return [
     // --- Combat / Core Achievements ---
@@ -277,13 +281,15 @@ export function computePlayerAchievements(params: {
       glowColor: "rgba(255, 215, 0, 0.4)",
       bgGradient: "linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(180, 140, 0, 0.05) 100%)",
       iconSvg: (
+        // Military Veteran Shield / Badge with crossed blades
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+          <path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z" />
+          <circle cx="12" cy="12" r="2.5" />
         </svg>
       )
     },
 
-    // --- Map-Specific Achievements ---
+    // --- Map-Specific Achievements (Roman Numerals I - VII) ---
     {
       id: "mirage_enjoyer",
       title: "MIRAGE ENJOYER",
@@ -296,21 +302,12 @@ export function computePlayerAchievements(params: {
       color: "#f59e0b",
       glowColor: "rgba(245, 158, 11, 0.4)",
       bgGradient: "linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(180, 100, 0, 0.05) 100%)",
-      iconSvg: (
-        // Hookah / Shisha vector icon
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="9" y="2" width="6" height="3" rx="1" />
-          <path d="M12 5v6" />
-          <path d="M8 11h8" />
-          <path d="M10 11l-3 7a4 4 0 0 0 4 4h2a4 4 0 0 0 4-4l-3-7" />
-          <path d="M15 8c2.5 0 4 1.5 4 4v3" />
-        </svg>
-      )
+      iconSvg: renderRoman("I")
     },
     {
       id: "dust2_master",
       title: "DUST2 MASTER",
-      subtitle: "Сын Даста",
+      subtitle: "Казах",
       description: "Win Rate ≥ 50% на Dust2 при ≥ 6 матчах",
       category: "maps",
       unlocked: dust2Unlocked,
@@ -319,21 +316,11 @@ export function computePlayerAchievements(params: {
       color: "#fb923c",
       glowColor: "rgba(251, 146, 60, 0.4)",
       bgGradient: "linear-gradient(135deg, rgba(251, 146, 60, 0.15) 0%, rgba(190, 80, 0, 0.05) 100%)",
-      iconSvg: (
-        // Palm & Desert Sun vector icon
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 22v-9" />
-          <path d="M12 13c-2-3-6-3-8-1 1.5 3 4 3.5 8 1z" />
-          <path d="M12 13c2-3 6-3 8-1-1.5 3-4 3.5-8 1z" />
-          <path d="M12 13c0-4 3-7 6-7-.5 3-2 6-6 7z" />
-          <path d="M12 13c0-4-3-7-6-7 .5 3 2 6 6 7z" />
-          <circle cx="18" cy="4" r="2" />
-        </svg>
-      )
+      iconSvg: renderRoman("II")
     },
     {
-      id: "inferno_pizza",
-      title: "INFERNO PIZZA",
+      id: "inferno_defender",
+      title: "INFERNO DEFENDER",
       subtitle: "Итальянский Мастер",
       description: "Win Rate ≥ 50% на Inferno при ≥ 6 матчах",
       category: "maps",
@@ -343,20 +330,12 @@ export function computePlayerAchievements(params: {
       color: "#ef4444",
       glowColor: "rgba(239, 68, 68, 0.4)",
       bgGradient: "linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(180, 20, 20, 0.05) 100%)",
-      iconSvg: (
-        // Pizza Slice vector icon
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 21L2 6.5C7 4 17 4 22 6.5L12 21z" />
-          <circle cx="12" cy="11" r="1.5" fill="currentColor" />
-          <circle cx="8.5" cy="8" r="1" fill="currentColor" />
-          <circle cx="15.5" cy="8.5" r="1.2" fill="currentColor" />
-        </svg>
-      )
+      iconSvg: renderRoman("III")
     },
     {
       id: "nuke_specialist",
       title: "NUKE SPECIALIST",
-      subtitle: "Ядерный Удар",
+      subtitle: "Гомер Симпсон",
       description: "Win Rate ≥ 50% на Nuke при ≥ 6 матчах",
       category: "maps",
       unlocked: nukeUnlocked,
@@ -365,20 +344,12 @@ export function computePlayerAchievements(params: {
       color: "#84cc16",
       glowColor: "rgba(132, 204, 22, 0.4)",
       bgGradient: "linear-gradient(135deg, rgba(132, 204, 22, 0.15) 0%, rgba(80, 140, 10, 0.05) 100%)",
-      iconSvg: (
-        // Radiation trefoil hazard vector icon
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="2.5" />
-          <path d="M12 9.5V2.5a9.5 9.5 0 0 1 8.2 4.75L14.15 10.8a3 3 0 0 0-2.15-1.3z" />
-          <path d="M9.85 10.8L3.8 7.25A9.5 9.5 0 0 1 12 2.5v7a3 3 0 0 0-2.15 1.3z" />
-          <path d="M14.5 13.5l6.05 3.5a9.5 9.5 0 0 1-17.1 0l6.05-3.5a3 3 0 0 0 5 0z" />
-        </svg>
-      )
+      iconSvg: renderRoman("IV")
     },
     {
       id: "anubis_pharaoh",
       title: "ANUBIS PHARAOH",
-      subtitle: "Фараон Анубиса",
+      subtitle: "Фараон",
       description: "Win Rate ≥ 50% на Anubis при ≥ 6 матчах",
       category: "maps",
       unlocked: anubisUnlocked,
@@ -387,19 +358,12 @@ export function computePlayerAchievements(params: {
       color: "#06b6d4",
       glowColor: "rgba(6, 182, 212, 0.4)",
       bgGradient: "linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(0, 120, 150, 0.05) 100%)",
-      iconSvg: (
-        // Egyptian Pyramid vector icon
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 2L2 20h20L12 2z" />
-          <path d="M12 2v18" />
-          <path d="M6 14l6-3 6 3" />
-        </svg>
-      )
+      iconSvg: renderRoman("V")
     },
     {
-      id: "ancient_warrior",
-      title: "ANCIENT WARRIOR",
-      subtitle: "Жрец Древних",
+      id: "ancient_fan",
+      title: "ANCIENT FAN",
+      subtitle: "Тлатоани",
       description: "Win Rate ≥ 50% на Ancient при ≥ 6 матчах",
       category: "maps",
       unlocked: ancientUnlocked,
@@ -408,21 +372,12 @@ export function computePlayerAchievements(params: {
       color: "#10b981",
       glowColor: "rgba(16, 185, 129, 0.4)",
       bgGradient: "linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(0, 120, 80, 0.05) 100%)",
-      iconSvg: (
-        // Aztec stepped pyramid vector icon
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M2 21h20" />
-          <path d="M4 21v-4h16v4" />
-          <path d="M7 17v-4h10v4" />
-          <path d="M10 13V9h4v4" />
-          <path d="M11 9V5h2v4" />
-        </svg>
-      )
+      iconSvg: renderRoman("VI")
     },
     {
-      id: "cache_trucker",
-      title: "CACHE TRUCKER",
-      subtitle: "Водитель ЗИЛа",
+      id: "cache_owner",
+      title: "CACHE OWNER",
+      subtitle: "Сталкер",
       description: "Win Rate ≥ 50% на Cache при ≥ 6 матчах",
       category: "maps",
       unlocked: cacheUnlocked,
@@ -431,22 +386,13 @@ export function computePlayerAchievements(params: {
       color: "#6366f1",
       glowColor: "rgba(99, 102, 241, 0.4)",
       bgGradient: "linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(50, 50, 180, 0.05) 100%)",
-      iconSvg: (
-        // ZIL Heavy Truck vector icon
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="2" y="7" width="13" height="9" rx="1" />
-          <path d="M15 10h4l3 3v3h-7v-6z" />
-          <circle cx="6" cy="18" r="2" />
-          <circle cx="18" cy="18" r="2" />
-          <path d="M8 18h8" />
-        </svg>
-      )
+      iconSvg: renderRoman("VII")
     },
 
     // --- Special Achievements ---
     {
-      id: "flash_master",
-      title: "FLASH",
+      id: "blind_master",
+      title: "BLIND MASTER",
       subtitle: "Ослепительная улыбка",
       description: "Успешность флешек (Flashbang Rate) ≥ 35%",
       category: "special",
@@ -457,14 +403,10 @@ export function computePlayerAchievements(params: {
       glowColor: "rgba(56, 189, 248, 0.4)",
       bgGradient: "linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(0, 100, 180, 0.05) 100%)",
       iconSvg: (
-        // Flashbang Grenade vector icon
+        // 4-point Sparkle Flash Star vector icon
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="8" y="7" width="8" height="13" rx="2" />
-          <line x1="12" y1="2" x2="12" y2="7" />
-          <line x1="9" y1="4" x2="15" y2="4" />
-          <line x1="5" y1="2" x2="2" y2="5" />
-          <line x1="19" y1="2" x2="22" y2="5" />
-          <line x1="8" y1="12" x2="16" y2="12" />
+          <path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z" fill="currentColor" fillOpacity="0.25" />
+          <circle cx="12" cy="12" r="2" fill="currentColor" />
         </svg>
       )
     },
