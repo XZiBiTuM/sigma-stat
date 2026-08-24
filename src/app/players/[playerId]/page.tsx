@@ -615,7 +615,7 @@ export default function PlayerProfilePage() {
     ];
 
     return (
-      <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1rem", marginTop: "auto" }}>
+      <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1rem" }}>
         <div>
           <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff", display: "block" }}>Сравнение со средним значением по Хабу</span>
           <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", display: "block", marginTop: "0.15rem" }}>Сопоставление ваших показателей со средней статистикой игроков хаба</span>
@@ -1624,7 +1624,7 @@ export default function PlayerProfilePage() {
                 </div>
 
                 {/* Granades detailed performance */}
-                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", marginTop: "auto" }}>
+                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)" }}>
                   <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", marginBottom: "1rem" }}>Гранаты</h3>
                   
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
