@@ -1438,8 +1438,8 @@ export default function PlayerProfilePage() {
             recent.forEach((m: any) => {
               const kills = m.kills ?? 15;
               const assists = m.assists ?? 3;
-              const isWin = (m.result === "1" || m.result === "win" || m.winner === "team1");
-              const hs = m.headshots ?? Math.round(kills * 0.45);
+              const isWin = Boolean(m.won === true || m.result === "WIN" || m.result === "1" || m.result === "win");
+              const hs = m.headshots ?? Math.round(kills * ((m.hsPct || 45) / 100));
               
               const snipPts = kills * 2.0 + hs * 1.0;
               const suppPts = assists * 2.5 + (kills * 0.8);
