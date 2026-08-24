@@ -296,10 +296,11 @@ export function computePlayerAchievements(params: {
       glowColor: "rgba(244, 63, 94, 0.4)",
       bgGradient: "linear-gradient(135deg, rgba(244, 63, 94, 0.15) 0%, rgba(180, 20, 50, 0.05) 100%)",
       iconSvg: (
-        // Ace of Spades vector icon
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 2C9 7 4 9 4 14a6 6 0 0 0 10.5 4l-2.5 4h0l4 0-2.5-4A6 6 0 0 0 20 14c0-5-5-7-8-12z" />
-          <circle cx="12" cy="13" r="1.5" fill="currentColor" />
+        // Playing Card Ace of Spades vector icon
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="4" y="2" width="16" height="20" rx="2.5" />
+          <path d="M12 7c-1.8 2.2-3.8 3.8-3.8 6a2.2 2.2 0 0 0 3.8 1.5V17h0v-2.5A2.2 2.2 0 0 0 15.8 13c0-2.2-2-3.8-3.8-6z" fill="currentColor" fillOpacity="0.4" />
+          <path d="M7 6.5h1.5l1 3h-.8l-.3-.9H7.6l-.3.9H6.5l1.5-3.8z" fill="currentColor" stroke="none" />
         </svg>
       )
     },
