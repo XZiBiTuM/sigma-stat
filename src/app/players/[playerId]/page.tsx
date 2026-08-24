@@ -1538,26 +1538,31 @@ export default function PlayerProfilePage() {
 
                 {/* Fantasy Scoring Rules Guide */}
                 <div style={{ background: "rgba(0,0,0,0.25)", border: "1px dashed rgba(192, 132, 252, 0.25)", borderRadius: "12px", padding: "1rem", display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.4rem" }}>
                     <span style={{ fontSize: "0.78rem", fontWeight: "800", color: "var(--accent-purple)", textTransform: "uppercase", letterSpacing: "0.03em" }}>
                       Правила начисления Fantasy-очков
                     </span>
                     <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", background: "rgba(255,255,255,0.05)", padding: "0.1rem 0.4rem", borderRadius: "4px" }}>
-                      Победа в матче: +10 pts
+                      Победа: +10 pts
                     </span>
                   </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "0.6rem", fontSize: "0.73rem" }}>
-                    <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.6rem 0.75rem", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
-                      <div style={{ color: "var(--accent-cyan)", fontWeight: "800", marginBottom: "0.2rem" }}>🎯 Роль Снайпера</div>
-                      <div style={{ color: "var(--text-muted)", lineHeight: "1.35" }}>Киллы (×2.0), Хедшоты (×1.0), Первые дуэли (×1.5).</div>
+
+                  <p style={{ fontSize: "0.72rem", color: "var(--text-secondary)", margin: 0, lineHeight: "1.4" }}>
+                    В турнире пики получают очки по выбранной роли (Снайпер / Саппорт / Лошадка). Индивидуальный рекорд в профиле и достижении — универсальный боевой скор за матч: <span style={{ color: "#fff", fontWeight: "700" }}>(Снайпер + Саппорт) / 2 + Победа</span>.
+                  </p>
+
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "0.5rem", fontSize: "0.72rem" }}>
+                    <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.55rem 0.7rem", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
+                      <div style={{ color: "var(--accent-cyan)", fontWeight: "800", marginBottom: "0.15rem" }}>Снайпер</div>
+                      <div style={{ color: "var(--text-muted)", lineHeight: "1.3" }}>Фраги (×2.0), Хедшоты (×1.0), Первые дуэли (×1.5).</div>
                     </div>
-                    <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.6rem 0.75rem", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
-                      <div style={{ color: "#ffd54f", fontWeight: "800", marginBottom: "0.2rem" }}>🛡️ Роль Саппорта</div>
-                      <div style={{ color: "var(--text-muted)", lineHeight: "1.35" }}>Ассисты (×2.5), Киллы (×0.8), Клатчи и полезные действия.</div>
+                    <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.55rem 0.7rem", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
+                      <div style={{ color: "#ffd54f", fontWeight: "800", marginBottom: "0.15rem" }}>Саппорт</div>
+                      <div style={{ color: "var(--text-muted)", lineHeight: "1.3" }}>Ассисты (×2.5), Фраги (×0.8), Клатчи и урон.</div>
                     </div>
-                    <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.6rem 0.75rem", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
-                      <div style={{ color: "var(--accent-purple)", fontWeight: "800", marginBottom: "0.2rem" }}>🐎 Тёмная лошадка</div>
-                      <div style={{ color: "var(--text-muted)", lineHeight: "1.35" }}>Базовые боевые очки × персональный бонус (до ×1.40).</div>
+                    <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.55rem 0.7rem", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
+                      <div style={{ color: "var(--accent-purple)", fontWeight: "800", marginBottom: "0.15rem" }}>Тёмная лошадка</div>
+                      <div style={{ color: "var(--text-muted)", lineHeight: "1.3" }}>Боевой скор × персональный бонус (до ×1.40).</div>
                     </div>
                   </div>
                 </div>
