@@ -57,7 +57,7 @@ export function computePlayerAchievements(params: {
       if (mId && seenMatches.has(mId)) continue;
       if (mId) seenMatches.add(mId);
 
-      const isWin = Boolean(m.result === "WIN" || m.won === true || m.winner === m.teamId || m.isWin === true);
+      const isWin = Boolean(m.won === true || m.result === "WIN" || (m.winner && m.teamId && m.winner === m.teamId));
       if (isWin) {
         curr++;
         if (curr > maxConsecutiveWins) maxConsecutiveWins = curr;
