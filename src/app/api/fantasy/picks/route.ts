@@ -118,3 +118,39 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message || "Ошибка сохранения состава" }, { status: 500 });
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const { searchParams } = request.nextUrl;
+    const userId = searchParams.get("userId");
+    const clearAll = searchParams.get("all") === "true";
+
+    const allPicks = await getAllPicks();
+
+    if (clearAll) {
+      await savePicks({});
+      return NextResponse.json({
+        success: true,
+        message: "Все прогнозы Fantasy League успешно удалены"
+      });
+    }
+
+    if (!userId) {
+      return NextResponse.json({ error: "Не указан userId для удаления" }, { status: 400 });
+    }
+
+    if (!allPicks[userId]) {
+      return NextResponse.json({ error: "Прогноз с таким userId не найден" }, { status: 404 });
+    }
+
+    delete allPicks[userId];
+    await savePicks(allPicks);
+
+    return NextResponse.json({
+      success: true,
+      message: "Прогноз успешно удален"
+    });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || "Ошибка удаления прогноза" }, { status: 500 });
+  }
+}

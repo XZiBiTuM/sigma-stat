@@ -34,6 +34,11 @@ export default function AdminLoginPage() {
   const [syncStatusMsg, setSyncStatusMsg] = useState("");
   const [isSyncing, setIsSyncing] = useState(false);
 
+  // Fantasy Picks Management state
+  const [fantasyPicksList, setFantasyPicksList] = useState<any[]>([]);
+  const [isLoadingPicks, setIsLoadingPicks] = useState(false);
+  const [picksMsg, setPicksMsg] = useState("");
+
   const fetchAnalytics = (code?: string) => {
     setIsLoadingAnalytics(true);
     const pass = code || passcode || localStorage.getItem("sigma_admin_pass") || "demon323161";
@@ -48,6 +53,53 @@ export default function AdminLoginPage() {
       .finally(() => setIsLoadingAnalytics(false));
   };
 
+  const fetchFantasyPicks = () => {
+    setIsLoadingPicks(true);
+    fetch("/api/fantasy/picks")
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.picks) {
+          setFantasyPicksList(Object.values(data.picks));
+        } else {
+          setFantasyPicksList([]);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setIsLoadingPicks(false));
+  };
+
+  const handleDeletePick = async (userId: string, userName: string) => {
+    if (!window.confirm(`Вы действительно хотите удалить прогноз участника "${userName}"?`)) return;
+    try {
+      const res = await fetch(`/api/fantasy/picks?userId=${encodeURIComponent(userId)}`, { method: "DELETE" });
+      if (res.ok) {
+        setPicksMsg(`Прогноз "${userName}" успешно удален!`);
+        fetchFantasyPicks();
+      } else {
+        const d = await res.json();
+        setPicksMsg(`Ошибка: ${d.error || "Не удалось удалить"}`);
+      }
+    } catch (e: any) {
+      setPicksMsg(`Ошибка сети: ${e.message}`);
+    }
+  };
+
+  const handleClearAllPicks = async () => {
+    if (!window.confirm("⚠️ ВНИМАНИЕ: Вы действительно хотите удалить ВСЕ прогнозы Fantasy League и очистить таблицу? Это действие необратимо.")) return;
+    try {
+      const res = await fetch("/api/fantasy/picks?all=true", { method: "DELETE" });
+      if (res.ok) {
+        setPicksMsg("Все прогнозы успешно удалены! Таблица Fantasy League очищена.");
+        fetchFantasyPicks();
+      } else {
+        const d = await res.json();
+        setPicksMsg(`Ошибка: ${d.error || "Не удалось очистить"}`);
+      }
+    } catch (e: any) {
+      setPicksMsg(`Ошибка сети: ${e.message}`);
+    }
+  };
+
   useEffect(() => {
     try {
       const saved = localStorage.getItem("sigma_user_role");
@@ -55,6 +107,7 @@ export default function AdminLoginPage() {
         setCurrentRole(saved);
         if (saved === "ADMIN") {
           fetchAnalytics();
+          fetchFantasyPicks();
         }
       }
     } catch (e) {}
@@ -85,6 +138,7 @@ export default function AdminLoginPage() {
       setSuccessMsg("Успешный вход в систему с правами Администратора!");
       setError("");
       fetchAnalytics(p);
+      fetchFantasyPicks();
     } else if (p === "chillout" || p === "mrchillout") {
       localStorage.setItem("sigma_user_role", "EVENT_MAKER");
       localStorage.setItem("sigma_user_name", "Mr.Chillout");
@@ -411,6 +465,124 @@ export default function AdminLoginPage() {
                     {isSavingTour ? "Сохранение..." : "Сохранить турнир и Fantasy"}
                   </button>
                 </form>
+              </div>
+            )}
+
+            {/* FANTASY PICKS MANAGEMENT SECTION */}
+            {currentRole === "ADMIN" && (
+              <div style={{
+                marginTop: "1.5rem",
+                background: "rgba(255, 215, 0, 0.04)",
+                border: "1px solid rgba(255, 215, 0, 0.3)",
+                borderRadius: "18px",
+                padding: "1.5rem",
+                textAlign: "left"
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem", flexWrap: "wrap", gap: "0.5rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <span style={{ fontSize: "1.25rem" }}>🎯</span>
+                    <h3 style={{ margin: 0, fontSize: "1.1rem", color: "#ffd700" }}>
+                      Прогнозы участников Fantasy League ({fantasyPicksList.length})
+                    </h3>
+                  </div>
+
+                  <div style={{ display: "flex", gap: "0.5rem" }}>
+                    <button
+                      onClick={() => fetchFantasyPicks()}
+                      disabled={isLoadingPicks}
+                      style={{
+                        padding: "0.35rem 0.75rem",
+                        borderRadius: "8px",
+                        background: "rgba(255, 215, 0, 0.15)",
+                        border: "1px solid rgba(255, 215, 0, 0.4)",
+                        color: "#ffd700",
+                        fontSize: "0.75rem",
+                        fontWeight: "700",
+                        cursor: "pointer"
+                      }}
+                    >
+                      {isLoadingPicks ? "Обновление..." : "🔄 Обновить"}
+                    </button>
+                    {fantasyPicksList.length > 0 && (
+                      <button
+                        onClick={handleClearAllPicks}
+                        style={{
+                          padding: "0.35rem 0.75rem",
+                          borderRadius: "8px",
+                          background: "rgba(255, 73, 73, 0.15)",
+                          border: "1px solid rgba(255, 73, 73, 0.4)",
+                          color: "#ff7b7b",
+                          fontSize: "0.75rem",
+                          fontWeight: "700",
+                          cursor: "pointer"
+                        }}
+                        title="Удалить все прогнозы и полностью очистить таблицу лидеров фентези"
+                      >
+                        ⚠️ Очистить все
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {picksMsg && (
+                  <div style={{ fontSize: "0.85rem", padding: "0.6rem 0.8rem", borderRadius: "8px", background: "rgba(255,255,255,0.05)", marginBottom: "1rem", color: picksMsg.includes("успешно") ? "#00e5ff" : "#ff7b7b" }}>
+                    {picksMsg}
+                  </div>
+                )}
+
+                {fantasyPicksList.length === 0 ? (
+                  <div style={{ textAlign: "center", padding: "1.5rem", color: "var(--text-muted)", fontSize: "0.85rem", border: "1px dashed var(--border-light)", borderRadius: "12px" }}>
+                    {isLoadingPicks ? "Загрузка списка прогнозов..." : "Нет активных прогнозов в текущем турнире."}
+                  </div>
+                ) : (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem", maxHeight: "300px", overflowY: "auto" }}>
+                    {fantasyPicksList.map((pick: any) => (
+                      <div
+                        key={pick.userId}
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          padding: "0.75rem 1rem",
+                          borderRadius: "12px",
+                          background: "rgba(0,0,0,0.4)",
+                          border: "1px solid var(--border-light)",
+                          flexWrap: "wrap",
+                          gap: "0.75rem"
+                        }}
+                      >
+                        <div>
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                            <strong style={{ color: "#fff", fontSize: "0.92rem" }}>{pick.userName}</strong>
+                            <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", background: "rgba(255,255,255,0.06)", padding: "0.1rem 0.4rem", borderRadius: "4px" }}>
+                              {pick.userId.startsWith("guest_") ? "Гость" : "Steam"}
+                            </span>
+                          </div>
+                          <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.2rem" }}>
+                            🔴 {pick.sniper?.nickname || "—"} | 🔵 {pick.support?.nickname || "—"} | 🟡 {pick.darkHorse?.nickname || "—"}
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => handleDeletePick(pick.userId, pick.userName)}
+                          style={{
+                            padding: "0.35rem 0.75rem",
+                            borderRadius: "8px",
+                            background: "rgba(255, 73, 73, 0.12)",
+                            border: "1px solid rgba(255, 73, 73, 0.3)",
+                            color: "#ff7b7b",
+                            fontSize: "0.75rem",
+                            fontWeight: "700",
+                            cursor: "pointer",
+                            transition: "all 0.2s ease"
+                          }}
+                        >
+                          🗑 Удалить
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>
