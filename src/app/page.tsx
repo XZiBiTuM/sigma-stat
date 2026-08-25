@@ -3960,33 +3960,11 @@ export default function Home() {
                           </p>
                         </div>
 
-                        {currentUser ? (
+                        {currentUser && (
                           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(0,0,0,0.3)", padding: "0.45rem 1rem", borderRadius: "14px", border: "1px solid var(--border-light)" }}>
                             {currentUser.steamAvatar && <img src={currentUser.steamAvatar} alt="" style={{ width: "26px", height: "26px", borderRadius: "50%" }} />}
                             <span style={{ fontSize: "0.88rem", color: "#fff", fontWeight: "700" }}>{currentUser.steamName}</span>
                           </div>
-                        ) : (
-                          <a
-                            href="/api/auth/steam/login"
-                            style={{
-                              display: "inline-flex",
-                              alignItems: "center",
-                              gap: "0.45rem",
-                              padding: "0.5rem 1rem",
-                              borderRadius: "12px",
-                              background: "rgba(255, 255, 255, 0.05)",
-                              border: "1px solid var(--border-light)",
-                              color: "var(--text-secondary)",
-                              fontWeight: "600",
-                              fontSize: "0.82rem",
-                              textDecoration: "none",
-                              transition: "all 0.2s ease"
-                            }}
-                            title="Войти через Steam для синхронизации ваших прогнозов с вашим профилем"
-                          >
-                            <img src="/steam-logo.svg" alt="" style={{ width: "16px", height: "16px" }} />
-                            Войти через Steam для синхронизации ваших прогнозов с вашим профилем
-                          </a>
                         )}
                       </div>
 
@@ -4226,41 +4204,74 @@ export default function Home() {
 
                       </div>
 
-                      {/* GUEST NICKNAME INPUT (IF NOT LOGGED IN VIA STEAM) */}
+                      {/* GUEST NICKNAME & STEAM SYNC ROW (IF NOT LOGGED IN VIA STEAM) */}
                       {!currentUser && (
                         <div style={{
                           background: "rgba(179, 136, 255, 0.06)",
                           border: "1.5px solid rgba(179, 136, 255, 0.25)",
-                          borderRadius: "16px",
+                          borderRadius: "18px",
                           padding: "1.25rem 1.5rem",
                           marginBottom: "1.5rem",
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "0.6rem"
+                          display: "grid",
+                          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                          alignItems: "center",
+                          gap: "1.5rem"
                         }}>
-                          <label style={{ fontSize: "0.92rem", fontWeight: "800", color: "#fff", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                            <span>👤 Твой никнейм для таблицы Fantasy League:</span>
-                            <span style={{ color: "var(--accent-purple)", fontSize: "0.9rem" }}>*</span>
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="Введи никнейм (например: s1mple или Имя)"
-                            value={guestFantasyNick}
-                            onChange={(e) => setGuestFantasyNick(e.target.value)}
-                            disabled={!isDraftOpen}
-                            style={{
-                              width: "100%",
-                              maxWidth: "420px",
-                              padding: "0.75rem 1.1rem",
-                              borderRadius: "12px",
-                              background: "rgba(0,0,0,0.6)",
-                              border: "1px solid var(--border-light)",
-                              color: "#fff",
-                              fontSize: "0.95rem",
-                              fontWeight: "600",
-                              outline: "none"
-                            }}
-                          />
+                          {/* LEFT: GUEST NICKNAME */}
+                          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                            <label style={{ fontSize: "0.92rem", fontWeight: "800", color: "#fff", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                              <span>👤 Твой никнейм для таблицы Fantasy League:</span>
+                              <span style={{ color: "var(--accent-purple)", fontSize: "0.9rem" }}>*</span>
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="Введи никнейм (например: s1mple или Имя)"
+                              value={guestFantasyNick}
+                              onChange={(e) => setGuestFantasyNick(e.target.value)}
+                              disabled={!isDraftOpen}
+                              style={{
+                                width: "100%",
+                                padding: "0.75rem 1.1rem",
+                                borderRadius: "12px",
+                                background: "rgba(0,0,0,0.6)",
+                                border: "1px solid var(--border-light)",
+                                color: "#fff",
+                                fontSize: "0.95rem",
+                                fontWeight: "600",
+                                outline: "none"
+                              }}
+                            />
+                          </div>
+
+                          {/* RIGHT: STEAM SYNC BUTTON */}
+                          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                            <label style={{ fontSize: "0.85rem", fontWeight: "700", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                              <span>🎮 Или синхронизируй через Steam:</span>
+                            </label>
+                            <a
+                              href="/api/auth/steam/login"
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                gap: "0.6rem",
+                                padding: "0.75rem 1.25rem",
+                                borderRadius: "12px",
+                                background: "linear-gradient(135deg, #171a21, #2a475e)",
+                                border: "1px solid rgba(102, 192, 244, 0.4)",
+                                color: "#fff",
+                                fontWeight: "700",
+                                fontSize: "0.85rem",
+                                textDecoration: "none",
+                                boxShadow: "0 0 15px rgba(102, 192, 244, 0.15)",
+                                transition: "all 0.2s ease",
+                                textAlign: "center"
+                              }}
+                            >
+                              <img src="/steam-logo.svg" alt="" style={{ width: "18px", height: "18px" }} />
+                              <span>Войти через Steam для синхронизации</span>
+                            </a>
+                          </div>
                         </div>
                       )}
 
