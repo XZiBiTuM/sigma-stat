@@ -445,6 +445,25 @@ export default function Home() {
                 setDraftDarkHorse(pData.pick.darkHorse);
               }
             }).catch(() => {});
+        } else {
+          // If not logged in via Steam, check stored guest nickname
+          try {
+            const savedGuestNick = localStorage.getItem("sigma_guest_fantasy_nick");
+            if (savedGuestNick) {
+              setGuestFantasyNick(savedGuestNick);
+              const guestId = `guest_${savedGuestNick.toLowerCase().replace(/[^a-z0-9а-яё_]/gi, "_")}`;
+              fetch(`/api/fantasy/picks?userId=${guestId}`)
+                .then(r => r.json())
+                .then(pData => {
+                  if (pData?.pick) {
+                    setUserFantasyPick(pData.pick);
+                    setDraftSniper(pData.pick.sniper);
+                    setDraftSupport(pData.pick.support);
+                    setDraftDarkHorse(pData.pick.darkHorse);
+                  }
+                }).catch(() => {});
+            }
+          } catch {}
         }
       })
       .catch(() => {});
@@ -469,6 +488,7 @@ export default function Home() {
   const [draftSniper, setDraftSniper] = useState<any>(null);
   const [draftSupport, setDraftSupport] = useState<any>(null);
   const [draftDarkHorse, setDraftDarkHorse] = useState<any>(null);
+  const [guestFantasyNick, setGuestFantasyNick] = useState<string>("");
   const [isSavingFantasy, setIsSavingFantasy] = useState(false);
   const [fantasySaveMsg, setFantasySaveMsg] = useState("");
   const [fantasySearchSniper, setFantasySearchSniper] = useState("");
@@ -3786,8 +3806,9 @@ export default function Home() {
                 }).filter(p => p.playerId && p.nickname !== "Player").sort((a, b) => a.nickname.localeCompare(b.nickname));
 
                 const handleSaveFantasyPick = async () => {
-                  if (!currentUser) {
-                    window.location.href = "/api/auth/steam/login";
+                  const userName = currentUser ? currentUser.steamName : guestFantasyNick.trim();
+                  if (!userName) {
+                    setFantasySaveMsg("Пожалуйста, введите ваш никнейм для сохранения состава!");
                     return;
                   }
                   if (!draftSniper || !draftSupport || !draftDarkHorse) {
@@ -3801,6 +3822,10 @@ export default function Home() {
                     return;
                   }
 
+                  const userId = currentUser 
+                    ? currentUser.steamId 
+                    : `guest_${userName.toLowerCase().replace(/[^a-z0-9а-яё_]/gi, "_")}`;
+
                   setIsSavingFantasy(true);
                   setFantasySaveMsg("");
                   try {
@@ -3808,10 +3833,10 @@ export default function Home() {
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
                       body: JSON.stringify({
-                        userId: currentUser.steamId,
-                        userName: currentUser.steamName,
-                        avatar: currentUser.steamAvatar || currentUser.faceit?.avatar,
-                        faceitNickname: currentUser.faceit?.nickname,
+                        userId,
+                        userName,
+                        avatar: currentUser?.steamAvatar || currentUser?.faceit?.avatar || "",
+                        faceitNickname: currentUser?.faceit?.nickname || "",
                         sniper: draftSniper,
                         support: draftSupport,
                         darkHorse: draftDarkHorse
@@ -3821,6 +3846,11 @@ export default function Home() {
                     if (res.ok) {
                       setFantasySaveMsg("Ваш состав на Fantasy League успешно сохранен!");
                       setUserFantasyPick(d.pick);
+                      if (!currentUser) {
+                        try {
+                          localStorage.setItem("sigma_guest_fantasy_nick", userName);
+                        } catch {}
+                      }
                       // Refresh leaderboard
                       fetch("/api/fantasy/leaderboard")
                         .then(r => r.json())
@@ -3930,26 +3960,32 @@ export default function Home() {
                           </p>
                         </div>
 
-                        {!currentUser && (
+                        {currentUser ? (
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(0,0,0,0.3)", padding: "0.45rem 1rem", borderRadius: "14px", border: "1px solid var(--border-light)" }}>
+                            {currentUser.steamAvatar && <img src={currentUser.steamAvatar} alt="" style={{ width: "26px", height: "26px", borderRadius: "50%" }} />}
+                            <span style={{ fontSize: "0.88rem", color: "#fff", fontWeight: "700" }}>{currentUser.steamName}</span>
+                          </div>
+                        ) : (
                           <a
                             href="/api/auth/steam/login"
                             style={{
                               display: "inline-flex",
                               alignItems: "center",
-                              gap: "0.5rem",
-                              padding: "0.6rem 1.25rem",
+                              gap: "0.45rem",
+                              padding: "0.5rem 1rem",
                               borderRadius: "12px",
-                              background: "linear-gradient(135deg, #171a21, #2a475e)",
-                              border: "1px solid #66c0f4",
-                              color: "#fff",
-                              fontWeight: "700",
-                              fontSize: "0.85rem",
+                              background: "rgba(255, 255, 255, 0.05)",
+                              border: "1px solid var(--border-light)",
+                              color: "var(--text-secondary)",
+                              fontWeight: "600",
+                              fontSize: "0.82rem",
                               textDecoration: "none",
-                              boxShadow: "0 0 20px rgba(102, 192, 244, 0.25)"
+                              transition: "all 0.2s ease"
                             }}
+                            title="Войти через Steam для автоматической привязки профиля"
                           >
-                            <img src="/steam-logo.svg" alt="" style={{ width: "18px", height: "18px" }} />
-                            Войти через Steam для участия
+                            <img src="/steam-logo.svg" alt="" style={{ width: "16px", height: "16px" }} />
+                            Войти через Steam (по желанию)
                           </a>
                         )}
                       </div>
@@ -4190,6 +4226,49 @@ export default function Home() {
 
                       </div>
 
+                      {/* GUEST NICKNAME INPUT (IF NOT LOGGED IN VIA STEAM) */}
+                      {!currentUser && (
+                        <div style={{
+                          background: "rgba(179, 136, 255, 0.06)",
+                          border: "1.5px solid rgba(179, 136, 255, 0.25)",
+                          borderRadius: "16px",
+                          padding: "1.25rem 1.5rem",
+                          marginBottom: "1.5rem",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "0.6rem"
+                        }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>
+                            <label style={{ fontSize: "0.92rem", fontWeight: "800", color: "#fff", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                              <span>👤 Твой никнейм для таблицы Fantasy League:</span>
+                              <span style={{ color: "var(--accent-purple)", fontSize: "0.9rem" }}>*</span>
+                            </label>
+                            <span style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>
+                              (Авторизация не требуется)
+                            </span>
+                          </div>
+                          <input
+                            type="text"
+                            placeholder="Введи никнейм (например: s1mple или Имя)"
+                            value={guestFantasyNick}
+                            onChange={(e) => setGuestFantasyNick(e.target.value)}
+                            disabled={!isDraftOpen}
+                            style={{
+                              width: "100%",
+                              maxWidth: "420px",
+                              padding: "0.75rem 1.1rem",
+                              borderRadius: "12px",
+                              background: "rgba(0,0,0,0.6)",
+                              border: "1px solid var(--border-light)",
+                              color: "#fff",
+                              fontSize: "0.95rem",
+                              fontWeight: "600",
+                              outline: "none"
+                            }}
+                          />
+                        </div>
+                      )}
+
                       {/* SAVE ACTION & NOTIFICATION */}
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
                         <div>
@@ -4270,7 +4349,13 @@ export default function Home() {
                                     </td>
                                     <td style={{ padding: "1rem" }}>
                                       <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                                        <img src={item.avatar} alt="" style={{ width: "32px", height: "32px", borderRadius: "50%", border: isFirst ? "2px solid #ffd700" : "1px solid var(--border-light)" }} />
+                                        {item.avatar && !item.avatar.includes("default-avatar.png") ? (
+                                          <img src={item.avatar} alt="" style={{ width: "32px", height: "32px", borderRadius: "50%", border: isFirst ? "2px solid #ffd700" : "1px solid var(--border-light)", objectFit: "cover" }} />
+                                        ) : (
+                                          <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: isFirst ? "linear-gradient(135deg, #ffd700, #ff9100)" : "linear-gradient(135deg, var(--accent-purple), var(--accent-cyan))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.8rem", fontWeight: "900", color: isFirst ? "#000" : "#fff", border: isFirst ? "2px solid #ffd700" : "1px solid var(--border-light)" }}>
+                                            {item.userName ? item.userName.slice(0, 2).toUpperCase() : "👤"}
+                                          </div>
+                                        )}
                                         <div>
                                           <div style={{ fontWeight: "700", color: "#fff", fontSize: "0.92rem", display: "flex", alignItems: "center", gap: "0.4rem" }}>
                                             {item.userName}

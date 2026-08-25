@@ -55,10 +55,15 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => ({}));
-    const { userId, userName, avatar, faceitNickname, sniper, support, darkHorse } = body;
+    let { userId, userName, avatar, faceitNickname, sniper, support, darkHorse } = body;
 
-    if (!userId || !userName) {
-      return NextResponse.json({ error: "Пожалуйста, авторизуйтесь через Steam для участия в Fantasy League" }, { status: 401 });
+    if (!userName || typeof userName !== "string" || !userName.trim()) {
+      return NextResponse.json({ error: "Пожалуйста, укажите ваш никнейм для участия в Fantasy League" }, { status: 400 });
+    }
+
+    userName = userName.trim();
+    if (!userId || typeof userId !== "string" || !userId.trim()) {
+      userId = `guest_${userName.toLowerCase().replace(/[^a-z0-9а-яё_]/gi, "_")}`;
     }
 
     if (!sniper?.playerId || !support?.playerId || !darkHorse?.playerId) {
