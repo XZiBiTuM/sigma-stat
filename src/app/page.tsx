@@ -3982,10 +3982,10 @@ export default function Home() {
                               textDecoration: "none",
                               transition: "all 0.2s ease"
                             }}
-                            title="Войти через Steam для автоматической привязки профиля"
+                            title="Войти через Steam для синхронизации ваших прогнозов с вашим профилем"
                           >
                             <img src="/steam-logo.svg" alt="" style={{ width: "16px", height: "16px" }} />
-                            Войти через Steam (по желанию)
+                            Войти через Steam для синхронизации ваших прогнозов с вашим профилем
                           </a>
                         )}
                       </div>
@@ -4238,15 +4238,10 @@ export default function Home() {
                           flexDirection: "column",
                           gap: "0.6rem"
                         }}>
-                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>
-                            <label style={{ fontSize: "0.92rem", fontWeight: "800", color: "#fff", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                              <span>👤 Твой никнейм для таблицы Fantasy League:</span>
-                              <span style={{ color: "var(--accent-purple)", fontSize: "0.9rem" }}>*</span>
-                            </label>
-                            <span style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>
-                              (Авторизация не требуется)
-                            </span>
-                          </div>
+                          <label style={{ fontSize: "0.92rem", fontWeight: "800", color: "#fff", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                            <span>👤 Твой никнейм для таблицы Fantasy League:</span>
+                            <span style={{ color: "var(--accent-purple)", fontSize: "0.9rem" }}>*</span>
+                          </label>
                           <input
                             type="text"
                             placeholder="Введи никнейм (например: s1mple или Имя)"
@@ -4270,29 +4265,29 @@ export default function Home() {
                       )}
 
                       {/* SAVE ACTION & NOTIFICATION */}
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
-                        <div>
-                          {fantasySaveMsg && (
-                            <div style={{ fontSize: "0.9rem", fontWeight: "700", color: fantasySaveMsg.includes("успешно") ? "#00e5ff" : "#ff5252" }}>
-                              {fantasySaveMsg}
-                            </div>
-                          )}
-                        </div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", width: "100%" }}>
+                        {fantasySaveMsg && (
+                          <div style={{ fontSize: "0.92rem", fontWeight: "700", textAlign: "center", color: fantasySaveMsg.includes("успешно") ? "#00e5ff" : "#ff5252" }}>
+                            {fantasySaveMsg}
+                          </div>
+                        )}
 
                         <button
                           onClick={handleSaveFantasyPick}
                           disabled={isSavingFantasy || !isDraftOpen}
                           style={{
-                            padding: "0.85rem 2rem",
+                            width: "100%",
+                            padding: "1rem 2rem",
                             borderRadius: "14px",
                             background: isDraftOpen ? "linear-gradient(135deg, #b388ff, #00e5ff)" : "rgba(255,255,255,0.1)",
                             border: "none",
                             color: isDraftOpen ? "#000" : "var(--text-muted)",
-                            fontSize: "0.95rem",
+                            fontSize: "1rem",
                             fontWeight: "800",
                             cursor: isDraftOpen ? "pointer" : "not-allowed",
                             boxShadow: isDraftOpen ? "0 0 25px rgba(179, 136, 255, 0.4)" : "none",
-                            transition: "all 0.2s ease"
+                            transition: "all 0.2s ease",
+                            textAlign: "center"
                           }}
                         >
                           {isSavingFantasy ? "Сохранение..." : isDraftOpen ? "Сохранить состав на турнир" : "Сбор составов закрыт"}
