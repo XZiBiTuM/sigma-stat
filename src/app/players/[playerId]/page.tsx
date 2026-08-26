@@ -1785,21 +1785,21 @@ export default function PlayerProfilePage() {
                   </div>
 
                   <p style={{ fontSize: "0.72rem", color: "var(--text-secondary)", margin: 0, lineHeight: "1.4" }}>
-                    В турнире пики получают очки по выбранной роли (Стар-плеер / Саппорт / Лошадка). Индивидуальный рекорд в профиле и достижении — универсальный боевой скор за матч: <span style={{ color: "#fff", fontWeight: "700" }}>(Стар-плеер + Саппорт) / 2 + Победа</span>.
+                    В турнире пики получают очки по выбранной роли (Стар-плеер / Саппорт / Лошадка) с учетом баффов и штрафов за оверскилл. Индивидуальный рекорд в профиле и достижении — универсальный боевой счет за матч: <span style={{ color: "#fff", fontWeight: "700" }}>(Стар-плеер + Саппорт) / 2 + Победа</span>.
                   </p>
 
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "0.5rem", fontSize: "0.72rem" }}>
                     <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.55rem 0.7rem", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
                       <div style={{ color: "var(--accent-cyan)", fontWeight: "800", marginBottom: "0.15rem" }}>Стар-плеер</div>
-                      <div style={{ color: "var(--text-muted)", lineHeight: "1.3" }}>Фраги (×2.0), Хедшоты (×1.0), Первые дуэли (×1.5).</div>
+                      <div style={{ color: "var(--text-muted)", lineHeight: "1.3" }}>Фраги (×2.0), Хедшоты (×1.0), Первые дуэли (×1.5). Без штрафов за скилл.</div>
                     </div>
                     <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.55rem 0.7rem", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
                       <div style={{ color: "#ffd54f", fontWeight: "800", marginBottom: "0.15rem" }}>Саппорт</div>
-                      <div style={{ color: "var(--text-muted)", lineHeight: "1.3" }}>Ассисты (×2.5), Фраги (×0.8), Клатчи и урон.</div>
+                      <div style={{ color: "var(--text-muted)", lineHeight: "1.3" }}>Ассисты (×2.5), Фраги (×0.8), Клатчи. <span style={{ color: "#ff8a80" }}>Штраф: скилл &gt;65 дает -50% очков.</span></div>
                     </div>
                     <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.55rem 0.7rem", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
                       <div style={{ color: "var(--accent-purple)", fontWeight: "800", marginBottom: "0.15rem" }}>Тёмная лошадка</div>
-                      <div style={{ color: "var(--text-muted)", lineHeight: "1.3" }}>Боевой скор × персональный бонус (до ×1.40).</div>
+                      <div style={{ color: "var(--text-muted)", lineHeight: "1.3" }}>Боевой счет × множитель. <span style={{ color: "#ffd54f" }}>Скилл ≤65 = Бонус (до ×1.40)</span>, <span style={{ color: "#ff8a80" }}>скилл &gt;65 = Штраф (до ×0.60)</span>.</div>
                     </div>
                   </div>
                 </div>
