@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
+import { loadWeeklySkillData } from "@/lib/weekly_skill";
 
 const PICKS_LOCAL = path.join(process.cwd(), "src", "lib", "fantasy_picks.json");
 const PICKS_PERSISTENT = path.join(process.cwd(), "..", "sigma_persistent_fantasy_picks.json");
@@ -23,17 +24,44 @@ async function readJsonFile(localPath: string, persistentPath: string) {
   }
 }
 
+function getPlayerSkill(player: any, overrides: any, weeklyPlayers: Record<string, any>): number {
+  if (!player) return 50;
+  const pId = player.playerId || "";
+  const nick = player.nickname || "";
+  const nickLower = nick.toLowerCase();
+
+  // 1. Check weekly skill data
+  if (pId && weeklyPlayers[pId]?.currentScore) return weeklyPlayers[pId].currentScore;
+  for (const key of Object.keys(weeklyPlayers)) {
+    const wp = weeklyPlayers[key];
+    if (wp && (wp.playerId === pId || wp.nickname?.toLowerCase() === nickLower)) {
+      return wp.currentScore;
+    }
+  }
+
+  // 2. Check player overrides
+  const ov = (pId && overrides[pId]) || (nick && overrides[nick]) || (nickLower && overrides[nickLower]);
+  if (ov?.customSkillScore) return ov.customSkillScore;
+
+  // 3. Check pick skillScore if valid and not default 50
+  if (player.skillScore && player.skillScore !== 50) return Number(player.skillScore);
+
+  return 50;
+}
+
 export async function GET() {
   try {
     const picks = await readJsonFile(PICKS_LOCAL, PICKS_PERSISTENT);
     const tour = await readJsonFile(TOUR_LOCAL, TOUR_PERSISTENT);
     const overrides = await readJsonFile(OVERRIDES_LOCAL, OVERRIDES_PERSISTENT);
+    const weeklyData = await loadWeeklySkillData().catch(() => ({ players: {} }));
+    const weeklyPlayers = weeklyData?.players || {};
 
     const isLiveOrDone = tour?.status === "LIVE" || tour?.status === "COMPLETED";
 
     const leaderboard = Object.values(picks).map((pick: any) => {
-      const darkSkill = pick.darkHorse?.skillScore || 50;
-      const underdogBonus = pick.darkHorse?.underdogBonus || Math.round((1.0 + ((100 - Math.min(100, Math.max(10, darkSkill))) / 100) * 0.40) * 100) / 100;
+      const darkSkill = getPlayerSkill(pick.darkHorse, overrides, weeklyPlayers);
+      const underdogBonus = Math.round((1.0 + ((100 - Math.min(100, Math.max(10, darkSkill))) / 100) * 0.40) * 100) / 100;
 
       if (!isLiveOrDone) {
         // Tournament draft is open / has not started yet -> 0 points
@@ -62,13 +90,11 @@ export async function GET() {
       }
 
       // 1. Calculate Sniper Score during LIVE or COMPLETED tournament
-      const snipOv = overrides[pick.sniper?.playerId] || overrides[pick.sniper?.nickname] || {};
-      const snipSkill = pick.sniper?.skillScore || snipOv.customSkillScore || 50;
+      const snipSkill = getPlayerSkill(pick.sniper, overrides, weeklyPlayers);
       const snipBasePoints = Math.round((snipSkill * 1.45 + 35) * 10) / 10;
 
       // 2. Calculate Support Score
-      const suppOv = overrides[pick.support?.playerId] || overrides[pick.support?.nickname] || {};
-      const suppSkill = pick.support?.skillScore || suppOv.customSkillScore || 50;
+      const suppSkill = getPlayerSkill(pick.support, overrides, weeklyPlayers);
       const suppBasePoints = Math.round((suppSkill * 1.25 + 45) * 10) / 10;
 
       // 3. Calculate Dark Horse Score with Underdog Multiplier

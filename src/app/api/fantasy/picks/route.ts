@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
+import { loadWeeklySkillData } from "@/lib/weekly_skill";
 
 const LOCAL_FILE = path.join(process.cwd(), "src", "lib", "fantasy_picks.json");
 const PERSISTENT_FILE = path.join(process.cwd(), "..", "sigma_persistent_fantasy_picks.json");
+const OVERRIDES_LOCAL = path.join(process.cwd(), "src", "lib", "player_overrides.json");
+const OVERRIDES_PERSISTENT = path.join(process.cwd(), "..", "sigma_persistent_player_overrides.json");
 
 interface FantasyPick {
   userId: string; // steamId or custom ID
@@ -26,6 +29,43 @@ async function getAllPicks(): Promise<Record<string, FantasyPick>> {
   } catch {
     return {};
   }
+}
+
+async function getOverrides(): Promise<Record<string, any>> {
+  let fileToRead = OVERRIDES_LOCAL;
+  try {
+    const pStat = await fs.stat(OVERRIDES_PERSISTENT).catch(() => null);
+    if (pStat) fileToRead = OVERRIDES_PERSISTENT;
+    const data = await fs.readFile(fileToRead, "utf8");
+    return JSON.parse(data);
+  } catch {
+    return {};
+  }
+}
+
+function resolvePlayerSkillScore(player: any, overrides: any, weeklyPlayers: Record<string, any>): number {
+  if (!player) return 50;
+  const pId = player.playerId || "";
+  const nick = player.nickname || "";
+  const nickLower = nick.toLowerCase();
+
+  // 1. Check weekly skill data
+  if (pId && weeklyPlayers[pId]?.currentScore) return weeklyPlayers[pId].currentScore;
+  for (const key of Object.keys(weeklyPlayers)) {
+    const wp = weeklyPlayers[key];
+    if (wp && (wp.playerId === pId || wp.nickname?.toLowerCase() === nickLower)) {
+      return wp.currentScore;
+    }
+  }
+
+  // 2. Check player overrides
+  const ov = (pId && overrides[pId]) || (nick && overrides[nick]) || (nickLower && overrides[nickLower]);
+  if (ov?.customSkillScore) return ov.customSkillScore;
+
+  // 3. Pick skill score
+  if (player.skillScore && player.skillScore !== 50) return Number(player.skillScore);
+
+  return 50;
 }
 
 async function savePicks(picks: Record<string, FantasyPick>) {
@@ -77,8 +117,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Нельзя выбирать одного и того же игрока на несколько ролей" }, { status: 400 });
     }
 
-    // Calculate dynamic Underdog Bonus: 1.0 + ((100 - SkillScore) / 100) * 0.40
-    const rawDarkSkill = Number(darkHorse.skillScore) || 50;
+    const overrides = await getOverrides();
+    const weeklyData = await loadWeeklySkillData().catch(() => ({ players: {} }));
+    const weeklyPlayers = weeklyData?.players || {};
+
+    const sniperSkill = resolvePlayerSkillScore(sniper, overrides, weeklyPlayers);
+    const supportSkill = resolvePlayerSkillScore(support, overrides, weeklyPlayers);
+    const rawDarkSkill = resolvePlayerSkillScore(darkHorse, overrides, weeklyPlayers);
     const underdogBonus = Math.round((1.0 + ((100 - Math.min(100, Math.max(10, rawDarkSkill))) / 100) * 0.40) * 100) / 100;
 
     const allPicks = await getAllPicks();
@@ -90,12 +135,12 @@ export async function POST(request: NextRequest) {
       sniper: {
         playerId: sniper.playerId,
         nickname: sniper.nickname,
-        skillScore: Number(sniper.skillScore) || 50
+        skillScore: sniperSkill
       },
       support: {
         playerId: support.playerId,
         nickname: support.nickname,
-        skillScore: Number(support.skillScore) || 50
+        skillScore: supportSkill
       },
       darkHorse: {
         playerId: darkHorse.playerId,

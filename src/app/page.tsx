@@ -3800,7 +3800,7 @@ export default function Home() {
                   const pId = p.player_id || p.user_id || p.id || p.nickname || item.player_id || item.user_id || item.nickname || "";
                   const nick = p.nickname || item.nickname || "Player";
                   const ov = (pId && playerOverridesMap[pId]) || (nick && playerOverridesMap[nick]) || (nick.toLowerCase() && playerOverridesMap[nick.toLowerCase()]) || {};
-                  const skill = ov.customSkillScore || 50;
+                  const skill = ov.customSkillScore || item.skillScore || p.skillScore || (weeklySkillMap && (weeklySkillMap[pId]?.currentScore || weeklySkillMap[nick]?.currentScore || weeklySkillMap[nick.toLowerCase()]?.currentScore)) || 50;
                   const avatar = p.avatar || item.avatar || "";
                   return { playerId: pId, nickname: nick, skillScore: skill, avatar };
                 }).filter(p => p.playerId && p.nickname !== "Player").sort((a, b) => a.nickname.localeCompare(b.nickname));
