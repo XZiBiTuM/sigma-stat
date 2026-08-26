@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (!sniper?.playerId || !support?.playerId || !darkHorse?.playerId) {
-      return NextResponse.json({ error: "Необходимо заполнить все 3 слота (Снайпер, Саппорт, Темная лошадка)" }, { status: 400 });
+      return NextResponse.json({ error: "Необходимо заполнить все 3 слота (Стар-плеер, Саппорт, Темная лошадка)" }, { status: 400 });
     }
 
     // Check for duplicate players in one team

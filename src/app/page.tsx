@@ -3976,7 +3976,7 @@ export default function Home() {
                         marginBottom: "2rem"
                       }}>
                         
-                        {/* SLOT 1: SNIPER */}
+                        {/* SLOT 1: STAR PLAYER */}
                         <div style={{
                           background: "rgba(255, 73, 73, 0.04)",
                           border: draftSniper ? "1.5px solid #ff5252" : "1px solid rgba(255, 73, 73, 0.3)",
@@ -3990,7 +3990,7 @@ export default function Home() {
                         }}>
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                             <div>
-                              <div style={{ fontSize: "1.05rem", fontWeight: "800", color: "#ff7b7b" }}>Снайпер</div>
+                              <div style={{ fontSize: "1.05rem", fontWeight: "800", color: "#ff7b7b" }}>Стар-плеер</div>
                               <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Фраги (+2.5), Entry (+2.0), HS (+1.0)</div>
                             </div>
                             <span style={{ fontSize: "0.72rem", fontWeight: "800", padding: "0.2rem 0.5rem", borderRadius: "6px", background: "rgba(255, 82, 82, 0.15)", color: "#ff8a80" }}>
@@ -4020,7 +4020,7 @@ export default function Home() {
                                 cursor: isDraftOpen ? "pointer" : "not-allowed"
                               }}
                             >
-                              <option value="">-- Выбери Снайпера --</option>
+                              <option value="">-- Выбери Стар-плеера --</option>
                               {allPlayersList.map(p => {
                                 const isUsedInOtherSlot = (draftSupport && (draftSupport.nickname === p.nickname || draftSupport.playerId === p.playerId)) ||
                                                           (draftDarkHorse && (draftDarkHorse.nickname === p.nickname || draftDarkHorse.playerId === p.playerId));
@@ -4333,7 +4333,7 @@ export default function Home() {
                               <tr style={{ borderBottom: "1px solid var(--border-light)", color: "var(--text-muted)", fontSize: "0.8rem", textTransform: "uppercase" }}>
                                 <th style={{ padding: "0.75rem 1rem" }}>#</th>
                                 <th style={{ padding: "0.75rem 1rem" }}>Участник</th>
-                                <th style={{ padding: "0.75rem 1rem" }}>Снайпер</th>
+                                <th style={{ padding: "0.75rem 1rem" }}>Стар-плеер</th>
                                 <th style={{ padding: "0.75rem 1rem" }}>Саппорт</th>
                                 <th style={{ padding: "0.75rem 1rem" }}>Темная лошадка</th>
                                 <th style={{ padding: "0.75rem 1rem", textAlign: "right" }}>Всего очков</th>
@@ -7601,7 +7601,7 @@ export default function Home() {
                   Интерактивная лига прогнозов на турниры Сигма Хаба. Собери команду из 3 игроков и соревнуйся за звание лучшего аналитика.
                 </p>
                 <div className="tour-modal-box">
-                  <div><strong>Выберите 3 роли:</strong> Снайпер (фраги и первый килл), Саппорт (ассисты, гранаты и дефьюзы) и Темная лошадка (сбалансированный множитель очков).</div>
+                  <div><strong>Выберите 3 роли:</strong> Стар-плеер (фраги и первый килл), Саппорт (ассисты, гранаты и дефьюзы) и Темная лошадка (сбалансированный множитель очков).</div>
                   <div><strong>Автоматический подсчет:</strong> очки рассчитываются по реальной статистике матчей турнира.</div>
                   <div><strong>Награды:</strong> победитель получает официальный статус «Фантазер» и золотую рамку на сайте.</div>
                 </div>

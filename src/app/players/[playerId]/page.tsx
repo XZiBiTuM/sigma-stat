@@ -1767,7 +1767,7 @@ export default function PlayerProfilePage() {
                     </span>
                   </div>
                   <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", margin: 0, lineHeight: "1.4" }}>
-                    {skillScore >= 75 && "Игрок высшего эшелона — приносит максимум очков на позиции Снайпера (фраги, открывающие дуэли и хедшоты)."}
+                    {skillScore >= 75 && "Игрок высшего эшелона — приносит максимум очков на позиции Стар-плеера (фраги, открывающие дуэли и хедшоты)."}
                     {skillScore >= 50 && skillScore < 75 && "Надежный командный боец — отлично набирает очки на позиции Саппорта (ассисты, урон и клатчи)."}
                     {skillScore < 50 && `Бонусный множитель x${underdogBonus.toFixed(2)} — дает повышенные очки на роли Темная лошадка.`}
                   </p>
@@ -1785,12 +1785,12 @@ export default function PlayerProfilePage() {
                   </div>
 
                   <p style={{ fontSize: "0.72rem", color: "var(--text-secondary)", margin: 0, lineHeight: "1.4" }}>
-                    В турнире пики получают очки по выбранной роли (Снайпер / Саппорт / Лошадка). Индивидуальный рекорд в профиле и достижении — универсальный боевой скор за матч: <span style={{ color: "#fff", fontWeight: "700" }}>(Снайпер + Саппорт) / 2 + Победа</span>.
+                    В турнире пики получают очки по выбранной роли (Стар-плеер / Саппорт / Лошадка). Индивидуальный рекорд в профиле и достижении — универсальный боевой скор за матч: <span style={{ color: "#fff", fontWeight: "700" }}>(Стар-плеер + Саппорт) / 2 + Победа</span>.
                   </p>
 
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "0.5rem", fontSize: "0.72rem" }}>
                     <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.55rem 0.7rem", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
-                      <div style={{ color: "var(--accent-cyan)", fontWeight: "800", marginBottom: "0.15rem" }}>Снайпер</div>
+                      <div style={{ color: "var(--accent-cyan)", fontWeight: "800", marginBottom: "0.15rem" }}>Стар-плеер</div>
                       <div style={{ color: "var(--text-muted)", lineHeight: "1.3" }}>Фраги (×2.0), Хедшоты (×1.0), Первые дуэли (×1.5).</div>
                     </div>
                     <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.55rem 0.7rem", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
