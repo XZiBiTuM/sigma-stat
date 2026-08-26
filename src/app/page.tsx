@@ -4026,8 +4026,8 @@ export default function Home() {
                               </div>
                               <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", margin: "0.3rem 0 0 0" }}>
                                 {isPickLocked 
-                                  ? "Состав сохранен и зафиксирован на турнир. Замена игроков заблокирована для сохранения баланса рисков и баффов!"
-                                  : "Выбери по одному игроку на каждую роль. Внимание: после сохранения состав фиксируется и замена будет недоступна!"}
+                                  ? "Твой боевой состав и активные баффы на текущий турнир."
+                                  : "Выбери по одному игроку на каждую роль. Внимание: в Саппортах и Лошадке действует штраф за оверскилл!"}
                               </p>
                             </div>
 
@@ -5076,91 +5076,77 @@ export default function Home() {
                       )}
 
                       {/* SAVE ACTION & NOTIFICATION */}
-                      <div style={{ display: "flex", flexDirection: "column", gap: "1rem", width: "100%" }}>
-                        {/* WARNING NOTE BEFORE SAVING */}
-                        {!isPickLocked ? (
-                          <div style={{
-                            display: "flex",
-                            alignItems: "flex-start",
-                            gap: "0.75rem",
-                            background: "rgba(255, 171, 0, 0.08)",
-                            border: "1px solid rgba(255, 171, 0, 0.35)",
-                            borderRadius: "14px",
-                            padding: "0.85rem 1.1rem",
-                            color: "#ffc107"
-                          }}>
-                            <span style={{ fontSize: "1.15rem", lineHeight: 1 }}>⚠️</span>
-                            <div style={{ fontSize: "0.82rem", lineHeight: "1.4" }}>
-                              <strong style={{ color: "#ffd54f" }}>Внимание: </strong>
-                              После нажатия кнопки «Сохранить состав» карточки получат случайные баффы, а состав будет <strong>зафиксирован на весь турнир</strong>. Заменить игроков или перероллить баффы будет <strong>нельзя</strong> (риск за оверскилл принимается навсегда)!
-                            </div>
-                          </div>
-                        ) : (
-                          <div style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "0.75rem",
-                            background: "rgba(34, 197, 94, 0.08)",
-                            border: "1px solid rgba(34, 197, 94, 0.35)",
-                            borderRadius: "14px",
-                            padding: "0.85rem 1.1rem",
-                            color: "#4ade80"
-                          }}>
-                            <span style={{ fontSize: "1.15rem", lineHeight: 1 }}>🔒</span>
-                            <div style={{ fontSize: "0.82rem", lineHeight: "1.4" }}>
-                              <strong style={{ color: "#86efac" }}>Состав зафиксирован: </strong>
-                              Твои карточки и баффы активированы. Замена игроков заблокирована до конца текущего турнира.
-                            </div>
-                          </div>
-                        )}
-
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem", width: "100%" }}>
                         {fantasySaveMsg && (
                           <div style={{ fontSize: "0.92rem", fontWeight: "700", textAlign: "center", color: fantasySaveMsg.includes("успешно") ? "#00e5ff" : "#ff5252" }}>
                             {fantasySaveMsg}
                           </div>
                         )}
 
-                        <button
-                          onClick={handleSaveFantasyPick}
-                          disabled={isSavingFantasy || !isDraftOpen || isPickLocked}
-                          style={{
+                        {!isPickLocked ? (
+                          <>
+                            {/* WARNING NOTE BEFORE SAVING */}
+                            <div style={{
+                              display: "flex",
+                              alignItems: "flex-start",
+                              gap: "0.75rem",
+                              background: "rgba(255, 171, 0, 0.08)",
+                              border: "1px solid rgba(255, 171, 0, 0.35)",
+                              borderRadius: "14px",
+                              padding: "0.85rem 1.1rem",
+                              color: "#ffc107"
+                            }}>
+                              <span style={{ fontSize: "1.15rem", lineHeight: 1 }}>⚠️</span>
+                              <div style={{ fontSize: "0.82rem", lineHeight: "1.4" }}>
+                                <strong style={{ color: "#ffd54f" }}>Внимание: </strong>
+                                После нажатия кнопки «Сохранить состав» карточки получат случайные баффы, а состав будет <strong>зафиксирован на весь турнир</strong>. Заменить игроков или перероллить баффы будет <strong>нельзя</strong> (риск за оверскилл принимается навсегда)!
+                              </div>
+                            </div>
+
+                            <button
+                              onClick={handleSaveFantasyPick}
+                              disabled={isSavingFantasy || !isDraftOpen}
+                              style={{
+                                width: "100%",
+                                padding: "1rem 2rem",
+                                borderRadius: "14px",
+                                background: isDraftOpen ? "linear-gradient(135deg, #b388ff, #00e5ff)" : "rgba(255,255,255,0.1)",
+                                border: "none",
+                                color: isDraftOpen ? "#000" : "var(--text-muted)",
+                                fontSize: "1rem",
+                                fontWeight: "800",
+                                cursor: isDraftOpen ? "pointer" : "not-allowed",
+                                boxShadow: isDraftOpen ? "0 0 25px rgba(179, 136, 255, 0.4)" : "none",
+                                transition: "all 0.2s ease",
+                                textAlign: "center"
+                              }}
+                            >
+                              {isSavingFantasy ? "Сохранение и ролл баффов..." : isDraftOpen ? "Сохранить состав на турнир" : "Сбор составов закрыт"}
+                            </button>
+                          </>
+                        ) : (
+                          /* SINGLE CLEAN CONFIRMED STATUS */
+                          <div style={{
                             width: "100%",
-                            padding: "1rem 2rem",
+                            padding: "0.95rem 1.5rem",
                             borderRadius: "14px",
-                            background: isPickLocked
-                              ? "rgba(34, 197, 94, 0.15)"
-                              : isDraftOpen
-                                ? "linear-gradient(135deg, #b388ff, #00e5ff)"
-                                : "rgba(255,255,255,0.1)",
-                            border: isPickLocked ? "1px solid rgba(34, 197, 94, 0.4)" : "none",
-                            color: isPickLocked ? "#4ade80" : isDraftOpen ? "#000" : "var(--text-muted)",
-                            fontSize: "1rem",
+                            background: "rgba(34, 197, 94, 0.12)",
+                            border: "1px solid rgba(34, 197, 94, 0.35)",
+                            color: "#4ade80",
+                            fontSize: "0.95rem",
                             fontWeight: "800",
-                            cursor: isPickLocked || !isDraftOpen ? "not-allowed" : "pointer",
-                            boxShadow: isPickLocked ? "0 0 20px rgba(34, 197, 94, 0.15)" : isDraftOpen ? "0 0 25px rgba(179, 136, 255, 0.4)" : "none",
-                            transition: "all 0.2s ease",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
                             gap: "0.5rem"
-                          }}
-                        >
-                          {isSavingFantasy ? (
-                            "Сохранение и ролл баффов..."
-                          ) : isPickLocked ? (
-                            <>
-                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                              </svg>
-                              <span>Состав зафиксирован (изменения недоступны)</span>
-                            </>
-                          ) : isDraftOpen ? (
-                            "Сохранить состав на турнир"
-                          ) : (
-                            "Сбор составов закрыт"
-                          )}
-                        </button>
+                          }}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                            </svg>
+                            <span>Состав подтвержден и участвует в турнире</span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   );
