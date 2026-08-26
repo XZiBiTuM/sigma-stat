@@ -2551,51 +2551,58 @@ export default function Home() {
                 </p>
               </div>
 
-              {/* Tournament countdown widget (Option 2) */}
-              {fantasyTour?.startTime && (
-                <div 
-                  onClick={() => setActiveTab("fantasy")}
-                  style={{
-                    background: "linear-gradient(135deg, rgba(255, 215, 0, 0.08) 0%, rgba(255, 145, 0, 0.03) 100%)",
-                    border: "1px solid rgba(255, 215, 0, 0.35)",
-                    borderRadius: "12px",
-                    padding: "0.75rem 1.35rem",
-                    textAlign: "center",
-                    minWidth: "160px",
-                    cursor: "pointer",
-                    boxShadow: "0 0 25px rgba(255, 215, 0, 0.12)",
-                    transition: "all 0.2s ease",
-                    userSelect: "none"
-                  }}
-                  title="Нажмите, чтобы перейти в Fantasy League"
-                >
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.45rem" }}>
-                    <span style={{
-                      width: "7px",
-                      height: "7px",
-                      borderRadius: "50%",
-                      background: fantasyTour.status === "COMPLETED" ? "#ff5252" : "#ffd700",
-                      boxShadow: fantasyTour.status === "COMPLETED" ? "0 0 8px #ff5252" : "0 0 8px #ffd700",
-                      display: "inline-block"
-                    }} />
-                    <span style={{ fontSize: "0.72rem", color: fantasyTour.status === "COMPLETED" ? "#ff5252" : "#ffd700", textTransform: "uppercase", fontWeight: "800", letterSpacing: "0.05em" }}>
-                      {fantasyTour.status === "LIVE" ? "ТУРНИР" : fantasyTour.status === "COMPLETED" ? "ТУРНИР" : "ДО ТУРНИРА"}
-                    </span>
+              {/* Tournament countdown widget (Option 2) - hides after 3 days if completed */}
+              {fantasyTour?.startTime && (() => {
+                const isCompleted = fantasyTour.status === "COMPLETED";
+                const completedTime = new Date(fantasyTour.updatedAt || fantasyTour.startTime).getTime();
+                const isExpired = isCompleted && (Date.now() - completedTime > 3 * 24 * 60 * 60 * 1000);
+                if (isExpired) return null;
+
+                return (
+                  <div 
+                    onClick={() => setActiveTab("fantasy")}
+                    style={{
+                      background: "linear-gradient(135deg, rgba(255, 215, 0, 0.08) 0%, rgba(255, 145, 0, 0.03) 100%)",
+                      border: "1px solid rgba(255, 215, 0, 0.35)",
+                      borderRadius: "12px",
+                      padding: "0.75rem 1.35rem",
+                      textAlign: "center",
+                      minWidth: "160px",
+                      cursor: "pointer",
+                      boxShadow: "0 0 25px rgba(255, 215, 0, 0.12)",
+                      transition: "all 0.2s ease",
+                      userSelect: "none"
+                    }}
+                    title="Нажмите, чтобы перейти в Fantasy League"
+                  >
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.45rem" }}>
+                      <span style={{
+                        width: "7px",
+                        height: "7px",
+                        borderRadius: "50%",
+                        background: isCompleted ? "#ff5252" : "#ffd700",
+                        boxShadow: isCompleted ? "0 0 8px #ff5252" : "0 0 8px #ffd700",
+                        display: "inline-block"
+                      }} />
+                      <span style={{ fontSize: "0.72rem", color: isCompleted ? "#ff5252" : "#ffd700", textTransform: "uppercase", fontWeight: "800", letterSpacing: "0.05em" }}>
+                        {fantasyTour.status === "LIVE" ? "ТУРНИР" : isCompleted ? "ТУРНИР" : "ДО ТУРНИРА"}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: "1.6rem", fontWeight: "900", color: "#fff", marginTop: "0.15rem", letterSpacing: "0.02em" }}>
+                      {(() => {
+                        if (isCompleted) return "ЗАВЕРШЕН";
+                        if (fantasyTour.status === "LIVE") return "ИДЕТ СЕЙЧАС";
+                        const diff = new Date(fantasyTour.startTime).getTime() - Date.now();
+                        if (diff <= 0) return "СКОРО СТАРТ";
+                        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                        const mins = Math.floor((diff / (1000 * 60)) % 60);
+                        return `${days > 0 ? `${days}д ` : ''}${hours}ч ${mins}м`;
+                      })()}
+                    </div>
                   </div>
-                  <div style={{ fontSize: "1.6rem", fontWeight: "900", color: "#fff", marginTop: "0.15rem", letterSpacing: "0.02em" }}>
-                    {(() => {
-                      if (fantasyTour.status === "COMPLETED") return "ЗАВЕРШЕН";
-                      if (fantasyTour.status === "LIVE") return "ИДЕТ СЕЙЧАС";
-                      const diff = new Date(fantasyTour.startTime).getTime() - Date.now();
-                      if (diff <= 0) return "СКОРО СТАРТ";
-                      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-                      const mins = Math.floor((diff / (1000 * 60)) % 60);
-                      return `${days > 0 ? `${days}д ` : ''}${hours}ч ${mins}м`;
-                    })()}
-                  </div>
-                </div>
-              )}
+                );
+              })()}
 
               {/* Members stats widget */}
               <div style={{
