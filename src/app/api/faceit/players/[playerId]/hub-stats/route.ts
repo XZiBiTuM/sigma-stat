@@ -436,17 +436,38 @@ export async function GET(
     // Check if player is Fantasy Champion
     let isFantasyWinner = false;
     try {
+      // 1. Check fantasy_tournament.json
+      const tourPersistent = getPersistentPath("fantasy_tournament.json");
+      const tourFallback = getStoragePath("fantasy_tournament.json");
+      const activeTourPath = fsSync.existsSync(tourPersistent) ? tourPersistent : tourFallback;
+      if (fsSync.existsSync(activeTourPath)) {
+        const tourData = JSON.parse(fsSync.readFileSync(activeTourPath, "utf8") || "{}");
+        const wNick = (tourData.winnerNickname || "").toLowerCase();
+        const wUid = (tourData.winnerUserId || "").toLowerCase();
+        const curNick = (playerProfile?.nickname || "").toLowerCase();
+        const curId = (playerId || "").toLowerCase();
+        const curUuid = (uuid || "").toLowerCase();
+        if (wNick && curNick && wNick === curNick) {
+          isFantasyWinner = true;
+        } else if (wUid && (wUid === curId || wUid === curUuid)) {
+          isFantasyWinner = true;
+        }
+      }
+
+      // 2. Check player_overrides.json
       const ovPath = getPersistentPath("player_overrides.json");
       const fallbackOv = getStoragePath("player_overrides.json");
       const activeOvPath = fsSync.existsSync(ovPath) ? ovPath : fallbackOv;
       if (fsSync.existsSync(activeOvPath)) {
         const ovData = JSON.parse(fsSync.readFileSync(activeOvPath, "utf8") || "{}");
-        const pOv = ovData[uuid] || ovData[playerId] || ovData[playerProfile.nickname || ""] || {};
+        const pOv = ovData[uuid] || ovData[playerId] || ovData[playerProfile?.nickname || ""] || ovData[(playerProfile?.nickname || "").toLowerCase()] || {};
         if (pOv.customRole === "CHAMPION" || pOv.isFantasyChampion === true || pOv.fantasyWinner === true) {
           isFantasyWinner = true;
         }
       }
-    } catch {}
+    } catch (e) {
+      console.warn("Error checking fantasy champion in hub-stats:", e);
+    }
 
     return NextResponse.json({
       playerId,

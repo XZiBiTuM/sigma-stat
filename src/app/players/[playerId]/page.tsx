@@ -1808,20 +1808,33 @@ export default function PlayerProfilePage() {
           })()}
 
           {/* ACHIEVEMENTS & MEDALS SECTION */}
-          {profile && (
-            <div className="glass-card" style={{ padding: "1.75rem 2rem", borderRadius: "16px", border: "1px solid var(--border-light)" }}>
-              <PlayerAchievements
-                achievements={computePlayerAchievements({
-                  hubStats,
-                  profile,
-                  leetify,
-                  currentStreak: hubStats?.streak || 0,
-                  hubPlayed: hubStats?.matches || 0,
-                  hubWon: hubStats?.wins || 0
-                })}
-              />
-            </div>
-          )}
+          {profile && (() => {
+            const isPlayerFantasyWinner = Boolean(
+              (fantasyWinnerNick && (
+                profile?.nickname?.toLowerCase() === fantasyWinnerNick.toLowerCase() ||
+                profile?.player_id === fantasyWinnerNick ||
+                (fantasyWinnerSteamId && profile?.steam_id_64 === fantasyWinnerSteamId)
+              )) ||
+              hubStats?.isFantasyWinner ||
+              profile?.isFantasyWinner ||
+              profile?.customRole === "CHAMPION"
+            );
+
+            return (
+              <div className="glass-card" style={{ padding: "1.75rem 2rem", borderRadius: "16px", border: "1px solid var(--border-light)" }}>
+                <PlayerAchievements
+                  achievements={computePlayerAchievements({
+                    hubStats: { ...hubStats, isFantasyWinner: isPlayerFantasyWinner },
+                    profile: { ...profile, isFantasyWinner: isPlayerFantasyWinner },
+                    leetify,
+                    currentStreak: hubStats?.streak || 0,
+                    hubPlayed: hubStats?.matches || 0,
+                    hubWon: hubStats?.wins || 0
+                  })}
+                />
+              </div>
+            );
+          })()}
 
           {/* COMMENTS & VOUCHES WALL */}
           {profile && (
