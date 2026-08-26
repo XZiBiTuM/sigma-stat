@@ -779,7 +779,7 @@ export default function PlayerProfilePage() {
         <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
           
           {/* Top Info Header */}
-          <div className="glass-card" style={{ padding: "2rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "1.25rem", position: "relative" }}>
+          <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "1.25rem", position: "relative" }}>
             {/* Top decorative line */}
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px", background: "linear-gradient(90deg, var(--accent-purple), var(--accent-cyan))" }} />
             
@@ -794,13 +794,14 @@ export default function PlayerProfilePage() {
               );
               return (
                 <div style={{
-                  width: "100px",
-                  height: "100px",
+                  width: "90px",
+                  height: "90px",
                   borderRadius: "16px",
                   overflow: "hidden",
                   background: "#1c1829",
                   border: isChamp ? "2.5px solid #ffd700" : "2px solid var(--border-light)",
-                  boxShadow: isChamp ? "0 0 25px rgba(255, 215, 0, 0.4), 0 4px 20px rgba(0,0,0,0.4)" : "0 4px 20px rgba(0,0,0,0.4)"
+                  boxShadow: isChamp ? "0 0 25px rgba(255, 215, 0, 0.4), 0 4px 20px rgba(0,0,0,0.4)" : "0 4px 20px rgba(0,0,0,0.4)",
+                  flexShrink: 0
                 }}>
               {profile.avatar ? (
                 <img src={profile.avatar} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
@@ -814,9 +815,9 @@ export default function PlayerProfilePage() {
             })()}
 
             {/* Name and Links */}
-            <div>
+            <div style={{ flex: "1 1 240px", minWidth: 0 }}>
               <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
-                <h1 style={{ fontSize: "2.2rem", fontWeight: "900", color: "#fff", letterSpacing: "-0.03em", margin: 0 }}>{profile.nickname}</h1>
+                <h1 style={{ fontSize: "clamp(1.6rem, 5vw, 2.2rem)", fontWeight: "900", color: "#fff", letterSpacing: "-0.03em", margin: 0, wordBreak: "break-word" }}>{profile.nickname}</h1>
                 {Boolean(
                   fantasyWinnerNick && (
                     profile.nickname?.toLowerCase() === fantasyWinnerNick.toLowerCase() ||
@@ -837,9 +838,9 @@ export default function PlayerProfilePage() {
                   </span>
                 )}
               </div>
-              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "1rem", marginTop: "0.5rem" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.85rem", marginTop: "0.5rem" }}>
                 {profile.country && (
-                  <span style={{ color: "var(--text-secondary)", fontSize: "0.9rem" }}>
+                  <span style={{ color: "var(--text-secondary)", fontSize: "0.85rem" }}>
                     Страна: <strong style={{ color: "#fff" }}>{profile.country.toUpperCase()}</strong>
                   </span>
                 )}
@@ -848,7 +849,7 @@ export default function PlayerProfilePage() {
                     href={`https://steamcommunity.com/profiles/${profile.steam_id_64 || profile.platforms?.steam}`}
                     target="_blank" 
                     rel="noreferrer"
-                    style={{ color: steamHover ? "#fff" : "var(--accent-cyan)", fontSize: "0.9rem", textDecoration: "none", fontWeight: "600", display: "inline-flex", alignItems: "center", gap: "0.4rem", transition: "color 0.2s" }}
+                    style={{ color: steamHover ? "#fff" : "var(--accent-cyan)", fontSize: "0.85rem", textDecoration: "none", fontWeight: "600", display: "inline-flex", alignItems: "center", gap: "0.4rem", transition: "color 0.2s" }}
                     onMouseEnter={() => setSteamHover(true)}
                     onMouseLeave={() => setSteamHover(false)}
                   >
@@ -860,7 +861,7 @@ export default function PlayerProfilePage() {
                   href={`https://www.faceit.com/ru/players/${profile.nickname}`}
                   target="_blank" 
                   rel="noreferrer"
-                  style={{ color: faceitHover ? "#fff" : "var(--accent-purple)", fontSize: "0.9rem", textDecoration: "none", fontWeight: "600", display: "inline-flex", alignItems: "center", gap: "0.4rem", transition: "color 0.2s" }}
+                  style={{ color: faceitHover ? "#fff" : "var(--accent-purple)", fontSize: "0.85rem", textDecoration: "none", fontWeight: "600", display: "inline-flex", alignItems: "center", gap: "0.4rem", transition: "color 0.2s" }}
                   onMouseEnter={() => setFaceitHover(true)}
                   onMouseLeave={() => setFaceitHover(false)}
                 >
@@ -875,7 +876,7 @@ export default function PlayerProfilePage() {
                     background: "transparent",
                     border: "none",
                     color: copied ? "#4caf50" : (copyHover ? "#fff" : "rgba(255, 255, 255, 0.7)"),
-                    fontSize: "0.9rem",
+                    fontSize: "0.85rem",
                     fontWeight: "600",
                     display: "inline-flex",
                     alignItems: "center",
@@ -888,24 +889,24 @@ export default function PlayerProfilePage() {
                   <svg viewBox="0 0 24 24" style={{ width: "16px", height: "16px", fill: copied ? "#4caf50" : (copyHover ? "#fff" : "rgba(255, 255, 255, 0.7)"), transition: "fill 0.2s" }}>
                     <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
                   </svg>
-                  <span>{copied ? "Ссылка скопирована!" : "Скопировать ссылку профиля"}</span>
+                  <span>{copied ? "Ссылка скопирована!" : "Скопировать ссылку"}</span>
                 </button>
               </div>
             </div>
 
             {/* Level and Elo */}
             {cs2Info && (
-              <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "1.25rem", background: "rgba(0,0,0,0.25)", border: "1px solid var(--border-light)", padding: "0.75rem 1.5rem", borderRadius: "12px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "1rem", background: "rgba(0,0,0,0.25)", border: "1px solid var(--border-light)", padding: "0.6rem 1.2rem", borderRadius: "12px", flexShrink: 0 }}>
                 <div style={{ textAlign: "right" }}>
-                  <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", display: "block", textTransform: "uppercase", fontWeight: "700" }}>Faceit ELO</span>
-                  <span style={{ fontWeight: "800", color: "#fff", fontSize: "1.3rem" }}>{cs2Info.faceit_elo}</span>
+                  <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", display: "block", textTransform: "uppercase", fontWeight: "700" }}>Faceit ELO</span>
+                  <span style={{ fontWeight: "800", color: "#fff", fontSize: "1.2rem" }}>{cs2Info.faceit_elo}</span>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.15rem" }}>
-                  <span style={{ fontSize: "0.65rem", color: "var(--text-muted)", fontWeight: "700" }}>LEVEL</span>
+                  <span style={{ fontSize: "0.62rem", color: "var(--text-muted)", fontWeight: "700" }}>LEVEL</span>
                   <img 
                     src={`/icons/faceit_level_${cs2Info.skill_level}.svg`} 
                     alt={`Level ${cs2Info.skill_level}`} 
-                    style={{ width: "32px", height: "32px", objectFit: "contain", display: "block", marginTop: "0.15rem" }} 
+                    style={{ width: "30px", height: "30px", objectFit: "contain", display: "block", marginTop: "0.15rem" }} 
                   />
                 </div>
               </div>

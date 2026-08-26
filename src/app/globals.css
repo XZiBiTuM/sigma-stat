@@ -564,3 +564,115 @@ html, body {
     border-radius: 20px;
   }
 }
+
+/* ========================================================= */
+/* MOBILE & TABLET COMPREHENSIVE RESPONSIVENESS (< 768px, < 480px) */
+/* ========================================================= */
+
+/* Utility: hide scrollbar while keeping horizontal touch scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Touch scroll smooth deceleration */
+.touch-scroll-x {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1.25rem 0.85rem;
+  }
+
+  .glass-card {
+    padding: 1.15rem 0.95rem;
+    border-radius: 18px;
+  }
+
+  /* Tour Modal on Mobile */
+  .tour-modal-card {
+    padding: 1.25rem 1rem;
+    width: 95vw;
+    border-radius: 18px;
+  }
+
+  .tour-modal-title {
+    font-size: 1.2rem;
+  }
+
+  .tour-modal-desc {
+    font-size: 0.82rem;
+  }
+
+  .tour-modal-carousel {
+    height: 220px;
+    margin: 0.85rem 0;
+  }
+
+  .tour-modal-slide {
+    width: 86vw;
+    max-width: 340px;
+    height: 195px;
+  }
+
+  /* Table adjustments on mobile */
+  .custom-table th {
+    padding: 0.65rem 0.5rem;
+    font-size: 0.72rem;
+  }
+
+  .custom-table td {
+    padding: 0.65rem 0.5rem;
+    font-size: 0.82rem;
+  }
+
+  /* Buttons touch target on mobile */
+  .btn {
+    min-height: 44px;
+    padding: 0.65rem 1.15rem;
+  }
+
+  /* Modals on mobile */
+  .modal-content {
+    width: 95vw;
+    max-height: 90vh;
+    border-radius: 18px;
+    margin: auto;
+  }
+
+  .modal-close-btn {
+    top: 1rem;
+    right: 1rem;
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0.9rem 0.6rem;
+  }
+
+  .glass-card {
+    padding: 1rem 0.8rem;
+    border-radius: 16px;
+  }
+
+  h1 {
+    font-size: 1.6rem !important;
+  }
+
+  h2 {
+    font-size: 1.35rem !important;
+  }
+
+  h3 {
+    font-size: 1.15rem !important;
+  }
+}

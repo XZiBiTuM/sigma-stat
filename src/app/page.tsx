@@ -2630,7 +2630,7 @@ export default function Home() {
             <div style={{ display: "flex", flexDirection: "column", gap: "1rem", width: "100%" }}>
               
               {/* Tab headers */}
-              <div className="tabs-container">
+              <div className="tabs-container no-scrollbar touch-scroll-x" style={{ overflowX: "auto", display: "flex", gap: "0.5rem", whiteSpace: "nowrap", WebkitOverflowScrolling: "touch" }}>
                 <button 
                   className={`tab-btn ${activeTab === 'leaderboard' ? 'active' : ''}`}
                   onClick={() => setActiveTab('leaderboard')}
@@ -4956,7 +4956,8 @@ export default function Home() {
                                       display: "flex",
                                       alignItems: "center",
                                       justifyContent: "space-between",
-                                      gap: "1rem",
+                                      gap: "0.75rem",
+                                      flexWrap: "wrap",
                                       background: "rgba(255,255,255,0.03)",
                                       border: "1px solid rgba(255,255,255,0.06)",
                                       borderRadius: "14px",
@@ -5173,8 +5174,8 @@ export default function Home() {
                           Пока никто не сохранил свой прогноз. Стань первым!
                         </div>
                       ) : (
-                        <div style={{ overflowX: "auto" }}>
-                          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+                        <div className="custom-table-container no-scrollbar touch-scroll-x" style={{ overflowX: "auto" }}>
+                          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", minWidth: "550px" }}>
                             <thead>
                               <tr style={{ borderBottom: "1px solid var(--border-light)", color: "var(--text-muted)", fontSize: "0.8rem", textTransform: "uppercase" }}>
                                 <th style={{ padding: "0.75rem 1rem" }}>#</th>
