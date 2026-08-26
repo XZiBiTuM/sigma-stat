@@ -4108,7 +4108,7 @@ export default function Home() {
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                             <div>
                               <div style={{ fontSize: "1.05rem", fontWeight: "800", color: "var(--accent-cyan)" }}>Саппорт</div>
-                              <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Лимит скилла ≤65 (Скилл &gt;65 дает -50% очков)</div>
+                              <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Ассисты (+2.5), Фраги (+0.8), Клатчи и урон</div>
                             </div>
                             <span style={{
                               fontSize: "0.72rem",
@@ -4197,7 +4197,7 @@ export default function Home() {
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                             <div>
                               <div style={{ fontSize: "1.05rem", fontWeight: "800", color: "#ffd700" }}>Темная лошадка</div>
-                              <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Скилл ≤65 = БОНУС, скилл &gt;65 = ШТРАФ</div>
+                              <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Боевой счет × Множитель лошадки (до x1.40)</div>
                             </div>
                             <span style={{
                               fontSize: "0.72rem",
