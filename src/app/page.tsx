@@ -3821,8 +3821,25 @@ export default function Home() {
                   return Math.max(0.60, 1.0 - ((skill - 65) / 35) * 0.40).toFixed(2);
                 };
 
+                const getLivePlayerSkill = (player: any): number => {
+                  if (!player) return 50;
+                  const pId = player.playerId || player.player_id || player.user_id || "";
+                  const nick = player.nickname || "";
+                  const found = allPlayersList.find(p => (pId && p.playerId === pId) || (nick && p.nickname.toLowerCase() === nick.toLowerCase()));
+                  if (found) return found.skillScore;
+                  const ov = (pId && playerOverridesMap[pId]) || (nick && playerOverridesMap[nick]) || (nick && playerOverridesMap[nick.toLowerCase()]) || {};
+                  if (ov.customSkillScore) return ov.customSkillScore;
+                  if (weeklySkillMap && pId && weeklySkillMap[pId]?.currentScore) return weeklySkillMap[pId].currentScore;
+                  if (weeklySkillMap && nick && (weeklySkillMap[nick]?.currentScore || weeklySkillMap[nick.toLowerCase()]?.currentScore)) return weeklySkillMap[nick]?.currentScore || weeklySkillMap[nick.toLowerCase()]?.currentScore;
+                  return player.skillScore || 50;
+                };
+
+                const sniperSkill = getLivePlayerSkill(draftSniper);
+                const supportSkill = getLivePlayerSkill(draftSupport);
+                const darkHorseSkill = getLivePlayerSkill(draftDarkHorse);
+
                 const darkMultiplier = draftDarkHorse 
-                  ? calcDarkMultiplier(draftDarkHorse.skillScore)
+                  ? calcDarkMultiplier(darkHorseSkill)
                   : "1.00";
 
                 const handleSaveFantasyPick = async () => {
@@ -3857,9 +3874,9 @@ export default function Home() {
                         userName,
                         avatar: currentUser?.steamAvatar || currentUser?.faceit?.avatar || "",
                         faceitNickname: currentUser?.faceit?.nickname || "",
-                        sniper: draftSniper,
-                        support: draftSupport,
-                        darkHorse: draftDarkHorse
+                        sniper: { ...draftSniper, skillScore: sniperSkill },
+                        support: { ...draftSupport, skillScore: supportSkill },
+                        darkHorse: { ...draftDarkHorse, skillScore: darkHorseSkill }
                       })
                     });
                     const d = await res.json();
@@ -4063,7 +4080,7 @@ export default function Home() {
                               )}
                               <div>
                                 <div style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff" }}>{draftSniper.nickname}</div>
-                                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Скилл: <strong style={{ color: "#ff7b7b" }}>{draftSniper.skillScore}</strong></div>
+                                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Скилл: <strong style={{ color: "#ff7b7b" }}>{sniperSkill}</strong></div>
                               </div>
                             </div>
                           )}
@@ -4072,7 +4089,7 @@ export default function Home() {
                         {/* SLOT 2: SUPPORT */}
                         <div style={{
                           background: "rgba(0, 229, 255, 0.04)",
-                          border: draftSupport ? (draftSupport.skillScore > 65 ? "1.5px solid #ff5252" : "1.5px solid var(--accent-cyan)") : "1px solid rgba(0, 229, 255, 0.3)",
+                          border: draftSupport ? (supportSkill > 65 ? "1.5px solid #ff5252" : "1.5px solid var(--accent-cyan)") : "1px solid rgba(0, 229, 255, 0.3)",
                           borderRadius: "18px",
                           padding: "1.5rem",
                           display: "flex",
@@ -4091,10 +4108,10 @@ export default function Home() {
                               fontWeight: "800",
                               padding: "0.2rem 0.5rem",
                               borderRadius: "6px",
-                              background: draftSupport && draftSupport.skillScore > 65 ? "rgba(255, 73, 73, 0.2)" : "rgba(0, 229, 255, 0.15)",
-                              color: draftSupport && draftSupport.skillScore > 65 ? "#ff5252" : "var(--accent-cyan)"
+                              background: draftSupport && supportSkill > 65 ? "rgba(255, 73, 73, 0.2)" : "rgba(0, 229, 255, 0.15)",
+                              color: draftSupport && supportSkill > 65 ? "#ff5252" : "var(--accent-cyan)"
                             }}>
-                              {draftSupport && draftSupport.skillScore > 65 ? "⚠️ ШТРАФ -50%" : "СЛОТ 2"}
+                              {draftSupport && supportSkill > 65 ? "⚠️ ШТРАФ -50%" : "СЛОТ 2"}
                             </span>
                           </div>
 
@@ -4113,7 +4130,7 @@ export default function Home() {
                                 padding: "0.75rem 1rem",
                                 borderRadius: "12px",
                                 background: "#06050c",
-                                border: draftSupport && draftSupport.skillScore > 65 ? "1px solid rgba(255, 82, 82, 0.5)" : "1px solid rgba(0, 229, 255, 0.4)",
+                                border: draftSupport && supportSkill > 65 ? "1px solid rgba(255, 82, 82, 0.5)" : "1px solid rgba(0, 229, 255, 0.4)",
                                 color: "#fff",
                                 fontSize: "0.9rem",
                                 fontWeight: "600",
@@ -4146,10 +4163,10 @@ export default function Home() {
                               <div style={{ flex: 1 }}>
                                 <div style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff" }}>{draftSupport.nickname}</div>
                                 <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
-                                  Скилл: <strong style={{ color: draftSupport.skillScore > 65 ? "#ff5252" : "var(--accent-cyan)" }}>{draftSupport.skillScore}</strong>
+                                  Скилл: <strong style={{ color: supportSkill > 65 ? "#ff5252" : "var(--accent-cyan)" }}>{supportSkill}</strong>
                                 </div>
                               </div>
-                              {draftSupport.skillScore > 65 && (
+                              {supportSkill > 65 && (
                                 <span style={{ fontSize: "0.72rem", color: "#ff5252", fontWeight: "900", background: "rgba(255, 73, 73, 0.15)", padding: "0.2rem 0.5rem", borderRadius: "6px" }}>
                                   -50% очков
                                 </span>
@@ -4235,7 +4252,7 @@ export default function Home() {
                               )}
                               <div style={{ flex: 1 }}>
                                 <div style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff" }}>{draftDarkHorse.nickname}</div>
-                                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Скилл: <strong style={{ color: Number(darkMultiplier) < 1.0 ? "#ff5252" : "#ffd700" }}>{draftDarkHorse.skillScore}</strong></div>
+                                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Скилл: <strong style={{ color: Number(darkMultiplier) < 1.0 ? "#ff5252" : "#ffd700" }}>{darkHorseSkill}</strong></div>
                               </div>
                               <span style={{
                                 fontSize: "0.78rem",
@@ -4300,7 +4317,7 @@ export default function Home() {
                                   overflow: "hidden"
                                 }}>
                                   <div style={{ position: "absolute", top: "1rem", left: "1.2rem", textAlign: "left" }}>
-                                    <div style={{ fontSize: "1.8rem", fontWeight: "900", color: "#ff5252", lineHeight: 1 }}>{draftSniper.skillScore}</div>
+                                    <div style={{ fontSize: "1.8rem", fontWeight: "900", color: "#ff5252", lineHeight: 1 }}>{sniperSkill}</div>
                                     <div style={{ fontSize: "0.72rem", fontWeight: "800", color: "#ff8a80", textTransform: "uppercase" }}>СТАР</div>
                                   </div>
 
@@ -4376,7 +4393,7 @@ export default function Home() {
                             {/* FUT CARD 2: SUPPORT */}
                             {draftSupport && (() => {
                               const buff = userFantasyPick?.support?.buff;
-                              const isPenalty = draftSupport.skillScore > 65;
+                              const isPenalty = supportSkill > 65;
                               return (
                                 <div style={{
                                   background: "radial-gradient(ellipse at 50% 0%, rgba(0, 229, 255, 0.25) 0%, rgba(12, 10, 22, 0.98) 75%)",
@@ -4391,7 +4408,7 @@ export default function Home() {
                                   overflow: "hidden"
                                 }}>
                                   <div style={{ position: "absolute", top: "1rem", left: "1.2rem", textAlign: "left" }}>
-                                    <div style={{ fontSize: "1.8rem", fontWeight: "900", color: isPenalty ? "#ff5252" : "var(--accent-cyan)", lineHeight: 1 }}>{draftSupport.skillScore}</div>
+                                    <div style={{ fontSize: "1.8rem", fontWeight: "900", color: isPenalty ? "#ff5252" : "var(--accent-cyan)", lineHeight: 1 }}>{supportSkill}</div>
                                     <div style={{ fontSize: "0.72rem", fontWeight: "800", color: isPenalty ? "#ff8a80" : "var(--accent-cyan)", textTransform: "uppercase" }}>САП</div>
                                   </div>
 
@@ -4484,7 +4501,7 @@ export default function Home() {
                                   overflow: "hidden"
                                 }}>
                                   <div style={{ position: "absolute", top: "1rem", left: "1.2rem", textAlign: "left" }}>
-                                    <div style={{ fontSize: "1.8rem", fontWeight: "900", color: isPenalty ? "#ff5252" : "#ffd700", lineHeight: 1 }}>{draftDarkHorse.skillScore}</div>
+                                    <div style={{ fontSize: "1.8rem", fontWeight: "900", color: isPenalty ? "#ff5252" : "#ffd700", lineHeight: 1 }}>{darkHorseSkill}</div>
                                     <div style={{ fontSize: "0.72rem", fontWeight: "800", color: isPenalty ? "#ff8a80" : "#ffd700", textTransform: "uppercase" }}>ТЕМН</div>
                                   </div>
 
