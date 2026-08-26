@@ -3801,17 +3801,18 @@ export default function Home() {
                   }
                 }
 
-                // Available hub players with robust ID extraction
+                // Available hub players with robust ID extraction and live skill computation
                 const allPlayersList = [...(rankings || [])].map((item: any) => {
                   const p = item.player || item.user || item;
                   const pId = p.player_id || p.user_id || p.id || p.nickname || item.player_id || item.user_id || item.nickname || "";
                   const nick = p.nickname || item.nickname || "Player";
-                  const ov = (pId && playerOverridesMap[pId]) || (nick && playerOverridesMap[nick]) || (nick.toLowerCase() && playerOverridesMap[nick.toLowerCase()]) || {};
-                  const skill = ov.customSkillScore || item.skillScore || p.skillScore || (weeklySkillMap && (weeklySkillMap[pId]?.currentScore || weeklySkillMap[nick]?.currentScore || weeklySkillMap[nick.toLowerCase()]?.currentScore)) || 50;
+                  const elo = (p as any)?.faceit_elo || (p as any)?.games?.cs2?.faceit_elo || (p as any)?.elo || item.elo;
+                  const skInfo = getPlayerSkillInfo(pId, nick, elo, undefined, item.hubStats);
+                  const skill = skInfo.score;
                   const avatar = p.avatar || item.avatar || "";
-                  const kd = item.kd || p.kd || (item.stats && item.stats["K/D Ratio"]) || "1.10";
-                  const winRate = item.winRate || p.winRate || (item.stats && item.stats["Win Rate %"]) || "50%";
-                  const hsRate = item.hsRate || p.hsRate || (item.stats && item.stats["Headshots %"]) || "45%";
+                  const kd = item.hubStats?.kd !== undefined ? String(item.hubStats.kd) : item.kd || p.kd || (item.stats && item.stats["K/D Ratio"]) || "1.10";
+                  const winRate = item.hubStats?.winrate !== undefined ? `${item.hubStats.winrate}%` : item.winRate || p.winRate || (item.stats && item.stats["Win Rate %"]) || "50%";
+                  const hsRate = item.hubStats?.hsPct !== undefined ? `${item.hubStats.hsPct}%` : item.hsRate || p.hsRate || (item.stats && item.stats["Headshots %"]) || "45%";
                   return { playerId: pId, nickname: nick, skillScore: skill, avatar, kd, winRate, hsRate };
                 }).filter(p => p.playerId && p.nickname !== "Player").sort((a, b) => a.nickname.localeCompare(b.nickname));
 
@@ -3828,11 +3829,9 @@ export default function Home() {
                   const nick = player.nickname || "";
                   const found = allPlayersList.find(p => (pId && p.playerId === pId) || (nick && p.nickname.toLowerCase() === nick.toLowerCase()));
                   if (found) return found.skillScore;
-                  const ov = (pId && playerOverridesMap[pId]) || (nick && playerOverridesMap[nick]) || (nick && playerOverridesMap[nick.toLowerCase()]) || {};
-                  if (ov.customSkillScore) return ov.customSkillScore;
-                  if (weeklySkillMap && pId && weeklySkillMap[pId]?.currentScore) return weeklySkillMap[pId].currentScore;
-                  if (weeklySkillMap && nick && (weeklySkillMap[nick]?.currentScore || weeklySkillMap[nick.toLowerCase()]?.currentScore)) return weeklySkillMap[nick]?.currentScore || weeklySkillMap[nick.toLowerCase()]?.currentScore;
-                  return player.skillScore || 50;
+                  const elo = (player as any)?.faceit_elo || (player as any)?.games?.cs2?.faceit_elo || (player as any)?.elo;
+                  const sk = getPlayerSkillInfo(pId, nick, elo, undefined, (player as any).hubStats);
+                  return sk.score || 50;
                 };
 
                 const sniperSkill = getLivePlayerSkill(draftSniper);
