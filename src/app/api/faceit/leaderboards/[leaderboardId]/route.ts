@@ -103,8 +103,8 @@ export async function GET(
     let activeMemberIds = new Set<string>();
     let activeMemberNicks = new Set<string>();
     try {
-      const hubId = "d0701937-8eba-4df9-8830-22137001c0bd";
-      const membersData = await faceitFetch(`/hubs/${hubId}/members`, { limit: 100 }).catch(() => null);
+      const hubId = "0dd077bc-b401-4f5c-8a40-47578601ccb7";
+      const membersData = await faceitFetch(`/hubs/${hubId}/members`).catch(() => null);
       if (membersData && Array.isArray(membersData.items)) {
         membersData.items.forEach((m: any) => {
           const pid = (m.user_id || m.player_id || m.id || "").toLowerCase();

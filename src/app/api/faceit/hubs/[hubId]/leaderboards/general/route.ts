@@ -105,7 +105,7 @@ export async function GET(
     let activeMemberIds = new Set<string>();
     let activeMemberNicks = new Set<string>();
     try {
-      const membersData = await faceitFetch(`/hubs/${hubId}/members`, { limit: 100 }).catch(() => null);
+      const membersData = await faceitFetch(`/hubs/${hubId}/members`).catch(() => null);
       if (membersData && Array.isArray(membersData.items)) {
         membersData.items.forEach((m: any) => {
           const pid = (m.user_id || m.player_id || m.id || "").toLowerCase();
