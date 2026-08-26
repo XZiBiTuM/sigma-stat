@@ -61,7 +61,26 @@ export async function GET() {
 
     const leaderboard = Object.values(picks).map((pick: any) => {
       const darkSkill = getPlayerSkill(pick.darkHorse, overrides, weeklyPlayers);
-      const underdogBonus = Math.round((1.0 + ((100 - Math.min(100, Math.max(10, darkSkill))) / 100) * 0.40) * 100) / 100;
+      
+      // Dynamic Underdog Multiplier with Overpower Penalty (>65)
+      let underdogBonus = 1.0;
+      if (darkSkill <= 65) {
+        underdogBonus = Math.round((1.0 + ((65 - Math.max(10, darkSkill)) / 65) * 0.40) * 100) / 100;
+      } else {
+        underdogBonus = Math.round(Math.max(0.60, 1.0 - ((darkSkill - 65) / 35) * 0.40) * 100) / 100;
+      }
+
+      const snipSkill = getPlayerSkill(pick.sniper, overrides, weeklyPlayers);
+      const suppSkill = getPlayerSkill(pick.support, overrides, weeklyPlayers);
+
+      // Card buffs
+      const snipBuff = pick.sniper?.buff || null;
+      const suppBuff = pick.support?.buff || null;
+      const darkBuff = pick.darkHorse?.buff || null;
+
+      const snipBuffMult = 1 + ((snipBuff?.percent || 0) / 100);
+      const suppBuffMult = 1 + ((suppBuff?.percent || 0) / 100);
+      const darkBuffMult = 1 + ((darkBuff?.percent || 0) / 100);
 
       if (!isLiveOrDone) {
         // Tournament draft is open / has not started yet -> 0 points
@@ -74,32 +93,40 @@ export async function GET() {
           status: "DRAFT_OPEN",
           sniper: {
             nickname: pick.sniper?.nickname,
+            skill: snipSkill,
+            buff: snipBuff,
             points: 0
           },
           support: {
             nickname: pick.support?.nickname,
+            skill: suppSkill,
+            penaltyApplied: suppSkill > 65,
+            buff: suppBuff,
             points: 0
           },
           darkHorse: {
             nickname: pick.darkHorse?.nickname,
+            skill: darkSkill,
             multiplier: underdogBonus,
+            buff: darkBuff,
             points: 0
           },
           totalPoints: 0
         };
       }
 
-      // 1. Calculate Sniper Score during LIVE or COMPLETED tournament
-      const snipSkill = getPlayerSkill(pick.sniper, overrides, weeklyPlayers);
-      const snipBasePoints = Math.round((snipSkill * 1.45 + 35) * 10) / 10;
+      // 1. Calculate Star Player Score during LIVE or COMPLETED tournament
+      const snipRaw = snipSkill * 1.45 + 35;
+      const snipBasePoints = Math.round((snipRaw * snipBuffMult) * 10) / 10;
 
-      // 2. Calculate Support Score
-      const suppSkill = getPlayerSkill(pick.support, overrides, weeklyPlayers);
-      const suppBasePoints = Math.round((suppSkill * 1.25 + 45) * 10) / 10;
+      // 2. Calculate Support Score with 50% Penalty if skill > 65
+      const suppPenalty = suppSkill > 65 ? 0.50 : 1.0;
+      const suppRaw = (suppSkill * 1.25 + 45) * suppPenalty;
+      const suppBasePoints = Math.round((suppRaw * suppBuffMult) * 10) / 10;
 
       // 3. Calculate Dark Horse Score with Underdog Multiplier
-      const darkRawPoints = darkSkill * 1.20 + 30;
-      const darkFinalPoints = Math.round((darkRawPoints * underdogBonus) * 10) / 10;
+      const darkRawPoints = (darkSkill * 1.20 + 30) * underdogBonus;
+      const darkFinalPoints = Math.round((darkRawPoints * darkBuffMult) * 10) / 10;
 
       const totalPoints = Math.round((snipBasePoints + suppBasePoints + darkFinalPoints) * 10) / 10;
 
@@ -112,15 +139,22 @@ export async function GET() {
         status: tour?.status,
         sniper: {
           nickname: pick.sniper?.nickname,
+          skill: snipSkill,
+          buff: snipBuff,
           points: snipBasePoints
         },
         support: {
           nickname: pick.support?.nickname,
+          skill: suppSkill,
+          penaltyApplied: suppSkill > 65,
+          buff: suppBuff,
           points: suppBasePoints
         },
         darkHorse: {
           nickname: pick.darkHorse?.nickname,
+          skill: darkSkill,
           multiplier: underdogBonus,
+          buff: darkBuff,
           points: darkFinalPoints
         },
         totalPoints

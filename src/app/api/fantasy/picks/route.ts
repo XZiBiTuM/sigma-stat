@@ -8,15 +8,44 @@ const PERSISTENT_FILE = path.join(process.cwd(), "..", "sigma_persistent_fantasy
 const OVERRIDES_LOCAL = path.join(process.cwd(), "src", "lib", "player_overrides.json");
 const OVERRIDES_PERSISTENT = path.join(process.cwd(), "..", "sigma_persistent_player_overrides.json");
 
-interface FantasyPick {
+export interface CardBuff {
+  id: string;
+  name: string;
+  icon: string;
+  percent: number;
+  desc: string;
+}
+
+export interface FantasyPick {
   userId: string; // steamId or custom ID
   userName: string;
   avatar?: string;
   faceitNickname?: string;
-  sniper: { playerId: string; nickname: string; skillScore: number };
-  support: { playerId: string; nickname: string; skillScore: number };
-  darkHorse: { playerId: string; nickname: string; skillScore: number; underdogBonus: number };
+  sniper: { playerId: string; nickname: string; skillScore: number; buff?: CardBuff };
+  support: { playerId: string; nickname: string; skillScore: number; penaltyApplied?: boolean; buff?: CardBuff };
+  darkHorse: { playerId: string; nickname: string; skillScore: number; underdogBonus: number; buff?: CardBuff };
   submittedAt: string;
+}
+
+export const FANTASY_BUFFS = [
+  { id: "headshot", name: "Хедшот-Машина", icon: "🎯", min: 10, max: 25, desc: "Буст к меткости и фрагам" },
+  { id: "in_the_zone", name: "В Зоне (In The Zone)", icon: "🔥", min: 8, max: 20, desc: "Боевой кураж и темп" },
+  { id: "iron_defuse", name: "Железный Дефьюз", icon: "🛡️", min: 10, max: 22, desc: "Бонус за клатчи и раунды" },
+  { id: "clutch_king", name: "Клатч-Кинг", icon: "⚡", min: 12, max: 25, desc: "Индивидуальный импакт" },
+  { id: "tactician", name: "Тактик Раскидок", icon: "💣", min: 8, max: 20, desc: "Командная утилити-польза" },
+  { id: "joker", name: "Джокер (Крит)", icon: "🎲", min: 15, max: 30, desc: "Случайный критический множитель" }
+];
+
+export function getRandomBuff(): CardBuff {
+  const buff = FANTASY_BUFFS[Math.floor(Math.random() * FANTASY_BUFFS.length)];
+  const percent = Math.floor(Math.random() * (buff.max - buff.min + 1)) + buff.min;
+  return {
+    id: buff.id,
+    name: buff.name,
+    icon: buff.icon,
+    percent,
+    desc: buff.desc
+  };
 }
 
 async function getAllPicks(): Promise<Record<string, FantasyPick>> {
@@ -124,7 +153,19 @@ export async function POST(request: NextRequest) {
     const sniperSkill = resolvePlayerSkillScore(sniper, overrides, weeklyPlayers);
     const supportSkill = resolvePlayerSkillScore(support, overrides, weeklyPlayers);
     const rawDarkSkill = resolvePlayerSkillScore(darkHorse, overrides, weeklyPlayers);
-    const underdogBonus = Math.round((1.0 + ((100 - Math.min(100, Math.max(10, rawDarkSkill))) / 100) * 0.40) * 100) / 100;
+
+    // Dynamic Underdog Multiplier with Overpower Penalty (>65)
+    let underdogBonus = 1.0;
+    if (rawDarkSkill <= 65) {
+      underdogBonus = Math.round((1.0 + ((65 - Math.max(10, rawDarkSkill)) / 65) * 0.40) * 100) / 100;
+    } else {
+      underdogBonus = Math.round(Math.max(0.60, 1.0 - ((rawDarkSkill - 65) / 35) * 0.40) * 100) / 100;
+    }
+
+    // Roll unique card buffs on save
+    const sniperBuff = getRandomBuff();
+    const supportBuff = getRandomBuff();
+    const darkHorseBuff = getRandomBuff();
 
     const allPicks = await getAllPicks();
     const newPick: FantasyPick = {
@@ -135,18 +176,22 @@ export async function POST(request: NextRequest) {
       sniper: {
         playerId: sniper.playerId,
         nickname: sniper.nickname,
-        skillScore: sniperSkill
+        skillScore: sniperSkill,
+        buff: sniperBuff
       },
       support: {
         playerId: support.playerId,
         nickname: support.nickname,
-        skillScore: supportSkill
+        skillScore: supportSkill,
+        penaltyApplied: supportSkill > 65,
+        buff: supportBuff
       },
       darkHorse: {
         playerId: darkHorse.playerId,
         nickname: darkHorse.nickname,
         skillScore: rawDarkSkill,
-        underdogBonus
+        underdogBonus,
+        buff: darkHorseBuff
       },
       submittedAt: new Date().toISOString()
     };
@@ -157,7 +202,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       pick: newPick,
-      message: "Ваш состав на Fantasy League успешно сохранен!"
+      message: "Ваш состав на Fantasy League успешно сохранен и карточки получили случайные баффы!"
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message || "Ошибка сохранения состава" }, { status: 500 });
