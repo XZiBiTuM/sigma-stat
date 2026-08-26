@@ -4325,19 +4325,22 @@ export default function Home() {
                               );
                             case "vampire":
                               return (
-                                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                  <path d="M12 2a9 9 0 0 0-9 9c0 4.5 3 8 7 9.5v-3.5h-2v-3h2V11a3 3 0 0 1 3-3h3v3h-2a1 1 0 0 0-1 1v2h3l-.5 3h-2.5v3.5c4-1.5 7-5 7-9.5a9 9 0 0 0-9-9z" />
-                                  <path d="m8 13 1.5 3.5" strokeWidth="2.2" />
-                                  <path d="m16 13-1.5 3.5" strokeWidth="2.2" />
+                                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M4 9c3.5 3 6.5 2 8 0 1.5 2 4.5 3 8 0" />
+                                  <path d="M5 11c3 6 11 6 14 0" />
+                                  <polygon points="7.5 9.5 6 15 9.5 11" fill={color} stroke={color} strokeWidth="1.2" strokeLinejoin="round" />
+                                  <polygon points="16.5 9.5 18 15 14.5 11" fill={color} stroke={color} strokeWidth="1.2" strokeLinejoin="round" />
+                                  <path d="M12 14c-1.2 1.6-1.5 2.5-1.5 3.3a1.5 1.5 0 0 0 3 0c0-.8-.3-1.7-1.5-3.3z" fill={color} stroke="none" />
                                 </svg>
                               );
                             case "lucky_loser":
                               return (
-                                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                  <path d="M12 2a3.5 3.5 0 0 0-3.5 3.5c0 1.5.8 2.8 2 3.5-1.2.7-2 2-2 3.5a3.5 3.5 0 0 0 7 0c0-1.5-.8-2.8-2-3.5 1.2-.7 2-2 2-3.5A3.5 3.5 0 0 0 12 2z" />
-                                  <path d="M2.5 12a3.5 3.5 0 0 0 3.5 3.5c1.5 0 2.8-.8 3.5-2-.7-1.2-.7-2.8 0-4-.7-1.2-2-2-3.5-2a3.5 3.5 0 0 0-3.5 4.5z" />
-                                  <path d="M21.5 12a3.5 3.5 0 0 0-3.5-4.5c-1.5 0-2.8.8-3.5 2 .7 1.2 2 2 3.5 2a3.5 3.5 0 0 0 3.5-3.5z" />
-                                  <path d="M12 16v6" />
+                                <svg width={size} height={size} viewBox="0 0 24 24" fill={color} fillOpacity="0.22" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                  <circle cx="8" cy="8" r="4.2" />
+                                  <circle cx="16" cy="8" r="4.2" />
+                                  <circle cx="8" cy="15" r="4.2" />
+                                  <circle cx="16" cy="15" r="4.2" />
+                                  <path d="M12 12c0 3.5-2 6.5-5.5 7.5" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" />
                                 </svg>
                               );
                             default:
@@ -4892,19 +4895,22 @@ export default function Home() {
                                       );
                                     case "vampire":
                                       return (
-                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                          <path d="M12 2a9 9 0 0 0-9 9c0 4.5 3 8 7 9.5v-3.5h-2v-3h2V11a3 3 0 0 1 3-3h3v3h-2a1 1 0 0 0-1 1v2h3l-.5 3h-2.5v3.5c4-1.5 7-5 7-9.5a9 9 0 0 0-9-9z" />
-                                          <path d="m8 13 1.5 3.5" strokeWidth="2.2" />
-                                          <path d="m16 13-1.5 3.5" strokeWidth="2.2" />
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                          <path d="M4 9c3.5 3 6.5 2 8 0 1.5 2 4.5 3 8 0" />
+                                          <path d="M5 11c3 6 11 6 14 0" />
+                                          <polygon points="7.5 9.5 6 15 9.5 11" fill="#f43f5e" stroke="#f43f5e" strokeWidth="1.2" strokeLinejoin="round" />
+                                          <polygon points="16.5 9.5 18 15 14.5 11" fill="#f43f5e" stroke="#f43f5e" strokeWidth="1.2" strokeLinejoin="round" />
+                                          <path d="M12 14c-1.2 1.6-1.5 2.5-1.5 3.3a1.5 1.5 0 0 0 3 0c0-.8-.3-1.7-1.5-3.3z" fill="#f43f5e" stroke="none" />
                                         </svg>
                                       );
                                     case "lucky_loser":
                                       return (
-                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                          <path d="M12 2a3.5 3.5 0 0 0-3.5 3.5c0 1.5.8 2.8 2 3.5-1.2.7-2 2-2 3.5a3.5 3.5 0 0 0 7 0c0-1.5-.8-2.8-2-3.5 1.2-.7 2-2 2-3.5A3.5 3.5 0 0 0 12 2z" />
-                                          <path d="M2.5 12a3.5 3.5 0 0 0 3.5 3.5c1.5 0 2.8-.8 3.5-2-.7-1.2-.7-2.8 0-4-.7-1.2-2-2-3.5-2a3.5 3.5 0 0 0-3.5 4.5z" />
-                                          <path d="M21.5 12a3.5 3.5 0 0 0-3.5-4.5c-1.5 0-2.8.8-3.5 2 .7 1.2 2 2 3.5 2a3.5 3.5 0 0 0 3.5-3.5z" />
-                                          <path d="M12 16v6" />
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="#4ade80" fillOpacity="0.22" stroke="#4ade80" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                          <circle cx="8" cy="8" r="4.2" />
+                                          <circle cx="16" cy="8" r="4.2" />
+                                          <circle cx="8" cy="15" r="4.2" />
+                                          <circle cx="16" cy="15" r="4.2" />
+                                          <path d="M12 12c0 3.5-2 6.5-5.5 7.5" fill="none" stroke="#4ade80" strokeWidth="2" strokeLinecap="round" />
                                         </svg>
                                       );
                                     default:
