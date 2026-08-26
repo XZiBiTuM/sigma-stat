@@ -82,6 +82,12 @@ export async function GET() {
       const suppBuffMult = 1 + ((suppBuff?.percent || 0) / 100);
       const darkBuffMult = 1 + ((darkBuff?.percent || 0) / 100);
 
+      const isSuppLucky = suppBuff?.id === "lucky_loser";
+      const isDarkLucky = darkBuff?.id === "lucky_loser";
+
+      const effectiveUnderdogBonus = isDarkLucky && underdogBonus < 1.0 ? 1.0 : underdogBonus;
+      const suppPenalty = suppSkill > 65 && !isSuppLucky ? 0.50 : 1.0;
+
       if (!isLiveOrDone) {
         // Tournament draft is open / has not started yet -> 0 points
         return {
@@ -100,14 +106,14 @@ export async function GET() {
           support: {
             nickname: pick.support?.nickname,
             skill: suppSkill,
-            penaltyApplied: suppSkill > 65,
+            penaltyApplied: suppSkill > 65 && !isSuppLucky,
             buff: suppBuff,
             points: 0
           },
           darkHorse: {
             nickname: pick.darkHorse?.nickname,
             skill: darkSkill,
-            multiplier: underdogBonus,
+            multiplier: effectiveUnderdogBonus,
             buff: darkBuff,
             points: 0
           },
@@ -115,20 +121,37 @@ export async function GET() {
         };
       }
 
-      // 1. Calculate Star Player Score during LIVE or COMPLETED tournament
-      const snipRaw = snipSkill * 1.45 + 35;
-      const snipBasePoints = Math.round((snipRaw * snipBuffMult) * 10) / 10;
+      // 1. Calculate base points for each slot
+      let snipPoints = (snipSkill * 1.45 + 35) * snipBuffMult;
+      let suppPoints = (suppSkill * 1.25 + 45) * suppPenalty * suppBuffMult;
+      let darkPoints = (darkSkill * 1.20 + 30) * effectiveUnderdogBonus * darkBuffMult;
 
-      // 2. Calculate Support Score with 50% Penalty if skill > 65
-      const suppPenalty = suppSkill > 65 ? 0.50 : 1.0;
-      const suppRaw = (suppSkill * 1.25 + 45) * suppPenalty;
-      const suppBasePoints = Math.round((suppRaw * suppBuffMult) * 10) / 10;
+      // 2. Vampire Siphon Mechanics
+      // If Star is vampire: drain 15% from Support, gain 15% * 1.2 (= 18%) of Support
+      if (snipBuff?.id === "vampire") {
+        const drain = suppPoints * 0.15;
+        suppPoints -= drain;
+        snipPoints += drain * 1.2;
+      }
+      // If Support is vampire: drain 10% from Star and 10% from Dark Horse, gain 10% * 1.2 (= 12%) from each
+      if (suppBuff?.id === "vampire") {
+        const drainSnip = snipPoints * 0.10;
+        const drainDark = darkPoints * 0.10;
+        snipPoints -= drainSnip;
+        darkPoints -= drainDark;
+        suppPoints += (drainSnip + drainDark) * 1.2;
+      }
+      // If Dark Horse is vampire: drain 15% from Support, gain 15% * 1.2 (= 18%) of Support
+      if (darkBuff?.id === "vampire") {
+        const drain = suppPoints * 0.15;
+        suppPoints -= drain;
+        darkPoints += drain * 1.2;
+      }
 
-      // 3. Calculate Dark Horse Score with Underdog Multiplier
-      const darkRawPoints = (darkSkill * 1.20 + 30) * underdogBonus;
-      const darkFinalPoints = Math.round((darkRawPoints * darkBuffMult) * 10) / 10;
-
-      const totalPoints = Math.round((snipBasePoints + suppBasePoints + darkFinalPoints) * 10) / 10;
+      const snipFinal = Math.round(snipPoints * 10) / 10;
+      const suppFinal = Math.round(suppPoints * 10) / 10;
+      const darkFinal = Math.round(darkPoints * 10) / 10;
+      const totalPoints = Math.round((snipFinal + suppFinal + darkFinal) * 10) / 10;
 
       return {
         userId: pick.userId,
@@ -141,21 +164,21 @@ export async function GET() {
           nickname: pick.sniper?.nickname,
           skill: snipSkill,
           buff: snipBuff,
-          points: snipBasePoints
+          points: snipFinal
         },
         support: {
           nickname: pick.support?.nickname,
           skill: suppSkill,
-          penaltyApplied: suppSkill > 65,
+          penaltyApplied: suppSkill > 65 && !isSuppLucky,
           buff: suppBuff,
-          points: suppBasePoints
+          points: suppFinal
         },
         darkHorse: {
           nickname: pick.darkHorse?.nickname,
           skill: darkSkill,
-          multiplier: underdogBonus,
+          multiplier: effectiveUnderdogBonus,
           buff: darkBuff,
-          points: darkFinalPoints
+          points: darkFinal
         },
         totalPoints
       };

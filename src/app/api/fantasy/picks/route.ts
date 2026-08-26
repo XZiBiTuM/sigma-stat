@@ -28,17 +28,21 @@ export interface FantasyPick {
 }
 
 export const FANTASY_BUFFS = [
-  { id: "headshot", name: "Хедшот-Машина", icon: "🎯", min: 10, max: 25, desc: "Буст к меткости и фрагам" },
-  { id: "in_the_zone", name: "В Зоне (In The Zone)", icon: "🔥", min: 8, max: 20, desc: "Боевой кураж и темп" },
-  { id: "iron_defuse", name: "Железный Дефьюз", icon: "🛡️", min: 10, max: 22, desc: "Бонус за клатчи и раунды" },
-  { id: "clutch_king", name: "Клатч-Кинг", icon: "⚡", min: 12, max: 25, desc: "Индивидуальный импакт" },
-  { id: "tactician", name: "Тактик Раскидок", icon: "💣", min: 8, max: 20, desc: "Командная утилити-польза" },
-  { id: "joker", name: "Джокер (Крит)", icon: "🎲", min: 15, max: 30, desc: "Случайный критический множитель" }
+  { id: "headshot", name: "Хедшот-Машина", icon: "🎯", min: 10, max: 25, desc: "Буст к меткости и очкам за фраги в голову" },
+  { id: "flow", name: "В потоке", icon: "🌊", min: 8, max: 20, desc: "Боевой кураж, высокий темп и стабильный набор очков" },
+  { id: "clutcher", name: "Клатчер", icon: "⚡", min: 12, max: 26, desc: "Повышенные иксы и импакт в решающих раундах" },
+  { id: "tactician", name: "Тактик Раскидок", icon: "💣", min: 8, max: 20, desc: "Командная утилити-польза и ассисты" },
+  { id: "joker", name: "Джокер (Крит)", icon: "🎲", min: 15, max: 30, desc: "Редкий максимальный множитель очков" },
+  { id: "vampire", name: "Вампир", icon: "🧛", min: 0, max: 0, desc: "Забирает 15% очков у соседней карты (или по 10% с обеих, если в центре) и переводит себе с бонусом ×1.2" },
+  { id: "lucky_loser", name: "Неудачник?", icon: "🍀", min: 0, max: 0, desc: "Полностью снимает штраф за оверскилл с карточки (Саппорт: -50% аннулируется; Лошадка: множитель восстанавливается до 1.00)" }
 ];
 
 export function getRandomBuff(): CardBuff {
   const buff = FANTASY_BUFFS[Math.floor(Math.random() * FANTASY_BUFFS.length)];
-  const percent = Math.floor(Math.random() * (buff.max - buff.min + 1)) + buff.min;
+  let percent = 0;
+  if (buff.max > buff.min) {
+    percent = Math.floor(Math.random() * (buff.max - buff.min + 1)) + buff.min;
+  }
   return {
     id: buff.id,
     name: buff.name,

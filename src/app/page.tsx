@@ -494,6 +494,7 @@ export default function Home() {
   const [fantasySearchSniper, setFantasySearchSniper] = useState("");
   const [fantasySearchSupport, setFantasySearchSupport] = useState("");
   const [fantasySearchDark, setFantasySearchDark] = useState("");
+  const [showBuffsModal, setShowBuffsModal] = useState<boolean>(false);
   const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
   const [showCybershokeModal, setShowCybershokeModal] = useState<boolean>(false);
   const [csMap1, setCsMap1] = useState<string>("de_mirage");
@@ -4271,310 +4272,521 @@ export default function Home() {
                       </div>
 
                       {/* FIFA ULTIMATE TEAM (FUT) CARDS SHOWCASE */}
-                      {(draftSniper || draftSupport || draftDarkHorse) && (
-                        <div style={{
-                          marginBottom: "2rem",
-                          padding: "1.75rem",
-                          borderRadius: "22px",
-                          background: "linear-gradient(180deg, rgba(20, 15, 38, 0.8) 0%, rgba(7, 5, 15, 0.95) 100%)",
-                          border: "1.5px solid rgba(255, 215, 0, 0.3)",
-                          boxShadow: "0 0 35px rgba(255, 215, 0, 0.1)"
-                        }}>
-                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", flexWrap: "wrap", gap: "0.5rem" }}>
-                            <div>
-                              <div style={{ fontSize: "0.75rem", color: "#ffd700", fontWeight: "800", textTransform: "uppercase", letterSpacing: "1.5px" }}>
-                                ULTIMATE TEAM • CYBER CARDS
+                      {(draftSniper || draftSupport || draftDarkHorse) && (() => {
+                        const getCardTier = (skill: number) => {
+                          if (skill >= 70) {
+                            return {
+                              tier: "GOLD",
+                              badge: "🥇 GOLD",
+                              color: "#ffd700",
+                              accent: "#fef08a",
+                              darkAccent: "#854d0e",
+                              border: "2px solid #ffd700",
+                              cardBg: "linear-gradient(180deg, rgba(255, 215, 0, 0.28) 0%, rgba(36, 28, 6, 0.96) 38%, rgba(14, 11, 3, 0.99) 100%)",
+                              glow: "0 10px 40px rgba(255, 215, 0, 0.28)",
+                              foilBadge: "linear-gradient(135deg, rgba(255, 215, 0, 0.22), rgba(254, 240, 138, 0.12))",
+                              foilBorder: "1px solid rgba(255, 215, 0, 0.6)",
+                              foilText: "#ffd700",
+                              avatarBorder: "3px solid #ffd700",
+                              avatarGlow: "0 0 20px rgba(255, 215, 0, 0.45)"
+                            };
+                          }
+                          if (skill >= 50) {
+                            return {
+                              tier: "SILVER",
+                              badge: "🥈 SILVER",
+                              color: "#e2e8f0",
+                              accent: "#cbd5e1",
+                              darkAccent: "#475569",
+                              border: "2px solid #cbd5e1",
+                              cardBg: "linear-gradient(180deg, rgba(203, 213, 225, 0.28) 0%, rgba(30, 41, 59, 0.96) 38%, rgba(15, 23, 42, 0.99) 100%)",
+                              glow: "0 10px 40px rgba(203, 213, 225, 0.24)",
+                              foilBadge: "linear-gradient(135deg, rgba(203, 213, 225, 0.22), rgba(241, 245, 249, 0.12))",
+                              foilBorder: "1px solid rgba(203, 213, 225, 0.6)",
+                              foilText: "#f1f5f9",
+                              avatarBorder: "3px solid #cbd5e1",
+                              avatarGlow: "0 0 20px rgba(203, 213, 225, 0.4)"
+                            };
+                          }
+                          return {
+                            tier: "BRONZE",
+                            badge: "🥉 BRONZE",
+                            color: "#e59866",
+                            accent: "#fdba74",
+                            darkAccent: "#7c2d12",
+                            border: "2px solid #cd7f32",
+                            cardBg: "linear-gradient(180deg, rgba(205, 127, 50, 0.32) 0%, rgba(45, 22, 12, 0.96) 38%, rgba(20, 10, 5, 0.99) 100%)",
+                            glow: "0 10px 40px rgba(205, 127, 50, 0.26)",
+                            foilBadge: "linear-gradient(135deg, rgba(205, 127, 50, 0.24), rgba(253, 186, 116, 0.12))",
+                            foilBorder: "1px solid rgba(205, 127, 50, 0.6)",
+                            foilText: "#fed7aa",
+                            avatarBorder: "3px solid #cd7f32",
+                            avatarGlow: "0 0 20px rgba(205, 127, 50, 0.45)"
+                          };
+                        };
+
+                        const renderFUTCard = (params: {
+                          player: any;
+                          roleName: string;
+                          roleShort: string;
+                          skill: number;
+                          buff?: any;
+                          statusTag?: React.ReactNode;
+                        }) => {
+                          const { player, roleName, roleShort, skill, buff, statusTag } = params;
+                          const t = getCardTier(skill);
+                          const isVampire = buff?.id === "vampire";
+                          const isLucky = buff?.id === "lucky_loser";
+
+                          return (
+                            <div style={{
+                              width: "100%",
+                              maxWidth: "285px",
+                              minHeight: "490px",
+                              borderRadius: "24px",
+                              background: t.cardBg,
+                              border: t.border,
+                              boxShadow: t.glow,
+                              padding: "1.75rem 1.25rem 1.4rem",
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                              position: "relative",
+                              overflow: "hidden",
+                              margin: "0 auto",
+                              transition: "transform 0.25s ease, box-shadow 0.25s ease"
+                            }}>
+                              {/* Top Header Row */}
+                              <div style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.5rem" }}>
+                                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+                                  <div style={{ fontSize: "2.3rem", fontWeight: "900", color: t.color, lineHeight: 0.9, letterSpacing: "-0.5px" }}>
+                                    {skill}
+                                  </div>
+                                  <div style={{ fontSize: "0.72rem", fontWeight: "800", color: t.accent, textTransform: "uppercase", marginTop: "0.2rem", letterSpacing: "1px" }}>
+                                    {roleShort}
+                                  </div>
+                                  <span style={{
+                                    fontSize: "0.62rem",
+                                    fontWeight: "900",
+                                    color: t.color,
+                                    background: "rgba(0,0,0,0.45)",
+                                    border: `1px solid ${t.color}40`,
+                                    padding: "0.15rem 0.4rem",
+                                    borderRadius: "6px",
+                                    marginTop: "0.3rem",
+                                    letterSpacing: "0.5px"
+                                  }}>
+                                    {t.badge}
+                                  </span>
+                                </div>
+
+                                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.35rem" }}>
+                                  <span style={{ fontSize: "0.65rem", padding: "0.15rem 0.5rem", borderRadius: "6px", background: "rgba(0,0,0,0.5)", color: t.accent, fontWeight: "800", border: `1px solid ${t.color}30` }}>
+                                    CS2 OVR
+                                  </span>
+                                  {statusTag}
+                                </div>
                               </div>
-                              <h4 style={{ fontSize: "1.25rem", fontWeight: "900", color: "#fff", margin: "0.2rem 0 0 0" }}>
-                                Твои боевые карточки и активные баффы
-                              </h4>
+
+                              {/* Avatar in Cyber Ring */}
+                              <div style={{ marginTop: "0.4rem", marginBottom: "0.85rem", position: "relative" }}>
+                                {player.avatar ? (
+                                  <img
+                                    src={player.avatar}
+                                    alt=""
+                                    style={{
+                                      width: "88px",
+                                      height: "88px",
+                                      borderRadius: "50%",
+                                      border: t.avatarBorder,
+                                      boxShadow: t.avatarGlow,
+                                      objectFit: "cover"
+                                    }}
+                                  />
+                                ) : (
+                                  <div style={{
+                                    width: "88px",
+                                    height: "88px",
+                                    borderRadius: "50%",
+                                    background: `linear-gradient(135deg, ${t.color}, #0a0a0a)`,
+                                    border: t.avatarBorder,
+                                    boxShadow: t.avatarGlow,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    fontSize: "1.7rem",
+                                    fontWeight: "900",
+                                    color: "#fff"
+                                  }}>
+                                    {player.nickname?.slice(0, 2).toUpperCase()}
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Player Nickname & Role */}
+                              <div style={{
+                                fontSize: "1.2rem",
+                                fontWeight: "900",
+                                color: "#fff",
+                                textAlign: "center",
+                                textShadow: "0 2px 10px rgba(0,0,0,0.8)",
+                                letterSpacing: "0.5px",
+                                marginBottom: "0.1rem",
+                                maxWidth: "240px",
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis"
+                              }}>
+                                {player.nickname}
+                              </div>
+                              <div style={{ fontSize: "0.68rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "1rem" }}>
+                                {roleName}
+                              </div>
+
+                              {/* Stats Matrix (3 columns) */}
+                              <div style={{
+                                display: "grid",
+                                gridTemplateColumns: "repeat(3, 1fr)",
+                                gap: "0.4rem",
+                                width: "100%",
+                                background: "rgba(0,0,0,0.55)",
+                                borderRadius: "14px",
+                                border: `1px solid ${t.color}25`,
+                                padding: "0.65rem 0.4rem",
+                                marginBottom: "1.1rem",
+                                textAlign: "center"
+                              }}>
+                                <div>
+                                  <div style={{ fontSize: "0.62rem", color: "var(--text-muted)", fontWeight: "700", textTransform: "uppercase" }}>К/Д</div>
+                                  <div style={{ fontSize: "0.92rem", fontWeight: "900", color: "#fff" }}>{player.kd || "1.10"}</div>
+                                </div>
+                                <div style={{ borderLeft: "1px solid rgba(255,255,255,0.08)", borderRight: "1px solid rgba(255,255,255,0.08)" }}>
+                                  <div style={{ fontSize: "0.62rem", color: "var(--text-muted)", fontWeight: "700", textTransform: "uppercase" }}>HS%</div>
+                                  <div style={{ fontSize: "0.92rem", fontWeight: "900", color: "#fff" }}>{player.hsRate || "48%"}</div>
+                                </div>
+                                <div>
+                                  <div style={{ fontSize: "0.62rem", color: "var(--text-muted)", fontWeight: "700", textTransform: "uppercase" }}>WIN%</div>
+                                  <div style={{ fontSize: "0.92rem", fontWeight: "900", color: "#fff" }}>{player.winRate || "52%"}</div>
+                                </div>
+                              </div>
+
+                              {/* Holographic Foil Buff Plate */}
+                              <div style={{
+                                width: "100%",
+                                marginTop: "auto",
+                                padding: "0.7rem 0.85rem",
+                                borderRadius: "14px",
+                                background: buff ? t.foilBadge : "rgba(0,0,0,0.4)",
+                                border: buff ? t.foilBorder : "1px dashed var(--border-light)",
+                                textAlign: "center",
+                                position: "relative"
+                              }}>
+                                {buff ? (
+                                  <div>
+                                    <div style={{
+                                      fontSize: "0.85rem",
+                                      fontWeight: "900",
+                                      color: t.foilText,
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      gap: "0.4rem",
+                                      flexWrap: "wrap"
+                                    }}>
+                                      <span>{buff.icon} {buff.name}</span>
+                                      {buff.percent > 0 && (
+                                        <span style={{
+                                          background: t.color,
+                                          color: "#000",
+                                          padding: "0.15rem 0.45rem",
+                                          borderRadius: "6px",
+                                          fontSize: "0.74rem",
+                                          fontWeight: "900"
+                                        }}>
+                                          +{buff.percent}%
+                                        </span>
+                                      )}
+                                      {isVampire && (
+                                        <span style={{
+                                          background: "#ff5252",
+                                          color: "#fff",
+                                          padding: "0.15rem 0.45rem",
+                                          borderRadius: "6px",
+                                          fontSize: "0.72rem",
+                                          fontWeight: "900"
+                                        }}>
+                                          ×1.2 КРАЖА
+                                        </span>
+                                      )}
+                                      {isLucky && (
+                                        <span style={{
+                                          background: "#22c55e",
+                                          color: "#000",
+                                          padding: "0.15rem 0.45rem",
+                                          borderRadius: "6px",
+                                          fontSize: "0.72rem",
+                                          fontWeight: "900"
+                                        }}>
+                                          БЕЗ ШТРАФА
+                                        </span>
+                                      )}
+                                    </div>
+                                    <div style={{ fontSize: "0.68rem", color: "var(--text-secondary)", marginTop: "0.25rem", lineHeight: "1.2" }}>
+                                      {buff.desc || "Активное усиление Fantasy"}
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.35rem" }}>
+                                    <span>🎲</span>
+                                    <span>Бафф ролится при сохранении</span>
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                            <span style={{ fontSize: "0.78rem", color: "var(--text-muted)", background: "rgba(255,255,255,0.05)", padding: "0.3rem 0.8rem", borderRadius: "10px", border: "1px solid var(--border-light)" }}>
-                              🎲 Баффы роллятся при сохранении состава
-                            </span>
-                          </div>
+                          );
+                        };
 
+                        return (
                           <div style={{
-                            display: "grid",
-                            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-                            gap: "1.5rem",
-                            justifyContent: "center"
+                            marginBottom: "2rem",
+                            padding: "2rem",
+                            borderRadius: "24px",
+                            background: "linear-gradient(180deg, rgba(20, 15, 38, 0.85) 0%, rgba(7, 5, 15, 0.98) 100%)",
+                            border: "1.5px solid rgba(255, 215, 0, 0.35)",
+                            boxShadow: "0 0 40px rgba(255, 215, 0, 0.12)"
                           }}>
-                            {/* FUT CARD 1: STAR PLAYER */}
-                            {draftSniper && (() => {
-                              const buff = userFantasyPick?.sniper?.buff;
-                              return (
-                                <div style={{
-                                  background: "radial-gradient(ellipse at 50% 0%, rgba(255, 82, 82, 0.25) 0%, rgba(12, 10, 22, 0.98) 75%)",
-                                  border: "2px solid #ff5252",
-                                  borderRadius: "20px",
-                                  padding: "1.5rem 1.25rem",
-                                  boxShadow: "0 0 30px rgba(255, 82, 82, 0.2)",
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  alignItems: "center",
-                                  position: "relative",
-                                  overflow: "hidden"
-                                }}>
-                                  <div style={{ position: "absolute", top: "1rem", left: "1.2rem", textAlign: "left" }}>
-                                    <div style={{ fontSize: "1.8rem", fontWeight: "900", color: "#ff5252", lineHeight: 1 }}>{sniperSkill}</div>
-                                    <div style={{ fontSize: "0.72rem", fontWeight: "800", color: "#ff8a80", textTransform: "uppercase" }}>СТАР</div>
-                                  </div>
-
-                                  <div style={{ position: "absolute", top: "1rem", right: "1.2rem" }}>
-                                    <span style={{ fontSize: "0.7rem", padding: "0.15rem 0.5rem", borderRadius: "6px", background: "rgba(255, 82, 82, 0.2)", color: "#ff8a80", fontWeight: "800" }}>CS2 OVR</span>
-                                  </div>
-
-                                  {/* Avatar */}
-                                  <div style={{ marginTop: "1rem", marginBottom: "0.75rem" }}>
-                                    {draftSniper.avatar ? (
-                                      <img src={draftSniper.avatar} alt="" style={{ width: "76px", height: "76px", borderRadius: "50%", border: "3px solid #ff5252", boxShadow: "0 0 20px rgba(255, 82, 82, 0.4)", objectFit: "cover" }} />
-                                    ) : (
-                                      <div style={{ width: "76px", height: "76px", borderRadius: "50%", background: "linear-gradient(135deg, #ff5252, #b71c1c)", border: "3px solid #ff5252", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem", fontWeight: "900", color: "#fff" }}>
-                                        {draftSniper.nickname?.slice(0, 2).toUpperCase()}
-                                      </div>
-                                    )}
-                                  </div>
-
-                                  <div style={{ fontSize: "1.15rem", fontWeight: "900", color: "#fff", textAlign: "center", marginBottom: "1rem", letterSpacing: "0.5px" }}>
-                                    {draftSniper.nickname}
-                                  </div>
-
-                                  {/* Stats Grid */}
-                                  <div style={{
-                                    display: "grid",
-                                    gridTemplateColumns: "repeat(3, 1fr)",
-                                    gap: "0.5rem",
-                                    width: "100%",
-                                    background: "rgba(0,0,0,0.5)",
-                                    borderRadius: "12px",
-                                    padding: "0.6rem",
-                                    marginBottom: "1rem",
-                                    textAlign: "center"
-                                  }}>
-                                    <div>
-                                      <div style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>К/Д</div>
-                                      <div style={{ fontSize: "0.88rem", fontWeight: "800", color: "#fff" }}>{draftSniper.kd || "1.15"}</div>
-                                    </div>
-                                    <div>
-                                      <div style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>HS%</div>
-                                      <div style={{ fontSize: "0.88rem", fontWeight: "800", color: "#fff" }}>{draftSniper.hsRate || "48%"}</div>
-                                    </div>
-                                    <div>
-                                      <div style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>WIN%</div>
-                                      <div style={{ fontSize: "0.88rem", fontWeight: "800", color: "#fff" }}>{draftSniper.winRate || "52%"}</div>
-                                    </div>
-                                  </div>
-
-                                  {/* Buff plate */}
-                                  <div style={{
-                                    width: "100%",
-                                    padding: "0.55rem 0.8rem",
-                                    borderRadius: "10px",
-                                    background: buff ? "linear-gradient(135deg, rgba(255, 82, 82, 0.2), rgba(255, 138, 128, 0.1))" : "rgba(255,255,255,0.03)",
-                                    border: buff ? "1px solid #ff5252" : "1px dashed var(--border-light)",
-                                    textAlign: "center"
-                                  }}>
-                                    {buff ? (
-                                      <div style={{ fontSize: "0.82rem", fontWeight: "800", color: "#ff8a80", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem" }}>
-                                        <span>{buff.icon} {buff.name}</span>
-                                        <span style={{ background: "#ff5252", color: "#000", padding: "0.1rem 0.4rem", borderRadius: "6px", fontSize: "0.75rem", fontWeight: "900" }}>+{buff.percent}%</span>
-                                      </div>
-                                    ) : (
-                                      <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
-                                        🎲 Бафф ролится при сохранении
-                                      </div>
-                                    )}
-                                  </div>
+                            {/* Showcase Header */}
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.75rem", flexWrap: "wrap", gap: "1rem" }}>
+                              <div>
+                                <div style={{ fontSize: "0.75rem", color: "#ffd700", fontWeight: "800", textTransform: "uppercase", letterSpacing: "1.5px" }}>
+                                  ULTIMATE TEAM • CYBER CARDS
                                 </div>
-                              );
-                            })()}
+                                <h4 style={{ fontSize: "1.3rem", fontWeight: "900", color: "#fff", margin: "0.2rem 0 0 0" }}>
+                                  Твои боевые карточки и активные баффы
+                                </h4>
+                              </div>
 
-                            {/* FUT CARD 2: SUPPORT */}
-                            {draftSupport && (() => {
-                              const buff = userFantasyPick?.support?.buff;
-                              const isPenalty = supportSkill > 65;
-                              return (
-                                <div style={{
-                                  background: "radial-gradient(ellipse at 50% 0%, rgba(0, 229, 255, 0.25) 0%, rgba(12, 10, 22, 0.98) 75%)",
-                                  border: isPenalty ? "2px solid #ff5252" : "2px solid var(--accent-cyan)",
-                                  borderRadius: "20px",
-                                  padding: "1.5rem 1.25rem",
-                                  boxShadow: isPenalty ? "0 0 30px rgba(255, 82, 82, 0.2)" : "0 0 30px rgba(0, 229, 255, 0.2)",
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  alignItems: "center",
-                                  position: "relative",
-                                  overflow: "hidden"
-                                }}>
-                                  <div style={{ position: "absolute", top: "1rem", left: "1.2rem", textAlign: "left" }}>
-                                    <div style={{ fontSize: "1.8rem", fontWeight: "900", color: isPenalty ? "#ff5252" : "var(--accent-cyan)", lineHeight: 1 }}>{supportSkill}</div>
-                                    <div style={{ fontSize: "0.72rem", fontWeight: "800", color: isPenalty ? "#ff8a80" : "var(--accent-cyan)", textTransform: "uppercase" }}>САП</div>
-                                  </div>
+                              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+                                <button
+                                  type="button"
+                                  onClick={() => setShowBuffsModal(true)}
+                                  style={{
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: "0.45rem",
+                                    background: "rgba(255, 215, 0, 0.12)",
+                                    border: "1px solid rgba(255, 215, 0, 0.4)",
+                                    color: "#ffd700",
+                                    padding: "0.45rem 0.9rem",
+                                    borderRadius: "12px",
+                                    fontSize: "0.82rem",
+                                    fontWeight: "800",
+                                    cursor: "pointer",
+                                    transition: "all 0.2s ease"
+                                  }}
+                                  onMouseEnter={e => e.currentTarget.style.background = "rgba(255, 215, 0, 0.22)"}
+                                  onMouseLeave={e => e.currentTarget.style.background = "rgba(255, 215, 0, 0.12)"}
+                                >
+                                  <span style={{ background: "#ffd700", color: "#000", width: "18px", height: "18px", borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: "0.75rem", fontWeight: "900" }}>!</span>
+                                  Каталог баффов
+                                </button>
 
-                                  <div style={{ position: "absolute", top: "1rem", right: "1.2rem" }}>
-                                    <span style={{ fontSize: "0.7rem", padding: "0.15rem 0.5rem", borderRadius: "6px", background: isPenalty ? "rgba(255, 82, 82, 0.2)" : "rgba(0, 229, 255, 0.2)", color: isPenalty ? "#ff5252" : "var(--accent-cyan)", fontWeight: "800" }}>
-                                      {isPenalty ? "⚠️ -50%" : "CS2 OVR"}
+                                <span style={{ fontSize: "0.78rem", color: "var(--text-muted)", background: "rgba(255,255,255,0.05)", padding: "0.4rem 0.8rem", borderRadius: "10px", border: "1px solid var(--border-light)" }}>
+                                  🎲 Баффы роллятся при сохранении
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* 3 Vertical FIFA Cyber Cards Grid */}
+                            <div style={{
+                              display: "grid",
+                              gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+                              gap: "2rem",
+                              justifyContent: "center",
+                              maxWidth: "1000px",
+                              margin: "0 auto"
+                            }}>
+                              {/* SLOT 1: STAR PLAYER */}
+                              {draftSniper && renderFUTCard({
+                                player: draftSniper,
+                                roleName: "Стар-плеер",
+                                roleShort: "СТАР",
+                                skill: sniperSkill,
+                                buff: userFantasyPick?.sniper?.buff,
+                                statusTag: (
+                                  <span style={{ fontSize: "0.68rem", padding: "0.15rem 0.45rem", borderRadius: "6px", background: "rgba(255, 82, 82, 0.2)", color: "#ff8a80", fontWeight: "800" }}>
+                                    СЛОТ 1
+                                  </span>
+                                )
+                              })}
+
+                              {/* SLOT 2: SUPPORT */}
+                              {draftSupport && (() => {
+                                const buff = userFantasyPick?.support?.buff;
+                                const isLucky = buff?.id === "lucky_loser";
+                                const isPenalty = supportSkill > 65 && !isLucky;
+
+                                return renderFUTCard({
+                                  player: draftSupport,
+                                  roleName: "Саппорт",
+                                  roleShort: "САП",
+                                  skill: supportSkill,
+                                  buff,
+                                  statusTag: (
+                                    <span style={{
+                                      fontSize: "0.68rem",
+                                      padding: "0.15rem 0.45rem",
+                                      borderRadius: "6px",
+                                      background: isLucky ? "rgba(34, 197, 94, 0.2)" : isPenalty ? "rgba(255, 82, 82, 0.25)" : "rgba(0, 229, 255, 0.2)",
+                                      color: isLucky ? "#4ade80" : isPenalty ? "#ff5252" : "var(--accent-cyan)",
+                                      fontWeight: "800"
+                                    }}>
+                                      {isLucky ? "🍀 БЕЗ ШТРАФА" : isPenalty ? "⚠️ -50% ШТРАФ" : "СЛОТ 2"}
                                     </span>
-                                  </div>
+                                  )
+                                });
+                              })()}
 
-                                  {/* Avatar */}
-                                  <div style={{ marginTop: "1rem", marginBottom: "0.75rem" }}>
-                                    {draftSupport.avatar ? (
-                                      <img src={draftSupport.avatar} alt="" style={{ width: "76px", height: "76px", borderRadius: "50%", border: isPenalty ? "3px solid #ff5252" : "3px solid var(--accent-cyan)", boxShadow: "0 0 20px rgba(0, 229, 255, 0.4)", objectFit: "cover" }} />
-                                    ) : (
-                                      <div style={{ width: "76px", height: "76px", borderRadius: "50%", background: "linear-gradient(135deg, #00e5ff, #0077b6)", border: "3px solid var(--accent-cyan)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem", fontWeight: "900", color: "#fff" }}>
-                                        {draftSupport.nickname?.slice(0, 2).toUpperCase()}
-                                      </div>
-                                    )}
-                                  </div>
+                              {/* SLOT 3: DARK HORSE */}
+                              {draftDarkHorse && (() => {
+                                const buff = userFantasyPick?.darkHorse?.buff;
+                                const isLucky = buff?.id === "lucky_loser";
+                                const isPenalty = Number(darkMultiplier) < 1.0 && !isLucky;
 
-                                  <div style={{ fontSize: "1.15rem", fontWeight: "900", color: "#fff", textAlign: "center", marginBottom: "1rem", letterSpacing: "0.5px" }}>
-                                    {draftSupport.nickname}
-                                  </div>
-
-                                  {/* Stats Grid */}
-                                  <div style={{
-                                    display: "grid",
-                                    gridTemplateColumns: "repeat(3, 1fr)",
-                                    gap: "0.5rem",
-                                    width: "100%",
-                                    background: "rgba(0,0,0,0.5)",
-                                    borderRadius: "12px",
-                                    padding: "0.6rem",
-                                    marginBottom: "1rem",
-                                    textAlign: "center"
-                                  }}>
-                                    <div>
-                                      <div style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>К/Д</div>
-                                      <div style={{ fontSize: "0.88rem", fontWeight: "800", color: "#fff" }}>{draftSupport.kd || "1.05"}</div>
-                                    </div>
-                                    <div>
-                                      <div style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>HS%</div>
-                                      <div style={{ fontSize: "0.88rem", fontWeight: "800", color: "#fff" }}>{draftSupport.hsRate || "42%"}</div>
-                                    </div>
-                                    <div>
-                                      <div style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>WIN%</div>
-                                      <div style={{ fontSize: "0.88rem", fontWeight: "800", color: "#fff" }}>{draftSupport.winRate || "50%"}</div>
-                                    </div>
-                                  </div>
-
-                                  {/* Buff plate */}
-                                  <div style={{
-                                    width: "100%",
-                                    padding: "0.55rem 0.8rem",
-                                    borderRadius: "10px",
-                                    background: buff ? "linear-gradient(135deg, rgba(0, 229, 255, 0.2), rgba(0, 180, 216, 0.1))" : "rgba(255,255,255,0.03)",
-                                    border: buff ? "1px solid var(--accent-cyan)" : "1px dashed var(--border-light)",
-                                    textAlign: "center"
-                                  }}>
-                                    {buff ? (
-                                      <div style={{ fontSize: "0.82rem", fontWeight: "800", color: "var(--accent-cyan)", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem" }}>
-                                        <span>{buff.icon} {buff.name}</span>
-                                        <span style={{ background: "var(--accent-cyan)", color: "#000", padding: "0.1rem 0.4rem", borderRadius: "6px", fontSize: "0.75rem", fontWeight: "900" }}>+{buff.percent}%</span>
-                                      </div>
-                                    ) : (
-                                      <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
-                                        🎲 Бафф ролится при сохранении
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                              );
-                            })()}
-
-                            {/* FUT CARD 3: DARK HORSE */}
-                            {draftDarkHorse && (() => {
-                              const buff = userFantasyPick?.darkHorse?.buff;
-                              const isPenalty = Number(darkMultiplier) < 1.0;
-                              return (
-                                <div style={{
-                                  background: "radial-gradient(ellipse at 50% 0%, rgba(255, 215, 0, 0.25) 0%, rgba(12, 10, 22, 0.98) 75%)",
-                                  border: isPenalty ? "2px solid #ff5252" : "2px solid #ffd700",
-                                  borderRadius: "20px",
-                                  padding: "1.5rem 1.25rem",
-                                  boxShadow: isPenalty ? "0 0 30px rgba(255, 82, 82, 0.2)" : "0 0 30px rgba(255, 215, 0, 0.2)",
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  alignItems: "center",
-                                  position: "relative",
-                                  overflow: "hidden"
-                                }}>
-                                  <div style={{ position: "absolute", top: "1rem", left: "1.2rem", textAlign: "left" }}>
-                                    <div style={{ fontSize: "1.8rem", fontWeight: "900", color: isPenalty ? "#ff5252" : "#ffd700", lineHeight: 1 }}>{darkHorseSkill}</div>
-                                    <div style={{ fontSize: "0.72rem", fontWeight: "800", color: isPenalty ? "#ff8a80" : "#ffd700", textTransform: "uppercase" }}>ТЕМН</div>
-                                  </div>
-
-                                  <div style={{ position: "absolute", top: "1rem", right: "1.2rem" }}>
-                                    <span style={{ fontSize: "0.7rem", padding: "0.15rem 0.5rem", borderRadius: "6px", background: isPenalty ? "rgba(255, 82, 82, 0.2)" : "rgba(255, 215, 0, 0.2)", color: isPenalty ? "#ff5252" : "#ffd700", fontWeight: "800" }}>
-                                      {isPenalty ? `x${darkMultiplier}` : `x${darkMultiplier}`}
+                                return renderFUTCard({
+                                  player: draftDarkHorse,
+                                  roleName: "Темная лошадка",
+                                  roleShort: "ТЕМН",
+                                  skill: darkHorseSkill,
+                                  buff,
+                                  statusTag: (
+                                    <span style={{
+                                      fontSize: "0.68rem",
+                                      padding: "0.15rem 0.45rem",
+                                      borderRadius: "6px",
+                                      background: isLucky ? "rgba(34, 197, 94, 0.2)" : isPenalty ? "rgba(255, 82, 82, 0.25)" : "rgba(255, 215, 0, 0.2)",
+                                      color: isLucky ? "#4ade80" : isPenalty ? "#ff5252" : "#ffd700",
+                                      fontWeight: "800"
+                                    }}>
+                                      {isLucky ? "🍀 БЕЗ ШТРАФА" : isPenalty ? `⚠️ x${darkMultiplier}` : `БОНУС x${darkMultiplier}`}
                                     </span>
-                                  </div>
+                                  )
+                                });
+                              })()}
+                            </div>
+                          </div>
+                        );
+                      })()}
 
-                                  {/* Avatar */}
-                                  <div style={{ marginTop: "1rem", marginBottom: "0.75rem" }}>
-                                    {draftDarkHorse.avatar ? (
-                                      <img src={draftDarkHorse.avatar} alt="" style={{ width: "76px", height: "76px", borderRadius: "50%", border: isPenalty ? "3px solid #ff5252" : "3px solid #ffd700", boxShadow: "0 0 20px rgba(255, 215, 0, 0.4)", objectFit: "cover" }} />
-                                    ) : (
-                                      <div style={{ width: "76px", height: "76px", borderRadius: "50%", background: "linear-gradient(135deg, #ffd700, #ff8f00)", border: "3px solid #ffd700", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem", fontWeight: "900", color: "#000" }}>
-                                        {draftDarkHorse.nickname?.slice(0, 2).toUpperCase()}
-                                      </div>
-                                    )}
-                                  </div>
-
-                                  <div style={{ fontSize: "1.15rem", fontWeight: "900", color: "#fff", textAlign: "center", marginBottom: "1rem", letterSpacing: "0.5px" }}>
-                                    {draftDarkHorse.nickname}
-                                  </div>
-
-                                  {/* Stats Grid */}
-                                  <div style={{
-                                    display: "grid",
-                                    gridTemplateColumns: "repeat(3, 1fr)",
-                                    gap: "0.5rem",
-                                    width: "100%",
-                                    background: "rgba(0,0,0,0.5)",
-                                    borderRadius: "12px",
-                                    padding: "0.6rem",
-                                    marginBottom: "1rem",
-                                    textAlign: "center"
-                                  }}>
-                                    <div>
-                                      <div style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>К/Д</div>
-                                      <div style={{ fontSize: "0.88rem", fontWeight: "800", color: "#fff" }}>{draftDarkHorse.kd || "0.95"}</div>
-                                    </div>
-                                    <div>
-                                      <div style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>HS%</div>
-                                      <div style={{ fontSize: "0.88rem", fontWeight: "800", color: "#fff" }}>{draftDarkHorse.hsRate || "40%"}</div>
-                                    </div>
-                                    <div>
-                                      <div style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>WIN%</div>
-                                      <div style={{ fontSize: "0.88rem", fontWeight: "800", color: "#fff" }}>{draftDarkHorse.winRate || "48%"}</div>
-                                    </div>
-                                  </div>
-
-                                  {/* Buff plate */}
-                                  <div style={{
-                                    width: "100%",
-                                    padding: "0.55rem 0.8rem",
-                                    borderRadius: "10px",
-                                    background: buff ? "linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 145, 0, 0.1))" : "rgba(255,255,255,0.03)",
-                                    border: buff ? "1px solid #ffd700" : "1px dashed var(--border-light)",
-                                    textAlign: "center"
-                                  }}>
-                                    {buff ? (
-                                      <div style={{ fontSize: "0.82rem", fontWeight: "800", color: "#ffd700", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem" }}>
-                                        <span>{buff.icon} {buff.name}</span>
-                                        <span style={{ background: "#ffd700", color: "#000", padding: "0.1rem 0.4rem", borderRadius: "6px", fontSize: "0.75rem", fontWeight: "900" }}>+{buff.percent}%</span>
-                                      </div>
-                                    ) : (
-                                      <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
-                                        🎲 Бафф ролится при сохранении
-                                      </div>
-                                    )}
-                                  </div>
+                      {/* BUFFS CATALOG MODAL POPUP */}
+                      {showBuffsModal && (
+                        <div
+                          onClick={() => setShowBuffsModal(false)}
+                          style={{
+                            position: "fixed",
+                            inset: 0,
+                            zIndex: 9999,
+                            background: "rgba(0, 0, 0, 0.75)",
+                            backdropFilter: "blur(8px)",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            padding: "1rem"
+                          }}
+                        >
+                          <div
+                            onClick={e => e.stopPropagation()}
+                            style={{
+                              background: "linear-gradient(135deg, rgba(20, 15, 38, 0.98) 0%, rgba(10, 8, 20, 0.99) 100%)",
+                              border: "1.5px solid rgba(255, 215, 0, 0.4)",
+                              boxShadow: "0 0 50px rgba(255, 215, 0, 0.2)",
+                              borderRadius: "24px",
+                              padding: "2rem",
+                              maxWidth: "680px",
+                              width: "100%",
+                              maxHeight: "85vh",
+                              overflowY: "auto"
+                            }}
+                          >
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
+                              <div>
+                                <div style={{ fontSize: "0.75rem", color: "#ffd700", fontWeight: "800", textTransform: "uppercase", letterSpacing: "1px" }}>
+                                  FANTASY LEAGUE • ПРАВИЛА УСИЛЕНИЙ
                                 </div>
-                              );
-                            })()}
+                                <h3 style={{ fontSize: "1.4rem", fontWeight: "900", color: "#fff", margin: "0.2rem 0 0 0" }}>
+                                  🎲 Каталог баффов карточек
+                                </h3>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => setShowBuffsModal(false)}
+                                style={{
+                                  background: "rgba(255,255,255,0.08)",
+                                  border: "none",
+                                  color: "#fff",
+                                  width: "32px",
+                                  height: "32px",
+                                  borderRadius: "50%",
+                                  cursor: "pointer",
+                                  fontSize: "1.1rem",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center"
+                                }}
+                              >
+                                ✕
+                              </button>
+                            </div>
+
+                            <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", lineHeight: "1.5", marginBottom: "1.5rem" }}>
+                              При сохранении состава каждой карточке в твоей команде выпадает случайный бафф из каталога ниже со случайным процентом или эффектом:
+                            </p>
+
+                            <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+                              {[
+                                { icon: "🎯", name: "Хедшот-Машина", range: "+10% ... +25%", desc: "Буст к меткости и очкам за фраги в голову." },
+                                { icon: "🌊", name: "В потоке", range: "+8% ... +20%", desc: "Боевой кураж, высокий темп и стабильный набор очков в каждом матче." },
+                                { icon: "⚡", name: "Клатчер", range: "+12% ... +26%", desc: "Повышенные иксы и импакт за выигранные клатчи и ключевые моменты." },
+                                { icon: "💣", name: "Тактик Раскидок", range: "+8% ... +20%", desc: "Командная утилити-польза, флешки и ассисты." },
+                                { icon: "🎲", name: "Джокер (Крит)", range: "+15% ... +30%", desc: "Редкий максимальный множитель очков." },
+                                { icon: "🧛", name: "Вампир", range: "×1.2 Кража", desc: "Забирает 15% очков у соседней карты (или по 10% с обеих, если в центре) и переводит себе с коэффициентом ×1.2." },
+                                { icon: "🍀", name: "Неудачник?", range: "Снятие штрафа", desc: "Полностью снимает штраф за оверскилл (Саппорт: -50% аннулируется; Лошадка: множитель восстанавливается до 1.00)." }
+                              ].map(b => (
+                                <div
+                                  key={b.name}
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "space-between",
+                                    gap: "1rem",
+                                    background: "rgba(255,255,255,0.03)",
+                                    border: "1px solid rgba(255,255,255,0.06)",
+                                    borderRadius: "14px",
+                                    padding: "0.85rem 1.1rem"
+                                  }}
+                                >
+                                  <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
+                                    <span style={{ fontSize: "1.6rem" }}>{b.icon}</span>
+                                    <div>
+                                      <div style={{ fontSize: "0.95rem", fontWeight: "800", color: "#fff" }}>{b.name}</div>
+                                      <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", lineHeight: "1.3" }}>{b.desc}</div>
+                                    </div>
+                                  </div>
+                                  <span style={{
+                                    fontSize: "0.78rem",
+                                    fontWeight: "900",
+                                    color: "#ffd700",
+                                    background: "rgba(255, 215, 0, 0.12)",
+                                    border: "1px solid rgba(255, 215, 0, 0.3)",
+                                    padding: "0.3rem 0.65rem",
+                                    borderRadius: "8px",
+                                    whiteSpace: "nowrap"
+                                  }}>
+                                    {b.range}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         </div>
                       )}
