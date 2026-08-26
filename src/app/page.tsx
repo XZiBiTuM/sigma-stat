@@ -5076,7 +5076,44 @@ export default function Home() {
                       )}
 
                       {/* SAVE ACTION & NOTIFICATION */}
-                      <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", width: "100%" }}>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "1rem", width: "100%" }}>
+                        {/* WARNING NOTE BEFORE SAVING */}
+                        {!isPickLocked ? (
+                          <div style={{
+                            display: "flex",
+                            alignItems: "flex-start",
+                            gap: "0.75rem",
+                            background: "rgba(255, 171, 0, 0.08)",
+                            border: "1px solid rgba(255, 171, 0, 0.35)",
+                            borderRadius: "14px",
+                            padding: "0.85rem 1.1rem",
+                            color: "#ffc107"
+                          }}>
+                            <span style={{ fontSize: "1.15rem", lineHeight: 1 }}>⚠️</span>
+                            <div style={{ fontSize: "0.82rem", lineHeight: "1.4" }}>
+                              <strong style={{ color: "#ffd54f" }}>Внимание: </strong>
+                              После нажатия кнопки «Сохранить состав» карточки получат случайные баффы, а состав будет <strong>зафиксирован на весь турнир</strong>. Заменить игроков или перероллить баффы будет <strong>нельзя</strong> (риск за оверскилл принимается навсегда)!
+                            </div>
+                          </div>
+                        ) : (
+                          <div style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "0.75rem",
+                            background: "rgba(34, 197, 94, 0.08)",
+                            border: "1px solid rgba(34, 197, 94, 0.35)",
+                            borderRadius: "14px",
+                            padding: "0.85rem 1.1rem",
+                            color: "#4ade80"
+                          }}>
+                            <span style={{ fontSize: "1.15rem", lineHeight: 1 }}>🔒</span>
+                            <div style={{ fontSize: "0.82rem", lineHeight: "1.4" }}>
+                              <strong style={{ color: "#86efac" }}>Состав зафиксирован: </strong>
+                              Твои карточки и баффы активированы. Замена игроков заблокирована до конца текущего турнира.
+                            </div>
+                          </div>
+                        )}
+
                         {fantasySaveMsg && (
                           <div style={{ fontSize: "0.92rem", fontWeight: "700", textAlign: "center", color: fantasySaveMsg.includes("успешно") ? "#00e5ff" : "#ff5252" }}>
                             {fantasySaveMsg}
