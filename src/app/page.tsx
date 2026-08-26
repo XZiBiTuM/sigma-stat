@@ -3992,173 +3992,203 @@ export default function Home() {
                     )}
 
                     {/* DRAFT PICKING SECTION */}
-                    <div className="glass-card" style={{ padding: "2rem", borderRadius: "24px" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
-                        <div>
-                          <h3 style={{ fontSize: "1.35rem", fontWeight: "800", color: "#fff", margin: "0 0 0.3rem 0" }}>
-                            Твой состав на турнир (3 слота)
-                          </h3>
-                          <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", margin: 0 }}>
-                            Выбери по одному игроку на каждую роль. Внимание: в Саппортах и Лошадке действует штраф за оверскилл!
-                          </p>
-                        </div>
+                    {(() => {
+                      const isPickLocked = !!userFantasyPick;
 
-                        {currentUser && (
-                          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(0,0,0,0.3)", padding: "0.45rem 1rem", borderRadius: "14px", border: "1px solid var(--border-light)" }}>
-                            {currentUser.steamAvatar && <img src={currentUser.steamAvatar} alt="" style={{ width: "26px", height: "26px", borderRadius: "50%" }} />}
-                            <span style={{ fontSize: "0.88rem", color: "#fff", fontWeight: "700" }}>{currentUser.steamName}</span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* 3 CYBER ROLE CARDS */}
-                      <div style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-                        gap: "1.5rem",
-                        marginBottom: "2rem"
-                      }}>
-                        
-                        {/* SLOT 1: STAR PLAYER */}
-                        <div style={{
-                          background: "rgba(255, 73, 73, 0.04)",
-                          border: draftSniper ? "1.5px solid #ff5252" : "1px solid rgba(255, 73, 73, 0.3)",
-                          borderRadius: "18px",
-                          padding: "1.5rem",
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "1rem",
-                          boxShadow: draftSniper ? "0 0 25px rgba(255, 82, 82, 0.15)" : "none",
-                          transition: "all 0.2s ease"
-                        }}>
-                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      return (
+                        <div className="glass-card" style={{ padding: "2rem", borderRadius: "24px" }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
                             <div>
-                              <div style={{ fontSize: "1.05rem", fontWeight: "800", color: "#ff7b7b" }}>Стар-плеер</div>
-                              <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Фраги (+2.5), Entry (+2.0), HS (+1.0)</div>
+                              <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+                                <h3 style={{ fontSize: "1.35rem", fontWeight: "800", color: "#fff", margin: 0 }}>
+                                  Твой состав на турнир (3 слота)
+                                </h3>
+                                {isPickLocked && (
+                                  <span style={{
+                                    fontSize: "0.75rem",
+                                    fontWeight: "800",
+                                    padding: "0.2rem 0.6rem",
+                                    borderRadius: "8px",
+                                    background: "rgba(34, 197, 94, 0.15)",
+                                    border: "1px solid rgba(34, 197, 94, 0.35)",
+                                    color: "#4ade80",
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: "0.35rem"
+                                  }}>
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                    </svg>
+                                    ЗАФИКСИРОВАН
+                                  </span>
+                                )}
+                              </div>
+                              <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", margin: "0.3rem 0 0 0" }}>
+                                {isPickLocked 
+                                  ? "Состав сохранен и зафиксирован на турнир. Замена игроков заблокирована для сохранения баланса рисков и баффов!"
+                                  : "Выбери по одному игроку на каждую роль. Внимание: после сохранения состав фиксируется и замена будет недоступна!"}
+                              </p>
                             </div>
-                            <span style={{ fontSize: "0.72rem", fontWeight: "800", padding: "0.2rem 0.5rem", borderRadius: "6px", background: "rgba(255, 82, 82, 0.15)", color: "#ff8a80" }}>
-                              СЛОТ 1
-                            </span>
+
+                            {currentUser && (
+                              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(0,0,0,0.3)", padding: "0.45rem 1rem", borderRadius: "14px", border: "1px solid var(--border-light)" }}>
+                                {currentUser.steamAvatar && <img src={currentUser.steamAvatar} alt="" style={{ width: "26px", height: "26px", borderRadius: "50%" }} />}
+                                <span style={{ fontSize: "0.88rem", color: "#fff", fontWeight: "700" }}>{currentUser.steamName}</span>
+                              </div>
+                            )}
                           </div>
 
-                          {/* Player selector */}
-                          <div>
-                            <select
-                              value={draftSniper?.nickname || draftSniper?.playerId || ""}
-                              onChange={e => {
-                                const val = e.target.value;
-                                const found = allPlayersList.find(p => p.nickname === val || p.playerId === val);
-                                setDraftSniper(found || null);
-                              }}
-                              disabled={!isDraftOpen}
-                              style={{
-                                width: "100%",
-                                padding: "0.75rem 1rem",
-                                borderRadius: "12px",
-                                background: "#06050c",
-                                border: "1px solid rgba(255, 82, 82, 0.4)",
-                                color: "#fff",
-                                fontSize: "0.9rem",
-                                fontWeight: "600",
-                                cursor: isDraftOpen ? "pointer" : "not-allowed"
-                              }}
-                            >
-                              <option value="">-- Выбери Стар-плеера --</option>
-                              {allPlayersList.map(p => {
-                                const isUsedInOtherSlot = (draftSupport && (draftSupport.nickname === p.nickname || draftSupport.playerId === p.playerId)) ||
-                                                          (draftDarkHorse && (draftDarkHorse.nickname === p.nickname || draftDarkHorse.playerId === p.playerId));
-                                return (
-                                  <option key={p.playerId || p.nickname} value={p.nickname} disabled={isUsedInOtherSlot}>
-                                    {p.nickname} (Скилл: {p.skillScore})
-                                  </option>
-                                );
-                              })}
-                            </select>
-                          </div>
+                          {/* 3 CYBER ROLE CARDS */}
+                          <div style={{
+                            display: "grid",
+                            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                            gap: "1.5rem",
+                            marginBottom: "2rem"
+                          }}>
+                            
+                            {/* SLOT 1: STAR PLAYER */}
+                            <div style={{
+                              background: "rgba(255, 73, 73, 0.04)",
+                              border: draftSniper ? "1.5px solid #ff5252" : "1px solid rgba(255, 73, 73, 0.3)",
+                              borderRadius: "18px",
+                              padding: "1.5rem",
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: "1rem",
+                              boxShadow: draftSniper ? "0 0 25px rgba(255, 82, 82, 0.15)" : "none",
+                              transition: "all 0.2s ease"
+                            }}>
+                              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                <div>
+                                  <div style={{ fontSize: "1.05rem", fontWeight: "800", color: "#ff7b7b" }}>Стар-плеер</div>
+                                  <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Фраги (+2.5), Entry (+2.0), HS (+1.0)</div>
+                                </div>
+                                <span style={{ fontSize: "0.72rem", fontWeight: "800", padding: "0.2rem 0.5rem", borderRadius: "6px", background: "rgba(255, 82, 82, 0.15)", color: "#ff8a80" }}>
+                                  СЛОТ 1
+                                </span>
+                              </div>
 
-                          {draftSniper && (
-                            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(0,0,0,0.3)", padding: "0.6rem 0.8rem", borderRadius: "12px" }}>
-                              {draftSniper.avatar ? (
-                                <img src={draftSniper.avatar} alt="" style={{ width: "32px", height: "32px", borderRadius: "50%" }} />
-                              ) : (
-                                <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "rgba(255, 82, 82, 0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.8rem", fontWeight: "700", color: "#ff8a80" }}>
-                                  {draftSniper.nickname?.slice(0, 2).toUpperCase()}
+                              {/* Player selector */}
+                              <div>
+                                <select
+                                  value={draftSniper?.nickname || draftSniper?.playerId || ""}
+                                  onChange={e => {
+                                    const val = e.target.value;
+                                    const found = allPlayersList.find(p => p.nickname === val || p.playerId === val);
+                                    setDraftSniper(found || null);
+                                  }}
+                                  disabled={!isDraftOpen || isPickLocked}
+                                  style={{
+                                    width: "100%",
+                                    padding: "0.75rem 1rem",
+                                    borderRadius: "12px",
+                                    background: "#06050c",
+                                    border: isPickLocked ? "1px solid rgba(255, 82, 82, 0.2)" : "1px solid rgba(255, 82, 82, 0.4)",
+                                    color: "#fff",
+                                    fontSize: "0.9rem",
+                                    fontWeight: "600",
+                                    cursor: isPickLocked ? "not-allowed" : isDraftOpen ? "pointer" : "not-allowed",
+                                    opacity: isPickLocked ? 0.85 : 1
+                                  }}
+                                >
+                                  <option value="">-- Выбери Стар-плеера --</option>
+                                  {allPlayersList.map(p => {
+                                    const isUsedInOtherSlot = (draftSupport && (draftSupport.nickname === p.nickname || draftSupport.playerId === p.playerId)) ||
+                                                              (draftDarkHorse && (draftDarkHorse.nickname === p.nickname || draftDarkHorse.playerId === p.playerId));
+                                    return (
+                                      <option key={p.playerId || p.nickname} value={p.nickname} disabled={isUsedInOtherSlot}>
+                                        {p.nickname} (Скилл: {p.skillScore})
+                                      </option>
+                                    );
+                                  })}
+                                </select>
+                              </div>
+
+                              {draftSniper && (
+                                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(0,0,0,0.3)", padding: "0.6rem 0.8rem", borderRadius: "12px" }}>
+                                  {draftSniper.avatar ? (
+                                    <img src={draftSniper.avatar} alt="" style={{ width: "32px", height: "32px", borderRadius: "50%" }} />
+                                  ) : (
+                                    <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "rgba(255, 82, 82, 0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.8rem", fontWeight: "700", color: "#ff8a80" }}>
+                                      {draftSniper.nickname?.slice(0, 2).toUpperCase()}
+                                    </div>
+                                  )}
+                                  <div>
+                                    <div style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff" }}>{draftSniper.nickname}</div>
+                                    <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Скилл: <strong style={{ color: "#ff7b7b" }}>{sniperSkill}</strong></div>
+                                  </div>
                                 </div>
                               )}
-                              <div>
-                                <div style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff" }}>{draftSniper.nickname}</div>
-                                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Скилл: <strong style={{ color: "#ff7b7b" }}>{sniperSkill}</strong></div>
-                              </div>
                             </div>
-                          )}
-                        </div>
 
-                        {/* SLOT 2: SUPPORT */}
-                        <div style={{
-                          background: "rgba(0, 229, 255, 0.04)",
-                          border: draftSupport ? (supportSkill > 65 ? "1.5px solid #ff5252" : "1.5px solid var(--accent-cyan)") : "1px solid rgba(0, 229, 255, 0.3)",
-                          borderRadius: "18px",
-                          padding: "1.5rem",
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "1rem",
-                          boxShadow: draftSupport ? "0 0 25px rgba(0, 229, 255, 0.15)" : "none",
-                          transition: "all 0.2s ease"
-                        }}>
-                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                            <div>
-                              <div style={{ fontSize: "1.05rem", fontWeight: "800", color: "var(--accent-cyan)" }}>Саппорт</div>
-                              <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Ассисты (+2.5), Фраги (+0.8), Клатчи и урон</div>
-                            </div>
-                            <span style={{
-                              fontSize: "0.72rem",
-                              fontWeight: "800",
-                              padding: "0.2rem 0.5rem",
-                              borderRadius: "6px",
-                              background: draftSupport && supportSkill > 65 ? "rgba(255, 73, 73, 0.2)" : "rgba(0, 229, 255, 0.15)",
-                              color: draftSupport && supportSkill > 65 ? "#ff5252" : "var(--accent-cyan)"
+                            {/* SLOT 2: SUPPORT */}
+                            <div style={{
+                              background: "rgba(0, 229, 255, 0.04)",
+                              border: draftSupport ? (supportSkill > 65 ? "1.5px solid #ff5252" : "1.5px solid var(--accent-cyan)") : "1px solid rgba(0, 229, 255, 0.3)",
+                              borderRadius: "18px",
+                              padding: "1.5rem",
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: "1rem",
+                              boxShadow: draftSupport ? "0 0 25px rgba(0, 229, 255, 0.15)" : "none",
+                              transition: "all 0.2s ease"
                             }}>
-                              {draftSupport && supportSkill > 65 ? "⚠️ ШТРАФ -50%" : "СЛОТ 2"}
-                            </span>
-                          </div>
+                              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                <div>
+                                  <div style={{ fontSize: "1.05rem", fontWeight: "800", color: "var(--accent-cyan)" }}>Саппорт</div>
+                                  <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Ассисты (+2.5), Фраги (+0.8), Клатчи и урон</div>
+                                </div>
+                                <span style={{
+                                  fontSize: "0.72rem",
+                                  fontWeight: "800",
+                                  padding: "0.2rem 0.5rem",
+                                  borderRadius: "6px",
+                                  background: draftSupport && supportSkill > 65 ? "rgba(255, 73, 73, 0.2)" : "rgba(0, 229, 255, 0.15)",
+                                  color: draftSupport && supportSkill > 65 ? "#ff5252" : "var(--accent-cyan)"
+                                }}>
+                                  {draftSupport && supportSkill > 65 ? "⚠️ ШТРАФ -50%" : "СЛОТ 2"}
+                                </span>
+                              </div>
 
-                          {/* Player selector */}
-                          <div>
-                            <select
-                              value={draftSupport?.nickname || draftSupport?.playerId || ""}
-                              onChange={e => {
-                                const val = e.target.value;
-                                const found = allPlayersList.find(p => p.nickname === val || p.playerId === val);
-                                setDraftSupport(found || null);
-                              }}
-                              disabled={!isDraftOpen}
-                              style={{
-                                width: "100%",
-                                padding: "0.75rem 1rem",
-                                borderRadius: "12px",
-                                background: "#06050c",
-                                border: draftSupport && supportSkill > 65 ? "1px solid rgba(255, 82, 82, 0.5)" : "1px solid rgba(0, 229, 255, 0.4)",
-                                color: "#fff",
-                                fontSize: "0.9rem",
-                                fontWeight: "600",
-                                cursor: isDraftOpen ? "pointer" : "not-allowed"
-                              }}
-                            >
-                              <option value="">-- Выбери Саппорта --</option>
-                              {allPlayersList.map(p => {
-                                const isUsedInOtherSlot = (draftSniper && (draftSniper.nickname === p.nickname || draftSniper.playerId === p.playerId)) ||
-                                                          (draftDarkHorse && (draftDarkHorse.nickname === p.nickname || draftDarkHorse.playerId === p.playerId));
-                                const isPenalty = p.skillScore > 65;
-                                return (
-                                  <option key={p.playerId || p.nickname} value={p.nickname} disabled={isUsedInOtherSlot}>
-                                    {p.nickname} (Скилл: {p.skillScore}{isPenalty ? " ➔ ⚠️ ШТРАФ -50%" : ""})
-                                  </option>
-                                );
-                              })}
-                            </select>
-                          </div>
+                              {/* Player selector */}
+                              <div>
+                                <select
+                                  value={draftSupport?.nickname || draftSupport?.playerId || ""}
+                                  onChange={e => {
+                                    const val = e.target.value;
+                                    const found = allPlayersList.find(p => p.nickname === val || p.playerId === val);
+                                    setDraftSupport(found || null);
+                                  }}
+                                  disabled={!isDraftOpen || isPickLocked}
+                                  style={{
+                                    width: "100%",
+                                    padding: "0.75rem 1rem",
+                                    borderRadius: "12px",
+                                    background: "#06050c",
+                                    border: draftSupport && supportSkill > 65 ? "1px solid rgba(255, 82, 82, 0.5)" : "1px solid rgba(0, 229, 255, 0.4)",
+                                    color: "#fff",
+                                    fontSize: "0.9rem",
+                                    fontWeight: "600",
+                                    cursor: isPickLocked ? "not-allowed" : isDraftOpen ? "pointer" : "not-allowed",
+                                    opacity: isPickLocked ? 0.85 : 1
+                                  }}
+                                >
+                                  <option value="">-- Выбери Саппорта --</option>
+                                  {allPlayersList.map(p => {
+                                    const isUsedInOtherSlot = (draftSniper && (draftSniper.nickname === p.nickname || draftSniper.playerId === p.playerId)) ||
+                                                              (draftDarkHorse && (draftDarkHorse.nickname === p.nickname || draftDarkHorse.playerId === p.playerId));
+                                    const isPenalty = p.skillScore > 65;
+                                    return (
+                                      <option key={p.playerId || p.nickname} value={p.nickname} disabled={isUsedInOtherSlot}>
+                                        {p.nickname} (Скилл: {p.skillScore}{isPenalty ? " ➔ ⚠️ ШТРАФ -50%" : ""})
+                                      </option>
+                                    );
+                                  })}
+                                </select>
+                              </div>
 
-                          {draftSupport && (
+                              {draftSupport && (
                             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(0,0,0,0.3)", padding: "0.6rem 0.8rem", borderRadius: "12px" }}>
                               {draftSupport.avatar ? (
                                 <img src={draftSupport.avatar} alt="" style={{ width: "32px", height: "32px", borderRadius: "50%" }} />
@@ -4220,7 +4250,7 @@ export default function Home() {
                                 const found = allPlayersList.find(p => p.nickname === val || p.playerId === val);
                                 setDraftDarkHorse(found || null);
                               }}
-                              disabled={!isDraftOpen}
+                              disabled={!isDraftOpen || isPickLocked}
                               style={{
                                 width: "100%",
                                 padding: "0.75rem 1rem",
@@ -4230,7 +4260,8 @@ export default function Home() {
                                 color: "#fff",
                                 fontSize: "0.9rem",
                                 fontWeight: "600",
-                                cursor: isDraftOpen ? "pointer" : "not-allowed"
+                                cursor: isPickLocked ? "not-allowed" : isDraftOpen ? "pointer" : "not-allowed",
+                                opacity: isPickLocked ? 0.85 : 1
                               }}
                             >
                               <option value="">-- Выбери Темную лошадку --</option>
@@ -4995,7 +5026,7 @@ export default function Home() {
                               placeholder="Введи никнейм (например: s1mple или Имя)"
                               value={guestFantasyNick}
                               onChange={(e) => setGuestFantasyNick(e.target.value)}
-                              disabled={!isDraftOpen}
+                              disabled={!isDraftOpen || isPickLocked}
                               style={{
                                 width: "100%",
                                 padding: "0.75rem 1.1rem",
@@ -5005,7 +5036,9 @@ export default function Home() {
                                 color: "#fff",
                                 fontSize: "0.95rem",
                                 fontWeight: "600",
-                                outline: "none"
+                                outline: "none",
+                                cursor: isPickLocked ? "not-allowed" : "text",
+                                opacity: isPickLocked ? 0.8 : 1
                               }}
                             />
                           </div>
@@ -5052,26 +5085,49 @@ export default function Home() {
 
                         <button
                           onClick={handleSaveFantasyPick}
-                          disabled={isSavingFantasy || !isDraftOpen}
+                          disabled={isSavingFantasy || !isDraftOpen || isPickLocked}
                           style={{
                             width: "100%",
                             padding: "1rem 2rem",
                             borderRadius: "14px",
-                            background: isDraftOpen ? "linear-gradient(135deg, #b388ff, #00e5ff)" : "rgba(255,255,255,0.1)",
-                            border: "none",
-                            color: isDraftOpen ? "#000" : "var(--text-muted)",
+                            background: isPickLocked
+                              ? "rgba(34, 197, 94, 0.15)"
+                              : isDraftOpen
+                                ? "linear-gradient(135deg, #b388ff, #00e5ff)"
+                                : "rgba(255,255,255,0.1)",
+                            border: isPickLocked ? "1px solid rgba(34, 197, 94, 0.4)" : "none",
+                            color: isPickLocked ? "#4ade80" : isDraftOpen ? "#000" : "var(--text-muted)",
                             fontSize: "1rem",
                             fontWeight: "800",
-                            cursor: isDraftOpen ? "pointer" : "not-allowed",
-                            boxShadow: isDraftOpen ? "0 0 25px rgba(179, 136, 255, 0.4)" : "none",
+                            cursor: isPickLocked || !isDraftOpen ? "not-allowed" : "pointer",
+                            boxShadow: isPickLocked ? "0 0 20px rgba(34, 197, 94, 0.15)" : isDraftOpen ? "0 0 25px rgba(179, 136, 255, 0.4)" : "none",
                             transition: "all 0.2s ease",
-                            textAlign: "center"
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "0.5rem"
                           }}
                         >
-                          {isSavingFantasy ? "Сохранение и ролл баффов..." : isDraftOpen ? "Сохранить состав на турнир" : "Сбор составов закрыт"}
+                          {isSavingFantasy ? (
+                            "Сохранение и ролл баффов..."
+                          ) : isPickLocked ? (
+                            <>
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                              </svg>
+                              <span>Состав зафиксирован (изменения недоступны)</span>
+                            </>
+                          ) : isDraftOpen ? (
+                            "Сохранить состав на турнир"
+                          ) : (
+                            "Сбор составов закрыт"
+                          )}
                         </button>
                       </div>
                     </div>
+                  );
+                })()}
 
                     {/* FANTASY LEAGUE LEADERBOARD */}
                     <div className="glass-card" style={{ padding: "2rem", borderRadius: "24px" }}>

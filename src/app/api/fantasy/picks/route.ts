@@ -172,6 +172,12 @@ export async function POST(request: NextRequest) {
     const darkHorseBuff = getRandomBuff();
 
     const allPicks = await getAllPicks();
+    if (allPicks[userId]) {
+      return NextResponse.json({
+        error: "Состав уже зафиксирован и не может быть изменен! Менять игроков после получения баффов запрещено правилами турнира."
+      }, { status: 403 });
+    }
+
     const newPick: FantasyPick = {
       userId,
       userName,
