@@ -4272,11 +4272,93 @@ export default function Home() {
 
                       {/* FIFA ULTIMATE TEAM (FUT) CARDS SHOWCASE */}
                       {(draftSniper || draftSupport || draftDarkHorse) && (() => {
+                        const renderBuffSvgIcon = (buffId?: string, size = 18, color = "currentColor") => {
+                          switch (buffId) {
+                            case "headshot":
+                              return (
+                                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <circle cx="12" cy="12" r="9" />
+                                  <line x1="12" y1="3" x2="12" y2="7" />
+                                  <line x1="12" y1="17" x2="12" y2="21" />
+                                  <line x1="3" y1="12" x2="7" y2="12" />
+                                  <line x1="17" y1="12" x2="21" y2="12" />
+                                  <circle cx="12" cy="12" r="2.5" fill={color} />
+                                </svg>
+                              );
+                            case "flow":
+                            case "in_the_zone":
+                              return (
+                                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M2 12c2.5-3 5.5-3 8 0s5.5 3 8 0 3-1.5 4-2" />
+                                  <path d="M2 6c2.5-3 5.5-3 8 0s5.5 3 8 0 3-1.5 4-2" opacity="0.6" />
+                                  <path d="M2 18c2.5-3 5.5-3 8 0s5.5 3 8 0 3-1.5 4-2" opacity="0.6" />
+                                </svg>
+                              );
+                            case "clutcher":
+                            case "clutch_king":
+                              return (
+                                <svg width={size} height={size} viewBox="0 0 24 24" fill={color} fillOpacity="0.2" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                                </svg>
+                              );
+                            case "tactician":
+                              return (
+                                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <circle cx="11" cy="13" r="7.5" />
+                                  <path d="M14.5 5.5 17.5 2.5" />
+                                  <path d="M16 2.5 19 5.5" />
+                                  <circle cx="11" cy="13" r="2.5" fill={color} fillOpacity="0.4" />
+                                </svg>
+                              );
+                            case "joker":
+                              return (
+                                <svg width={size} height={size} viewBox="0 0 24 24" fill={color} fillOpacity="0.25" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                </svg>
+                              );
+                            case "vampire":
+                              return (
+                                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M12 2a9 9 0 0 0-9 9c0 4.5 3 8 7 9.5v-3.5h-2v-3h2V11a3 3 0 0 1 3-3h3v3h-2a1 1 0 0 0-1 1v2h3l-.5 3h-2.5v3.5c4-1.5 7-5 7-9.5a9 9 0 0 0-9-9z" />
+                                  <path d="m8 13 1.5 3.5" strokeWidth="2.2" />
+                                  <path d="m16 13-1.5 3.5" strokeWidth="2.2" />
+                                </svg>
+                              );
+                            case "lucky_loser":
+                              return (
+                                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M12 2a3.5 3.5 0 0 0-3.5 3.5c0 1.5.8 2.8 2 3.5-1.2.7-2 2-2 3.5a3.5 3.5 0 0 0 7 0c0-1.5-.8-2.8-2-3.5 1.2-.7 2-2 2-3.5A3.5 3.5 0 0 0 12 2z" />
+                                  <path d="M2.5 12a3.5 3.5 0 0 0 3.5 3.5c1.5 0 2.8-.8 3.5-2-.7-1.2-.7-2.8 0-4-.7-1.2-2-2-3.5-2a3.5 3.5 0 0 0-3.5 4.5z" />
+                                  <path d="M21.5 12a3.5 3.5 0 0 0-3.5-4.5c-1.5 0-2.8.8-3.5 2 .7 1.2 2 2 3.5 2a3.5 3.5 0 0 0 3.5-3.5z" />
+                                  <path d="M12 16v6" />
+                                </svg>
+                              );
+                            default:
+                              return (
+                                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <rect x="3" y="3" width="18" height="18" rx="4" />
+                                  <circle cx="8.5" cy="8.5" r="1.5" fill={color} />
+                                  <circle cx="15.5" cy="15.5" r="1.5" fill={color} />
+                                  <circle cx="12" cy="12" r="1.5" fill={color} />
+                                </svg>
+                              );
+                          }
+                        };
+
+                        const renderTierSvgIcon = (tier: string, size = 12) => {
+                          const color = tier === "GOLD" ? "#ffd700" : tier === "SILVER" ? "#cbd5e1" : "#cd7f32";
+                          return (
+                            <svg width={size} height={size} viewBox="0 0 24 24" fill={color} stroke={color} strokeWidth="1.5">
+                              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                            </svg>
+                          );
+                        };
+
                         const getCardTier = (skill: number) => {
                           if (skill >= 70) {
                             return {
                               tier: "GOLD",
-                              badge: "🥇 GOLD",
+                              badge: "GOLD",
                               color: "#ffd700",
                               accent: "#fef08a",
                               darkAccent: "#854d0e",
@@ -4293,7 +4375,7 @@ export default function Home() {
                           if (skill >= 50) {
                             return {
                               tier: "SILVER",
-                              badge: "🥈 SILVER",
+                              badge: "SILVER",
                               color: "#e2e8f0",
                               accent: "#cbd5e1",
                               darkAccent: "#475569",
@@ -4309,7 +4391,7 @@ export default function Home() {
                           }
                           return {
                             tier: "BRONZE",
-                            badge: "🥉 BRONZE",
+                            badge: "BRONZE",
                             color: "#e59866",
                             accent: "#fdba74",
                             darkAccent: "#7c2d12",
@@ -4370,11 +4452,15 @@ export default function Home() {
                                     color: t.color,
                                     background: "rgba(0,0,0,0.45)",
                                     border: `1px solid ${t.color}40`,
-                                    padding: "0.15rem 0.4rem",
+                                    padding: "0.15rem 0.45rem",
                                     borderRadius: "6px",
                                     marginTop: "0.3rem",
-                                    letterSpacing: "0.5px"
+                                    letterSpacing: "0.5px",
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: "0.3rem"
                                   }}>
+                                    {renderTierSvgIcon(t.tier, 11)}
                                     {t.badge}
                                   </span>
                                 </div>
@@ -4492,7 +4578,10 @@ export default function Home() {
                                       gap: "0.4rem",
                                       flexWrap: "wrap"
                                     }}>
-                                      <span>{buff.icon} {buff.name}</span>
+                                      <span style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem" }}>
+                                        {renderBuffSvgIcon(buff.id, 17, t.foilText)}
+                                        {buff.name}
+                                      </span>
                                       {buff.percent > 0 && (
                                         <span style={{
                                           background: t.color,
@@ -4535,8 +4624,8 @@ export default function Home() {
                                     </div>
                                   </div>
                                 ) : (
-                                  <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.35rem" }}>
-                                    <span>🎲</span>
+                                  <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem" }}>
+                                    {renderBuffSvgIcon("dice", 15, "var(--text-muted)")}
                                     <span>Бафф ролится при сохранении</span>
                                   </div>
                                 )}
@@ -4590,8 +4679,9 @@ export default function Home() {
                                   Каталог баффов
                                 </button>
 
-                                <span style={{ fontSize: "0.78rem", color: "var(--text-muted)", background: "rgba(255,255,255,0.05)", padding: "0.4rem 0.8rem", borderRadius: "10px", border: "1px solid var(--border-light)" }}>
-                                  🎲 Баффы роллятся при сохранении
+                                <span style={{ fontSize: "0.78rem", color: "var(--text-muted)", background: "rgba(255,255,255,0.05)", padding: "0.4rem 0.8rem", borderRadius: "10px", border: "1px solid var(--border-light)", display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
+                                  {renderBuffSvgIcon("dice", 15, "var(--text-muted)")}
+                                  Баффы роллятся при сохранении
                                 </span>
                               </div>
                             </div>
@@ -4640,7 +4730,7 @@ export default function Home() {
                                       color: isLucky ? "#4ade80" : isPenalty ? "#ff5252" : "var(--accent-cyan)",
                                       fontWeight: "800"
                                     }}>
-                                      {isLucky ? "🍀 БЕЗ ШТРАФА" : isPenalty ? "⚠️ -50% ШТРАФ" : "СЛОТ 2"}
+                                      {isLucky ? "БЕЗ ШТРАФА" : isPenalty ? "-50% ШТРАФ" : "СЛОТ 2"}
                                     </span>
                                   )
                                 });
@@ -4667,7 +4757,7 @@ export default function Home() {
                                       color: isLucky ? "#4ade80" : isPenalty ? "#ff5252" : "#ffd700",
                                       fontWeight: "800"
                                     }}>
-                                      {isLucky ? "🍀 БЕЗ ШТРАФА" : isPenalty ? `⚠️ x${darkMultiplier}` : `БОНУС x${darkMultiplier}`}
+                                      {isLucky ? "БЕЗ ШТРАФА" : isPenalty ? `x${darkMultiplier}` : `БОНУС x${darkMultiplier}`}
                                     </span>
                                   )
                                 });
@@ -4712,8 +4802,8 @@ export default function Home() {
                                 <div style={{ fontSize: "0.75rem", color: "#ffd700", fontWeight: "800", textTransform: "uppercase", letterSpacing: "1px" }}>
                                   FANTASY LEAGUE • ПРАВИЛА УСИЛЕНИЙ
                                 </div>
-                                <h3 style={{ fontSize: "1.4rem", fontWeight: "900", color: "#fff", margin: "0.2rem 0 0 0" }}>
-                                  🎲 Каталог баффов карточек
+                                <h3 style={{ fontSize: "1.4rem", fontWeight: "900", color: "#fff", margin: "0.2rem 0 0 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                                  Каталог баффов карточек
                                 </h3>
                               </div>
                               <button
@@ -4743,48 +4833,126 @@ export default function Home() {
 
                             <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
                               {[
-                                { icon: "🎯", name: "Хедшот-Машина", range: "+10% ... +25%", desc: "Буст к меткости и очкам за фраги в голову." },
-                                { icon: "🌊", name: "В потоке", range: "+8% ... +20%", desc: "Боевой кураж, высокий темп и стабильный набор очков в каждом матче." },
-                                { icon: "⚡", name: "Клатчер", range: "+12% ... +26%", desc: "Повышенные иксы и импакт за выигранные клатчи и ключевые моменты." },
-                                { icon: "💣", name: "Тактик Раскидок", range: "+8% ... +20%", desc: "Командная утилити-польза, флешки и ассисты." },
-                                { icon: "🎲", name: "Джокер (Крит)", range: "+15% ... +30%", desc: "Редкий максимальный множитель очков." },
-                                { icon: "🧛", name: "Вампир", range: "×1.2 Кража", desc: "Забирает 15% очков у соседней карты (или по 10% с обеих, если в центре) и переводит себе с коэффициентом ×1.2." },
-                                { icon: "🍀", name: "Неудачник?", range: "Снятие штрафа", desc: "Полностью снимает штраф за оверскилл (Саппорт: -50% аннулируется; Лошадка: множитель восстанавливается до 1.00)." }
-                              ].map(b => (
-                                <div
-                                  key={b.name}
-                                  style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "space-between",
-                                    gap: "1rem",
-                                    background: "rgba(255,255,255,0.03)",
-                                    border: "1px solid rgba(255,255,255,0.06)",
-                                    borderRadius: "14px",
-                                    padding: "0.85rem 1.1rem"
-                                  }}
-                                >
-                                  <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
-                                    <span style={{ fontSize: "1.6rem" }}>{b.icon}</span>
-                                    <div>
-                                      <div style={{ fontSize: "0.95rem", fontWeight: "800", color: "#fff" }}>{b.name}</div>
-                                      <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", lineHeight: "1.3" }}>{b.desc}</div>
+                                { id: "headshot", name: "Хедшот-Машина", range: "+10% ... +25%", desc: "Буст к меткости и очкам за фраги в голову." },
+                                { id: "flow", name: "В потоке", range: "+8% ... +20%", desc: "Боевой кураж, высокий темп и стабильный набор очков в каждом матче." },
+                                { id: "clutcher", name: "Клатчер", range: "+12% ... +26%", desc: "Повышенные иксы и импакт за выигранные клатчи и ключевые моменты." },
+                                { id: "tactician", name: "Тактик Раскидок", range: "+8% ... +20%", desc: "Командная утилити-польза, флешки и ассисты." },
+                                { id: "joker", name: "Джокер (Крит)", range: "+15% ... +30%", desc: "Редкий максимальный множитель очков." },
+                                { id: "vampire", name: "Вампир", range: "×1.2 Кража", desc: "Забирает 15% очков у соседней карты (или по 10% с обеих, если в центре) и переводит себе с коэффициентом ×1.2." },
+                                { id: "lucky_loser", name: "Неудачник?", range: "Снятие штрафа", desc: "Полностью снимает штраф за оверскилл (Саппорт: -50% аннулируется; Лошадка: множитель восстанавливается до 1.00)." }
+                              ].map(b => {
+                                const renderModalSvg = (buffId: string) => {
+                                  switch (buffId) {
+                                    case "headshot":
+                                      return (
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffd700" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                          <circle cx="12" cy="12" r="9" />
+                                          <line x1="12" y1="3" x2="12" y2="7" />
+                                          <line x1="12" y1="17" x2="12" y2="21" />
+                                          <line x1="3" y1="12" x2="7" y2="12" />
+                                          <line x1="17" y1="12" x2="21" y2="12" />
+                                          <circle cx="12" cy="12" r="2.5" fill="#ffd700" />
+                                        </svg>
+                                      );
+                                    case "flow":
+                                      return (
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                          <path d="M2 12c2.5-3 5.5-3 8 0s5.5 3 8 0 3-1.5 4-2" />
+                                          <path d="M2 6c2.5-3 5.5-3 8 0s5.5 3 8 0 3-1.5 4-2" opacity="0.6" />
+                                          <path d="M2 18c2.5-3 5.5-3 8 0s5.5 3 8 0 3-1.5 4-2" opacity="0.6" />
+                                        </svg>
+                                      );
+                                    case "clutcher":
+                                      return (
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="#fbbf24" fillOpacity="0.2" stroke="#fbbf24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                                        </svg>
+                                      );
+                                    case "tactician":
+                                      return (
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                          <circle cx="11" cy="13" r="7.5" />
+                                          <path d="M14.5 5.5 17.5 2.5" />
+                                          <path d="M16 2.5 19 5.5" />
+                                          <circle cx="11" cy="13" r="2.5" fill="#f97316" fillOpacity="0.4" />
+                                        </svg>
+                                      );
+                                    case "joker":
+                                      return (
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="#c084fc" fillOpacity="0.25" stroke="#c084fc" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                        </svg>
+                                      );
+                                    case "vampire":
+                                      return (
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                          <path d="M12 2a9 9 0 0 0-9 9c0 4.5 3 8 7 9.5v-3.5h-2v-3h2V11a3 3 0 0 1 3-3h3v3h-2a1 1 0 0 0-1 1v2h3l-.5 3h-2.5v3.5c4-1.5 7-5 7-9.5a9 9 0 0 0-9-9z" />
+                                          <path d="m8 13 1.5 3.5" strokeWidth="2.2" />
+                                          <path d="m16 13-1.5 3.5" strokeWidth="2.2" />
+                                        </svg>
+                                      );
+                                    case "lucky_loser":
+                                      return (
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                          <path d="M12 2a3.5 3.5 0 0 0-3.5 3.5c0 1.5.8 2.8 2 3.5-1.2.7-2 2-2 3.5a3.5 3.5 0 0 0 7 0c0-1.5-.8-2.8-2-3.5 1.2-.7 2-2 2-3.5A3.5 3.5 0 0 0 12 2z" />
+                                          <path d="M2.5 12a3.5 3.5 0 0 0 3.5 3.5c1.5 0 2.8-.8 3.5-2-.7-1.2-.7-2.8 0-4-.7-1.2-2-2-3.5-2a3.5 3.5 0 0 0-3.5 4.5z" />
+                                          <path d="M21.5 12a3.5 3.5 0 0 0-3.5-4.5c-1.5 0-2.8.8-3.5 2 .7 1.2 2 2 3.5 2a3.5 3.5 0 0 0 3.5-3.5z" />
+                                          <path d="M12 16v6" />
+                                        </svg>
+                                      );
+                                    default:
+                                      return null;
+                                  }
+                                };
+
+                                return (
+                                  <div
+                                    key={b.name}
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "space-between",
+                                      gap: "1rem",
+                                      background: "rgba(255,255,255,0.03)",
+                                      border: "1px solid rgba(255,255,255,0.06)",
+                                      borderRadius: "14px",
+                                      padding: "0.85rem 1.1rem"
+                                    }}
+                                  >
+                                    <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
+                                      <div style={{
+                                        width: "38px",
+                                        height: "38px",
+                                        borderRadius: "10px",
+                                        background: "rgba(255,255,255,0.04)",
+                                        border: "1px solid rgba(255,255,255,0.08)",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        flexShrink: 0
+                                      }}>
+                                        {renderModalSvg(b.id)}
+                                      </div>
+                                      <div>
+                                        <div style={{ fontSize: "0.95rem", fontWeight: "800", color: "#fff" }}>{b.name}</div>
+                                        <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", lineHeight: "1.3" }}>{b.desc}</div>
+                                      </div>
                                     </div>
+                                    <span style={{
+                                      fontSize: "0.78rem",
+                                      fontWeight: "900",
+                                      color: "#ffd700",
+                                      background: "rgba(255, 215, 0, 0.12)",
+                                      border: "1px solid rgba(255, 215, 0, 0.3)",
+                                      padding: "0.3rem 0.65rem",
+                                      borderRadius: "8px",
+                                      whiteSpace: "nowrap"
+                                    }}>
+                                      {b.range}
+                                    </span>
                                   </div>
-                                  <span style={{
-                                    fontSize: "0.78rem",
-                                    fontWeight: "900",
-                                    color: "#ffd700",
-                                    background: "rgba(255, 215, 0, 0.12)",
-                                    border: "1px solid rgba(255, 215, 0, 0.3)",
-                                    padding: "0.3rem 0.65rem",
-                                    borderRadius: "8px",
-                                    whiteSpace: "nowrap"
-                                  }}>
-                                    {b.range}
-                                  </span>
-                                </div>
-                              ))}
+                                );
+                              })}
                             </div>
                           </div>
                         </div>
