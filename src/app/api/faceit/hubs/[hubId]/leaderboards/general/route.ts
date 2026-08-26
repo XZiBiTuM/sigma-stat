@@ -101,9 +101,36 @@ export async function GET(
       }
     }
 
+    // 0. Fetch active hub members to ensure kicked/removed members are filtered out
+    let activeMemberIds = new Set<string>();
+    let activeMemberNicks = new Set<string>();
+    try {
+      const membersData = await faceitFetch(`/hubs/${hubId}/members`, { limit: 100 }).catch(() => null);
+      if (membersData && Array.isArray(membersData.items)) {
+        membersData.items.forEach((m: any) => {
+          const pid = (m.user_id || m.player_id || m.id || "").toLowerCase();
+          const nick = (m.nickname || "").toLowerCase();
+          if (pid) activeMemberIds.add(pid);
+          if (nick) activeMemberNicks.add(nick);
+        });
+      }
+    } catch (e) {
+      console.warn("Failed to fetch active hub members for filtering:", e);
+    }
+
     // Attach computed stats to leaderboard items
     if (data && Array.isArray(data.items)) {
-      data.items.forEach((item: any) => {
+      if (activeMemberIds.size > 0 || activeMemberNicks.size > 0) {
+        data.items = data.items.filter((item: any) => {
+          const pInfo = item.player || item.user || {};
+          const pid = (pInfo.player_id || pInfo.user_id || pInfo.id || item.player_id || "").toLowerCase();
+          const nick = (pInfo.nickname || item.nickname || "").toLowerCase();
+          return (pid && activeMemberIds.has(pid)) || (nick && activeMemberNicks.has(nick));
+        });
+      }
+
+      data.items.forEach((item: any, idx: number) => {
+        item.position = idx + 1;
         const pInfo = item.player || item.user || {};
         const pid = (pInfo.player_id || pInfo.user_id || pInfo.id || item.player_id || "").toLowerCase();
         const nick = (pInfo.nickname || item.nickname || "").toLowerCase();
