@@ -32,7 +32,7 @@ export const FANTASY_BUFFS = [
   { id: "flow", name: "В потоке", icon: "🌊", min: 8, max: 20, desc: "Дает стабильную прибавку от +8% до +20% ко всем очкам карточки за турнир" },
   { id: "clutcher", name: "Клатчер", icon: "⚡", min: 12, max: 26, desc: "Увеличивает очки карточки на +12% ... +26% за взятые клатчи и победы" },
   { id: "tactician", name: "Тактик Раскидок", icon: "💣", min: 8, max: 20, desc: "Прибавляет от +8% до +20% к очкам за ассисты, флешки и урон от гранат" },
-  { id: "joker", name: "Джокер (Крит)", icon: "🎲", min: 15, max: 30, desc: "Джекпот-бафф: дает самый высокий бонус в игре (до +30% к очкам)" },
+  { id: "joker", name: "Джокер (Крит)", icon: "🎲", min: 15, max: 30, desc: "Джекпот-усиление: дает самый высокий бонус в игре (до +30% к очкам)" },
   { id: "vampire", name: "Вампир", icon: "🧛", min: 0, max: 0, desc: "Забирает 15% очков у соседней карты (или по 10% с обеих, если по центру) и отдает этой карточке с бонусом +20%" },
   { id: "lucky_loser", name: "Неудачник?", icon: "🍀", min: 0, max: 0, desc: "Полностью отменяет любые штрафы за высокий скилл (Саппорт получает 100% очков, Лошадка не штрафуется)" }
 ];
@@ -167,6 +167,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Roll unique card buffs on save
+    // Roll unique card усиления on save
     const sniperBuff = getRandomBuff();
     const supportBuff = getRandomBuff();
     const darkHorseBuff = getRandomBuff();
@@ -174,7 +175,7 @@ export async function POST(request: NextRequest) {
     const allPicks = await getAllPicks();
     if (allPicks[userId]) {
       return NextResponse.json({
-        error: "Состав уже зафиксирован и не может быть изменен! Менять игроков после получения баффов запрещено правилами турнира."
+        error: "Состав уже зафиксирован и не может быть изменен! Менять игроков после получения усилений запрещено правилами турнира."
       }, { status: 403 });
     }
 
@@ -212,7 +213,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       pick: newPick,
-      message: "Ваш состав на Fantasy League успешно сохранен и карточки получили случайные баффы!"
+      message: "Ваш состав на Fantasy League успешно сохранен и карточки получили случайные усиления!"
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message || "Ошибка сохранения состава" }, { status: 500 });

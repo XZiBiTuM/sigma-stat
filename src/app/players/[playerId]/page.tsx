@@ -1810,7 +1810,7 @@ export default function PlayerProfilePage() {
                   </div>
 
                   <p style={{ fontSize: "0.72rem", color: "var(--text-secondary)", margin: 0, lineHeight: "1.4" }}>
-                    В турнире пики получают очки по выбранной роли (Стар-плеер / Саппорт / Лошадка) с учетом баффов и штрафов за оверскилл. Индивидуальный рекорд в профиле и достижении — универсальный боевой счет за матч: <span style={{ color: "#fff", fontWeight: "700" }}>(Стар-плеер + Саппорт) / 2 + Победа</span>.
+                    В турнире пики получают очки по выбранной роли (Стар-плеер / Саппорт / Лошадка) с учетом усилений и штрафов за оверскилл. Индивидуальный рекорд в профиле и достижении — универсальный боевой счет за матч: <span style={{ color: "#fff", fontWeight: "700" }}>(Стар-плеер + Саппорт) / 2 + Победа</span>.
                   </p>
 
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "0.5rem", fontSize: "0.72rem" }}>

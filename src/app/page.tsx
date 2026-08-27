@@ -3872,7 +3872,7 @@ export default function Home() {
                     });
                     const d = await res.json();
                     if (res.ok) {
-                      setFantasySaveMsg("Ваш состав на Fantasy League успешно сохранен и получил уникальные баффы!");
+                      setFantasySaveMsg("Ваш состав на Fantasy League успешно сохранен и получил уникальные усиления!");
                       setUserFantasyPick(d.pick);
                       if (!currentUser) {
                         try {
@@ -3988,7 +3988,7 @@ export default function Home() {
                               </h3>
                               <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", margin: "0.3rem 0 0 0" }}>
                                 {isPickLocked 
-                                  ? "Твой боевой состав и активные баффы на текущий турнир."
+                                  ? "Твой боевой состав и активные усиления на текущий турнир."
                                   : "Выбери по одному игроку на каждую роль. Внимание: в Саппортах и Лошадке действует штраф за оверскилл!"}
                               </p>
                             </div>
@@ -4652,7 +4652,7 @@ export default function Home() {
                                 ) : (
                                   <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem" }}>
                                     {renderBuffSvgIcon("dice", 15, "var(--text-muted)")}
-                                    <span>Бафф ролится при сохранении</span>
+                                    <span>Усиление выпадает при сохранении</span>
                                   </div>
                                 )}
                               </div>
@@ -4676,7 +4676,7 @@ export default function Home() {
                                   ULTIMATE TEAM • CYBER CARDS
                                 </div>
                                 <h4 style={{ fontSize: "1.3rem", fontWeight: "900", color: "#fff", margin: "0.2rem 0 0 0" }}>
-                                  Твои боевые карточки и активные баффы
+                                  Твои боевые карточки и активные усиления
                                 </h4>
                               </div>
 
@@ -4703,12 +4703,12 @@ export default function Home() {
                                   onMouseLeave={e => e.currentTarget.style.background = "rgba(255, 215, 0, 0.12)"}
                                 >
                                   <span style={{ background: "#ffd700", color: "#000", width: "18px", height: "18px", borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: "0.75rem", fontWeight: "900" }}>!</span>
-                                  Каталог баффов
+                                  Каталог усилений
                                 </button>
 
                                 <span className="fantasy-buffs-hint" style={{ fontSize: "0.78rem", color: "var(--text-muted)", background: "rgba(255,255,255,0.05)", padding: "0.55rem 0.8rem", borderRadius: "10px", border: "1px solid var(--border-light)", display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
                                   {renderBuffSvgIcon("dice", 15, "var(--text-muted)")}
-                                  Баффы роллятся при сохранении
+                                  Усиления выпадают при сохранении
                                 </span>
                               </div>
                             </div>
@@ -4830,7 +4830,7 @@ export default function Home() {
                                   FANTASY LEAGUE • ПРАВИЛА УСИЛЕНИЙ
                                 </div>
                                 <h3 style={{ fontSize: "1.4rem", fontWeight: "900", color: "#fff", margin: "0.2rem 0 0 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                                  Каталог баффов карточек
+                                  Каталог усилений карточек
                                 </h3>
                               </div>
                               <button
@@ -4855,7 +4855,7 @@ export default function Home() {
                             </div>
 
                             <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", lineHeight: "1.5", marginBottom: "1.5rem" }}>
-                              При сохранении состава каждой карточке в твоей команде выпадает случайный бафф из каталога ниже со случайным процентом или эффектом:
+                              При сохранении состава каждой карточке в твоей команде выпадает случайное усиление из каталога ниже со случайным процентом или эффектом:
                             </p>
 
                             <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
@@ -4864,7 +4864,7 @@ export default function Home() {
                                 { id: "flow", name: "В потоке", range: "+8% ... +20%", desc: "Дает стабильную прибавку от +8% до +20% ко всем очкам карточки за турнир." },
                                 { id: "clutcher", name: "Клатчер", range: "+12% ... +26%", desc: "Увеличивает очки карточки на +12% ... +26% за взятые клатчи и победы в раундах." },
                                 { id: "tactician", name: "Тактик Раскидок", range: "+8% ... +20%", desc: "Прибавляет от +8% до +20% к очкам за ассисты, флешки и урон от гранат." },
-                                { id: "joker", name: "Джокер (Крит)", range: "+15% ... +30%", desc: "Джекпот-бафф: дает самый высокий бонус в игре (до +30% к очкам), если повезет с роллом." },
+                                { id: "joker", name: "Джокер (Крит)", range: "+15% ... +30%", desc: "Джекпот-усиление: дает самый высокий бонус в игре (до +30% к очкам), если повезет с выпадением." },
                                 { id: "vampire", name: "Вампир", range: "Кража очков ×1.2", desc: "Забирает 15% очков у соседней карты (или по 10% с обеих, если по центру) и отдает этой карточке с бонусом +20%." },
                                 { id: "lucky_loser", name: "Неудачник?", range: "Без штрафов", desc: "Полностью отменяет штрафы за высокий скилл: Саппорт получает 100% очков, а Лошадка не штрафуется." }
                               ].map(b => {
@@ -5090,7 +5090,7 @@ export default function Home() {
                               <span style={{ fontSize: "1.15rem", lineHeight: 1 }}>⚠️</span>
                               <div style={{ fontSize: "0.82rem", lineHeight: "1.4" }}>
                                 <strong style={{ color: "#ffd54f" }}>Внимание: </strong>
-                                После нажатия кнопки «Сохранить состав» карточки получат случайные баффы, а состав будет <strong>зафиксирован на весь турнир</strong>. Заменить игроков или перероллить баффы будет <strong>нельзя</strong> (риск за оверскилл принимается навсегда)!
+                                После нажатия кнопки «Сохранить состав» карточки получат случайные усиления, а состав будет <strong>зафиксирован на весь турнир</strong>. Заменить игроков или изменить усиления будет <strong>нельзя</strong> (риск за оверскилл принимается навсегда)!
                               </div>
                             </div>
 
@@ -5112,7 +5112,7 @@ export default function Home() {
                                 textAlign: "center"
                               }}
                             >
-                              {isSavingFantasy ? "Сохранение и ролл баффов..." : isDraftOpen ? "Сохранить состав на турнир" : "Сбор составов закрыт"}
+                              {isSavingFantasy ? "Сохранение и выбор усилений..." : isDraftOpen ? "Сохранить состав на турнир" : "Сбор составов закрыт"}
                             </button>
                           </>
                         ) : (
