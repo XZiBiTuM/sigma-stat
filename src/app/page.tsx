@@ -4034,22 +4034,22 @@ export default function Home() {
                             
                             {/* SLOT 1: STAR PLAYER */}
                             <div style={{
-                              background: "rgba(255, 73, 73, 0.04)",
-                              border: draftSniper ? "1.5px solid #ff5252" : "1px solid rgba(255, 73, 73, 0.3)",
+                              background: "rgba(157, 59, 245, 0.04)",
+                              border: draftSniper ? "1.5px solid #9d3bf5" : "1px solid rgba(157, 59, 245, 0.3)",
                               borderRadius: "18px",
                               padding: "1.5rem",
                               display: "flex",
                               flexDirection: "column",
                               gap: "1rem",
-                              boxShadow: draftSniper ? "0 0 25px rgba(255, 82, 82, 0.15)" : "none",
+                              boxShadow: draftSniper ? "0 0 25px rgba(157, 59, 245, 0.15)" : "none",
                               transition: "all 0.2s ease"
                             }}>
                               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                                 <div>
-                                  <div style={{ fontSize: "1.05rem", fontWeight: "800", color: "#ff7b7b" }}>Стар-плеер</div>
+                                  <div style={{ fontSize: "1.05rem", fontWeight: "800", color: "var(--accent-purple)" }}>Стар-плеер</div>
                                   <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Фраги (+2.5), Entry (+2.0), HS (+1.0)</div>
                                 </div>
-                                <span style={{ fontSize: "0.72rem", fontWeight: "800", padding: "0.2rem 0.5rem", borderRadius: "6px", background: "rgba(255, 82, 82, 0.15)", color: "#ff8a80" }}>
+                                <span style={{ fontSize: "0.72rem", fontWeight: "800", padding: "0.2rem 0.5rem", borderRadius: "6px", background: "rgba(157, 59, 245, 0.15)", color: "#c084fc" }}>
                                   СЛОТ 1
                                 </span>
                               </div>
@@ -4069,7 +4069,7 @@ export default function Home() {
                                     padding: "0.75rem 1rem",
                                     borderRadius: "12px",
                                     background: "#06050c",
-                                    border: isPickLocked ? "1px solid rgba(255, 82, 82, 0.2)" : "1px solid rgba(255, 82, 82, 0.4)",
+                                    border: isPickLocked ? "1px solid rgba(157, 59, 245, 0.2)" : "1px solid rgba(157, 59, 245, 0.4)",
                                     color: "#fff",
                                     fontSize: "0.9rem",
                                     fontWeight: "600",
@@ -4738,7 +4738,7 @@ export default function Home() {
                                 skill: sniperSkill,
                                 buff: userFantasyPick?.sniper?.buff,
                                 statusTag: (
-                                  <span style={{ fontSize: "0.68rem", padding: "0.15rem 0.45rem", borderRadius: "6px", background: "rgba(255, 82, 82, 0.2)", color: "#ff8a80", fontWeight: "800" }}>
+                                  <span style={{ fontSize: "0.68rem", padding: "0.15rem 0.45rem", borderRadius: "6px", background: "rgba(157, 59, 245, 0.2)", color: "#c084fc", fontWeight: "800" }}>
                                     СЛОТ 1
                                   </span>
                                 )
