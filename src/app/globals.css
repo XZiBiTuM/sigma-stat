@@ -643,14 +643,52 @@ html, body {
     width: 95vw;
     max-height: 90vh;
     border-radius: 18px;
-    margin: auto;
+  /* Hub Profile Banner & Widgets on Mobile */
+  .hub-profile-banner {
+    display: flex;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 1.25rem !important;
+    width: 100% !important;
   }
 
-  .modal-close-btn {
-    top: 1rem;
-    right: 1rem;
-    width: 36px;
-    height: 36px;
+  .hub-logo-box {
+    margin: 0 auto !important;
+  }
+
+  .hub-title-box {
+    text-align: center !important;
+    width: 100% !important;
+    min-width: unset !important;
+  }
+
+  .hub-title-box h2 {
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .hub-title-box p {
+    text-align: center !important;
+    margin: 0.35rem auto 0 auto !important;
+  }
+
+  .hub-banner-widgets {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.85rem !important;
+  }
+
+  .hub-banner-widget-item {
+    width: 100% !important;
+    min-width: 100% !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
   }
 }
 
