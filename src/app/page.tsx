@@ -4444,6 +4444,14 @@ export default function Home() {
                           const t = getCardTier(skill);
                           const isVampire = buff?.id === "vampire";
                           const isLucky = buff?.id === "lucky_loser";
+                          // Look up full stats from allPlayersList (needed when loaded from saved DB pick)
+                          const enrichedPlayer = allPlayersList.find(p =>
+                            (player?.playerId && p.playerId === player.playerId) ||
+                            (player?.nickname && p.nickname?.toLowerCase() === player.nickname?.toLowerCase())
+                          ) || player;
+                          const cardKd = enrichedPlayer?.kd;
+                          const cardHsRate = enrichedPlayer?.hsRate;
+                          const cardWinRate = enrichedPlayer?.winRate;
 
                           return (
                             <div style={{
@@ -4569,15 +4577,15 @@ export default function Home() {
                               }}>
                                 <div>
                                   <div style={{ fontSize: "0.62rem", color: "var(--text-muted)", fontWeight: "700", textTransform: "uppercase" }}>К/Д</div>
-                                  <div style={{ fontSize: "0.92rem", fontWeight: "900", color: "#fff" }}>{player.kd || "1.10"}</div>
+                                  <div style={{ fontSize: "0.92rem", fontWeight: "900", color: "#fff" }}>{cardKd || "—"}</div>
                                 </div>
                                 <div style={{ borderLeft: "1px solid rgba(255,255,255,0.08)", borderRight: "1px solid rgba(255,255,255,0.08)" }}>
                                   <div style={{ fontSize: "0.62rem", color: "var(--text-muted)", fontWeight: "700", textTransform: "uppercase" }}>HS%</div>
-                                  <div style={{ fontSize: "0.92rem", fontWeight: "900", color: "#fff" }}>{player.hsRate || "48%"}</div>
+                                  <div style={{ fontSize: "0.92rem", fontWeight: "900", color: "#fff" }}>{cardHsRate || "—"}</div>
                                 </div>
                                 <div>
                                   <div style={{ fontSize: "0.62rem", color: "var(--text-muted)", fontWeight: "700", textTransform: "uppercase" }}>WIN%</div>
-                                  <div style={{ fontSize: "0.92rem", fontWeight: "900", color: "#fff" }}>{player.winRate || "52%"}</div>
+                                  <div style={{ fontSize: "0.92rem", fontWeight: "900", color: "#fff" }}>{cardWinRate || "—"}</div>
                                 </div>
                               </div>
 
