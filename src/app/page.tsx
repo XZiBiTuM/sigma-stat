@@ -3091,32 +3091,34 @@ export default function Home() {
                 <div className="glass-card animate-fade-in" style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
                   
                   {/* Filters Header */}
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
-                    <div style={{ display: "flex", gap: "0.5rem" }}>
-                      <button 
-                        className={`btn ${filterMatchStatus === 'all' ? 'btn-primary' : 'btn-secondary'}`}
-                        style={{ padding: "0.5rem 1rem", fontSize: "0.8rem", borderRadius: "8px" }}
-                        onClick={() => setFilterMatchStatus('all')}
-                      >
-                        Все матчи
-                      </button>
-                      <button 
-                        className={`btn ${filterMatchStatus === 'ongoing' ? 'btn-primary' : 'btn-secondary'}`}
-                        style={{ padding: "0.5rem 1rem", fontSize: "0.8rem", borderRadius: "8px", display: "inline-flex", alignItems: "center", gap: "0.4rem" }}
-                        onClick={() => setFilterMatchStatus('ongoing')}
-                      >
-                        <span className="live-dot" style={{ display: "inline-block", width: "8px", height: "8px", background: "var(--danger)", borderRadius: "50%" }}></span>
-                        В процессе
-                      </button>
-                      <button 
-                        className={`btn ${filterMatchStatus === 'past' ? 'btn-primary' : 'btn-secondary'}`}
-                        style={{ padding: "0.5rem 1rem", fontSize: "0.8rem", borderRadius: "8px" }}
-                        onClick={() => setFilterMatchStatus('past')}
-                      >
-                        Завершенные
-                      </button>
-                    </div>
-                    <button className="btn btn-secondary" style={{ padding: "0.5rem 1rem", fontSize: "0.8rem", borderRadius: "8px" }} onClick={fetchMatches}>
+                  <div className="matches-filters-container" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.5rem", flexWrap: "wrap", width: "100%" }}>
+                    <button 
+                      className={`btn ${filterMatchStatus === 'all' ? 'btn-primary' : 'btn-secondary'} matches-filter-btn`}
+                      style={{ padding: "0.5rem 1rem", fontSize: "0.8rem", borderRadius: "8px" }}
+                      onClick={() => setFilterMatchStatus('all')}
+                    >
+                      Все матчи
+                    </button>
+                    <button 
+                      className={`btn ${filterMatchStatus === 'ongoing' ? 'btn-primary' : 'btn-secondary'} matches-filter-btn`}
+                      style={{ padding: "0.5rem 1rem", fontSize: "0.8rem", borderRadius: "8px", display: "inline-flex", alignItems: "center", gap: "0.4rem" }}
+                      onClick={() => setFilterMatchStatus('ongoing')}
+                    >
+                      <span className="live-dot" style={{ display: "inline-block", width: "8px", height: "8px", background: "var(--danger)", borderRadius: "50%" }}></span>
+                      В процессе
+                    </button>
+                    <button 
+                      className={`btn ${filterMatchStatus === 'past' ? 'btn-primary' : 'btn-secondary'} matches-filter-btn`}
+                      style={{ padding: "0.5rem 1rem", fontSize: "0.8rem", borderRadius: "8px" }}
+                      onClick={() => setFilterMatchStatus('past')}
+                    >
+                      Завершенные
+                    </button>
+                    <button 
+                      className="btn btn-secondary matches-filter-btn" 
+                      style={{ padding: "0.5rem 1rem", fontSize: "0.8rem", borderRadius: "8px" }} 
+                      onClick={fetchMatches}
+                    >
                       Обновить
                     </button>
                   </div>
