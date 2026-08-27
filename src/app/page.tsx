@@ -7369,12 +7369,12 @@ export default function Home() {
                   </div>
                 )}
 
-                <div style={{ marginTop: "0.5rem", display: "flex", gap: "0.5rem" }}>
+                <div className="player-modal-footer-actions" style={{ marginTop: "0.5rem", display: "flex", gap: "0.5rem" }}>
                   <Link
                     href={`/players/${playerProfile.nickname}`}
                     style={{
                       flex: 1,
-                      padding: "0.55rem 1rem",
+                      padding: "0.65rem 1rem",
                       fontSize: "0.85rem",
                       display: "flex",
                       alignItems: "center",
@@ -7395,9 +7395,9 @@ export default function Home() {
                     target="_blank"
                     rel="noreferrer"
                     className="btn btn-primary"
-                    style={{ flex: 1, padding: "0.55rem 1rem", fontSize: "0.85rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.35rem", margin: 0 }}
+                    style={{ flex: 1, padding: "0.65rem 1rem", fontSize: "0.85rem", display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center", gap: "0.35rem", margin: 0 }}
                   >
-                    <span>Профиль FACEIT ↗</span>
+                    <span>FACEIT Профиль ↗</span>
                   </a>
                 </div>
 

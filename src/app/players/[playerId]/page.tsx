@@ -779,7 +779,7 @@ export default function PlayerProfilePage() {
         <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
           
           {/* Top Info Header */}
-          <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "1.25rem", position: "relative" }}>
+          <div className="glass-card full-player-header">
             {/* Top decorative line */}
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px", background: "linear-gradient(90deg, var(--accent-purple), var(--accent-cyan))" }} />
             
@@ -815,7 +815,7 @@ export default function PlayerProfilePage() {
             })()}
 
             {/* Name and Links */}
-            <div style={{ flex: "1 1 240px", minWidth: 0 }}>
+            <div className="full-player-header-info">
               <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
                 <h1 style={{ fontSize: "clamp(1.6rem, 5vw, 2.2rem)", fontWeight: "900", color: "#fff", letterSpacing: "-0.03em", margin: 0, wordBreak: "break-word" }}>{profile.nickname}</h1>
                 {Boolean(
@@ -896,7 +896,7 @@ export default function PlayerProfilePage() {
 
             {/* Level and Elo */}
             {cs2Info && (
-              <div style={{ display: "flex", alignItems: "center", gap: "1rem", background: "rgba(0,0,0,0.25)", border: "1px solid var(--border-light)", padding: "0.6rem 1.2rem", borderRadius: "12px", flexShrink: 0 }}>
+              <div className="full-player-header-elo">
                 <div style={{ textAlign: "right" }}>
                   <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", display: "block", textTransform: "uppercase", fontWeight: "700" }}>Faceit ELO</span>
                   <span style={{ fontWeight: "800", color: "#fff", fontSize: "1.2rem" }}>{cs2Info.faceit_elo}</span>
@@ -934,18 +934,8 @@ export default function PlayerProfilePage() {
             const prevScore = wRecord?.previousScore;
 
             return (
-              <div className="glass-card" style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "1.1rem 1.5rem",
-                borderRadius: "16px",
-                background: "rgba(255, 255, 255, 0.02)",
-                border: "1px solid var(--border-light)",
-                gap: "1rem",
-                flexWrap: "wrap"
-              }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
+              <div className="glass-card full-player-skill-card">
+                <div className="full-player-skill-left">
                   <span 
                     style={{
                       fontSize: "1.4rem",
@@ -955,7 +945,8 @@ export default function PlayerProfilePage() {
                       color: sk.color,
                       padding: "0.45rem 1rem",
                       borderRadius: "12px",
-                      boxShadow: sk.glow || "none"
+                      boxShadow: sk.glow || "none",
+                      flexShrink: 0
                     }}
                   >
                     {sk.score} / 100
@@ -971,17 +962,9 @@ export default function PlayerProfilePage() {
                 </div>
 
                 {/* Weekly Skill Calibration Badge */}
-                <div style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.85rem",
-                  background: "rgba(0,0,0,0.25)",
-                  border: "1px solid var(--border-light)",
-                  padding: "0.5rem 1rem",
-                  borderRadius: "10px"
-                }}>
-                  <div style={{ textAlign: "right" }}>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "0.4rem" }}>
+                <div className="full-player-weekly-badge">
+                  <div className="full-player-weekly-content">
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", flexWrap: "wrap" }}>
                       <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "700" }}>
                         Еженедельный пересчет
                       </span>

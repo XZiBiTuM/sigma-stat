@@ -853,6 +853,73 @@ html, body {
   gap: 0.75rem;
 }
 
+.player-modal-footer-actions {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+/* Full Player Profile Page (Base PC) */
+.full-player-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  border-radius: 16px;
+  border: 1px solid var(--border-light);
+  position: relative;
+}
+
+.full-player-header-info {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
+.full-player-header-elo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--border-light);
+  padding: 0.6rem 1.2rem;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.full-player-skill-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.1rem 1.5rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-light);
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.full-player-skill-left {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.full-player-weekly-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--border-light);
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+}
+
+.full-player-weekly-content {
+  text-align: right;
+}
+
 /* ========================================================= */
 /* MOBILE & TABLET STYLES (< 768px) */
 /* ========================================================= */
@@ -1325,6 +1392,86 @@ html, body {
   .player-modal-tactical-grid {
     grid-template-columns: 1fr !important;
     gap: 0.65rem !important;
+  }
+
+  .player-modal-footer-actions {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+  }
+
+  .player-modal-footer-actions a,
+  .player-modal-footer-actions .btn {
+    width: 100% !important;
+    justify-content: center !important;
+    text-align: center !important;
+    display: flex !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
+    padding: 0.65rem 1rem !important;
+  }
+
+  /* Full Player Profile Page Mobile Styles */
+  .full-player-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1.15rem !important;
+    padding: 1.25rem 1rem !important;
+  }
+
+  .full-player-header-info {
+    width: 100% !important;
+  }
+
+  .full-player-header-elo {
+    width: 100% !important;
+    min-width: 100% !important;
+    justify-content: space-around !important;
+    box-sizing: border-box !important;
+    padding: 0.75rem 1.25rem !important;
+    border-radius: 12px !important;
+  }
+
+  .full-player-skill-card {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 1.15rem 1rem !important;
+    gap: 1rem !important;
+  }
+
+  .full-player-skill-left {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem !important;
+    width: 100% !important;
+  }
+
+  .full-player-weekly-badge {
+    width: 100% !important;
+    min-width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+    padding: 0.75rem 1rem !important;
+    margin: 0 !important;
+  }
+
+  .full-player-weekly-content {
+    text-align: center !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .full-player-weekly-content div {
+    justify-content: center !important;
+    text-align: center !important;
   }
 }
 
