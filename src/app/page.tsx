@@ -5121,43 +5121,23 @@ export default function Home() {
                         )}
 
                         {isDraftWaiting ? (
-                          /* DRAFT_WAITING: coming soon notice + catalog link */
-                          <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem", width: "100%" }}>
-                            <div style={{
-                              width: "100%",
-                              padding: "1rem 1.5rem",
-                              borderRadius: "14px",
-                              background: "rgba(157, 59, 245, 0.1)",
-                              border: "1px solid rgba(157, 59, 245, 0.35)",
-                              color: "#c084fc",
-                              fontSize: "0.92rem",
-                              fontWeight: "700",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              gap: "0.5rem",
-                              textAlign: "center"
-                            }}>
-                              🕐 Дата следующего турнира пока не назначена. Следи за обновлениями!
-                            </div>
-                            <button
-                              onClick={() => setShowBuffsModal(true)}
-                              style={{
-                                width: "100%",
-                                padding: "0.85rem 2rem",
-                                borderRadius: "14px",
-                                background: "rgba(157, 59, 245, 0.15)",
-                                border: "1px solid rgba(157, 59, 245, 0.4)",
-                                color: "#c084fc",
-                                fontSize: "0.95rem",
-                                fontWeight: "800",
-                                cursor: "pointer",
-                                transition: "all 0.2s ease",
-                                textAlign: "center"
-                              }}
-                            >
-                              📋 Каталог усилений (ознакомительный)
-                            </button>
+                          /* DRAFT_WAITING: coming soon notice */
+                          <div style={{
+                            width: "100%",
+                            padding: "1rem 1.5rem",
+                            borderRadius: "14px",
+                            background: "rgba(157, 59, 245, 0.1)",
+                            border: "1px solid rgba(157, 59, 245, 0.35)",
+                            color: "#c084fc",
+                            fontSize: "0.92rem",
+                            fontWeight: "700",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "0.5rem",
+                            textAlign: "center"
+                          }}>
+                            🕐 Дата следующего турнира пока не назначена. Следи за обновлениями!
                           </div>
                         ) : !isPickLocked ? (
                           <>
