@@ -643,41 +643,65 @@ html, body {
     width: 95vw;
     max-height: 90vh;
     border-radius: 18px;
+    margin: auto;
+  }
+
+  .modal-close-btn {
+    top: 1rem;
+    right: 1rem;
+    width: 36px;
+    height: 36px;
+  }
+
   /* Hub Profile Banner & Widgets on Mobile */
   .hub-profile-banner {
-    display: flex;
+    display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
+    justify-content: center !important;
     text-align: center !important;
-    gap: 1.25rem !important;
+    gap: 1.35rem !important;
     width: 100% !important;
   }
 
   .hub-logo-box {
     margin: 0 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 
   .hub-title-box {
     text-align: center !important;
     width: 100% !important;
     min-width: unset !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 
   .hub-title-box h2 {
     justify-content: center !important;
     text-align: center !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 
   .hub-title-box p {
     text-align: center !important;
-    margin: 0.35rem auto 0 auto !important;
+    margin: 0.4rem auto 0 auto !important;
+    width: 100% !important;
   }
 
   .hub-banner-widgets {
     width: 100% !important;
     display: flex !important;
     flex-direction: column !important;
-    gap: 0.85rem !important;
+    gap: 1rem !important;
+    margin-top: 0.25rem !important;
   }
 
   .hub-banner-widget-item {
@@ -689,6 +713,7 @@ html, body {
     align-items: center !important;
     justify-content: center !important;
     text-align: center !important;
+    margin: 0 !important;
   }
 }
 
@@ -698,7 +723,7 @@ html, body {
   }
 
   .glass-card {
-    padding: 1rem 0.8rem;
+    padding: 1.15rem 0.85rem;
     border-radius: 16px;
   }
 
