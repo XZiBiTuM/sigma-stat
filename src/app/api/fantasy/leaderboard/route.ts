@@ -57,7 +57,7 @@ export async function GET() {
     const weeklyData = await loadWeeklySkillData().catch(() => ({ players: {} }));
     const weeklyPlayers = weeklyData?.players || {};
 
-    const isLiveOrDone = tour?.status === "LIVE" || tour?.status === "COMPLETED";
+    const isLiveOrDone = tour?.status === "LIVE" || tour?.status === "COMPLETED" || tour?.status === "DRAFT_WAITING";
 
     const leaderboard = Object.values(picks).map((pick: any) => {
       const darkSkill = getPlayerSkill(pick.darkHorse, overrides, weeklyPlayers);

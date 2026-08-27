@@ -23,7 +23,7 @@ export default function AdminLoginPage() {
   // Tournament settings state
   const [tourTitle, setTourTitle] = useState("Sigma Cup: Season 3");
   const [tourDate, setTourDate] = useState("");
-  const [tourStatus, setTourStatus] = useState<"DRAFT_OPEN" | "LIVE" | "COMPLETED">("DRAFT_OPEN");
+  const [tourStatus, setTourStatus] = useState<"DRAFT_OPEN" | "LIVE" | "COMPLETED" | "DRAFT_WAITING">("DRAFT_OPEN");
   const [tourWinner, setTourWinner] = useState("");
   const [isSavingTour, setIsSavingTour] = useState(false);
   const [tourSaveMsg, setTourSaveMsg] = useState("");
@@ -425,6 +425,7 @@ export default function AdminLoginPage() {
                       <option value="DRAFT_OPEN">DRAFT OPEN (Прием прогнозов открыт)</option>
                       <option value="LIVE">LIVE (Турнир идет, пики зафиксированы)</option>
                       <option value="COMPLETED">COMPLETED (Завершен, итоги подведены)</option>
+                      <option value="DRAFT_WAITING">DRAFT WAITING (Ожидание турнира, дата неизвестна)</option>
                     </select>
                   </div>
 
