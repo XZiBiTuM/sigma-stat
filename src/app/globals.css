@@ -1444,6 +1444,7 @@ html, body {
     text-align: center !important;
     gap: 0.85rem !important;
     width: 100% !important;
+    flex: none !important;
   }
 
   .full-player-avatar {
