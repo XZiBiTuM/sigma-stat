@@ -6802,37 +6802,39 @@ export default function Home() {
               <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
                 
                 {/* Profile header */}
-                <div style={{ display: "flex", alignItems: "center", gap: "1.25rem", borderBottom: "1px solid var(--border-light)", paddingBottom: "1.5rem", paddingTop: "0.5rem", paddingRight: "2.5rem" }}>
-                  <div style={{ width: "70px", height: "70px", borderRadius: "12px", overflow: "hidden", background: "#1c1829", border: "1px solid var(--border-light)" }}>
-                    {playerProfile.avatar ? (
-                      <img src={playerProfile.avatar} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                    ) : (
-                      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.35rem", fontWeight: "700", color: "var(--text-muted)" }}>
-                        {playerProfile.nickname.substring(0, 2).toUpperCase()}
+                <div className="player-modal-header">
+                  <div className="player-modal-header-left">
+                    <div style={{ width: "70px", height: "70px", borderRadius: "12px", overflow: "hidden", background: "#1c1829", border: "1px solid var(--border-light)", flexShrink: 0 }}>
+                      {playerProfile.avatar ? (
+                        <img src={playerProfile.avatar} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      ) : (
+                        <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.35rem", fontWeight: "700", color: "var(--text-muted)" }}>
+                          {playerProfile.nickname.substring(0, 2).toUpperCase()}
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <h2 style={{ fontSize: "1.35rem", color: "#fff", display: "flex", alignItems: "center", gap: "0.5rem", wordBreak: "break-all" }}>
+                        {playerProfile.nickname}
+                      </h2>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "0.25rem", flexWrap: "wrap" }}>
+                        {playerProfile.country && (
+                          <span style={{ color: "var(--text-muted)", fontSize: "0.78rem" }}>
+                            Страна: {playerProfile.country.toUpperCase()}
+                          </span>
+                        )}
+                        {(playerProfile.steam_id_64 || playerProfile.platforms?.steam) && (
+                          <a 
+                            href={`https://steamcommunity.com/profiles/${playerProfile.steam_id_64 || playerProfile.platforms?.steam}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            style={{ color: "var(--accent-cyan)", fontSize: "0.78rem", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "0.25rem" }}
+                          >
+                            <img src="/icons/steam.png" alt="" style={{ width: "12px", height: "12px", objectFit: "contain" }} />
+                            <span>Steam Profile ↗</span>
+                          </a>
+                        )}
                       </div>
-                    )}
-                  </div>
-                  <div>
-                    <h2 style={{ fontSize: "1.35rem", color: "#fff", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                      {playerProfile.nickname}
-                    </h2>
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "0.25rem" }}>
-                      {playerProfile.country && (
-                        <span style={{ color: "var(--text-muted)", fontSize: "0.78rem" }}>
-                          Страна: {playerProfile.country.toUpperCase()}
-                        </span>
-                      )}
-                      {(playerProfile.steam_id_64 || playerProfile.platforms?.steam) && (
-                        <a 
-                          href={`https://steamcommunity.com/profiles/${playerProfile.steam_id_64 || playerProfile.platforms?.steam}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          style={{ color: "var(--accent-cyan)", fontSize: "0.78rem", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "0.25rem" }}
-                        >
-                          <img src="/icons/steam.png" alt="" style={{ width: "12px", height: "12px", objectFit: "contain" }} />
-                          <span>Steam Profile ↗</span>
-                        </a>
-                      )}
                     </div>
                   </div>
 
@@ -6842,7 +6844,7 @@ export default function Home() {
                     const gameInfo = playerProfile.games?.[gameId];
                     if (!gameInfo) return null;
                     return (
-                      <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "1rem" }}>
+                      <div className="player-modal-header-right">
                         {playerHubStats?.hltvRating !== undefined && (
                           <div style={{ textAlign: "right", paddingRight: "0.75rem", borderRight: "1px solid var(--border-light)" }}>
                             <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block" }}>HLTV 2.0</span>
@@ -6879,19 +6881,8 @@ export default function Home() {
                   const premierMatches = playerSteamStats?.premierMatches || 0;
                   const sk = getPlayerSkillInfo(playerProfile.player_id, playerProfile.nickname, eloVal, realPremier, combatStats, faceitMatches, premierMatches);
                   return (
-                    <div className="glass-card" style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      padding: "1rem 1.35rem",
-                      borderRadius: "12px",
-                      background: "rgba(255, 255, 255, 0.02)",
-                      border: "1px solid var(--border-light)",
-                      gap: "1rem",
-                      marginTop: "0.75rem",
-                      marginBottom: "0.5rem"
-                    }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                    <div className="glass-card player-modal-skill-card">
+                      <div className="player-modal-skill-info">
                         <span 
                           style={{
                             fontSize: "1.2rem",
@@ -6900,7 +6891,8 @@ export default function Home() {
                             border: `1px solid ${sk.border}`,
                             color: sk.color,
                             padding: "0.35rem 0.85rem",
-                            borderRadius: "10px"
+                            borderRadius: "10px",
+                            flexShrink: 0
                           }}
                         >
                           {sk.score} / 100
@@ -6941,14 +6933,7 @@ export default function Home() {
                 })()}
 
                 {/* Tabs Menu */}
-                <div style={{
-                  display: "flex",
-                  borderBottom: "1px solid var(--border-light)",
-                  gap: "0.5rem",
-                  paddingBottom: "2px",
-                  marginTop: "0.75rem",
-                  marginBottom: "0.75rem"
-                }}>
+                <div className="player-modal-tabs no-scrollbar touch-scroll-x">
                   {[
                     { id: "general", label: "Статистика (хаб)" },
                     { id: "tactical", label: "Статистика (все игры)" },
@@ -7012,11 +6997,7 @@ export default function Home() {
                             : `${playerHubStats?.winrate ?? playerGameStats?.lifetime["Win Rate %"] ?? 0}%`;
 
                           return (
-                            <div style={{
-                              display: "grid",
-                              gridTemplateColumns: "repeat(4, 1fr)",
-                              gap: "0.75rem"
-                            }}>
+                            <div className="player-modal-stats-grid">
                               {[
                                 { label: lbPlayed !== undefined ? "Матчей (в сезоне)" : "Всего матчей", val: matchesVal, color: "#fff" },
                                 { label: lbWinRate !== null ? "Win Rate (в сезоне)" : "Процент побед", val: winrateVal, color: "var(--success)" },
@@ -7035,7 +7016,7 @@ export default function Home() {
                         })()}
 
                         {/* Form and Streaks */}
-                        <div style={{ display: "flex", gap: "1rem" }}>
+                        <div className="player-modal-form-streaks">
                           <div style={{ flex: 1, background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "8px", padding: "0.75rem 1rem" }}>
                             <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", display: "block", marginBottom: "0.5rem" }}>Текущая форма (Последние 5 игр)</span>
                             <div style={{ display: "flex", gap: "0.5rem" }}>
@@ -7176,7 +7157,7 @@ export default function Home() {
 
                     {/* Advanced Tactical Stats (FACEIT) */}
                     {playerGameStats && (
-                      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "0.75rem" }}>
+                      <div className="player-modal-tactical-grid">
                         
                         {/* Aim & Combat */}
                         <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "8px", padding: "0.75rem 1rem" }}>

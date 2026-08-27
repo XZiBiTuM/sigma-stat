@@ -585,6 +585,278 @@ html, body {
   scroll-behavior: smooth;
 }
 
+/* ========================================================= */
+/* BASE DESKTOP STYLES (PC > 768px) */
+/* ========================================================= */
+
+/* Hub Profile Banner & Widgets (Base PC) */
+.hub-profile-banner {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.hub-logo-box {
+  width: 110px;
+  height: 110px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 4px solid #0f0d1a;
+  background: #08070d;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.hub-title-box {
+  flex: 1;
+  min-width: 250px;
+  padding-bottom: 0.25rem;
+}
+
+.hub-banner-widgets {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.hub-banner-widget-item {
+  min-width: 150px;
+}
+
+/* Matches List Card & Scoreboard (Base PC) */
+.match-card-responsive {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-radius: 16px;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.match-score-responsive {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  background: rgba(0,0,0,0.25);
+  padding: 0.5rem 1.5rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-light);
+}
+
+.match-team-name {
+  font-weight: 700;
+  color: #fff;
+  font-size: 0.95rem;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.match-team-left {
+  text-align: right;
+}
+
+.match-team-right {
+  text-align: left;
+}
+
+.match-score-digits {
+  font-size: 1.35rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.match-action-btn-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.matches-filters-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.matches-filter-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Compare Players (Base PC) */
+.compare-selectors-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 1.5rem;
+  align-items: start;
+  width: 100%;
+}
+
+.compare-vs-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 3rem;
+}
+
+/* Fantasy League (Base PC) */
+.fantasy-hero-banner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.fantasy-hero-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.fantasy-hero-status {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-light);
+  border-radius: 18px;
+  padding: 1rem 1.5rem;
+  text-align: center;
+  min-width: 200px;
+}
+
+.fantasy-draft-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.fantasy-user-status-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.fantasy-cards-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.75rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.fantasy-buffs-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.fantasy-leaderboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* Player Profile Modal (Base PC) */
+.player-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 1.5rem;
+  padding-top: 0.5rem;
+  padding-right: 2.5rem;
+  width: 100%;
+}
+
+.player-modal-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.player-modal-header-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.player-modal-skill-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.35rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-light);
+  gap: 1rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.player-modal-skill-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.player-modal-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-light);
+  gap: 0.5rem;
+  padding-bottom: 2px;
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.player-modal-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
+.player-modal-form-streaks {
+  display: flex;
+  gap: 1rem;
+}
+
+.player-modal-tactical-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+/* ========================================================= */
+/* MOBILE & TABLET STYLES (< 768px) */
+/* ========================================================= */
+
 @media (max-width: 768px) {
   .container {
     padding: 1.25rem 0.85rem;
@@ -958,6 +1230,79 @@ html, body {
   .fantasy-participants-badge {
     align-self: center !important;
     text-align: center !important;
+  }
+
+  /* Player Profile Modal Mobile Styles */
+  .player-modal-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 1rem !important;
+    padding-right: 2rem !important;
+    padding-bottom: 1rem !important;
+  }
+
+  .player-modal-header-left {
+    width: 100% !important;
+    gap: 0.85rem !important;
+  }
+
+  .player-modal-header-right {
+    margin-left: 0 !important;
+    width: 100% !important;
+    justify-content: space-between !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    padding: 0.5rem 0.85rem !important;
+    border-radius: 10px !important;
+    border: 1px solid var(--border-light) !important;
+    box-sizing: border-box !important;
+  }
+
+  .player-modal-skill-card {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 1rem !important;
+    gap: 0.85rem !important;
+  }
+
+  .player-modal-skill-info {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem !important;
+  }
+
+  .player-modal-skill-card .btn {
+    width: 100% !important;
+    text-align: center !important;
+    justify-content: center !important;
+  }
+
+  .player-modal-tabs {
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    padding-bottom: 0.4rem !important;
+    gap: 0.25rem !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .player-modal-tabs button {
+    padding: 0.45rem 0.75rem !important;
+    font-size: 0.78rem !important;
+    flex-shrink: 0 !important;
+  }
+
+  .player-modal-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+
+  .player-modal-form-streaks {
+    flex-direction: column !important;
+    gap: 0.65rem !important;
+  }
+
+  .player-modal-tactical-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.65rem !important;
   }
 }
 
