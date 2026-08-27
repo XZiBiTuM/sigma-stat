@@ -1793,7 +1793,7 @@ export default function PlayerProfilePage() {
                   </div>
                   <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", margin: 0, lineHeight: "1.4" }}>
                     {skillScore >= 75 && "Игрок высшего эшелона — приносит максимум очков на позиции Стар-плеера (фраги, открывающие дуэли и хедшоты)."}
-                    {skillScore >= 50 && skillScore < 75 && "Надежный командный боец — отлично набирает очки на позиции Саппорта (ассисты, урон и клатчи)."}
+                    {skillScore >= 50 && skillScore < 75 && "Надежный командный боец — отлично набирает очки на позиции Саппорта (ассисты, урон гранатами и флешки)."}
                     {skillScore < 50 && `Бонусный множитель x${underdogBonus.toFixed(2)} — дает повышенные очки на роли Темная лошадка.`}
                   </p>
                 </div>
@@ -1820,7 +1820,7 @@ export default function PlayerProfilePage() {
                     </div>
                     <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.55rem 0.7rem", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
                       <div style={{ color: "#ffd54f", fontWeight: "800", marginBottom: "0.15rem" }}>Саппорт</div>
-                      <div style={{ color: "var(--text-muted)", lineHeight: "1.3" }}>Ассисты (×2.5), Фраги (×0.8), Клатчи. <span style={{ color: "#ff8a80" }}>Штраф: скилл &gt;65 дает -50% очков.</span></div>
+                      <div style={{ color: "var(--text-muted)", lineHeight: "1.3" }}>Ассисты (×2.5), Урон гранатами (1 HP = +0.05), Флешки (+0.95). <span style={{ color: "#ff8a80" }}>Штраф: скилл &gt;65 дает -50% очков.</span></div>
                     </div>
                     <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.55rem 0.7rem", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
                       <div style={{ color: "var(--accent-purple)", fontWeight: "800", marginBottom: "0.15rem" }}>Тёмная лошадка</div>

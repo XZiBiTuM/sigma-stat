@@ -4122,7 +4122,7 @@ export default function Home() {
                               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                                 <div>
                                   <div style={{ fontSize: "1.05rem", fontWeight: "800", color: "var(--accent-cyan)" }}>Саппорт</div>
-                                  <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Ассисты (+2.5), Фраги (+0.8), Клатчи и урон</div>
+                                  <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Ассисты (+2.5), Урон гранатами (1 HP = +0.05), Флешки (+0.95)</div>
                                 </div>
                                 <span style={{
                                   fontSize: "0.72rem",
@@ -8471,7 +8471,7 @@ export default function Home() {
                   Интерактивная лига прогнозов на турниры Сигма Хаба. Собери команду из 3 игроков и соревнуйся за звание лучшего аналитика.
                 </p>
                 <div className="tour-modal-box">
-                  <div><strong>Выберите 3 роли:</strong> Стар-плеер (фраги и первый килл), Саппорт (ассисты, гранаты и дефьюзы) и Темная лошадка (сбалансированный множитель очков).</div>
+                  <div><strong>Выберите 3 роли:</strong> Стар-плеер (фраги и первый килл), Саппорт (ассисты, урон гранатами и флешки) и Темная лошадка (сбалансированный множитель очков).</div>
                   <div><strong>Автоматический подсчет:</strong> очки рассчитываются по реальной статистике матчей турнира.</div>
                   <div><strong>Награды:</strong> победитель получает официальный статус «Фантазер» и золотую рамку на сайте.</div>
                 </div>
