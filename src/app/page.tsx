@@ -3913,7 +3913,7 @@ export default function Home() {
                       gap: "1.5rem"
                     }}>
                       <div className="fantasy-hero-content">
-                        <div className="fantasy-hero-badge" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.3rem 0.8rem", borderRadius: "20px", background: "rgba(179, 136, 255, 0.2)", border: "1px solid #b388ff", color: "#d1c4e9", fontSize: "0.78rem", fontWeight: "800", marginBottom: "0.75rem", textTransform: "uppercase", letterSpacing: "1px" }}>
+                        <div className="fantasy-hero-badge" style={{ display: "inline-flex", width: "fit-content", alignItems: "center", gap: "0.5rem", padding: "0.3rem 0.8rem", borderRadius: "20px", background: "rgba(179, 136, 255, 0.2)", border: "1px solid #b388ff", color: "#d1c4e9", fontSize: "0.78rem", fontWeight: "800", marginBottom: "0.75rem", textTransform: "uppercase", letterSpacing: "1px" }}>
                           SIGMA FANTASY LEAGUE
                         </div>
                         <h2 className="glow-text-purple fantasy-hero-title" style={{ fontSize: "1.85rem", fontWeight: "900", margin: "0 0 0.5rem 0", color: "#fff" }}>

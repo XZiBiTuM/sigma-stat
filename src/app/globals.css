@@ -728,6 +728,25 @@ html, body {
 .fantasy-hero-content {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+}
+
+.fantasy-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  background: rgba(179, 136, 255, 0.2);
+  border: 1px solid #b388ff;
+  color: #d1c4e9;
+  font-size: 0.78rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  width: fit-content;
+  align-self: flex-start;
 }
 
 .fantasy-hero-status {
@@ -1212,6 +1231,10 @@ html, body {
     align-items: center !important;
     text-align: center !important;
     width: 100% !important;
+  }
+
+  .fantasy-hero-badge {
+    align-self: center !important;
   }
 
   .fantasy-hero-title {
