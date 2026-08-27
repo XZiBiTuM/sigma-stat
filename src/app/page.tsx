@@ -6498,7 +6498,7 @@ export default function Home() {
                                   Ошибка анализа: {roundHistory.error || "Не удалось скачать или распаковать демку."}
                                 </div>
                               )}
-                              <div className="demo-url-form">
+                              <div className="demo-url-form" style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
                                 <input
                                   type="text"
                                   className="demo-url-input"
@@ -6507,6 +6507,8 @@ export default function Home() {
                                   onChange={(e) => setManualDemoUrl(e.target.value)}
                                   disabled={isSubmittingDemoUrl}
                                   style={{
+                                    flex: 1,
+                                    minWidth: 0,
                                     background: "rgba(0, 0, 0, 0.3)",
                                     border: "1px solid var(--border-light)",
                                     borderRadius: "6px",
@@ -6521,6 +6523,7 @@ export default function Home() {
                                   onClick={() => submitManualDemoUrlForMap(originalMapIndex, manualDemoUrl)}
                                   disabled={isSubmittingDemoUrl || !manualDemoUrl.trim()}
                                   style={{
+                                    flexShrink: 0,
                                     background: "linear-gradient(135deg, var(--accent-purple), var(--accent-cyan))",
                                     color: "#fff",
                                     border: "none",
@@ -6529,7 +6532,8 @@ export default function Home() {
                                     fontSize: "0.75rem",
                                     fontWeight: "600",
                                     cursor: "pointer",
-                                    transition: "opacity 0.2s"
+                                    transition: "opacity 0.2s",
+                                    whiteSpace: "nowrap"
                                   }}
                                 >
                                   {isSubmittingDemoUrl ? "Загрузка..." : "Анализировать"}
