@@ -3263,27 +3263,15 @@ export default function Home() {
 
                             {/* Teams scores layout */}
                             <div className="match-score-responsive" style={{ position: "relative", zIndex: 3 }}>
-                              <div style={{ textAlign: "right", flex: 1, minWidth: 0 }}>
-                                <div className="match-team-name" style={{ textAlign: "right" }} title={match.teams.faction1.name}>{match.teams.faction1.name}</div>
-                              </div>
+                              <div className="match-team-name match-team-left" title={match.teams.faction1.name}>{match.teams.faction1.name}</div>
                               
-                              <div style={{
-                                fontSize: "1.35rem",
-                                fontWeight: "800",
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "0.4rem",
-                                flexShrink: 0,
-                                color: isFinished ? "#fff" : "var(--accent-cyan)"
-                              }}>
+                              <div className="match-score-digits" style={{ color: isFinished ? "#fff" : "var(--accent-cyan)" }}>
                                 <span>{match.results?.score?.faction1 ?? match.teams.faction1.score ?? "-"}</span>
-                                <span style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>:</span>
+                                <span style={{ color: "var(--text-muted)", fontSize: "0.85em" }}>:</span>
                                 <span>{match.results?.score?.faction2 ?? match.teams.faction2.score ?? "-"}</span>
                               </div>
 
-                              <div style={{ textAlign: "left", flex: 1, minWidth: 0 }}>
-                                <div className="match-team-name" style={{ textAlign: "left" }} title={match.teams.faction2.name}>{match.teams.faction2.name}</div>
-                              </div>
+                              <div className="match-team-name match-team-right" title={match.teams.faction2.name}>{match.teams.faction2.name}</div>
                             </div>
 
                             {/* Actions button */}
@@ -6438,25 +6426,26 @@ export default function Home() {
                                   Ошибка анализа: {roundHistory.error || "Не удалось скачать или распаковать демку."}
                                 </div>
                               )}
-                              <div style={{ display: "flex", gap: "0.5rem" }}>
+                              <div className="demo-url-form">
                                 <input
                                   type="text"
+                                  className="demo-url-input"
                                   placeholder="Вставь ссылку на скачивание (.dem.zst / .dem.gz)..."
                                   value={manualDemoUrl}
                                   onChange={(e) => setManualDemoUrl(e.target.value)}
                                   disabled={isSubmittingDemoUrl}
                                   style={{
-                                    flex: 1,
                                     background: "rgba(0, 0, 0, 0.3)",
                                     border: "1px solid var(--border-light)",
                                     borderRadius: "6px",
-                                    padding: "0.4rem 0.75rem",
+                                    padding: "0.45rem 0.75rem",
                                     color: "#fff",
                                     fontSize: "0.75rem",
                                     outline: "none"
                                   }}
                                 />
                                 <button
+                                  className="demo-url-btn"
                                   onClick={() => submitManualDemoUrlForMap(originalMapIndex, manualDemoUrl)}
                                   disabled={isSubmittingDemoUrl || !manualDemoUrl.trim()}
                                   style={{
@@ -6464,7 +6453,7 @@ export default function Home() {
                                     color: "#fff",
                                     border: "none",
                                     borderRadius: "6px",
-                                    padding: "0.4rem 1rem",
+                                    padding: "0.45rem 1rem",
                                     fontSize: "0.75rem",
                                     fontWeight: "600",
                                     cursor: "pointer",
