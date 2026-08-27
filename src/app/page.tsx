@@ -5113,25 +5113,30 @@ export default function Home() {
                           </>
                         ) : (
                           /* SINGLE CLEAN CONFIRMED STATUS */
-                          <div style={{
-                            width: "100%",
-                            padding: "0.95rem 1.5rem",
-                            borderRadius: "14px",
-                            background: "rgba(34, 197, 94, 0.12)",
-                            border: "1px solid rgba(34, 197, 94, 0.35)",
-                            color: "#4ade80",
-                            fontSize: "0.95rem",
-                            fontWeight: "800",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            gap: "0.5rem"
-                          }}>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <div 
+                            className="fantasy-confirmed-banner"
+                            style={{
+                              width: "100%",
+                              padding: "0.95rem 1.5rem",
+                              borderRadius: "14px",
+                              background: "rgba(34, 197, 94, 0.12)",
+                              border: "1px solid rgba(34, 197, 94, 0.35)",
+                              color: "#4ade80",
+                              fontSize: "0.95rem",
+                              fontWeight: "800",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              textAlign: "center",
+                              gap: "0.5rem",
+                              boxSizing: "border-box"
+                            }}
+                          >
+                            <svg style={{ flexShrink: 0 }} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                               <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                               <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                             </svg>
-                            <span>Состав подтвержден и участвует в турнире</span>
+                            <span style={{ textAlign: "center" }}>Состав подтвержден и участвует в турнире</span>
                           </div>
                         )}
                       </div>
