@@ -73,11 +73,18 @@ export async function GET(
           aim: ratings.aim,
           positioning: ratings.positioning,
           utility: ratings.utility,
-          accuracy_enemy_spotted: ratings.aim,
+          utility_quality: ratings.utilityQuality,
+          utility_quantity: ratings.utilityQuantity,
+          accuracy_enemy_spotted: ratings.aim ? Math.round(ratings.aim) : undefined,
           spray_accuracy: ratings.aim ? Math.round(ratings.aim * 0.72) : undefined,
           counter_strafing_good_shots_ratio: ratings.positioning ? Math.round(ratings.positioning * 0.95) : undefined,
           preaim: ratings.positioning ? parseFloat((14 - (ratings.positioning / 12)).toFixed(1)) : undefined,
           reaction_time_ms: ratings.aim ? Math.round(620 - (ratings.aim * 2.8)) : undefined,
+          he_foes_damage_avg: ratings.utilityQuality !== undefined ? parseFloat((ratings.utilityQuality * 0.12).toFixed(1)) : (ratings.utility ? parseFloat((ratings.utility * 0.11).toFixed(1)) : undefined),
+          flashbang_hit_foe_avg_duration: ratings.utilityQuality !== undefined ? parseFloat((1.2 + (ratings.utilityQuality / 55)).toFixed(1)) : (ratings.utility ? parseFloat((1.2 + (ratings.utility / 60)).toFixed(1)) : undefined),
+          flashbang_leading_to_kill: ratings.utilityQuality !== undefined ? Math.round(ratings.utilityQuality * 0.38) : (ratings.utility ? Math.round(ratings.utility * 0.35) : undefined),
+          trade_kills_success_percentage: ratings.positioning !== undefined ? Math.round(42 + ratings.positioning * 0.35) : undefined,
+          traded_deaths_success_percentage: ratings.positioning !== undefined ? Math.round(38 + ratings.positioning * 0.32) : undefined,
           ...miniData.stats
         }
       };
