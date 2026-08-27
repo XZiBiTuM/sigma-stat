@@ -93,6 +93,25 @@ export async function GET(
       console.warn("Failed to fetch match timestamps:", e);
     }
 
+    // 2.5 Check if player has a statsStartDate cutoff (e.g. 2026-07-14)
+    let statsStartDate: string | undefined;
+    try {
+      const ovPath = getPersistentPath("player_overrides.json");
+      const fallbackOvPath = getStoragePath("player_overrides.json");
+      const activeOvPath = fsSync.existsSync(ovPath) ? ovPath : fallbackOvPath;
+      if (fsSync.existsSync(activeOvPath)) {
+        const ovData = JSON.parse(await fs.readFile(activeOvPath, "utf8"));
+        const pOv = (uuid && ovData[uuid]) || 
+                    (playerProfile.nickname && ovData[playerProfile.nickname]) || 
+                    (playerProfile.nickname && ovData[playerProfile.nickname.toLowerCase()]);
+        if (pOv?.statsStartDate) {
+          statsStartDate = pOv.statsStartDate;
+        }
+      }
+    } catch (e) {}
+
+    const cutoffTimestamp = statsStartDate ? Math.floor(new Date(statsStartDate).getTime() / 1000) : 0;
+
     // 3. Aggregate stats only for matches in the hub cache
     let matchesCount = 0;
     let winsCount = 0;
@@ -157,6 +176,11 @@ export async function GET(
     for (const matchId in cacheData) {
       const match = cacheData[matchId];
       if (!match || !Array.isArray(match.rounds)) continue;
+
+      const mTime = match.finished_at || match.started_at || match.created_at || matchTimestamps[matchId] || 0;
+      if (cutoffTimestamp > 0 && mTime > 0 && mTime < cutoffTimestamp) {
+        continue; // Skip matches before cutoff date for this player
+      }
 
       for (const round of match.rounds) {
         const roundStats = round.round_stats || {};
@@ -320,9 +344,9 @@ export async function GET(
 
     // Overall metrics calculation
     const avgKd = totalDeaths > 0 ? totalKills / totalDeaths : totalKills;
-    const finalMatchesCount = typeof userLb?.played === "number" ? userLb.played : (typeof userLb?.matches === "number" ? userLb.matches : uniqueMatchIds.size);
-    const finalWinsCount = typeof userLb?.won === "number" ? userLb.won : (typeof userLb?.wins === "number" ? userLb.wins : uniqueWinMatchIds.size);
-    const winrateOverall = typeof userLb?.winrate === "number" ? userLb.winrate : (typeof userLb?.winRate === "number" ? userLb.winRate : (finalMatchesCount > 0 ? Math.round((finalWinsCount / finalMatchesCount) * 100) : 0));
+    const finalMatchesCount = (cutoffTimestamp > 0) ? uniqueMatchIds.size : (typeof userLb?.played === "number" ? userLb.played : (typeof userLb?.matches === "number" ? userLb.matches : uniqueMatchIds.size));
+    const finalWinsCount = (cutoffTimestamp > 0) ? uniqueWinMatchIds.size : (typeof userLb?.won === "number" ? userLb.won : (typeof userLb?.wins === "number" ? userLb.wins : uniqueWinMatchIds.size));
+    const winrateOverall = (cutoffTimestamp > 0) ? (finalMatchesCount > 0 ? Math.round((finalWinsCount / finalMatchesCount) * 100) : 0) : (typeof userLb?.winrate === "number" ? userLb.winrate : (typeof userLb?.winRate === "number" ? userLb.winRate : (finalMatchesCount > 0 ? Math.round((finalWinsCount / finalMatchesCount) * 100) : 0)));
     const avgHs = totalKills > 0 ? Math.round((totalHeadshots / totalKills) * 100) : 0;
     const avgAdr = totalRounds > 0 ? totalDamage / totalRounds : 0;
     
@@ -425,9 +449,9 @@ export async function GET(
     const recentResults = recentMatchesList.map(m => m.result);
     const recentMaps = playerMatchesList.slice(0, 5).map((m: any) => m.won ? "1" : "0").reverse();
 
-    // Use official streak from leaderboard if available, else computed match streak
-    const finalMatchCurrentStreak = officialStreak !== null ? officialStreak : matchCurrentStreak;
-    const finalMatchLongestStreak = Math.max(matchLongestStreak, officialStreak || 0);
+    // Use official streak from leaderboard if available and no cutoff, else computed match streak
+    const finalMatchCurrentStreak = (cutoffTimestamp > 0 || officialStreak === null) ? matchCurrentStreak : officialStreak;
+    const finalMatchLongestStreak = (cutoffTimestamp > 0) ? matchLongestStreak : Math.max(matchLongestStreak, officialStreak || 0);
 
     // Calculate hub-wide averages from all matches in the cache
     let hubTotalKills = 0;

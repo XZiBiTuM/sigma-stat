@@ -35,6 +35,13 @@ export async function GET(
       console.warn("Failed to read match cache in general leaderboard:", e);
     }
 
+    let overridesData: Record<string, any> = {};
+    try {
+      const overridesPath = getStoragePath("player_overrides.json");
+      const ovStr = await fs.readFile(overridesPath, "utf8");
+      overridesData = JSON.parse(ovStr);
+    } catch (e) {}
+
     const playerAgg: Record<string, {
       matches: number;
       wins: number;
@@ -49,6 +56,7 @@ export async function GET(
     for (const matchId in cacheData) {
       const match = cacheData[matchId];
       if (!match || !Array.isArray(match.rounds)) continue;
+      const mTime = match.finished_at || match.started_at || match.created_at || 0;
 
       for (const round of match.rounds) {
         const roundsInMatch = parseInt(round.round_stats?.Rounds || "22", 10);
@@ -62,6 +70,14 @@ export async function GET(
 
             const keys = [pid, nick].filter(Boolean);
             if (keys.length === 0) continue;
+
+            const pOv = (pid && overridesData[pid]) || (nick && overridesData[nick]) || (nick && overridesData[nick.toLowerCase()]);
+            if (pOv?.statsStartDate) {
+              const cutoff = Math.floor(new Date(pOv.statsStartDate).getTime() / 1000);
+              if (cutoff > 0 && mTime > 0 && mTime < cutoff) {
+                continue; // Skip pre-cutoff matches for this player
+              }
+            }
 
             const primaryKey = pid || nick;
             if (!playerAgg[primaryKey]) {
@@ -148,16 +164,25 @@ export async function GET(
           const adrNum = st.rounds > 0 ? st.damage / st.rounds : 0;
           const hltv = parseFloat(Math.max(0.1, (0.36 * kpr) - (0.53 * dpr) + (0.1 * apr) + (0.003 * adrNum) + 0.85).toFixed(2));
 
-          const tableWinRate = typeof item.win_rate === "number" 
+          const pOv = (pid && overridesData[pid]) || (nick && overridesData[nick]) || (nick && overridesData[nick.toLowerCase()]);
+          const hasCutoff = Boolean(pOv?.statsStartDate);
+
+          const tableWinRate = (!hasCutoff && typeof item.win_rate === "number")
             ? (item.win_rate <= 1 ? item.win_rate * 100 : item.win_rate)
-            : (typeof item.played === "number" && item.played > 0 && typeof item.won === "number" ? (item.won / item.played) * 100 : undefined);
+            : (!hasCutoff && typeof item.played === "number" && item.played > 0 && typeof item.won === "number" ? (item.won / item.played) * 100 : undefined);
 
-          const winrate = tableWinRate !== undefined 
-            ? parseFloat(tableWinRate.toFixed(1)) 
-            : (st.matches > 0 ? parseFloat(((st.wins / st.matches) * 100).toFixed(1)) : 50.0);
+          const winrate = hasCutoff 
+            ? (st.matches > 0 ? parseFloat(((st.wins / st.matches) * 100).toFixed(1)) : 50.0)
+            : (tableWinRate !== undefined ? parseFloat(tableWinRate.toFixed(1)) : (st.matches > 0 ? parseFloat(((st.wins / st.matches) * 100).toFixed(1)) : 50.0));
 
-          const matchesCount = typeof item.played === "number" ? item.played : st.matches;
-          const winsCount = typeof item.won === "number" ? item.won : st.wins;
+          const matchesCount = hasCutoff ? st.matches : (typeof item.played === "number" ? item.played : st.matches);
+          const winsCount = hasCutoff ? st.wins : (typeof item.won === "number" ? item.won : st.wins);
+
+          if (hasCutoff) {
+            item.played = st.matches;
+            item.won = st.wins;
+            item.lost = Math.max(0, st.matches - st.wins);
+          }
 
           item.hubStats = {
             kd,

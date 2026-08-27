@@ -47,11 +47,19 @@ export async function GET(
       const fallbackCache = getStoragePath("match_stats_cache.json");
       const activeCachePath = fsSync.existsSync(cachePath) ? cachePath : fallbackCache;
       let kills = 0, deaths = 0, damage = 0, rounds = 0, headshots = 0, matches = 0, wins = 0, hltvSum = 0;
+      const cutoffTimestamp = override?.statsStartDate ? Math.floor(new Date(override.statsStartDate).getTime() / 1000) : 0;
+      const hasCutoff = Boolean(override?.statsStartDate);
+
       if (fsSync.existsSync(activeCachePath)) {
         const cache = JSON.parse(await fs.readFile(activeCachePath, "utf8") || "{}");
         
         for (const match of Object.values(cache) as any[]) {
           if (!match?.rounds) continue;
+          const mTime = match.finished_at || match.started_at || match.created_at || 0;
+          if (cutoffTimestamp > 0 && mTime > 0 && mTime < cutoffTimestamp) {
+            continue;
+          }
+
           for (const round of match.rounds) {
             for (const t of round.teams || []) {
               for (const p of t.players || []) {
@@ -77,24 +85,26 @@ export async function GET(
     // Check general leaderboard for official played & won count & winrate
     let officialWinRate: number | undefined;
     let officialPlayed: number | undefined;
-    try {
-      const HUB_ID = "d0701937-8eba-4df9-8830-22137001c0bd";
-      const lbRes = await faceitFetch(`/leaderboards/hubs/${HUB_ID}/general?limit=50`).catch(() => ({ items: [] }));
-      const userLb = (lbRes?.items || []).find((i: any) => 
-        (i.player?.user_id && i.player.user_id.toLowerCase() === (data.player_id || "").toLowerCase()) || 
-        (i.player?.nickname && i.player.nickname.toLowerCase() === lowerNick)
-      );
-      if (userLb) {
-        if (typeof userLb.win_rate === "number") {
-          officialWinRate = userLb.win_rate <= 1 ? userLb.win_rate * 100 : userLb.win_rate;
-        } else if (typeof userLb.played === "number" && userLb.played > 0 && typeof userLb.won === "number") {
-          officialWinRate = (userLb.won / userLb.played) * 100;
+    if (!hasCutoff) {
+      try {
+        const HUB_ID = "d0701937-8eba-4df9-8830-22137001c0bd";
+        const lbRes = await faceitFetch(`/leaderboards/hubs/${HUB_ID}/general?limit=50`).catch(() => ({ items: [] }));
+        const userLb = (lbRes?.items || []).find((i: any) => 
+          (i.player?.user_id && i.player.user_id.toLowerCase() === (data.player_id || "").toLowerCase()) || 
+          (i.player?.nickname && i.player.nickname.toLowerCase() === lowerNick)
+        );
+        if (userLb) {
+          if (typeof userLb.win_rate === "number") {
+            officialWinRate = userLb.win_rate <= 1 ? userLb.win_rate * 100 : userLb.win_rate;
+          } else if (typeof userLb.played === "number" && userLb.played > 0 && typeof userLb.won === "number") {
+            officialWinRate = (userLb.won / userLb.played) * 100;
+          }
+          if (typeof userLb.played === "number") {
+            officialPlayed = userLb.played;
+          }
         }
-        if (typeof userLb.played === "number") {
-          officialPlayed = userLb.played;
-        }
-      }
-    } catch {}
+      } catch {}
+    }
 
     if (matches > 0) {
       combatStats = {

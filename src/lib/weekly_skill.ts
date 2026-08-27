@@ -141,12 +141,22 @@ export async function performWeeklyRecalibration(force: boolean = false): Promis
 
   for (const match of Object.values(cacheData) as any[]) {
     if (!match?.rounds) continue;
+    const mTime = match.finished_at || match.started_at || match.created_at || 0;
+
     for (const round of match.rounds) {
       for (const t of round.teams || []) {
         for (const p of t.players || []) {
           const pid = p.player_id || p.user_id || p.id;
           const nick = p.nickname;
           if (!nick) continue;
+
+          const pOv = (pid && overrides[pid]) || (nick && overrides[nick]) || (nick && overrides[nick.toLowerCase()]);
+          if (pOv?.statsStartDate) {
+            const cutoff = Math.floor(new Date(pOv.statsStartDate).getTime() / 1000);
+            if (cutoff > 0 && mTime > 0 && mTime < cutoff) {
+              continue; // Skip pre-cutoff matches for this player
+            }
+          }
 
           const key = (pid || nick).toLowerCase();
           if (!playerStats[key]) {
