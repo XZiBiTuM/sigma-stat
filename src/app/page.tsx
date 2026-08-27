@@ -4942,15 +4942,14 @@ export default function Home() {
                                       display: "flex",
                                       alignItems: "center",
                                       justifyContent: "space-between",
-                                      gap: "0.75rem",
-                                      flexWrap: "wrap",
+                                      gap: "1rem",
                                       background: "rgba(255,255,255,0.03)",
                                       border: "1px solid rgba(255,255,255,0.06)",
                                       borderRadius: "14px",
                                       padding: "0.85rem 1.1rem"
                                     }}
                                   >
-                                    <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
+                                    <div style={{ display: "flex", alignItems: "center", gap: "0.85rem", flex: 1, minWidth: 0 }}>
                                       <div style={{
                                         width: "38px",
                                         height: "38px",
@@ -4964,23 +4963,28 @@ export default function Home() {
                                       }}>
                                         {renderModalSvg(b.id)}
                                       </div>
-                                      <div>
+                                      <div style={{ flex: 1, minWidth: 0 }}>
                                         <div style={{ fontSize: "0.95rem", fontWeight: "800", color: "#fff" }}>{b.name}</div>
                                         <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", lineHeight: "1.3" }}>{b.desc}</div>
                                       </div>
                                     </div>
-                                    <span style={{
-                                      fontSize: "0.78rem",
-                                      fontWeight: "900",
-                                      color: "#ffd700",
-                                      background: "rgba(255, 215, 0, 0.12)",
-                                      border: "1px solid rgba(255, 215, 0, 0.3)",
-                                      padding: "0.3rem 0.65rem",
-                                      borderRadius: "8px",
-                                      whiteSpace: "nowrap"
-                                    }}>
-                                      {b.range}
-                                    </span>
+                                    <div style={{ flexShrink: 0, textAlign: "right" }}>
+                                      <span style={{
+                                        fontSize: "0.78rem",
+                                        fontWeight: "900",
+                                        color: "#ffd700",
+                                        background: "rgba(255, 215, 0, 0.12)",
+                                        border: "1px solid rgba(255, 215, 0, 0.3)",
+                                        padding: "0.35rem 0.75rem",
+                                        borderRadius: "8px",
+                                        whiteSpace: "nowrap",
+                                        display: "inline-block",
+                                        textAlign: "center",
+                                        minWidth: "110px"
+                                      }}>
+                                        {b.range}
+                                      </span>
+                                    </div>
                                   </div>
                                 );
                               })}
