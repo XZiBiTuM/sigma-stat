@@ -2559,9 +2559,14 @@ export default function Home() {
                 {/* Tournament countdown widget (Option 2) - hides after 3 days if completed */}
                 {fantasyTour?.startTime && (() => {
                   const isCompleted = fantasyTour.status === "COMPLETED";
+                  const isDraftWaiting = fantasyTour.status === "DRAFT_WAITING";
                   const completedTime = new Date(fantasyTour.updatedAt || fantasyTour.startTime).getTime();
                   const isExpired = isCompleted && (Date.now() - completedTime > 3 * 24 * 60 * 60 * 1000);
                   if (isExpired) return null;
+
+                  const dotColor = isCompleted ? "#ff5252" : isDraftWaiting ? "#9d3bf5" : "#ffd700";
+                  const labelColor = isCompleted ? "#ff5252" : isDraftWaiting ? "#9d3bf5" : "#ffd700";
+                  const labelText = fantasyTour.status === "LIVE" ? "ТУРНИР" : isCompleted ? "ТУРНИР" : isDraftWaiting ? "ФЕНТЕЗИ" : "ДО ТУРНИРА";
 
                   return (
                     <div 
@@ -2586,17 +2591,18 @@ export default function Home() {
                           width: "7px",
                           height: "7px",
                           borderRadius: "50%",
-                          background: isCompleted ? "#ff5252" : "#ffd700",
-                          boxShadow: isCompleted ? "0 0 8px #ff5252" : "0 0 8px #ffd700",
+                          background: dotColor,
+                          boxShadow: `0 0 8px ${dotColor}`,
                           display: "inline-block"
                         }} />
-                        <span style={{ fontSize: "0.72rem", color: isCompleted ? "#ff5252" : "#ffd700", textTransform: "uppercase", fontWeight: "800", letterSpacing: "0.05em" }}>
-                          {fantasyTour.status === "LIVE" ? "ТУРНИР" : isCompleted ? "ТУРНИР" : "ДО ТУРНИРА"}
+                        <span style={{ fontSize: "0.72rem", color: labelColor, textTransform: "uppercase", fontWeight: "800", letterSpacing: "0.05em" }}>
+                          {labelText}
                         </span>
                       </div>
                       <div style={{ fontSize: "1.6rem", fontWeight: "900", color: "#fff", marginTop: "0.15rem", letterSpacing: "0.02em" }}>
                         {(() => {
                           if (isCompleted) return "ЗАВЕРШЕН";
+                          if (isDraftWaiting) return "СКОРО";
                           if (fantasyTour.status === "LIVE") return "ИДЕТ СЕЙЧАС";
                           const diff = new Date(fantasyTour.startTime).getTime() - Date.now();
                           if (diff <= 0) return "СКОРО СТАРТ";
@@ -3778,6 +3784,8 @@ export default function Home() {
                 let countdownStr = "Скоро старт";
                 if (tourStatus === "COMPLETED") {
                   countdownStr = "Итоги подведены";
+                } else if (tourStatus === "DRAFT_WAITING") {
+                  countdownStr = "Дата следующего турнира неизвестна";
                 } else if (tourStatus === "LIVE") {
                   countdownStr = "Матчи идут";
                 } else if (fantasyTour?.startTime) {
@@ -3938,10 +3946,10 @@ export default function Home() {
                         <div style={{
                           fontSize: "0.95rem",
                           fontWeight: "800",
-                          color: tourStatus === "DRAFT_OPEN" ? "#00e5ff" : tourStatus === "LIVE" ? "#ffb74d" : "#ff5252",
+                          color: tourStatus === "DRAFT_OPEN" ? "#00e5ff" : tourStatus === "LIVE" ? "#ffb74d" : tourStatus === "DRAFT_WAITING" ? "#9d3bf5" : "#ff5252",
                           marginBottom: "0.5rem"
                         }}>
-                          {tourStatus === "DRAFT_OPEN" ? "СБОР СОСТАВОВ ОТКРЫТ" : tourStatus === "LIVE" ? "ТУРНИР В ПРОЦЕССЕ" : "ТУРНИР ЗАВЕРШЕН"}
+                          {tourStatus === "DRAFT_OPEN" ? "СБОР СОСТАВОВ ОТКРЫТ" : tourStatus === "LIVE" ? "ТУРНИР В ПРОЦЕССЕ" : tourStatus === "DRAFT_WAITING" ? "СЛЕДУЮЩИЙ ТУРНИР СКОРО" : "ТУРНИР ЗАВЕРШЕН"}
                         </div>
                         <div style={{ fontSize: "0.82rem", color: "#fff", background: "rgba(255, 255, 255, 0.06)", padding: "0.3rem 0.6rem", borderRadius: "8px", fontWeight: "600" }}>
                           {countdownStr}

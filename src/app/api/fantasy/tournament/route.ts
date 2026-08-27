@@ -9,7 +9,7 @@ interface FantasyTournament {
   id: string;
   title: string;
   startTime: string; // ISO or YYYY-MM-DDTHH:mm
-  status: "DRAFT_OPEN" | "LIVE" | "COMPLETED";
+  status: "DRAFT_OPEN" | "LIVE" | "COMPLETED" | "DRAFT_WAITING";
   winnerSteamId?: string;
   winnerNickname?: string;
   updatedAt: string;
@@ -21,7 +21,16 @@ async function getTournament(): Promise<FantasyTournament> {
     const pStat = await fs.stat(PERSISTENT_FILE).catch(() => null);
     if (pStat) fileToRead = PERSISTENT_FILE;
     const data = await fs.readFile(fileToRead, "utf8");
-    return JSON.parse(data);
+    const t: FantasyTournament = JSON.parse(data);
+    // Auto-transition: after 3 days from completion → DRAFT_WAITING
+    if (t.status === "COMPLETED") {
+      const completedTime = new Date(t.updatedAt || t.startTime).getTime();
+      if (Date.now() - completedTime > 3 * 24 * 60 * 60 * 1000) {
+        t.status = "DRAFT_WAITING";
+        await saveTournament(t);
+      }
+    }
+    return t;
   } catch {
     // Default initial upcoming tournament (7 days from now)
     const defaultDate = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16);
