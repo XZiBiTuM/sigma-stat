@@ -825,6 +825,23 @@ html, body {
     display: flex !important;
     align-items: center !important;
   }
+
+  /* Compare Players tab on Mobile (Column stack) */
+  .compare-selectors-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.25rem !important;
+    width: 100% !important;
+  }
+
+  .compare-vs-divider {
+    padding: 0.35rem 0 !important;
+    margin: 0 auto !important;
+  }
+
+  .compare-vs-divider div {
+    font-size: 1.4rem !important;
+  }
 }
 
 @media (max-width: 480px) {

@@ -5320,9 +5320,9 @@ export default function Home() {
                     </div>
 
                     {/* Player selectors */}
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: "1.5rem", alignItems: "start" }}>
+                    <div className="compare-selectors-grid" style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: "1.5rem", alignItems: "start" }}>
                       {/* Player 1 selector */}
-                      <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", width: "100%" }}>
                         <div style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.05em" }}>Игрок 1</div>
                         <input
                           type="text"
@@ -5330,7 +5330,7 @@ export default function Home() {
                           placeholder="Поиск по нику…"
                           value={compareSearchQuery1}
                           onChange={e => setCompareSearchQuery1(e.target.value)}
-                          style={{ fontSize: "0.85rem" }}
+                          style={{ fontSize: "0.85rem", width: "100%" }}
                         />
                         <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", maxHeight: "250px", overflowY: "auto" }}>
                           {filteredPlayers1.map(r => (
@@ -5342,7 +5342,7 @@ export default function Home() {
                                 background: comparePlayer1Id === getItemId(r) ? "rgba(0, 229, 255, 0.12)" : "rgba(255,255,255,0.03)",
                                 border: comparePlayer1Id === getItemId(r) ? "1px solid rgba(0,229,255,0.4)" : "1px solid transparent",
                                 borderRadius: "8px", padding: "0.45rem 0.75rem",
-                                cursor: "pointer", textAlign: "left"
+                                cursor: "pointer", textAlign: "left", width: "100%"
                               }}
                             >
                               <img src={getItemAvatar(r)} alt="" style={{ width: "24px", height: "24px", borderRadius: "50%", objectFit: "cover" }} />
@@ -5352,7 +5352,7 @@ export default function Home() {
                           ))}
                         </div>
                         {p1 && (
-                          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(0,229,255,0.06)", border: "1px solid rgba(0,229,255,0.25)", borderRadius: "12px", padding: "0.75rem 1rem" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(0,229,255,0.06)", border: "1px solid rgba(0,229,255,0.25)", borderRadius: "12px", padding: "0.75rem 1rem", width: "100%", boxSizing: "border-box" }}>
                             {getItemAvatar(p1) && <img src={getItemAvatar(p1)} alt="" style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(0,229,255,0.4)" }} />}
                             <div>
                               <div style={{ fontWeight: "700", fontSize: "0.85rem", color: "#fff" }}>{getItemNick(p1)}</div>
@@ -5364,12 +5364,12 @@ export default function Home() {
                       </div>
 
                       {/* VS divider */}
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", paddingTop: "3rem" }}>
+                      <div className="compare-vs-divider" style={{ display: "flex", alignItems: "center", justifyContent: "center", paddingTop: "3rem" }}>
                         <div style={{ fontSize: "1.8rem", fontWeight: "900", color: "var(--text-muted)", letterSpacing: "0.1em", opacity: 0.5 }}>VS</div>
                       </div>
 
                       {/* Player 2 selector */}
-                      <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", width: "100%" }}>
                         <div style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.05em" }}>Игрок 2</div>
                         <input
                           type="text"
@@ -5377,7 +5377,7 @@ export default function Home() {
                           placeholder="Поиск по нику…"
                           value={compareSearchQuery2}
                           onChange={e => setCompareSearchQuery2(e.target.value)}
-                          style={{ fontSize: "0.85rem" }}
+                          style={{ fontSize: "0.85rem", width: "100%" }}
                         />
                         <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", maxHeight: "250px", overflowY: "auto" }}>
                           {filteredPlayers2.map(r => (
@@ -5389,7 +5389,7 @@ export default function Home() {
                                 background: comparePlayer2Id === getItemId(r) ? "rgba(168, 85, 247, 0.12)" : "rgba(255,255,255,0.03)",
                                 border: comparePlayer2Id === getItemId(r) ? "1px solid rgba(168,85,247,0.4)" : "1px solid transparent",
                                 borderRadius: "8px", padding: "0.45rem 0.75rem",
-                                cursor: "pointer", textAlign: "left"
+                                cursor: "pointer", textAlign: "left", width: "100%"
                               }}
                             >
                               <img src={getItemAvatar(r)} alt="" style={{ width: "24px", height: "24px", borderRadius: "50%", objectFit: "cover" }} />
@@ -5399,7 +5399,7 @@ export default function Home() {
                           ))}
                         </div>
                         {p2 && (
-                          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(168,85,247,0.06)", border: "1px solid rgba(168,85,247,0.25)", borderRadius: "12px", padding: "0.75rem 1rem" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(168,85,247,0.06)", border: "1px solid rgba(168,85,247,0.25)", borderRadius: "12px", padding: "0.75rem 1rem", width: "100%", boxSizing: "border-box" }}>
                             {getItemAvatar(p2) && <img src={getItemAvatar(p2)} alt="" style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(168,85,247,0.4)" }} />}
                             <div>
                               <div style={{ fontWeight: "700", fontSize: "0.85rem", color: "#fff" }}>{getItemNick(p2)}</div>
