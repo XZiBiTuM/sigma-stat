@@ -715,6 +715,50 @@ html, body {
     text-align: center !important;
     margin: 0 !important;
   }
+
+  /* Matches List Card & Scoreboard Mobile Styles */
+  .match-card-responsive {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1rem !important;
+    padding: 1rem 1rem !important;
+  }
+
+  .match-score-responsive {
+    width: 100% !important;
+    justify-content: space-between !important;
+    padding: 0.65rem 0.85rem !important;
+    gap: 0.4rem !important;
+    box-sizing: border-box !important;
+  }
+
+  .match-team-name {
+    max-width: 110px !important;
+    font-size: 0.82rem !important;
+  }
+
+  .match-action-btn-wrapper {
+    width: 100% !important;
+  }
+
+  .match-action-btn-wrapper .btn {
+    width: 100% !important;
+    text-align: center !important;
+    justify-content: center !important;
+  }
+
+  .match-modal-mvp {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    padding: 1.2rem 1rem !important;
+    gap: 1.2rem !important;
+  }
+
+  .match-modal-mvp-grid {
+    grid-template-columns: repeat(auto-fit, minmax(85px, 1fr)) !important;
+    gap: 0.35rem !important;
+  }
 }
 
 @media (max-width: 480px) {
@@ -737,5 +781,10 @@ html, body {
 
   h3 {
     font-size: 1.15rem !important;
+  }
+
+  .match-team-name {
+    max-width: 95px !important;
+    font-size: 0.78rem !important;
   }
 }

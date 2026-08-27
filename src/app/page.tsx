@@ -1826,12 +1826,20 @@ export default function Home() {
       return sortOrder === "desc" ? (valB - valA) : (valA - valB);
     });
 
-  const filteredMatches = matches.filter((match) => {
-    if (filterMatchStatus === "all") return true;
-    if (filterMatchStatus === "ongoing") return match.status === "CHECK-IN" || match.status === "ONGOING" || match.status === "LIVE" || match.status === "READY";
-    if (filterMatchStatus === "past") return match.status === "FINISHED" || match.status === "CANCELLED";
-    return true;
-  });
+  const filteredMatches = matches
+    .filter((match) => {
+      const st = String(match.status || "").toUpperCase();
+      if (st === "CANCELLED" || st === "CANCEL" || st === "ABORTED") return false;
+      if (filterMatchStatus === "all") return true;
+      if (filterMatchStatus === "ongoing") return st === "CHECK-IN" || st === "ONGOING" || st === "LIVE" || st === "READY";
+      if (filterMatchStatus === "past") return st === "FINISHED";
+      return true;
+    })
+    .sort((a, b) => {
+      const timeA = Number(a.finished_at || a.started_at || (a as any).created_at || 0);
+      const timeB = Number(b.finished_at || b.started_at || (b as any).created_at || 0);
+      return timeB - timeA;
+    });
 
   // Normalize map name to match public/maps/ file names (e.g. Mirage -> de_mirage)
   const getMapFileName = (mapNameStr: string) => {
@@ -3159,19 +3167,12 @@ export default function Home() {
                         return (
                           <div 
                             key={match.match_id} 
-                            className="glass-card" 
+                            className="glass-card match-card-responsive" 
                             style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                              padding: "1.25rem 1.5rem",
-                              borderRadius: "16px",
                               border: isCustom ? "1.5px solid rgba(255, 145, 0, 0.4)" : "1px solid var(--border-light)",
                               position: "relative",
                               overflow: "hidden",
-                              boxShadow: isCustom ? "0 0 25px rgba(255, 145, 0, 0.15)" : "none",
-                              gap: "1.5rem",
-                              flexWrap: "wrap"
+                              boxShadow: isCustom ? "0 0 25px rgba(255, 145, 0, 0.15)" : "none"
                             }}
                           >
                             {/* Card Map Background */}
@@ -3238,7 +3239,7 @@ export default function Home() {
                             </div>
 
                             {/* Match state & game info */}
-                            <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", position: "relative", zIndex: 3 }}>
+                            <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", position: "relative", zIndex: 3, minWidth: "160px" }}>
                               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                                 {isFinished ? (
                                   <span className="badge badge-success">Завершен</span>
@@ -3261,19 +3262,9 @@ export default function Home() {
                             </div>
 
                             {/* Teams scores layout */}
-                            <div style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "1.5rem",
-                              background: "rgba(0,0,0,0.2)",
-                              padding: "0.5rem 1.5rem",
-                              borderRadius: "10px",
-                              border: "1px solid var(--border-light)",
-                              position: "relative",
-                              zIndex: 3
-                            }}>
-                              <div style={{ textAlign: "right" }}>
-                                <div style={{ fontWeight: "700", color: "#fff", fontSize: "0.95rem" }}>{match.teams.faction1.name}</div>
+                            <div className="match-score-responsive" style={{ position: "relative", zIndex: 3 }}>
+                              <div style={{ textAlign: "right", flex: 1, minWidth: 0 }}>
+                                <div className="match-team-name" style={{ textAlign: "right" }} title={match.teams.faction1.name}>{match.teams.faction1.name}</div>
                               </div>
                               
                               <div style={{
@@ -3281,7 +3272,8 @@ export default function Home() {
                                 fontWeight: "800",
                                 display: "flex",
                                 alignItems: "center",
-                                gap: "0.5rem",
+                                gap: "0.4rem",
+                                flexShrink: 0,
                                 color: isFinished ? "#fff" : "var(--accent-cyan)"
                               }}>
                                 <span>{match.results?.score?.faction1 ?? match.teams.faction1.score ?? "-"}</span>
@@ -3289,13 +3281,13 @@ export default function Home() {
                                 <span>{match.results?.score?.faction2 ?? match.teams.faction2.score ?? "-"}</span>
                               </div>
 
-                              <div style={{ textAlign: "left" }}>
-                                <div style={{ fontWeight: "700", color: "#fff", fontSize: "0.95rem" }}>{match.teams.faction2.name}</div>
+                              <div style={{ textAlign: "left", flex: 1, minWidth: 0 }}>
+                                <div className="match-team-name" style={{ textAlign: "left" }} title={match.teams.faction2.name}>{match.teams.faction2.name}</div>
                               </div>
                             </div>
 
                             {/* Actions button */}
-                            <div style={{ position: "relative", zIndex: 3 }}>
+                            <div className="match-action-btn-wrapper" style={{ position: "relative", zIndex: 3 }}>
                               {isFinished ? (
                                 <button 
                                   className="btn btn-secondary" 
@@ -5765,7 +5757,7 @@ export default function Home() {
                           marginBottom: "1.5rem"
                         }}>
                           {/* Left: MVP Card */}
-                          <div className="glass-card" style={{
+                          <div className="glass-card match-modal-mvp" style={{
                             padding: "1.5rem",
                             display: "flex",
                             gap: "1.5rem",
@@ -5820,7 +5812,7 @@ export default function Home() {
                             </div>
 
                             {/* MVP stats column */}
-                            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+                            <div style={{ flex: 1, width: "100%", display: "flex", flexDirection: "column", gap: "0.6rem" }}>
                               <span style={{
                                 background: "linear-gradient(90deg, #ffe082, #ffb300)",
                                 WebkitBackgroundClip: "text",
@@ -5832,7 +5824,7 @@ export default function Home() {
                                 ★ MVP МАТЧА
                               </span>
 
-                              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.4rem" }}>
+                              <div className="match-modal-mvp-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.4rem" }}>
                                 {/* Row 1: Core Stats */}
                                 <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.4rem 0.5rem", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.04)" }}>
                                   <div style={{ fontSize: "0.55rem", color: "var(--text-muted)", textTransform: "uppercase" }}>K / D / A</div>
@@ -6694,8 +6686,8 @@ export default function Home() {
                             </div>
 
                             {/* Players stats table */}
-                            <div className="custom-table-container">
-                              <table className="custom-table">
+                            <div className="custom-table-container no-scrollbar touch-scroll-x" style={{ overflowX: "auto" }}>
+                              <table className="custom-table" style={{ width: "100%", minWidth: "560px" }}>
                                 <thead>
                                   <tr>
                                     <th>Игрок</th>

@@ -62,11 +62,27 @@ export async function GET(
       }
     }
 
-    // Prepend Custom Cybershoke matches to the items list
+    // Merge Custom Cybershoke matches and FACEIT matches
     const customMatches = await readCustomMatches();
+    let allMatches = [...(data.items || [])];
     if (customMatches.length > 0) {
-      data.items = [...customMatches, ...data.items];
+      allMatches = [...customMatches, ...allMatches];
     }
+
+    // Filter out CANCELLED / ABORTED matches
+    allMatches = allMatches.filter((m: any) => {
+      const st = String(m.status || "").toUpperCase();
+      return st !== "CANCELLED" && st !== "CANCEL" && st !== "ABORTED";
+    });
+
+    // Sort chronologically by timestamp (newest first)
+    allMatches.sort((a: any, b: any) => {
+      const timeA = Number(a.finished_at || a.started_at || a.created_at || 0);
+      const timeB = Number(b.finished_at || b.started_at || b.created_at || 0);
+      return timeB - timeA;
+    });
+
+    data.items = allMatches;
 
     return NextResponse.json(data);
   } catch (error: any) {
