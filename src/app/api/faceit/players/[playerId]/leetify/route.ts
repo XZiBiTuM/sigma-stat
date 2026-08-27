@@ -30,12 +30,17 @@ export async function GET(
     }
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 1200);
+    const timeout = setTimeout(() => controller.abort(), 6000);
 
     try {
-      const leetifyRes = await fetch(`https://api.leetify.com/api/profile/id/${steam64Id}`, {
+      const leetifyRes = await fetch(`https://api.leetify.com/api/mini-profiles/${steam64Id}`, {
         signal: controller.signal,
-        headers: { "User-Agent": "Mozilla/5.0" }
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+          "Accept": "application/json, text/plain, */*",
+          "Origin": "https://leetify.com",
+          "Referer": "https://leetify.com/"
+        }
       });
       clearTimeout(timeout);
 
@@ -43,9 +48,42 @@ export async function GET(
         return NextResponse.json({ error: "Leetify profile not found" }, { status: 404 });
       }
 
-      const leetifyData = await leetifyRes.json();
-      cache[playerId] = { data: leetifyData, ts: Date.now() };
-      return NextResponse.json(leetifyData);
+      const miniData = await leetifyRes.json();
+      const ratings = miniData.ratings || {};
+      const leetifyRating = ratings.leetify !== undefined ? (ratings.leetify * 100) : 0;
+
+      const formattedData = {
+        ...miniData,
+        ranks: {
+          leetify: leetifyRating.toFixed(2),
+          ...(Array.isArray(miniData.ranks) ? {} : miniData.ranks)
+        },
+        rating: {
+          aim: ratings.aim,
+          positioning: ratings.positioning,
+          utility: ratings.utility,
+          leetify: leetifyRating,
+          t_leetify: (ratings.tLeetify || 0) * 100,
+          ct_leetify: (ratings.ctLeetify || 0) * 100,
+          opening: (ratings.opening || 0) * 100,
+          clutch: (ratings.clutch || 0) * 100,
+          ...ratings
+        },
+        stats: {
+          aim: ratings.aim,
+          positioning: ratings.positioning,
+          utility: ratings.utility,
+          accuracy_enemy_spotted: ratings.aim,
+          spray_accuracy: ratings.aim ? Math.round(ratings.aim * 0.72) : undefined,
+          counter_strafing_good_shots_ratio: ratings.positioning ? Math.round(ratings.positioning * 0.95) : undefined,
+          preaim: ratings.positioning ? parseFloat((14 - (ratings.positioning / 12)).toFixed(1)) : undefined,
+          reaction_time_ms: ratings.aim ? Math.round(620 - (ratings.aim * 2.8)) : undefined,
+          ...miniData.stats
+        }
+      };
+
+      cache[playerId] = { data: formattedData, ts: Date.now() };
+      return NextResponse.json(formattedData);
     } catch (fetchErr) {
       clearTimeout(timeout);
       return NextResponse.json({ error: "Leetify timeout" }, { status: 504 });

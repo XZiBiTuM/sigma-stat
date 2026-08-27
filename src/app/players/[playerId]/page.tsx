@@ -783,115 +783,120 @@ export default function PlayerProfilePage() {
             {/* Top decorative line */}
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px", background: "linear-gradient(90deg, var(--accent-purple), var(--accent-cyan))" }} />
             
-            {/* Avatar */}
-            {(() => {
-              const isChamp = Boolean(
-                fantasyWinnerNick && (
-                  profile.nickname?.toLowerCase() === fantasyWinnerNick.toLowerCase() ||
-                  profile.player_id === fantasyWinnerNick ||
-                  (fantasyWinnerSteamId && profile.steam_id_64 === fantasyWinnerSteamId)
-                )
-              );
-              return (
-                <div style={{
-                  width: "90px",
-                  height: "90px",
-                  borderRadius: "16px",
-                  overflow: "hidden",
-                  background: "#1c1829",
-                  border: isChamp ? "2.5px solid #ffd700" : "2px solid var(--border-light)",
-                  boxShadow: isChamp ? "0 0 25px rgba(255, 215, 0, 0.4), 0 4px 20px rgba(0,0,0,0.4)" : "0 4px 20px rgba(0,0,0,0.4)",
-                  flexShrink: 0
-                }}>
-              {profile.avatar ? (
-                <img src={profile.avatar} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-              ) : (
-                <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2rem", fontWeight: "800", color: "var(--text-muted)" }}>
-                  {profile.nickname.substring(0, 2).toUpperCase()}
-                </div>
-              )}
-            </div>
-            );
-            })()}
-
-            {/* Name and Links */}
-            <div className="full-player-header-info">
-              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
-                <h1 style={{ fontSize: "clamp(1.6rem, 5vw, 2.2rem)", fontWeight: "900", color: "#fff", letterSpacing: "-0.03em", margin: 0, wordBreak: "break-word" }}>{profile.nickname}</h1>
-                {Boolean(
+            {/* Player Identity (Avatar + Name) */}
+            <div className="full-player-identity">
+              {(() => {
+                const isChamp = Boolean(
                   fantasyWinnerNick && (
                     profile.nickname?.toLowerCase() === fantasyWinnerNick.toLowerCase() ||
                     profile.player_id === fantasyWinnerNick ||
                     (fantasyWinnerSteamId && profile.steam_id_64 === fantasyWinnerSteamId)
                   )
-                ) && (
-                  <span style={{
-                    fontSize: "0.75rem",
-                    padding: "0.25rem 0.65rem",
-                    borderRadius: "10px",
-                    background: "linear-gradient(135deg, #ffd700, #ff9100)",
-                    color: "#000",
-                    fontWeight: "900",
-                    letterSpacing: "0.5px"
+                );
+                return (
+                  <div className="full-player-avatar" style={{
+                    width: "84px",
+                    height: "84px",
+                    borderRadius: "16px",
+                    overflow: "hidden",
+                    background: "#1c1829",
+                    border: isChamp ? "2.5px solid #ffd700" : "2px solid var(--border-light)",
+                    boxShadow: isChamp ? "0 0 25px rgba(255, 215, 0, 0.4), 0 4px 20px rgba(0,0,0,0.4)" : "0 4px 20px rgba(0,0,0,0.4)",
+                    flexShrink: 0
                   }}>
-                    ФАНТАЗЕР СЕЗОНА
-                  </span>
-                )}
+                    {profile.avatar ? (
+                      <img src={profile.avatar} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    ) : (
+                      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2rem", fontWeight: "800", color: "var(--text-muted)" }}>
+                        {profile.nickname.substring(0, 2).toUpperCase()}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+
+              <div className="full-player-name-wrapper">
+                <div style={{ display: "flex", alignItems: "center", gap: "0.65rem", flexWrap: "wrap" }}>
+                  <h1 style={{ fontSize: "clamp(1.5rem, 4vw, 2.2rem)", fontWeight: "900", color: "#fff", letterSpacing: "-0.03em", margin: 0, wordBreak: "break-word" }}>
+                    {profile.nickname}
+                  </h1>
+                  {Boolean(
+                    fantasyWinnerNick && (
+                      profile.nickname?.toLowerCase() === fantasyWinnerNick.toLowerCase() ||
+                      profile.player_id === fantasyWinnerNick ||
+                      (fantasyWinnerSteamId && profile.steam_id_64 === fantasyWinnerSteamId)
+                    )
+                  ) && (
+                    <span style={{
+                      fontSize: "0.75rem",
+                      padding: "0.25rem 0.65rem",
+                      borderRadius: "10px",
+                      background: "linear-gradient(135deg, #ffd700, #ff9100)",
+                      color: "#000",
+                      fontWeight: "900",
+                      letterSpacing: "0.5px"
+                    }}>
+                      ФАНТАЗЕР СЕЗОНА
+                    </span>
+                  )}
+                </div>
               </div>
-              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.85rem", marginTop: "0.5rem" }}>
-                {profile.country && (
-                  <span style={{ color: "var(--text-secondary)", fontSize: "0.85rem" }}>
-                    Страна: <strong style={{ color: "#fff" }}>{profile.country.toUpperCase()}</strong>
-                  </span>
-                )}
-                {(profile.steam_id_64 || profile.platforms?.steam) && (
-                  <a 
-                    href={`https://steamcommunity.com/profiles/${profile.steam_id_64 || profile.platforms?.steam}`}
-                    target="_blank" 
-                    rel="noreferrer"
-                    style={{ color: steamHover ? "#fff" : "var(--accent-cyan)", fontSize: "0.85rem", textDecoration: "none", fontWeight: "600", display: "inline-flex", alignItems: "center", gap: "0.4rem", transition: "color 0.2s" }}
-                    onMouseEnter={() => setSteamHover(true)}
-                    onMouseLeave={() => setSteamHover(false)}
-                  >
-                    <img src="/icons/steam.png" alt="" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
-                    <span>Steam Profile ↗</span>
-                  </a>
-                )}
+            </div>
+
+            {/* Links and Actions */}
+            <div className="full-player-links">
+              {profile.country && (
+                <span style={{ color: "var(--text-secondary)", fontSize: "0.85rem" }}>
+                  Страна: <strong style={{ color: "#fff" }}>{profile.country.toUpperCase()}</strong>
+                </span>
+              )}
+              {(profile.steam_id_64 || profile.platforms?.steam) && (
                 <a 
-                  href={`https://www.faceit.com/ru/players/${profile.nickname}`}
+                  href={`https://steamcommunity.com/profiles/${profile.steam_id_64 || profile.platforms?.steam}`}
                   target="_blank" 
                   rel="noreferrer"
-                  style={{ color: faceitHover ? "#fff" : "var(--accent-purple)", fontSize: "0.85rem", textDecoration: "none", fontWeight: "600", display: "inline-flex", alignItems: "center", gap: "0.4rem", transition: "color 0.2s" }}
-                  onMouseEnter={() => setFaceitHover(true)}
-                  onMouseLeave={() => setFaceitHover(false)}
+                  style={{ color: steamHover ? "#fff" : "var(--accent-cyan)", fontSize: "0.85rem", textDecoration: "none", fontWeight: "600", display: "inline-flex", alignItems: "center", gap: "0.4rem", transition: "color 0.2s" }}
+                  onMouseEnter={() => setSteamHover(true)}
+                  onMouseLeave={() => setSteamHover(false)}
                 >
-                  <img src="/icons/faceit.png" alt="" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
-                  <span>FACEIT Profile ↗</span>
+                  <img src="/icons/steam.png" alt="" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
+                  <span>Steam Profile ↗</span>
                 </a>
-                <button
-                  onClick={handleCopyProfile}
-                  onMouseEnter={() => setCopyHover(true)}
-                  onMouseLeave={() => setCopyHover(false)}
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    color: copied ? "#4caf50" : (copyHover ? "#fff" : "rgba(255, 255, 255, 0.7)"),
-                    fontSize: "0.85rem",
-                    fontWeight: "600",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "0.4rem",
-                    cursor: "pointer",
-                    padding: 0,
-                    transition: "color 0.2s"
-                  }}
-                >
-                  <svg viewBox="0 0 24 24" style={{ width: "16px", height: "16px", fill: copied ? "#4caf50" : (copyHover ? "#fff" : "rgba(255, 255, 255, 0.7)"), transition: "fill 0.2s" }}>
-                    <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                  </svg>
-                  <span>{copied ? "Ссылка скопирована!" : "Скопировать ссылку"}</span>
-                </button>
-              </div>
+              )}
+              <a 
+                href={`https://www.faceit.com/ru/players/${profile.nickname}`}
+                target="_blank" 
+                rel="noreferrer"
+                style={{ color: faceitHover ? "#fff" : "var(--accent-purple)", fontSize: "0.85rem", textDecoration: "none", fontWeight: "600", display: "inline-flex", alignItems: "center", gap: "0.4rem", transition: "color 0.2s" }}
+                onMouseEnter={() => setFaceitHover(true)}
+                onMouseLeave={() => setFaceitHover(false)}
+              >
+                <img src="/icons/faceit.png" alt="" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
+                <span>FACEIT Profile ↗</span>
+              </a>
+              <button
+                onClick={handleCopyProfile}
+                onMouseEnter={() => setCopyHover(true)}
+                onMouseLeave={() => setCopyHover(false)}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  color: copied ? "#4caf50" : (copyHover ? "#fff" : "rgba(255, 255, 255, 0.7)"),
+                  fontSize: "0.85rem",
+                  fontWeight: "600",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.4rem",
+                  cursor: "pointer",
+                  padding: 0,
+                  transition: "color 0.2s"
+                }}
+              >
+                <svg viewBox="0 0 24 24" style={{ width: "16px", height: "16px", fill: copied ? "#4caf50" : (copyHover ? "#fff" : "rgba(255, 255, 255, 0.7)"), transition: "fill 0.2s" }}>
+                  <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                </svg>
+                <span>{copied ? "Ссылка скопирована!" : "Скопировать ссылку"}</span>
+              </button>
             </div>
 
             {/* Level and Elo */}

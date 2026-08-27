@@ -872,9 +872,24 @@ html, body {
   position: relative;
 }
 
-.full-player-header-info {
-  flex: 1 1 240px;
-  min-width: 0;
+.full-player-identity {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex: 1 1 300px;
+}
+
+.full-player-name-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.full-player-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.85rem;
 }
 
 .full-player-header-elo {
@@ -1414,13 +1429,44 @@ html, body {
 
   /* Full Player Profile Page Mobile Styles */
   .full-player-header {
+    display: flex !important;
     flex-direction: column !important;
     align-items: stretch !important;
-    gap: 1.15rem !important;
-    padding: 1.25rem 1rem !important;
+    gap: 0.85rem !important;
+    padding: 1.15rem 1rem !important;
   }
 
-  .full-player-header-info {
+  .full-player-identity {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.85rem !important;
+    width: 100% !important;
+  }
+
+  .full-player-avatar {
+    width: 64px !important;
+    height: 64px !important;
+    border-radius: 12px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .full-player-name-wrapper {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.25rem !important;
+    min-width: 0 !important;
+  }
+
+  .full-player-name-wrapper h1 {
+    font-size: 1.45rem !important;
+    margin: 0 !important;
+  }
+
+  .full-player-links {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 0.5rem 0.85rem !important;
     width: 100% !important;
   }
 
@@ -1429,8 +1475,9 @@ html, body {
     min-width: 100% !important;
     justify-content: space-around !important;
     box-sizing: border-box !important;
-    padding: 0.75rem 1.25rem !important;
+    padding: 0.65rem 1rem !important;
     border-radius: 12px !important;
+    margin-top: 0.25rem !important;
   }
 
   .full-player-skill-card {
