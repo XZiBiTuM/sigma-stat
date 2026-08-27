@@ -3989,6 +3989,10 @@ export default function Home() {
                       // During DRAFT_WAITING: don't show saved pick state — show clean empty interface
                       const isPickLocked = isDraftWaiting ? false : !!userFantasyPick;
 
+                      const displaySniper = isDraftWaiting ? null : draftSniper;
+                      const displaySupport = isDraftWaiting ? null : draftSupport;
+                      const displayDarkHorse = isDraftWaiting ? null : draftDarkHorse;
+
                       return (
                         <div className="glass-card fantasy-draft-card" style={{ padding: "2rem", borderRadius: "24px" }}>
                           <div className="fantasy-draft-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
@@ -4006,6 +4010,28 @@ export default function Home() {
                             </div>
 
                             <div className="fantasy-user-status-row" style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+                              <button
+                                onClick={() => setShowBuffsModal(true)}
+                                style={{
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  gap: "0.45rem",
+                                  background: "rgba(255, 215, 0, 0.12)",
+                                  border: "1px solid rgba(255, 215, 0, 0.4)",
+                                  color: "#ffd700",
+                                  padding: "0.45rem 0.9rem",
+                                  borderRadius: "12px",
+                                  fontSize: "0.82rem",
+                                  fontWeight: "800",
+                                  cursor: "pointer",
+                                  transition: "all 0.2s ease"
+                                }}
+                                onMouseEnter={e => e.currentTarget.style.background = "rgba(255, 215, 0, 0.22)"}
+                                onMouseLeave={e => e.currentTarget.style.background = "rgba(255, 215, 0, 0.12)"}
+                              >
+                                <span style={{ background: "#ffd700", color: "#000", width: "16px", height: "16px", borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: "0.7rem", fontWeight: "900" }}>!</span>
+                                Каталог усилений
+                              </button>
                               {currentUser && (
                                 <div className="fantasy-user-pill" style={{ display: "flex", alignItems: "center", gap: "0.6rem", background: "rgba(0,0,0,0.3)", padding: "0.45rem 1rem", borderRadius: "14px", border: "1px solid var(--border-light)" }}>
                                   {currentUser.steamAvatar && <img src={currentUser.steamAvatar} alt="" style={{ width: "24px", height: "24px", borderRadius: "50%" }} />}
@@ -4047,13 +4073,13 @@ export default function Home() {
                             {/* SLOT 1: STAR PLAYER */}
                             <div style={{
                               background: "rgba(157, 59, 245, 0.04)",
-                              border: draftSniper ? "1.5px solid #9d3bf5" : "1px solid rgba(157, 59, 245, 0.3)",
+                              border: displaySniper ? "1.5px solid #9d3bf5" : "1px solid rgba(157, 59, 245, 0.3)",
                               borderRadius: "18px",
                               padding: "1.5rem",
                               display: "flex",
                               flexDirection: "column",
                               gap: "1rem",
-                              boxShadow: draftSniper ? "0 0 25px rgba(157, 59, 245, 0.15)" : "none",
+                              boxShadow: displaySniper ? "0 0 25px rgba(157, 59, 245, 0.15)" : "none",
                               transition: "all 0.2s ease"
                             }}>
                               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -4069,7 +4095,7 @@ export default function Home() {
                               {/* Player selector */}
                               <div>
                                 <select
-                                  value={draftSniper?.nickname || draftSniper?.playerId || ""}
+                                  value={displaySniper?.nickname || displaySniper?.playerId || ""}
                                   onChange={e => {
                                     const val = e.target.value;
                                     const found = allPlayersList.find(p => p.nickname === val || p.playerId === val);
@@ -4102,17 +4128,17 @@ export default function Home() {
                                 </select>
                               </div>
 
-                              {draftSniper && (
+                              {displaySniper && (
                                 <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(0,0,0,0.3)", padding: "0.6rem 0.8rem", borderRadius: "12px" }}>
-                                  {draftSniper.avatar ? (
-                                    <img src={draftSniper.avatar} alt="" style={{ width: "32px", height: "32px", borderRadius: "50%" }} />
+                                  {displaySniper.avatar ? (
+                                    <img src={displaySniper.avatar} alt="" style={{ width: "32px", height: "32px", borderRadius: "50%" }} />
                                   ) : (
                                     <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "rgba(255, 82, 82, 0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.8rem", fontWeight: "700", color: "#ff8a80" }}>
-                                      {draftSniper.nickname?.slice(0, 2).toUpperCase()}
+                                      {displaySniper.nickname?.slice(0, 2).toUpperCase()}
                                     </div>
                                   )}
                                   <div>
-                                    <div style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff" }}>{draftSniper.nickname}</div>
+                                    <div style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff" }}>{displaySniper.nickname}</div>
                                     <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Скилл: <strong style={{ color: "#ff7b7b" }}>{sniperSkill}</strong></div>
                                   </div>
                                 </div>
@@ -4122,13 +4148,13 @@ export default function Home() {
                             {/* SLOT 2: SUPPORT */}
                             <div style={{
                               background: "rgba(0, 229, 255, 0.04)",
-                              border: draftSupport ? (supportSkill > 65 ? "1.5px solid #ff5252" : "1.5px solid var(--accent-cyan)") : "1px solid rgba(0, 229, 255, 0.3)",
+                              border: displaySupport ? (supportSkill > 65 ? "1.5px solid #ff5252" : "1.5px solid var(--accent-cyan)") : "1px solid rgba(0, 229, 255, 0.3)",
                               borderRadius: "18px",
                               padding: "1.5rem",
                               display: "flex",
                               flexDirection: "column",
                               gap: "1rem",
-                              boxShadow: draftSupport ? "0 0 25px rgba(0, 229, 255, 0.15)" : "none",
+                              boxShadow: displaySupport ? "0 0 25px rgba(0, 229, 255, 0.15)" : "none",
                               transition: "all 0.2s ease"
                             }}>
                               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -4141,17 +4167,17 @@ export default function Home() {
                                   fontWeight: "800",
                                   padding: "0.2rem 0.5rem",
                                   borderRadius: "6px",
-                                  background: draftSupport && supportSkill > 65 ? "rgba(255, 73, 73, 0.2)" : "rgba(0, 229, 255, 0.15)",
-                                  color: draftSupport && supportSkill > 65 ? "#ff5252" : "var(--accent-cyan)"
+                                  background: displaySupport && supportSkill > 65 ? "rgba(255, 73, 73, 0.2)" : "rgba(0, 229, 255, 0.15)",
+                                  color: displaySupport && supportSkill > 65 ? "#ff5252" : "var(--accent-cyan)"
                                 }}>
-                                  {draftSupport && supportSkill > 65 ? "⚠️ ШТРАФ -50%" : "СЛОТ 2"}
+                                  {displaySupport && supportSkill > 65 ? "⚠️ ШТРАФ -50%" : "СЛОТ 2"}
                                 </span>
                               </div>
 
                               {/* Player selector */}
                               <div>
                                 <select
-                                  value={draftSupport?.nickname || draftSupport?.playerId || ""}
+                                  value={displaySupport?.nickname || displaySupport?.playerId || ""}
                                   onChange={e => {
                                     const val = e.target.value;
                                     const found = allPlayersList.find(p => p.nickname === val || p.playerId === val);
@@ -4163,7 +4189,7 @@ export default function Home() {
                                     padding: "0.75rem 1rem",
                                     borderRadius: "12px",
                                     background: "#06050c",
-                                    border: draftSupport && supportSkill > 65 ? "1px solid rgba(255, 82, 82, 0.5)" : "1px solid rgba(0, 229, 255, 0.4)",
+                                    border: isPickLocked ? "1px solid rgba(0, 229, 255, 0.2)" : displaySupport && supportSkill > 65 ? "1px solid rgba(255, 82, 82, 0.5)" : "1px solid rgba(0, 229, 255, 0.4)",
                                     color: "#fff",
                                     fontSize: "0.9rem",
                                     fontWeight: "600",
@@ -4185,17 +4211,17 @@ export default function Home() {
                                 </select>
                               </div>
 
-                              {draftSupport && (
+                              {displaySupport && (
                             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(0,0,0,0.3)", padding: "0.6rem 0.8rem", borderRadius: "12px" }}>
-                              {draftSupport.avatar ? (
-                                <img src={draftSupport.avatar} alt="" style={{ width: "32px", height: "32px", borderRadius: "50%" }} />
+                              {displaySupport.avatar ? (
+                                <img src={displaySupport.avatar} alt="" style={{ width: "32px", height: "32px", borderRadius: "50%" }} />
                               ) : (
                                 <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "rgba(0, 229, 255, 0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.8rem", fontWeight: "700", color: "var(--accent-cyan)" }}>
-                                  {draftSupport.nickname?.slice(0, 2).toUpperCase()}
+                                  {displaySupport.nickname?.slice(0, 2).toUpperCase()}
                                 </div>
                               )}
                               <div style={{ flex: 1 }}>
-                                <div style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff" }}>{draftSupport.nickname}</div>
+                                <div style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff" }}>{displaySupport.nickname}</div>
                                 <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
                                   Скилл: <strong style={{ color: supportSkill > 65 ? "#ff5252" : "var(--accent-cyan)" }}>{supportSkill}</strong>
                                 </div>
@@ -4212,13 +4238,13 @@ export default function Home() {
                         {/* SLOT 3: DARK HORSE */}
                         <div style={{
                           background: "rgba(255, 215, 0, 0.04)",
-                          border: draftDarkHorse ? (Number(darkMultiplier) < 1.0 ? "1.5px solid #ff5252" : "1.5px solid #ffd700") : "1px solid rgba(255, 215, 0, 0.3)",
+                          border: displayDarkHorse ? (Number(darkMultiplier) < 1.0 ? "1.5px solid #ff5252" : "1.5px solid #ffd700") : "1px solid rgba(255, 215, 0, 0.3)",
                           borderRadius: "18px",
                           padding: "1.5rem",
                           display: "flex",
                           flexDirection: "column",
                           gap: "1rem",
-                          boxShadow: draftDarkHorse ? "0 0 25px rgba(255, 215, 0, 0.15)" : "none",
+                          boxShadow: displayDarkHorse ? "0 0 25px rgba(255, 215, 0, 0.15)" : "none",
                           transition: "all 0.2s ease"
                         }}>
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -4231,17 +4257,17 @@ export default function Home() {
                               fontWeight: "800",
                               padding: "0.2rem 0.5rem",
                               borderRadius: "6px",
-                              background: Number(darkMultiplier) < 1.0 ? "rgba(255, 73, 73, 0.2)" : "rgba(255, 215, 0, 0.15)",
-                              color: Number(darkMultiplier) < 1.0 ? "#ff5252" : "#ffd700"
+                              background: displayDarkHorse ? (Number(darkMultiplier) < 1.0 ? "rgba(255, 73, 73, 0.2)" : "rgba(255, 215, 0, 0.15)") : "rgba(255, 215, 0, 0.15)",
+                              color: displayDarkHorse ? (Number(darkMultiplier) < 1.0 ? "#ff5252" : "#ffd700") : "#ffd700"
                             }}>
-                              {Number(darkMultiplier) < 1.0 ? `⚠️ ШТРАФ x${darkMultiplier}` : `БОНУС x${darkMultiplier}`}
+                              {displayDarkHorse ? (Number(darkMultiplier) < 1.0 ? `⚠️ ШТРАФ x${darkMultiplier}` : `БОНУС x${darkMultiplier}`) : "СЛОТ 3"}
                             </span>
                           </div>
 
                           {/* Player selector */}
                           <div>
                             <select
-                              value={draftDarkHorse?.nickname || draftDarkHorse?.playerId || ""}
+                              value={displayDarkHorse?.nickname || displayDarkHorse?.playerId || ""}
                               onChange={e => {
                                 const val = e.target.value;
                                 const found = allPlayersList.find(p => p.nickname === val || p.playerId === val);
@@ -4253,7 +4279,7 @@ export default function Home() {
                                 padding: "0.75rem 1rem",
                                 borderRadius: "12px",
                                 background: "#06050c",
-                                border: Number(darkMultiplier) < 1.0 ? "1px solid rgba(255, 82, 82, 0.5)" : "1px solid rgba(255, 215, 0, 0.4)",
+                                border: isPickLocked ? "1px solid rgba(255, 215, 0, 0.2)" : displayDarkHorse && Number(darkMultiplier) < 1.0 ? "1px solid rgba(255, 82, 82, 0.5)" : "1px solid rgba(255, 215, 0, 0.4)",
                                 color: "#fff",
                                 fontSize: "0.9rem",
                                 fontWeight: "600",
@@ -4276,17 +4302,17 @@ export default function Home() {
                             </select>
                           </div>
 
-                          {draftDarkHorse && (
+                          {displayDarkHorse && (
                             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(0,0,0,0.3)", padding: "0.6rem 0.8rem", borderRadius: "12px" }}>
-                              {draftDarkHorse.avatar ? (
-                                <img src={draftDarkHorse.avatar} alt="" style={{ width: "32px", height: "32px", borderRadius: "50%" }} />
+                              {displayDarkHorse.avatar ? (
+                                <img src={displayDarkHorse.avatar} alt="" style={{ width: "32px", height: "32px", borderRadius: "50%" }} />
                               ) : (
                                 <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "rgba(255, 215, 0, 0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.8rem", fontWeight: "700", color: "#ffd700" }}>
-                                  {draftDarkHorse.nickname?.slice(0, 2).toUpperCase()}
+                                  {displayDarkHorse.nickname?.slice(0, 2).toUpperCase()}
                                 </div>
                               )}
                               <div style={{ flex: 1 }}>
-                                <div style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff" }}>{draftDarkHorse.nickname}</div>
+                                <div style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff" }}>{displayDarkHorse.nickname}</div>
                                 <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Скилл: <strong style={{ color: Number(darkMultiplier) < 1.0 ? "#ff5252" : "#ffd700" }}>{darkHorseSkill}</strong></div>
                               </div>
                               <span style={{
@@ -4306,7 +4332,7 @@ export default function Home() {
                       </div>
 
                       {/* FIFA ULTIMATE TEAM (FUT) CARDS SHOWCASE */}
-                      {(draftSniper || draftSupport || draftDarkHorse) && (() => {
+                      {(displaySniper || displaySupport || displayDarkHorse) && (() => {
                         const renderBuffSvgIcon = (buffId?: string, size = 18, color = "currentColor") => {
                           switch (buffId) {
                             case "headshot":
@@ -4743,8 +4769,8 @@ export default function Home() {
                               margin: "0 auto"
                             }}>
                               {/* SLOT 1: STAR PLAYER */}
-                              {draftSniper && renderFUTCard({
-                                player: draftSniper,
+                              {displaySniper && renderFUTCard({
+                                player: displaySniper,
                                 roleName: "Стар-плеер",
                                 roleShort: "СТАР",
                                 skill: sniperSkill,
@@ -4757,13 +4783,13 @@ export default function Home() {
                               })}
 
                               {/* SLOT 2: SUPPORT */}
-                              {draftSupport && (() => {
+                              {displaySupport && (() => {
                                 const buff = userFantasyPick?.support?.buff;
                                 const isLucky = buff?.id === "lucky_loser";
                                 const isPenalty = supportSkill > 65 && !isLucky;
 
                                 return renderFUTCard({
-                                  player: draftSupport,
+                                  player: displaySupport,
                                   roleName: "Саппорт",
                                   roleShort: "САП",
                                   skill: supportSkill,
@@ -4784,13 +4810,13 @@ export default function Home() {
                               })()}
 
                               {/* SLOT 3: DARK HORSE */}
-                              {draftDarkHorse && (() => {
+                              {displayDarkHorse && (() => {
                                 const buff = userFantasyPick?.darkHorse?.buff;
                                 const isLucky = buff?.id === "lucky_loser";
                                 const isPenalty = Number(darkMultiplier) < 1.0 && !isLucky;
 
                                 return renderFUTCard({
-                                  player: draftDarkHorse,
+                                  player: displayDarkHorse,
                                   roleName: "Темная лошадка",
                                   roleShort: "ТЕМН",
                                   skill: darkHorseSkill,
