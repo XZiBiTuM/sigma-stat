@@ -4082,12 +4082,14 @@ export default function Home() {
                               boxShadow: displaySniper ? "0 0 25px rgba(157, 59, 245, 0.15)" : "none",
                               transition: "all 0.2s ease"
                             }}>
-                              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "0.5rem" }}>
                                 <div>
                                   <div style={{ fontSize: "1.05rem", fontWeight: "800", color: "var(--accent-purple)" }}>Стар-плеер</div>
-                                  <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Фраги (+2.5), Entry (+2.0), HS (+1.0)</div>
+                                  <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", marginTop: "0.15rem", lineHeight: "1.35" }}>
+                                    Фраги (+2.5) · Entry (+2.0) · HS (+1.0)
+                                  </div>
                                 </div>
-                                <span style={{ fontSize: "0.72rem", fontWeight: "800", padding: "0.2rem 0.5rem", borderRadius: "6px", background: "rgba(157, 59, 245, 0.15)", color: "#c084fc" }}>
+                                <span style={{ fontSize: "0.72rem", fontWeight: "800", padding: "0.2rem 0.5rem", borderRadius: "6px", background: "rgba(157, 59, 245, 0.15)", color: "#c084fc", flexShrink: 0 }}>
                                   СЛОТ 1
                                 </span>
                               </div>
@@ -4157,10 +4159,12 @@ export default function Home() {
                               boxShadow: displaySupport ? "0 0 25px rgba(0, 229, 255, 0.15)" : "none",
                               transition: "all 0.2s ease"
                             }}>
-                              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "0.5rem" }}>
                                 <div>
                                   <div style={{ fontSize: "1.05rem", fontWeight: "800", color: "var(--accent-cyan)" }}>Саппорт</div>
-                                  <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "220px" }}>Ассисты (+2.5) · Гранаты (+0.05/HP) · Флешки (+0.95)</div>
+                                  <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", marginTop: "0.15rem", lineHeight: "1.35" }}>
+                                    Ассисты (+2.5) · Гранаты (+0.05/HP) · Флешки (+0.95)
+                                  </div>
                                 </div>
                                 <span style={{
                                   fontSize: "0.72rem",
@@ -4168,7 +4172,8 @@ export default function Home() {
                                   padding: "0.2rem 0.5rem",
                                   borderRadius: "6px",
                                   background: displaySupport && supportSkill > 65 ? "rgba(255, 73, 73, 0.2)" : "rgba(0, 229, 255, 0.15)",
-                                  color: displaySupport && supportSkill > 65 ? "#ff5252" : "var(--accent-cyan)"
+                                  color: displaySupport && supportSkill > 65 ? "#ff5252" : "var(--accent-cyan)",
+                                  flexShrink: 0
                                 }}>
                                   {displaySupport && supportSkill > 65 ? "⚠️ ШТРАФ -50%" : "СЛОТ 2"}
                                 </span>
@@ -4247,10 +4252,12 @@ export default function Home() {
                           boxShadow: displayDarkHorse ? "0 0 25px rgba(255, 215, 0, 0.15)" : "none",
                           transition: "all 0.2s ease"
                         }}>
-                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "0.5rem" }}>
                             <div>
                               <div style={{ fontSize: "1.05rem", fontWeight: "800", color: "#ffd700" }}>Темная лошадка</div>
-                              <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Боевой счет × Множитель лошадки (до x1.40)</div>
+                              <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", marginTop: "0.15rem", lineHeight: "1.35" }}>
+                                Боевой счет × Множитель лошадки (до x1.40)
+                              </div>
                             </div>
                             <span style={{
                               fontSize: "0.72rem",
@@ -4258,7 +4265,8 @@ export default function Home() {
                               padding: "0.2rem 0.5rem",
                               borderRadius: "6px",
                               background: displayDarkHorse ? (Number(darkMultiplier) < 1.0 ? "rgba(255, 73, 73, 0.2)" : "rgba(255, 215, 0, 0.15)") : "rgba(255, 215, 0, 0.15)",
-                              color: displayDarkHorse ? (Number(darkMultiplier) < 1.0 ? "#ff5252" : "#ffd700") : "#ffd700"
+                              color: displayDarkHorse ? (Number(darkMultiplier) < 1.0 ? "#ff5252" : "#ffd700") : "#ffd700",
+                              flexShrink: 0
                             }}>
                               {displayDarkHorse ? (Number(darkMultiplier) < 1.0 ? `⚠️ ШТРАФ x${darkMultiplier}` : `БОНУС x${darkMultiplier}`) : "СЛОТ 3"}
                             </span>
