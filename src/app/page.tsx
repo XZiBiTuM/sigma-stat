@@ -3985,19 +3985,23 @@ export default function Home() {
 
                     {/* DRAFT PICKING SECTION */}
                     {(() => {
-                      const isPickLocked = !!userFantasyPick;
+                      const isDraftWaiting = tourStatus === "DRAFT_WAITING";
+                      // During DRAFT_WAITING: don't show saved pick state — show clean empty interface
+                      const isPickLocked = isDraftWaiting ? false : !!userFantasyPick;
 
                       return (
                         <div className="glass-card fantasy-draft-card" style={{ padding: "2rem", borderRadius: "24px" }}>
                           <div className="fantasy-draft-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
                             <div className="fantasy-draft-title-box">
                               <h3 style={{ fontSize: "1.35rem", fontWeight: "800", color: "#fff", margin: 0 }}>
-                                Твой состав на турнир (3 слота)
+                                {isDraftWaiting ? "Следующий турнир" : "Твой состав на турнир (3 слота)"}
                               </h3>
                               <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", margin: "0.3rem 0 0 0" }}>
-                                {isPickLocked 
-                                  ? "Твой боевой состав и активные усиления на текущий турнир."
-                                  : "Выбери по одному игроку на каждую роль. Внимание: в Саппортах и Лошадке действует штраф за оверскилл!"}
+                                {isDraftWaiting
+                                  ? "Следующий турнир ожидается в ближайшее время. Дата пока неизвестна."
+                                  : isPickLocked 
+                                    ? "Твой боевой состав и активные усиления на текущий турнир."
+                                    : "Выбери по одному игроку на каждую роль. Внимание: в Саппортах и Лошадке действует штраф за оверскилл!"}
                               </p>
                             </div>
 
@@ -4130,7 +4134,7 @@ export default function Home() {
                               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                                 <div>
                                   <div style={{ fontSize: "1.05rem", fontWeight: "800", color: "var(--accent-cyan)" }}>Саппорт</div>
-                                  <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Ассисты (+2.5), Урон гранатами (1 HP = +0.05), Флешки (+0.95)</div>
+                                  <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "220px" }}>Ассисты (+2.5) · Гранаты (+0.05/HP) · Флешки (+0.95)</div>
                                 </div>
                                 <span style={{
                                   fontSize: "0.72rem",
@@ -5090,7 +5094,46 @@ export default function Home() {
                           </div>
                         )}
 
-                        {!isPickLocked ? (
+                        {isDraftWaiting ? (
+                          /* DRAFT_WAITING: coming soon notice + catalog link */
+                          <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem", width: "100%" }}>
+                            <div style={{
+                              width: "100%",
+                              padding: "1rem 1.5rem",
+                              borderRadius: "14px",
+                              background: "rgba(157, 59, 245, 0.1)",
+                              border: "1px solid rgba(157, 59, 245, 0.35)",
+                              color: "#c084fc",
+                              fontSize: "0.92rem",
+                              fontWeight: "700",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              gap: "0.5rem",
+                              textAlign: "center"
+                            }}>
+                              🕐 Дата следующего турнира пока не назначена. Следи за обновлениями!
+                            </div>
+                            <button
+                              onClick={() => setShowBuffsModal(true)}
+                              style={{
+                                width: "100%",
+                                padding: "0.85rem 2rem",
+                                borderRadius: "14px",
+                                background: "rgba(157, 59, 245, 0.15)",
+                                border: "1px solid rgba(157, 59, 245, 0.4)",
+                                color: "#c084fc",
+                                fontSize: "0.95rem",
+                                fontWeight: "800",
+                                cursor: "pointer",
+                                transition: "all 0.2s ease",
+                                textAlign: "center"
+                              }}
+                            >
+                              📋 Каталог усилений (ознакомительный)
+                            </button>
+                          </div>
+                        ) : !isPickLocked ? (
                           <>
                             {/* WARNING NOTE BEFORE SAVING */}
                             <div style={{
@@ -5169,10 +5212,10 @@ export default function Home() {
                       <div className="fantasy-leaderboard-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
                         <div className="fantasy-leaderboard-title-box">
                           <h3 style={{ fontSize: "1.35rem", fontWeight: "800", color: "#fff", margin: "0 0 0.3rem 0" }}>
-                            Таблица лидеров Fantasy League
+                            {tourStatus === "DRAFT_WAITING" ? "Итоги прошлого турнира" : "Таблица лидеров Fantasy League"}
                           </h3>
                           <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", margin: 0 }}>
-                            Рейтинг участников и набранные очки за текущий турнир
+                            {tourStatus === "DRAFT_WAITING" ? "Результаты участников завершённого турнира" : "Рейтинг участников и набранные очки за текущий турнир"}
                           </p>
                         </div>
                         <span className="fantasy-participants-badge" style={{ fontSize: "0.8rem", color: "var(--text-muted)", background: "rgba(255,255,255,0.05)", padding: "0.35rem 0.85rem", borderRadius: "10px", border: "1px solid var(--border-light)" }}>
