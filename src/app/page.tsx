@@ -7023,7 +7023,10 @@ export default function Home() {
                         {/* Form and Streaks */}
                         <div className="player-modal-form-streaks">
                           <div style={{ flex: 1, background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "8px", padding: "0.75rem 1rem" }}>
-                            <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", display: "block", marginBottom: "0.5rem" }}>Текущая форма (Последние 5 игр)</span>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+                              <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", fontWeight: "700" }}>Форма (последние 5 матчей BO2)</span>
+                              <span style={{ fontSize: "0.62rem", color: "var(--text-muted)" }}>матчи</span>
+                            </div>
                             <div style={{ display: "flex", gap: "0.5rem" }}>
                               {(() => {
                                 const recentList = playerHubStats?.recentResults || playerGameStats?.lifetime["Recent Results"] || [];
@@ -7031,21 +7034,26 @@ export default function Home() {
                                   return <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>—</span>;
                                 }
                                 return recentList.map((res: string, i: number) => {
-                                  const isWin = res === "1";
+                                  const isWin = res === "1" || res === "W";
+                                  const isDraw = res === "D";
+                                  const label = isWin ? "W" : isDraw ? "D" : "L";
+                                  const matchItem = playerHubStats?.recentMatchesList?.[i];
                                   return (
                                     <div 
                                       key={i} 
+                                      title={matchItem ? `Счет: ${matchItem.score} (${matchItem.maps?.join(", ")})` : label}
                                       style={{
-                                        width: "24px", height: "24px",
-                                        borderRadius: "50%",
-                                        display: "flex", alignItems: "center", justifyContent: "center",
-                                        fontSize: "0.7rem", fontWeight: "800",
-                                        background: isWin ? "rgba(76, 175, 80, 0.15)" : "rgba(244, 67, 54, 0.15)",
-                                        border: isWin ? "1px solid rgba(76, 175, 80, 0.3)" : "1px solid rgba(244, 67, 54, 0.3)",
-                                        color: isWin ? "#4caf50" : "#f44336"
+                                        minWidth: "28px", height: "28px",
+                                        borderRadius: "6px",
+                                        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                                        fontSize: "0.72rem", fontWeight: "900",
+                                        background: isWin ? "rgba(76, 175, 80, 0.15)" : isDraw ? "rgba(255, 193, 7, 0.15)" : "rgba(244, 67, 54, 0.15)",
+                                        border: isWin ? "1px solid rgba(76, 175, 80, 0.35)" : isDraw ? "1px solid rgba(255, 193, 7, 0.35)" : "1px solid rgba(244, 67, 54, 0.35)",
+                                        color: isWin ? "#4caf50" : isDraw ? "#ffc107" : "#f44336",
+                                        padding: "0 0.2rem"
                                       }}
                                     >
-                                      {isWin ? "W" : "L"}
+                                      <span>{label}</span>
                                     </div>
                                   );
                                 });
@@ -7053,19 +7061,31 @@ export default function Home() {
                             </div>
                           </div>
 
-                          <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "8px", padding: "0.75rem 1rem", minWidth: "180px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                          <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "8px", padding: "0.75rem 1rem", minWidth: "190px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
                             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.72rem", color: "var(--text-secondary)" }}>
-                              <span>Текущий стрик:</span>
+                              <span>Текущий стрик (матчи):</span>
                               <span style={{ fontWeight: "700", color: "var(--success)" }}>
-                                {(playerHubStats?.streaks?.current ?? playerGameStats?.lifetime["Current Win Streak"] ?? 0) > 0 ? `+${playerHubStats?.streaks?.current ?? playerGameStats?.lifetime["Current Win Streak"]} побед` : "0 побед"}
+                                {(playerHubStats?.streaks?.matches?.current ?? playerHubStats?.streaks?.current ?? playerGameStats?.lifetime["Current Win Streak"] ?? 0) > 0 
+                                  ? `+${playerHubStats?.streaks?.matches?.current ?? playerHubStats?.streaks?.current ?? playerGameStats?.lifetime["Current Win Streak"]} матча` 
+                                  : "0 матчей"}
                               </span>
                             </div>
+                            {playerHubStats?.streaks?.maps?.current !== undefined && (
+                              <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", textAlign: "right", marginTop: "0.1rem" }}>
+                                {playerHubStats.streaks.maps.current} карт подряд
+                              </div>
+                            )}
                             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.72rem", color: "var(--text-secondary)", marginTop: "0.35rem" }}>
-                              <span>Макс. стрик:</span>
+                              <span>Макс. стрик (матчи):</span>
                               <span style={{ fontWeight: "700", color: "#fff" }}>
-                                {playerHubStats?.streaks?.longest ?? playerGameStats?.lifetime["Longest Win Streak"] ?? 0} побед
+                                {playerHubStats?.streaks?.matches?.longest ?? playerHubStats?.streaks?.longest ?? playerGameStats?.lifetime["Longest Win Streak"] ?? 0} матчей
                               </span>
                             </div>
+                            {playerHubStats?.streaks?.maps?.longest !== undefined && (
+                              <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", textAlign: "right", marginTop: "0.1rem" }}>
+                                рекорд: {playerHubStats.streaks.maps.longest} карт подряд
+                              </div>
+                            )}
                           </div>
                         </div>
 

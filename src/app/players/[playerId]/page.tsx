@@ -1094,40 +1094,76 @@ export default function PlayerProfilePage() {
 
                   {/* Win Streaks */}
                   <div style={{ display: "flex", gap: "1rem", marginTop: "0.5rem" }}>
-                    <div style={{ flex: 1, background: "rgba(0,0,0,0.2)", border: "1px solid var(--border-light)", borderRadius: "10px", padding: "1rem", textAlign: "center" }}>
-                      <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", display: "block" }}>Текущий стрик</span>
-                      <span style={{ fontSize: "1.3rem", fontWeight: "800", color: "var(--success)", display: "block", marginTop: "0.25rem" }}>
-                        {(hubStats.streaks?.current || 0) > 0 ? `+${hubStats.streaks?.current} побед` : "0 побед"}
+                    <div style={{ flex: 1, background: "rgba(0,0,0,0.2)", border: "1px solid var(--border-light)", borderRadius: "10px", padding: "0.85rem 1rem", textAlign: "center" }}>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.35rem" }}>
+                        <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)" }}>Текущий стрик</span>
+                        <span style={{ fontSize: "0.62rem", color: "var(--accent-cyan)", background: "rgba(0, 212, 255, 0.08)", padding: "0.1rem 0.35rem", borderRadius: "4px", fontWeight: "700" }}>матчи</span>
+                      </div>
+                      <span style={{ fontSize: "1.25rem", fontWeight: "800", color: "var(--success)", display: "block", marginTop: "0.25rem" }}>
+                        {(hubStats.streaks?.matches?.current ?? hubStats.streaks?.current ?? 0) > 0 
+                          ? `+${hubStats.streaks?.matches?.current ?? hubStats.streaks?.current} ${Number(hubStats.streaks?.matches?.current ?? hubStats.streaks?.current) === 1 ? 'матч' : Number(hubStats.streaks?.matches?.current ?? hubStats.streaks?.current) < 5 ? 'матча' : 'матчей'}` 
+                          : "0 матчей"}
                       </span>
+                      {hubStats.streaks?.maps?.current !== undefined && (
+                        <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block", marginTop: "0.2rem" }}>
+                          ({hubStats.streaks.maps.current} {Number(hubStats.streaks.maps.current) === 1 ? 'карта' : Number(hubStats.streaks.maps.current) < 5 ? 'карты' : 'карт'} подряд)
+                        </span>
+                      )}
                     </div>
-                    <div style={{ flex: 1, background: "rgba(0,0,0,0.2)", border: "1px solid var(--border-light)", borderRadius: "10px", padding: "1rem", textAlign: "center" }}>
-                      <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", display: "block" }}>Лучший стрик</span>
-                      <span style={{ fontSize: "1.3rem", fontWeight: "800", color: "#fff", display: "block", marginTop: "0.25rem" }}>
-                        {hubStats.streaks?.longest || 0} побед
+                    <div style={{ flex: 1, background: "rgba(0,0,0,0.2)", border: "1px solid var(--border-light)", borderRadius: "10px", padding: "0.85rem 1rem", textAlign: "center" }}>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.35rem" }}>
+                        <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)" }}>Лучший стрик</span>
+                        <span style={{ fontSize: "0.62rem", color: "var(--accent-cyan)", background: "rgba(0, 212, 255, 0.08)", padding: "0.1rem 0.35rem", borderRadius: "4px", fontWeight: "700" }}>матчи</span>
+                      </div>
+                      <span style={{ fontSize: "1.25rem", fontWeight: "800", color: "#fff", display: "block", marginTop: "0.25rem" }}>
+                        {(hubStats.streaks?.matches?.longest ?? hubStats.streaks?.longest ?? 0)} {Number(hubStats.streaks?.matches?.longest ?? hubStats.streaks?.longest) === 1 ? 'матч' : Number(hubStats.streaks?.matches?.longest ?? hubStats.streaks?.longest) < 5 ? 'матча' : 'матчей'}
                       </span>
+                      {hubStats.streaks?.maps?.longest !== undefined && (
+                        <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block", marginTop: "0.2rem" }}>
+                          (рекорд: {hubStats.streaks.maps.longest} {Number(hubStats.streaks.maps.longest) === 1 ? 'карта' : Number(hubStats.streaks.maps.longest) < 5 ? 'карты' : 'карт'} подряд)
+                        </span>
+                      )}
                     </div>
                   </div>
 
                   {/* Form */}
                   {Array.isArray(hubStats.recentResults) && hubStats.recentResults.length > 0 && (
                     <div style={{ background: "rgba(0,0,0,0.15)", borderRadius: "10px", padding: "1rem", border: "1px dashed var(--border-light)" }}>
-                      <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)", display: "block", marginBottom: "0.75rem" }}>Последние 5 игр</span>
-                      <div style={{ display: "flex", gap: "0.75rem" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
+                        <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)", fontWeight: "700" }}>
+                          Форма (последние 5 матчей хаба BO2)
+                        </span>
+                        <span style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>
+                          слева направо: от ранних к новым
+                        </span>
+                      </div>
+                      <div style={{ display: "flex", gap: "0.65rem" }}>
                         {hubStats.recentResults.map((res: string, i: number) => {
-                          const isWin = res === "1";
+                          const isWin = res === "1" || res === "W";
+                          const isDraw = res === "D";
+                          const label = isWin ? "W" : isDraw ? "D" : "L";
+                          const bg = isWin ? "rgba(76, 175, 80, 0.15)" : isDraw ? "rgba(255, 193, 7, 0.15)" : "rgba(244, 67, 54, 0.15)";
+                          const border = isWin ? "1px solid rgba(76, 175, 80, 0.35)" : isDraw ? "1px solid rgba(255, 193, 7, 0.35)" : "1px solid rgba(244, 67, 54, 0.35)";
+                          const color = isWin ? "#4caf50" : isDraw ? "#ffc107" : "#f44336";
+                          const matchItem = hubStats.recentMatchesList?.[i];
                           return (
                             <div 
                               key={i} 
+                              title={matchItem ? `Счет: ${matchItem.score} (${matchItem.maps?.join(", ")})` : label}
                               style={{
-                                flex: 1, height: "32px", borderRadius: "8px",
-                                display: "flex", alignItems: "center", justifyContent: "center",
-                                fontSize: "0.85rem", fontWeight: "800",
-                                background: isWin ? "rgba(76, 175, 80, 0.15)" : "rgba(244, 67, 54, 0.15)",
-                                border: isWin ? "1px solid rgba(76, 175, 80, 0.35)" : "1px solid rgba(244, 67, 54, 0.35)",
-                                color: isWin ? "#4caf50" : "#f44336"
+                                flex: 1, minHeight: "36px", borderRadius: "8px",
+                                display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                                fontSize: "0.85rem", fontWeight: "900",
+                                background: bg,
+                                border: border,
+                                color: color,
+                                padding: "0.2rem 0.4rem"
                               }}
                             >
-                              {isWin ? "W" : "L"}
+                              <span>{label}</span>
+                              {matchItem?.score && (
+                                <span style={{ fontSize: "0.62rem", opacity: 0.85, fontWeight: "700" }}>{matchItem.score}</span>
+                              )}
                             </div>
                           );
                         })}

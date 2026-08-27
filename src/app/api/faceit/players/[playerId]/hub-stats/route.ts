@@ -331,33 +331,103 @@ export async function GET(
     const overallApr = totalRounds > 0 ? totalAssists / totalRounds : 0;
     const careerHLTV = (0.36 * overallKpr) - (0.53 * overallDpr) + (0.1 * overallApr) + (0.003 * avgAdr) + 0.85;
 
-    // Build recent results representation (1 for win, 0 for loss), chronological left-to-right (newest on the right)
-    const recentResults = playerMatchesList.slice(0, 5).map((m: any) => m.won ? "1" : "0").reverse();
-
-    // Streaks calculation
-    let currentStreak = 0;
-    let longestStreak = 0;
-    let activeStreak = 0;
-    // Iterate chronological order to compute streaks
-    const chronologicalMatches = [...playerMatchesList].reverse();
-    chronologicalMatches.forEach((m: any) => {
-      if (m.won) {
-        activeStreak++;
-        if (activeStreak > longestStreak) {
-          longestStreak = activeStreak;
-        }
-      } else {
-        activeStreak = 0;
+    // Group rounds into full BO2 Matches
+    const playerFullMatchesMap: { [matchId: string]: { matchId: string; timestamp: number; mapWins: number; mapLosses: number; mapsCount: number; maps: string[]; result: "W" | "D" | "L"; score: string } } = {};
+    
+    for (const m of playerMatchesList) {
+      if (!playerFullMatchesMap[m.matchId]) {
+        playerFullMatchesMap[m.matchId] = {
+          matchId: m.matchId,
+          timestamp: m.timestamp,
+          mapWins: 0,
+          mapLosses: 0,
+          mapsCount: 0,
+          maps: [],
+          result: "D",
+          score: ""
+        };
       }
+      const item = playerFullMatchesMap[m.matchId];
+      item.mapsCount++;
+      item.maps.push(m.map);
+      if (m.won) {
+        item.mapWins++;
+      } else {
+        item.mapLosses++;
+      }
+    }
+
+    const playerFullMatchesList = Object.values(playerFullMatchesMap).map(m => {
+      let result: "W" | "D" | "L" = "D";
+      if (m.mapWins > m.mapLosses) result = "W";
+      else if (m.mapLosses > m.mapWins) result = "L";
+      else result = "D";
+      return {
+        ...m,
+        result,
+        score: `${m.mapWins}:${m.mapLosses}`
+      };
     });
-    // Current streak from the most recent match (at index 0)
-    for (let k = 0; k < playerMatchesList.length; k++) {
-      if (playerMatchesList[k].won) {
-        currentStreak++;
+
+    // Sort full matches by timestamp descending
+    playerFullMatchesList.sort((a, b) => b.timestamp - a.timestamp);
+
+    // 1. Matches Streaks (Wins in match only count towards win streak; draws & losses break streak)
+    let matchCurrentStreak = 0;
+    for (let k = 0; k < playerFullMatchesList.length; k++) {
+      if (playerFullMatchesList[k].result === "W") {
+        matchCurrentStreak++;
       } else {
         break;
       }
     }
+
+    let matchLongestStreak = 0;
+    let matchActiveStreak = 0;
+    const chronoFullMatches = [...playerFullMatchesList].reverse();
+    chronoFullMatches.forEach((m) => {
+      if (m.result === "W") {
+        matchActiveStreak++;
+        if (matchActiveStreak > matchLongestStreak) {
+          matchLongestStreak = matchActiveStreak;
+        }
+      } else {
+        matchActiveStreak = 0;
+      }
+    });
+
+    // 2. Maps Streaks (Consecutive map wins)
+    let mapCurrentStreak = 0;
+    for (let k = 0; k < playerMatchesList.length; k++) {
+      if (playerMatchesList[k].won) {
+        mapCurrentStreak++;
+      } else {
+        break;
+      }
+    }
+
+    let mapLongestStreak = 0;
+    let mapActiveStreak = 0;
+    const chronoMaps = [...playerMatchesList].reverse();
+    chronoMaps.forEach((m: any) => {
+      if (m.won) {
+        mapActiveStreak++;
+        if (mapActiveStreak > mapLongestStreak) {
+          mapLongestStreak = mapActiveStreak;
+        }
+      } else {
+        mapActiveStreak = 0;
+      }
+    });
+
+    // Recent 5 full matches (chronological left-to-right: newest on right)
+    const recentMatchesList = playerFullMatchesList.slice(0, 5).reverse();
+    const recentResults = recentMatchesList.map(m => m.result);
+    const recentMaps = playerMatchesList.slice(0, 5).map((m: any) => m.won ? "1" : "0").reverse();
+
+    // Use official streak from leaderboard if available, else computed match streak
+    const finalMatchCurrentStreak = officialStreak !== null ? officialStreak : matchCurrentStreak;
+    const finalMatchLongestStreak = Math.max(matchLongestStreak, officialStreak || 0);
 
     // Calculate hub-wide averages from all matches in the cache
     let hubTotalKills = 0;
@@ -490,10 +560,20 @@ export async function GET(
         entrySuccessRate: hubAvgEntry
       },
       streaks: {
-        current: officialStreak !== null ? officialStreak : currentStreak,
-        longest: Math.max(longestStreak, officialStreak || 0)
+        matches: {
+          current: finalMatchCurrentStreak,
+          longest: finalMatchLongestStreak
+        },
+        maps: {
+          current: mapCurrentStreak,
+          longest: mapLongestStreak
+        },
+        current: finalMatchCurrentStreak,
+        longest: finalMatchLongestStreak
       },
       recentResults,
+      recentMaps,
+      recentMatchesList,
       multiKills: {
         doubles: totalDoubles,
         triples: totalTriples,
