@@ -1252,24 +1252,29 @@ html, body {
   /* Player Profile Modal Mobile Styles */
   .player-modal-header {
     flex-direction: column !important;
-    align-items: flex-start !important;
+    align-items: stretch !important;
     gap: 1rem !important;
-    padding-right: 2rem !important;
+    padding-right: 0 !important;
     padding-bottom: 1rem !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .player-modal-header-left {
     width: 100% !important;
     gap: 0.85rem !important;
+    padding-right: 2.75rem !important;
+    box-sizing: border-box !important;
   }
 
   .player-modal-header-right {
     margin-left: 0 !important;
     width: 100% !important;
-    justify-content: space-between !important;
-    background: rgba(255, 255, 255, 0.03) !important;
-    padding: 0.5rem 0.85rem !important;
-    border-radius: 10px !important;
+    min-width: 100% !important;
+    justify-content: space-around !important;
+    background: rgba(255, 255, 255, 0.02) !important;
+    padding: 0.75rem 1.25rem !important;
+    border-radius: 12px !important;
     border: 1px solid var(--border-light) !important;
     box-sizing: border-box !important;
   }
