@@ -1433,8 +1433,8 @@ html, body {
     flex-direction: column !important;
     align-items: center !important;
     text-align: center !important;
-    gap: 1rem !important;
-    padding: 1.5rem 1.1rem !important;
+    gap: 1.25rem !important;
+    padding: 1.85rem 1.25rem !important;
   }
 
   .full-player-identity {
@@ -1442,16 +1442,17 @@ html, body {
     flex-direction: column !important;
     align-items: center !important;
     text-align: center !important;
-    gap: 0.75rem !important;
+    gap: 0.85rem !important;
     width: 100% !important;
   }
 
   .full-player-avatar {
-    width: 96px !important;
-    height: 96px !important;
-    border-radius: 20px !important;
-    margin: 0 auto !important;
+    width: 136px !important;
+    height: 136px !important;
+    border-radius: 26px !important;
+    margin: 0.25rem auto !important;
     flex-shrink: 0 !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
   }
 
   .full-player-name-wrapper {
@@ -1459,14 +1460,16 @@ html, body {
     flex-direction: column !important;
     align-items: center !important;
     text-align: center !important;
-    gap: 0.35rem !important;
+    gap: 0.4rem !important;
     width: 100% !important;
   }
 
   .full-player-name-wrapper h1 {
-    font-size: 1.75rem !important;
+    font-size: 2.1rem !important;
+    font-weight: 900 !important;
     text-align: center !important;
     margin: 0 !important;
+    letter-spacing: -0.02em !important;
   }
 
   .full-player-name-wrapper div {
@@ -1479,8 +1482,9 @@ html, body {
     flex-wrap: wrap !important;
     justify-content: center !important;
     align-items: center !important;
-    gap: 0.6rem 1rem !important;
+    gap: 0.65rem 1.1rem !important;
     width: 100% !important;
+    margin: 0.25rem 0 !important;
   }
 
   .full-player-header-elo {
@@ -1488,9 +1492,9 @@ html, body {
     min-width: 100% !important;
     justify-content: space-around !important;
     box-sizing: border-box !important;
-    padding: 0.75rem 1.25rem !important;
-    border-radius: 12px !important;
-    margin-top: 0.25rem !important;
+    padding: 0.85rem 1.25rem !important;
+    border-radius: 14px !important;
+    margin-top: 0.4rem !important;
   }
 
   .full-player-skill-card {
