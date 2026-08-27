@@ -3900,7 +3900,7 @@ export default function Home() {
                   <div style={{ display: "flex", flexDirection: "column", gap: "2rem", width: "100%" }}>
                     
                     {/* FANTASY HERO BANNER */}
-                    <div className="glass-card animate-fade-in" style={{
+                    <div className="glass-card animate-fade-in fantasy-hero-banner" style={{
                       padding: "2rem 2.5rem",
                       borderRadius: "24px",
                       background: "linear-gradient(135deg, rgba(124, 77, 255, 0.15) 0%, rgba(0, 229, 255, 0.08) 50%, rgba(6, 5, 12, 0.95) 100%)",
@@ -3912,19 +3912,19 @@ export default function Home() {
                       alignItems: "center",
                       gap: "1.5rem"
                     }}>
-                      <div>
-                        <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.3rem 0.8rem", borderRadius: "20px", background: "rgba(179, 136, 255, 0.2)", border: "1px solid #b388ff", color: "#d1c4e9", fontSize: "0.78rem", fontWeight: "800", marginBottom: "0.75rem", textTransform: "uppercase", letterSpacing: "1px" }}>
+                      <div className="fantasy-hero-content">
+                        <div className="fantasy-hero-badge" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.3rem 0.8rem", borderRadius: "20px", background: "rgba(179, 136, 255, 0.2)", border: "1px solid #b388ff", color: "#d1c4e9", fontSize: "0.78rem", fontWeight: "800", marginBottom: "0.75rem", textTransform: "uppercase", letterSpacing: "1px" }}>
                           SIGMA FANTASY LEAGUE
                         </div>
-                        <h2 className="glow-text-purple" style={{ fontSize: "1.85rem", fontWeight: "900", margin: "0 0 0.5rem 0", color: "#fff" }}>
+                        <h2 className="glow-text-purple fantasy-hero-title" style={{ fontSize: "1.85rem", fontWeight: "900", margin: "0 0 0.5rem 0", color: "#fff" }}>
                           {fantasyTour?.title || "Sigma Cup: Season 3"}
                         </h2>
-                        <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", margin: 0, maxWidth: "600px", lineHeight: "1.5" }}>
+                        <p className="fantasy-hero-desc" style={{ color: "var(--text-secondary)", fontSize: "0.9rem", margin: 0, maxWidth: "600px", lineHeight: "1.5" }}>
                           Собери свою команду из 3 ролей на турнир. Победитель фентези получает статус <strong style={{ color: "#ffd700" }}>«Фантазер»</strong> и золотую рамку на сайте.
                         </p>
                       </div>
 
-                      <div style={{
+                      <div className="fantasy-hero-status" style={{
                         background: "rgba(0, 0, 0, 0.4)",
                         border: "1px solid var(--border-light)",
                         borderRadius: "18px",
@@ -3980,34 +3980,12 @@ export default function Home() {
                       const isPickLocked = !!userFantasyPick;
 
                       return (
-                        <div className="glass-card" style={{ padding: "2rem", borderRadius: "24px" }}>
-                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
-                            <div>
-                              <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-                                <h3 style={{ fontSize: "1.35rem", fontWeight: "800", color: "#fff", margin: 0 }}>
-                                  Твой состав на турнир (3 слота)
-                                </h3>
-                                {isPickLocked && (
-                                  <span style={{
-                                    fontSize: "0.75rem",
-                                    fontWeight: "800",
-                                    padding: "0.2rem 0.6rem",
-                                    borderRadius: "8px",
-                                    background: "rgba(34, 197, 94, 0.15)",
-                                    border: "1px solid rgba(34, 197, 94, 0.35)",
-                                    color: "#4ade80",
-                                    display: "inline-flex",
-                                    alignItems: "center",
-                                    gap: "0.35rem"
-                                  }}>
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                                    </svg>
-                                    ЗАФИКСИРОВАН
-                                  </span>
-                                )}
-                              </div>
+                        <div className="glass-card fantasy-draft-card" style={{ padding: "2rem", borderRadius: "24px" }}>
+                          <div className="fantasy-draft-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
+                            <div className="fantasy-draft-title-box">
+                              <h3 style={{ fontSize: "1.35rem", fontWeight: "800", color: "#fff", margin: 0 }}>
+                                Твой состав на турнир (3 слота)
+                              </h3>
                               <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", margin: "0.3rem 0 0 0" }}>
                                 {isPickLocked 
                                   ? "Твой боевой состав и активные баффы на текущий турнир."
@@ -4015,12 +3993,35 @@ export default function Home() {
                               </p>
                             </div>
 
-                            {currentUser && (
-                              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(0,0,0,0.3)", padding: "0.45rem 1rem", borderRadius: "14px", border: "1px solid var(--border-light)" }}>
-                                {currentUser.steamAvatar && <img src={currentUser.steamAvatar} alt="" style={{ width: "26px", height: "26px", borderRadius: "50%" }} />}
-                                <span style={{ fontSize: "0.88rem", color: "#fff", fontWeight: "700" }}>{currentUser.steamName}</span>
-                              </div>
-                            )}
+                            <div className="fantasy-user-status-row" style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+                              {currentUser && (
+                                <div className="fantasy-user-pill" style={{ display: "flex", alignItems: "center", gap: "0.6rem", background: "rgba(0,0,0,0.3)", padding: "0.45rem 1rem", borderRadius: "14px", border: "1px solid var(--border-light)" }}>
+                                  {currentUser.steamAvatar && <img src={currentUser.steamAvatar} alt="" style={{ width: "24px", height: "24px", borderRadius: "50%" }} />}
+                                  <span style={{ fontSize: "0.88rem", color: "#fff", fontWeight: "700" }}>{currentUser.steamName}</span>
+                                </div>
+                              )}
+                              {isPickLocked && (
+                                <div className="fantasy-locked-pill" style={{
+                                  fontSize: "0.78rem",
+                                  fontWeight: "800",
+                                  padding: "0.45rem 0.85rem",
+                                  borderRadius: "14px",
+                                  background: "rgba(34, 197, 94, 0.15)",
+                                  border: "1px solid rgba(34, 197, 94, 0.35)",
+                                  color: "#4ade80",
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  gap: "0.35rem"
+                                }}>
+                                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                  </svg>
+                                  ЗАФИКСИРОВАН
+                                </div>
+                              )}
+                            </div>
                           </div>
 
                           {/* 3 CYBER ROLE CARDS */}
@@ -4669,8 +4670,8 @@ export default function Home() {
                             boxShadow: "0 0 40px rgba(255, 215, 0, 0.12)"
                           }}>
                             {/* Showcase Header */}
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.75rem", flexWrap: "wrap", gap: "1rem" }}>
-                              <div>
+                            <div className="fantasy-cards-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.75rem", flexWrap: "wrap", gap: "1rem" }}>
+                              <div className="fantasy-cards-title-box">
                                 <div style={{ fontSize: "0.75rem", color: "#ffd700", fontWeight: "800", textTransform: "uppercase", letterSpacing: "1.5px" }}>
                                   ULTIMATE TEAM • CYBER CARDS
                                 </div>
@@ -4679,9 +4680,10 @@ export default function Home() {
                                 </h4>
                               </div>
 
-                              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+                              <div className="fantasy-buffs-actions" style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
                                 <button
                                   type="button"
+                                  className="fantasy-buffs-btn"
                                   onClick={() => setShowBuffsModal(true)}
                                   style={{
                                     display: "inline-flex",
@@ -4690,7 +4692,7 @@ export default function Home() {
                                     background: "rgba(255, 215, 0, 0.12)",
                                     border: "1px solid rgba(255, 215, 0, 0.4)",
                                     color: "#ffd700",
-                                    padding: "0.45rem 0.9rem",
+                                    padding: "0.55rem 1rem",
                                     borderRadius: "12px",
                                     fontSize: "0.82rem",
                                     fontWeight: "800",
@@ -4704,7 +4706,7 @@ export default function Home() {
                                   Каталог баффов
                                 </button>
 
-                                <span style={{ fontSize: "0.78rem", color: "var(--text-muted)", background: "rgba(255,255,255,0.05)", padding: "0.4rem 0.8rem", borderRadius: "10px", border: "1px solid var(--border-light)", display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
+                                <span className="fantasy-buffs-hint" style={{ fontSize: "0.78rem", color: "var(--text-muted)", background: "rgba(255,255,255,0.05)", padding: "0.55rem 0.8rem", borderRadius: "10px", border: "1px solid var(--border-light)", display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
                                   {renderBuffSvgIcon("dice", 15, "var(--text-muted)")}
                                   Баффы роллятся при сохранении
                                 </span>
@@ -5139,8 +5141,8 @@ export default function Home() {
 
                     {/* FANTASY LEAGUE LEADERBOARD */}
                     <div className="glass-card" style={{ padding: "2rem", borderRadius: "24px" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
-                        <div>
+                      <div className="fantasy-leaderboard-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
+                        <div className="fantasy-leaderboard-title-box">
                           <h3 style={{ fontSize: "1.35rem", fontWeight: "800", color: "#fff", margin: "0 0 0.3rem 0" }}>
                             Таблица лидеров Fantasy League
                           </h3>
@@ -5148,7 +5150,7 @@ export default function Home() {
                             Рейтинг участников и набранные очки за текущий турнир
                           </p>
                         </div>
-                        <span style={{ fontSize: "0.8rem", color: "var(--text-muted)", background: "rgba(255,255,255,0.05)", padding: "0.3rem 0.8rem", borderRadius: "10px" }}>
+                        <span className="fantasy-participants-badge" style={{ fontSize: "0.8rem", color: "var(--text-muted)", background: "rgba(255,255,255,0.05)", padding: "0.35rem 0.85rem", borderRadius: "10px", border: "1px solid var(--border-light)" }}>
                           Участников: {fantasyLeaderboard.length}
                         </span>
                       </div>

@@ -842,6 +842,123 @@ html, body {
   .compare-vs-divider div {
     font-size: 1.4rem !important;
   }
+
+  /* Fantasy League Mobile Responsiveness */
+  .fantasy-hero-banner {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    padding: 1.5rem 1rem !important;
+    gap: 1.25rem !important;
+  }
+
+  .fantasy-hero-content {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    width: 100% !important;
+  }
+
+  .fantasy-hero-title {
+    text-align: center !important;
+    font-size: 1.55rem !important;
+  }
+
+  .fantasy-hero-desc {
+    text-align: center !important;
+    font-size: 0.85rem !important;
+  }
+
+  .fantasy-hero-status {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
+    margin: 0 auto !important;
+  }
+
+  .fantasy-draft-card {
+    padding: 1.25rem 1rem !important;
+  }
+
+  .fantasy-draft-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1rem !important;
+  }
+
+  .fantasy-draft-title-box {
+    text-align: center !important;
+  }
+
+  .fantasy-user-status-row {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: stretch !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+  }
+
+  .fantasy-user-pill, .fantasy-locked-pill {
+    flex: 1 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 42px !important;
+    box-sizing: border-box !important;
+    padding: 0.45rem 0.6rem !important;
+  }
+
+  .fantasy-cards-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    text-align: center !important;
+    gap: 1rem !important;
+  }
+
+  .fantasy-cards-title-box {
+    text-align: center !important;
+  }
+
+  .fantasy-buffs-actions {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.65rem !important;
+    width: 100% !important;
+  }
+
+  .fantasy-buffs-btn {
+    width: 100% !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    padding: 0.65rem 1rem !important;
+    font-size: 0.88rem !important;
+    text-align: center !important;
+  }
+
+  .fantasy-buffs-hint {
+    width: 100% !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    padding: 0.55rem 0.8rem !important;
+    text-align: center !important;
+  }
+
+  .fantasy-leaderboard-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+  }
+
+  .fantasy-leaderboard-title-box {
+    text-align: center !important;
+  }
+
+  .fantasy-participants-badge {
+    align-self: center !important;
+    text-align: center !important;
+  }
 }
 
 @media (max-width: 480px) {
