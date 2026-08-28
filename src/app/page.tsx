@@ -3841,6 +3841,55 @@ export default function Home() {
                   ? calcDarkMultiplier(darkHorseSkill)
                   : "1.00";
 
+                const handleRandomSquad = () => {
+                  if (!allPlayersList || allPlayersList.length < 3) return;
+
+                  const shuffle = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
+
+                  // 1. STAR PLAYER (Слот 1): skill 70 to 99
+                  let starPool = allPlayersList.filter(p => p.skillScore >= 70 && p.skillScore <= 99);
+                  if (starPool.length === 0) starPool = allPlayersList.filter(p => p.skillScore >= 60);
+                  if (starPool.length === 0) starPool = [...allPlayersList];
+                  const pickedStar = shuffle(starPool)[0];
+
+                  // 2. SUPPORT (Слот 2): player without penalty (skill <= 65)
+                  let supportPool = allPlayersList.filter(p => 
+                    p.playerId !== pickedStar?.playerId && 
+                    p.nickname !== pickedStar?.nickname && 
+                    p.skillScore <= 65
+                  );
+                  if (supportPool.length === 0) {
+                    supportPool = allPlayersList.filter(p => 
+                      p.playerId !== pickedStar?.playerId && 
+                      p.nickname !== pickedStar?.nickname
+                    );
+                  }
+                  const pickedSupport = shuffle(supportPool)[0];
+
+                  // 3. DARK HORSE (Слот 3): player without penalty (skill <= 65, darkMultiplier >= 1.00)
+                  let darkHorsePool = allPlayersList.filter(p => 
+                    p.playerId !== pickedStar?.playerId && 
+                    p.nickname !== pickedStar?.nickname && 
+                    p.playerId !== pickedSupport?.playerId && 
+                    p.nickname !== pickedSupport?.nickname && 
+                    p.skillScore <= 65
+                  );
+                  if (darkHorsePool.length === 0) {
+                    darkHorsePool = allPlayersList.filter(p => 
+                      p.playerId !== pickedStar?.playerId && 
+                      p.nickname !== pickedStar?.nickname && 
+                      p.playerId !== pickedSupport?.playerId && 
+                      p.nickname !== pickedSupport?.nickname
+                    );
+                  }
+                  const pickedDarkHorse = shuffle(darkHorsePool)[0];
+
+                  if (pickedStar) setDraftSniper(pickedStar);
+                  if (pickedSupport) setDraftSupport(pickedSupport);
+                  if (pickedDarkHorse) setDraftDarkHorse(pickedDarkHorse);
+                  setFantasySaveMsg("");
+                };
+
                 const handleSaveFantasyPick = async () => {
                   const userName = currentUser ? currentUser.steamName : guestFantasyNick.trim();
                   if (!userName) {
@@ -4032,6 +4081,39 @@ export default function Home() {
                                 <span style={{ background: "#ffd700", color: "#000", width: "16px", height: "16px", borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: "0.7rem", fontWeight: "900" }}>!</span>
                                 Каталог усилений
                               </button>
+
+                              {!isPickLocked && isDraftOpen && !isDraftWaiting && (
+                                <button
+                                  type="button"
+                                  onClick={handleRandomSquad}
+                                  style={{
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: "0.45rem",
+                                    background: "linear-gradient(135deg, rgba(157, 59, 245, 0.18), rgba(0, 229, 255, 0.18))",
+                                    border: "1px solid rgba(179, 136, 255, 0.45)",
+                                    color: "#e0d4fc",
+                                    padding: "0.45rem 0.95rem",
+                                    borderRadius: "12px",
+                                    fontSize: "0.82rem",
+                                    fontWeight: "800",
+                                    cursor: "pointer",
+                                    boxShadow: "0 0 15px rgba(157, 59, 245, 0.2)",
+                                    transition: "all 0.2s ease"
+                                  }}
+                                  onMouseEnter={e => {
+                                    e.currentTarget.style.background = "linear-gradient(135deg, rgba(157, 59, 245, 0.32), rgba(0, 229, 255, 0.32))";
+                                    e.currentTarget.style.transform = "translateY(-1px)";
+                                  }}
+                                  onMouseLeave={e => {
+                                    e.currentTarget.style.background = "linear-gradient(135deg, rgba(157, 59, 245, 0.18), rgba(0, 229, 255, 0.18))";
+                                    e.currentTarget.style.transform = "none";
+                                  }}
+                                >
+                                  <span style={{ fontSize: "0.95rem" }}>🎲</span>
+                                  Случайный состав
+                                </button>
+                              )}
                               {currentUser && (
                                 <div className="fantasy-user-pill" style={{ display: "flex", alignItems: "center", gap: "0.6rem", background: "rgba(0,0,0,0.3)", padding: "0.45rem 1rem", borderRadius: "14px", border: "1px solid var(--border-light)" }}>
                                   {currentUser.steamAvatar && <img src={currentUser.steamAvatar} alt="" style={{ width: "24px", height: "24px", borderRadius: "50%" }} />}
@@ -5167,26 +5249,64 @@ export default function Home() {
                               </div>
                             </div>
 
-                            <button
-                              onClick={handleSaveFantasyPick}
-                              disabled={isSavingFantasy || !isDraftOpen}
-                              style={{
-                                width: "100%",
-                                padding: "1rem 2rem",
-                                borderRadius: "14px",
-                                background: isDraftOpen ? "linear-gradient(135deg, #b388ff, #00e5ff)" : "rgba(255,255,255,0.1)",
-                                border: "none",
-                                color: isDraftOpen ? "#000" : "var(--text-muted)",
-                                fontSize: "1rem",
-                                fontWeight: "800",
-                                cursor: isDraftOpen ? "pointer" : "not-allowed",
-                                boxShadow: isDraftOpen ? "0 0 25px rgba(179, 136, 255, 0.4)" : "none",
-                                transition: "all 0.2s ease",
-                                textAlign: "center"
-                              }}
-                            >
-                              {isSavingFantasy ? "Сохранение и выбор усилений..." : isDraftOpen ? "Сохранить состав на турнир" : "Сбор составов закрыт"}
-                            </button>
+                            <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", width: "100%" }}>
+                              <button
+                                type="button"
+                                onClick={handleRandomSquad}
+                                disabled={!isDraftOpen}
+                                style={{
+                                  flex: "1 1 220px",
+                                  padding: "0.95rem 1.4rem",
+                                  borderRadius: "14px",
+                                  background: "rgba(157, 59, 245, 0.12)",
+                                  border: "1.5px solid rgba(179, 136, 255, 0.4)",
+                                  color: "#d8b4fe",
+                                  fontSize: "0.95rem",
+                                  fontWeight: "800",
+                                  cursor: isDraftOpen ? "pointer" : "not-allowed",
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  gap: "0.55rem",
+                                  boxShadow: "0 0 20px rgba(157, 59, 245, 0.15)",
+                                  transition: "all 0.2s ease"
+                                }}
+                                onMouseEnter={e => {
+                                  if (isDraftOpen) {
+                                    e.currentTarget.style.background = "rgba(157, 59, 245, 0.24)";
+                                    e.currentTarget.style.transform = "translateY(-1px)";
+                                  }
+                                }}
+                                onMouseLeave={e => {
+                                  e.currentTarget.style.background = "rgba(157, 59, 245, 0.12)";
+                                  e.currentTarget.style.transform = "none";
+                                }}
+                              >
+                                <span style={{ fontSize: "1.1rem" }}>🎲</span>
+                                Собрать случайный состав
+                              </button>
+
+                              <button
+                                onClick={handleSaveFantasyPick}
+                                disabled={isSavingFantasy || !isDraftOpen}
+                                style={{
+                                  flex: "2 1 280px",
+                                  padding: "0.95rem 2rem",
+                                  borderRadius: "14px",
+                                  background: isDraftOpen ? "linear-gradient(135deg, #b388ff, #00e5ff)" : "rgba(255,255,255,0.1)",
+                                  border: "none",
+                                  color: isDraftOpen ? "#000" : "var(--text-muted)",
+                                  fontSize: "1rem",
+                                  fontWeight: "800",
+                                  cursor: isDraftOpen ? "pointer" : "not-allowed",
+                                  boxShadow: isDraftOpen ? "0 0 25px rgba(179, 136, 255, 0.4)" : "none",
+                                  transition: "all 0.2s ease",
+                                  textAlign: "center"
+                                }}
+                              >
+                                {isSavingFantasy ? "Сохранение и выбор усилений..." : isDraftOpen ? "Сохранить состав на турнир" : "Сбор составов закрыт"}
+                              </button>
+                            </div>
                           </>
                         ) : (
                           /* SINGLE CLEAN CONFIRMED STATUS */
