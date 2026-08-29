@@ -278,6 +278,7 @@ export default function Home() {
 
   // 4-Captain Draft System state
   const [showDraftModal, setShowDraftModal] = useState(false);
+  const [showSkillInfoModal, setShowSkillInfoModal] = useState(false);
   const [draftStep, setDraftStep] = useState<"setup" | "picking" | "finished">("setup");
   const [draftCaptains, setDraftCaptains] = useState<[string, string, string, string]>(["Капитан 1", "Капитан 2", "Капитан 3", "Капитан 4"]);
   const [draftPoolInput, setDraftPoolInput] = useState("");
@@ -2790,11 +2791,32 @@ export default function Home() {
                   }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}>
                       <div>
-                        <div style={{ fontSize: "0.85rem", fontWeight: "800", color: "#fff", display: "flex", alignItems: "center", gap: "0.4rem", flexWrap: "wrap" }}>
+                        <div style={{ fontSize: "0.85rem", fontWeight: "800", color: "#fff", display: "flex", alignItems: "center", gap: "0.45rem", flexWrap: "wrap" }}>
                           Рейтинг скилла (1–100)
                           <span style={{ fontSize: "0.68rem", fontWeight: "700", padding: "0.15rem 0.45rem", borderRadius: "6px", background: "rgba(0, 229, 255, 0.15)", color: "var(--accent-cyan)", border: "1px solid rgba(0, 229, 255, 0.35)" }}>
                             Формула + Эксперты
                           </span>
+                          <button
+                            onClick={() => setShowSkillInfoModal(true)}
+                            style={{
+                              background: "rgba(168, 85, 247, 0.15)",
+                              border: "1px solid rgba(168, 85, 247, 0.4)",
+                              color: "#d8b4fe",
+                              borderRadius: "6px",
+                              padding: "0.15rem 0.5rem",
+                              fontSize: "0.7rem",
+                              fontWeight: "800",
+                              cursor: "pointer",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "0.25rem",
+                              transition: "all 0.2s"
+                            }}
+                            title="Открыть подробную шкалу и систему тиров"
+                          >
+                            <span style={{ fontSize: "0.75rem" }}>ℹ️</span>
+                            Шкала и Тиры
+                          </button>
                         </div>
                         <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.15rem" }}>
                           Скилл формируется из боевой статистики (K/D, ADR, Premier, ELO) и консенсуса коллегии экспертов.
@@ -9214,7 +9236,7 @@ export default function Home() {
                           const activeCapIdx = draftTurnSequence[draftCurrentStepIndex];
                           const currentRoster = draftTeams[activeCapIdx] || [];
                           const currentTeamPts = currentRoster.reduce((sum, p) => sum + getPlayerSkillNumber(p), 0);
-                          const wouldExceedLimit = currentTeamPts + pSkill > 310;
+                          const wouldExceedLimit = currentTeamPts + pSkill > maxDraftTeamBudget;
 
                           return (
                             <div 
@@ -9431,6 +9453,329 @@ export default function Home() {
 
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* SKILL INFO & SCALE BREAKDOWN MODAL */}
+      {showSkillInfoModal && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "rgba(0, 0, 0, 0.88)",
+          backdropFilter: "blur(14px)",
+          WebkitBackdropFilter: "blur(14px)",
+          zIndex: 100000,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "1rem",
+          overflowY: "auto"
+        }}>
+          <div style={{
+            background: "linear-gradient(180deg, #120e24 0%, #0a0614 100%)",
+            border: "1px solid rgba(168, 85, 247, 0.4)",
+            borderRadius: "20px",
+            maxWidth: "920px",
+            width: "100%",
+            maxHeight: "90vh",
+            overflowY: "auto",
+            padding: "2rem",
+            boxShadow: "0 0 50px rgba(168, 85, 247, 0.25), 0 20px 40px rgba(0,0,0,0.8)",
+            display: "flex",
+            flexDirection: "column",
+            gap: "1.5rem"
+          }}>
+            {/* Header */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", borderBottom: "1px solid rgba(255,255,255,0.08)", paddingBottom: "1.2rem", flexWrap: "wrap", gap: "0.75rem" }}>
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
+                  <h3 style={{ fontSize: "1.35rem", color: "#fff", fontWeight: "900", margin: 0 }}>
+                    Система рейтинга скилла (Skill Score)
+                  </h3>
+                  <span style={{ fontSize: "0.7rem", padding: "0.2rem 0.55rem", borderRadius: "6px", background: "rgba(0, 229, 255, 0.15)", color: "var(--accent-cyan)", fontWeight: "800", border: "1px solid rgba(0, 229, 255, 0.35)" }}>
+                    Шкала: 15 – 95 PTS
+                  </span>
+                  <span style={{ fontSize: "0.7rem", padding: "0.2rem 0.55rem", borderRadius: "6px", background: "rgba(168, 85, 247, 0.15)", color: "#d8b4fe", fontWeight: "800", border: "1px solid rgba(168, 85, 247, 0.35)" }}>
+                    Формула + 5 Экспертов
+                  </span>
+                </div>
+                <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginTop: "0.35rem" }}>
+                  Прозрачная шкала оценки индивидуального мастерства для турниров, балансировки 5x5 и Fantasy League
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowSkillInfoModal(false)}
+                style={{
+                  background: "rgba(255,255,255,0.06)",
+                  border: "1px solid var(--border-light)",
+                  borderRadius: "8px",
+                  color: "#fff",
+                  padding: "0.4rem 0.8rem",
+                  cursor: "pointer",
+                  fontSize: "0.85rem",
+                  fontWeight: "700"
+                }}
+              >
+                Закрыть ✕
+              </button>
+            </div>
+
+            {/* VISUAL SKILL LINE / SCALE */}
+            <div style={{
+              background: "rgba(0,0,0,0.4)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              borderRadius: "16px",
+              padding: "1.5rem",
+              display: "flex",
+              flexDirection: "column",
+              gap: "1.25rem"
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>
+                <span style={{ fontSize: "0.85rem", fontWeight: "800", color: "var(--accent-cyan)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                  📊 Наглядная шкала и границы диапазона
+                </span>
+                <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
+                  Динамический диапазон: от 15 до 95 очков
+                </span>
+              </div>
+
+              {/* BORDERS EXPLANATION CARDS */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1rem" }}>
+                {/* Left Border */}
+                <div style={{
+                  background: "linear-gradient(135deg, rgba(71, 85, 105, 0.15), rgba(15, 23, 42, 0.4))",
+                  border: "1px solid rgba(148, 163, 184, 0.3)",
+                  borderRadius: "12px",
+                  padding: "1rem"
+                }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.4rem" }}>
+                    <span style={{ fontSize: "0.75rem", fontWeight: "900", color: "#94a3b8" }}>ЛЕВАЯ ГРАНИЦА ШКАЛЫ</span>
+                    <strong style={{ fontSize: "1.05rem", color: "#e2e8f0", fontWeight: "900" }}>15 PTS</strong>
+                  </div>
+                  <div style={{ fontSize: "0.78rem", color: "#cbd5e1", lineHeight: "1.4" }}>
+                    <strong>Базовая точка отсчёта (Tier E):</strong> Новички и начинающие игроки хаба (<em>Stas1kudin, AK_NoScope</em>). Точка опоры для максимального бонуса <strong>x1.40</strong> в Fantasy League.
+                  </div>
+                </div>
+
+                {/* Right Border */}
+                <div style={{
+                  background: "linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(245, 158, 11, 0.15))",
+                  border: "1px solid rgba(245, 158, 11, 0.4)",
+                  borderRadius: "12px",
+                  padding: "1rem"
+                }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.4rem" }}>
+                    <span style={{ fontSize: "0.75rem", fontWeight: "900", color: "#f59e0b" }}>ПРАВАЯ ГРАНИЦА ШКАЛЫ</span>
+                    <strong style={{ fontSize: "1.05rem", color: "#fcd34d", fontWeight: "900" }}>95 PTS</strong>
+                  </div>
+                  <div style={{ fontSize: "0.78rem", color: "#fef3c7", lineHeight: "1.4" }}>
+                    <strong>Пиковая точка отсчёта (Tier S):</strong> Абсолютный лидер и босс хаба (<em>Porshen</em>, 2300+ ELO). Эталонный ориентир при идеальном балансе 5x5 и драфте.
+                  </div>
+                </div>
+              </div>
+
+              {/* GRADIENT SCALE LINE */}
+              <div style={{ marginTop: "0.5rem" }}>
+                {/* Visual Bar */}
+                <div style={{
+                  height: "16px",
+                  borderRadius: "999px",
+                  background: "linear-gradient(90deg, #64748b 0%, #0284c7 20%, #10b981 40%, #06b6d4 58%, #8b5cf6 72%, #f59e0b 86%, #ef4444 100%)",
+                  boxShadow: "0 0 20px rgba(0, 229, 255, 0.3)",
+                  position: "relative"
+                }} />
+
+                {/* Markers under the bar */}
+                <div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.6rem", fontSize: "0.7rem", color: "var(--text-muted)", flexWrap: "wrap", gap: "0.4rem" }}>
+                  <div style={{ textAlign: "left" }}>
+                    <strong style={{ color: "#94a3b8", display: "block" }}>15 PTS</strong>
+                    <span>Tier E</span>
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <strong style={{ color: "#38bdf8", display: "block" }}>30–37 PTS</strong>
+                    <span>Tier D (Лошадки)</span>
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <strong style={{ color: "#34d399", display: "block" }}>42–52 PTS</strong>
+                    <span>Tier C/C+ (Опорники)</span>
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <strong style={{ color: "var(--accent-cyan)", display: "block" }}>59–65 PTS</strong>
+                    <span>Tier B (Саппорты)</span>
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <strong style={{ color: "#c084fc", display: "block" }}>73–74 PTS</strong>
+                    <span>Tier B+ (2-й эшелон)</span>
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <strong style={{ color: "#fbbf24", display: "block" }}>82–86 PTS</strong>
+                    <span>Tier A/A+ (Звёзды)</span>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <strong style={{ color: "#f87171", display: "block" }}>95 PTS</strong>
+                    <span>Tier S (Босс)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* TIERS DETAILED BREAKDOWN */}
+            <div>
+              <h4 style={{ color: "#fff", fontSize: "0.95rem", fontWeight: "900", marginBottom: "0.75rem" }}>
+                🏆 Градация тиров и роли игроков:
+              </h4>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "0.75rem" }}>
+                
+                {/* Tier S */}
+                <div style={{ background: "rgba(239, 68, 68, 0.08)", border: "1px solid rgba(239, 68, 68, 0.35)", borderRadius: "12px", padding: "0.85rem" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontWeight: "900", color: "#f87171", fontSize: "0.85rem" }}>🌟 Tier S (91–100 PTS)</span>
+                    <span style={{ fontSize: "0.68rem", background: "rgba(239,68,68,0.2)", color: "#f87171", padding: "0.1rem 0.4rem", borderRadius: "4px", fontWeight: "800" }}>БОСС ХАБА</span>
+                  </div>
+                  <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.3rem" }}>
+                    <strong>Игрок:</strong> Porshen (95). Абсолютный керри турнира, решает исходы раундов в соло.
+                  </div>
+                </div>
+
+                {/* Tier A+ */}
+                <div style={{ background: "rgba(245, 158, 11, 0.08)", border: "1px solid rgba(245, 158, 11, 0.35)", borderRadius: "12px", padding: "0.85rem" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontWeight: "900", color: "#fbbf24", fontSize: "0.85rem" }}>⭐ Tier A+ (85–90 PTS)</span>
+                    <span style={{ fontSize: "0.68rem", background: "rgba(245,158,11,0.2)", color: "#fbbf24", padding: "0.1rem 0.4rem", borderRadius: "4px", fontWeight: "800" }}>СУПЕР-ЗВЁЗДЫ</span>
+                  </div>
+                  <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.3rem" }}>
+                    <strong>Игроки:</strong> XZiBiTuM (86), nika_jok (86), su666nyak (85). Капитаны, топовые стрелки и коллеры.
+                  </div>
+                </div>
+
+                {/* Tier A */}
+                <div style={{ background: "rgba(168, 85, 247, 0.08)", border: "1px solid rgba(168, 85, 247, 0.35)", borderRadius: "12px", padding: "0.85rem" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontWeight: "900", color: "#d8b4fe", fontSize: "0.85rem" }}>🔥 Tier A (81–84 PTS)</span>
+                    <span style={{ fontSize: "0.68rem", background: "rgba(168,85,247,0.2)", color: "#d8b4fe", padding: "0.1rem 0.4rem", borderRadius: "4px", fontWeight: "800" }}>ЗВЁЗДЫ ХАБА</span>
+                  </div>
+                  <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.3rem" }}>
+                    <strong>Игроки:</strong> massao61 (82), Kups2-0 (82). Вторые керри команд, надежные лидеры.
+                  </div>
+                </div>
+
+                {/* Tier B+ */}
+                <div style={{ background: "rgba(99, 102, 241, 0.08)", border: "1px solid rgba(99, 102, 241, 0.35)", borderRadius: "12px", padding: "0.85rem" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontWeight: "900", color: "#a5b4fc", fontSize: "0.85rem" }}>⚔️ Tier B+ (66–80 PTS)</span>
+                    <span style={{ fontSize: "0.68rem", background: "rgba(99,102,241,0.2)", color: "#a5b4fc", padding: "0.1rem 0.4rem", borderRadius: "4px", fontWeight: "800" }}>2-Й ЭШЕЛОН</span>
+                  </div>
+                  <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.3rem" }}>
+                    <strong>Игроки:</strong> nycujan (74), syrass (74), uncle007 (73), FCG_pilotiki (73). Ключевой второй пик драфта.
+                  </div>
+                </div>
+
+                {/* Tier B */}
+                <div style={{ background: "rgba(0, 229, 255, 0.08)", border: "1px solid rgba(0, 229, 255, 0.35)", borderRadius: "12px", padding: "0.85rem" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontWeight: "900", color: "var(--accent-cyan)", fontSize: "0.85rem" }}>🛡 Tier B (56–65 PTS)</span>
+                    <span style={{ fontSize: "0.68rem", background: "rgba(0,229,255,0.2)", color: "var(--accent-cyan)", padding: "0.1rem 0.4rem", borderRadius: "4px", fontWeight: "800" }}>САППОРТЫ</span>
+                  </div>
+                  <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.3rem" }}>
+                    <strong>Игроки:</strong> ANAKONDA (67), Baltika (62), RT_BERS (59), JIyHaTuK (59). Потолок роли «Саппорт» в Fantasy без штрафа (≤65).
+                  </div>
+                </div>
+
+                {/* Tier C & C+ */}
+                <div style={{ background: "rgba(16, 185, 129, 0.08)", border: "1px solid rgba(16, 185, 129, 0.35)", borderRadius: "12px", padding: "0.85rem" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontWeight: "900", color: "#6ee7b7", fontSize: "0.85rem" }}>🎯 Tier C/C+ (38–55 PTS)</span>
+                    <span style={{ fontSize: "0.68rem", background: "rgba(16,185,129,0.2)", color: "#6ee7b7", padding: "0.1rem 0.4rem", borderRadius: "4px", fontWeight: "800" }}>ОПОРНИКИ</span>
+                  </div>
+                  <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.3rem" }}>
+                    <strong>Игроки:</strong> Gigant (52), Raul (51), Bryan (49), MrChillout (46), avtolike (42). Опора позиций и размен.
+                  </div>
+                </div>
+
+                {/* Tier D */}
+                <div style={{ background: "rgba(14, 165, 233, 0.08)", border: "1px solid rgba(14, 165, 233, 0.35)", borderRadius: "12px", padding: "0.85rem" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontWeight: "900", color: "#7dd3fc", fontSize: "0.85rem" }}>📦 Tier D (25–37 PTS)</span>
+                    <span style={{ fontSize: "0.68rem", background: "rgba(14,165,233,0.2)", color: "#7dd3fc", padding: "0.1rem 0.4rem", borderRadius: "4px", fontWeight: "800" }}>ЛОШАДКИ</span>
+                  </div>
+                  <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.3rem" }}>
+                    <strong>Игроки:</strong> Bezhenec (37), khachik92 (37), Pach03 (37), DatObase (30), madmax (30), mendez (30), w1ndyyyk (30). Множитель Fantasy: <strong>x1.22 – x1.28</strong>.
+                  </div>
+                </div>
+
+                {/* Tier E */}
+                <div style={{ background: "rgba(148, 163, 184, 0.08)", border: "1px solid rgba(148, 163, 184, 0.35)", borderRadius: "12px", padding: "0.85rem" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontWeight: "900", color: "#cbd5e1", fontSize: "0.85rem" }}>⚓ Tier E (15–24 PTS)</span>
+                    <span style={{ fontSize: "0.68rem", background: "rgba(148,163,184,0.2)", color: "#cbd5e1", padding: "0.1rem 0.4rem", borderRadius: "4px", fontWeight: "800" }}>ЯКОРЯ</span>
+                  </div>
+                  <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.3rem" }}>
+                    <strong>Игроки:</strong> Stas1kudin (15), AK_NoScope (15). Максимальный бонус в Fantasy: <strong>x1.40</strong>.
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            {/* HOW SKILL IS COMPUTED */}
+            <div style={{
+              background: "rgba(255,255,255,0.02)",
+              border: "1px solid rgba(255,255,255,0.06)",
+              borderRadius: "14px",
+              padding: "1.2rem",
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.75rem"
+            }}>
+              <span style={{ fontSize: "0.82rem", fontWeight: "800", color: "#fff", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                ⚙️ Методология расчёта очков скилла:
+              </span>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "0.75rem", fontSize: "0.75rem", color: "var(--text-secondary)" }}>
+                <div>
+                  <strong style={{ color: "var(--accent-cyan)" }}>1. Боевая статистика (40%):</strong>
+                  <div style={{ marginTop: "0.2rem" }}>
+                    K/D, ADR, KPR, Win Rate, CS2 Premier Rating и актуальный FACEIT ELO.
+                  </div>
+                </div>
+                <div>
+                  <strong style={{ color: "#d8b4fe" }}>2. Экспертная коллегия (60%):</strong>
+                  <div style={{ marginTop: "0.2rem" }}>
+                    5 независимых списков от скаутов хаба (<em>uncle007, nika_jok, massao61, JIyHaTuK_1, XZiBiTuM</em>) с медианным усреднением.
+                  </div>
+                </div>
+                <div>
+                  <strong style={{ color: "#fcd34d" }}>3. Контрастное растяжение:</strong>
+                  <div style={{ marginTop: "0.2rem" }}>
+                    Шкала 15–95 устраняет случайные зазоры в 1 очко и даёт идеальный баланс при делении на 5 равных команд.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer Button */}
+            <div style={{ display: "flex", justifyContent: "flex-end", borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "1rem" }}>
+              <button 
+                onClick={() => setShowSkillInfoModal(false)}
+                style={{
+                  background: "linear-gradient(135deg, var(--accent-cyan), var(--accent-purple))",
+                  border: "none",
+                  borderRadius: "10px",
+                  padding: "0.6rem 1.5rem",
+                  color: "#fff",
+                  fontSize: "0.85rem",
+                  fontWeight: "800",
+                  cursor: "pointer",
+                  boxShadow: "0 0 20px rgba(0, 229, 255, 0.3)"
+                }}
+              >
+                Понятно
+              </button>
+            </div>
+
           </div>
         </div>
       )}
