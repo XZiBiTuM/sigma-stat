@@ -964,7 +964,7 @@ export default function PlayerProfilePage() {
                       Premier CS Rating {sk.isRealPremier ? "" : "(расчетный)"}: <strong style={{ color: "#fff" }}>{(sk?.csRating ?? 0).toLocaleString("ru-RU")}</strong>
                     </span>
                     <span style={{ fontSize: "0.72rem", color: "var(--accent-cyan)", display: "inline-flex", alignItems: "center", gap: "0.3rem", marginTop: "0.25rem", background: "rgba(0, 229, 255, 0.08)", padding: "0.15rem 0.45rem", borderRadius: "6px", border: "1px solid rgba(0, 229, 255, 0.2)" }} title="Оценка формируется на основе статистики и консенсуса экспертов: uncle007, nika_jok, massao61, JIyHaTuK_1, XZiBiTuM">
-                      🎖️ Гибридный рейтинг (Формула + Скауты)
+                      Рейтинг (Формула + Эксперты)
                     </span>
                   </div>
                 </div>

@@ -2762,7 +2762,7 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* Hybrid Skill & Scouts Info Banner */}
+                  {/* Skill & Scouts Info Banner */}
                   <div style={{
                     marginBottom: "1rem",
                     padding: "0.85rem 1.15rem",
@@ -2776,12 +2776,11 @@ export default function Home() {
                     gap: "0.75rem"
                   }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}>
-                      <span style={{ fontSize: "1.3rem" }}>🎖️</span>
                       <div>
                         <div style={{ fontSize: "0.85rem", fontWeight: "800", color: "#fff", display: "flex", alignItems: "center", gap: "0.4rem", flexWrap: "wrap" }}>
-                          Гибридный рейтинг скилла (1–100)
+                          Рейтинг скилла (1–100)
                           <span style={{ fontSize: "0.68rem", fontWeight: "700", padding: "0.15rem 0.45rem", borderRadius: "6px", background: "rgba(0, 229, 255, 0.15)", color: "var(--accent-cyan)", border: "1px solid rgba(0, 229, 255, 0.35)" }}>
-                            Формула + Скауты
+                            Формула + Эксперты
                           </span>
                         </div>
                         <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.15rem" }}>
