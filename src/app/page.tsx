@@ -2762,6 +2762,55 @@ export default function Home() {
                     </div>
                   </div>
 
+                  {/* Hybrid Skill & Scouts Info Banner */}
+                  <div style={{
+                    marginBottom: "1rem",
+                    padding: "0.85rem 1.15rem",
+                    borderRadius: "14px",
+                    background: "linear-gradient(135deg, rgba(168, 85, 247, 0.08), rgba(0, 229, 255, 0.08))",
+                    border: "1px solid rgba(168, 85, 247, 0.3)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    flexWrap: "wrap",
+                    gap: "0.75rem"
+                  }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}>
+                      <span style={{ fontSize: "1.3rem" }}>🎖️</span>
+                      <div>
+                        <div style={{ fontSize: "0.85rem", fontWeight: "800", color: "#fff", display: "flex", alignItems: "center", gap: "0.4rem", flexWrap: "wrap" }}>
+                          Гибридный рейтинг скилла (1–100)
+                          <span style={{ fontSize: "0.68rem", fontWeight: "700", padding: "0.15rem 0.45rem", borderRadius: "6px", background: "rgba(0, 229, 255, 0.15)", color: "var(--accent-cyan)", border: "1px solid rgba(0, 229, 255, 0.35)" }}>
+                            Формула + Скауты
+                          </span>
+                        </div>
+                        <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.15rem" }}>
+                          Скилл формируется из боевой статистики (K/D, ADR, Premier, ELO) и консенсуса коллегии экспертов.
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", flexWrap: "wrap" }}>
+                      <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", fontWeight: "600" }}>Экспертная коллегия:</span>
+                      {["uncle007", "nika_jok", "massao61", "JIyHaTuK_1", "XZiBiTuM"].map((scout, idx) => (
+                        <span 
+                          key={idx}
+                          style={{
+                            fontSize: "0.72rem",
+                            fontWeight: "800",
+                            padding: "0.2rem 0.5rem",
+                            borderRadius: "8px",
+                            background: "rgba(255, 255, 255, 0.05)",
+                            border: "1px solid rgba(255, 255, 255, 0.12)",
+                            color: "#e0d4fc"
+                          }}
+                        >
+                          {scout}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
                   {/* Leaderboard Table */}
                   {isLoadingRankings ? (
                     <div style={{ textAlign: "center", padding: "3rem" }}>
@@ -8402,14 +8451,12 @@ export default function Home() {
               lineHeight: "1.45"
             }}>
               <strong style={{ color: "var(--accent-cyan)", display: "block", marginBottom: "0.45rem", fontSize: "0.88rem" }}>
-                Формула расчёта динамического скилла (1–100):
+                Гибридный расчёт скилла (1–100) — Статистика + Эксперты:
               </strong>
-              <div>• <strong>Базовый скилл (Faceit ELO + Premier PTS):</strong> взвешивается в пользу платформы с большей активностью (50/50, 70/30 или 30/70).</div>
-              <div>• <strong>Глобальные метрики Faceit:</strong> корректировка по K/D (±12 pts за 1.0), Win Rate (±0.20 pts за 1%) и HS%.</div>
-              <div>• <strong>Статистика в Хабе:</strong> плавный учёт K/D и ADR в хабе с защитой от малого количества игр: <code style={{ color: "#00e5ff", fontWeight: "700" }}>K_hub = min(0.35, N_матчей / 20 × 0.35)</code>.</div>
-              <div>• <strong>Итог:</strong> <code style={{ color: "#00e5ff", fontWeight: "700" }}>Skill = Math.round((1 - K_hub) × S_Global + K_hub × S_Hub)</code></div>
+              <div>• <strong>Математическая формула:</strong> Faceit ELO, Premier CS Rating, K/D, ADR, HLTV Rating и Win Rate в матчах хаба.</div>
+              <div>• <strong>Экспертная коллегия:</strong> оценки и консенсус скаутов хаба (<strong>uncle007</strong>, <strong>nika_jok</strong>, <strong>massao61</strong>, <strong>JIyHaTuK_1</strong>, <strong>XZiBiTuM</strong>).</div>
               <div style={{ marginTop: "0.45rem", color: "#ffb74d", fontSize: "0.78rem" }}>
-                <em>При вводе поля «Скилл (1–100)» значение фиксируется и напрямую задает итоговый балл игрока.</em>
+                <em>Поле «Скилл (1–100)» задает точный итоговый балл игрока в системе.</em>
               </div>
             </div>
 
