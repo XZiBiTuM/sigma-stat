@@ -2814,7 +2814,6 @@ export default function Home() {
                             }}
                             title="Открыть подробную шкалу и систему тиров"
                           >
-                            <span style={{ fontSize: "0.75rem" }}>ℹ️</span>
                             Шкала и Тиры
                           </button>
                         </div>
@@ -9504,7 +9503,7 @@ export default function Home() {
                   </span>
                 </div>
                 <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginTop: "0.35rem" }}>
-                  Прозрачная шкала оценки индивидуального мастерства для турниров, балансировки 5x5 и Fantasy League
+                  Шкала индивидуального мастерства для турниров, балансировки 5x5 и Fantasy League
                 </div>
               </div>
               <button 
@@ -9536,7 +9535,7 @@ export default function Home() {
             }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>
                 <span style={{ fontSize: "0.85rem", fontWeight: "800", color: "var(--accent-cyan)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  📊 Наглядная шкала и границы диапазона
+                  Шкала и границы диапазона
                 </span>
                 <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
                   Динамический диапазон: от 15 до 95 очков
@@ -9557,7 +9556,7 @@ export default function Home() {
                     <strong style={{ fontSize: "1.05rem", color: "#e2e8f0", fontWeight: "900" }}>15 PTS</strong>
                   </div>
                   <div style={{ fontSize: "0.78rem", color: "#cbd5e1", lineHeight: "1.4" }}>
-                    <strong>Базовая точка отсчёта (Tier E):</strong> Новички и начинающие игроки хаба (<em>Stas1kudin, AK_NoScope</em>). Точка опоры для максимального бонуса <strong>x1.40</strong> в Fantasy League.
+                    <strong>Базовая точка отсчёта:</strong> Новички и начинающие игроки хаба (<em>Stas1kudin, AK_NoScope</em>). Точка отсчёта для максимального бонуса <strong>x1.40</strong> в Fantasy League.
                   </div>
                 </div>
 
@@ -9573,7 +9572,7 @@ export default function Home() {
                     <strong style={{ fontSize: "1.05rem", color: "#fcd34d", fontWeight: "900" }}>95 PTS</strong>
                   </div>
                   <div style={{ fontSize: "0.78rem", color: "#fef3c7", lineHeight: "1.4" }}>
-                    <strong>Пиковая точка отсчёта (Tier S):</strong> Абсолютный лидер и босс хаба (<em>Porshen</em>, 2300+ ELO). Эталонный ориентир при идеальном балансе 5x5 и драфте.
+                    <strong>Пиковая точка отсчёта:</strong> Абсолютный лидер хаба (<em>Porshen</em>, 2300+ ELO). Эталонный ориентир при идеальном балансе 5x5 и драфте.
                   </div>
                 </div>
               </div>
@@ -9584,137 +9583,96 @@ export default function Home() {
                 <div style={{
                   height: "16px",
                   borderRadius: "999px",
-                  background: "linear-gradient(90deg, #64748b 0%, #0284c7 20%, #10b981 40%, #06b6d4 58%, #8b5cf6 72%, #f59e0b 86%, #ef4444 100%)",
-                  boxShadow: "0 0 20px rgba(0, 229, 255, 0.3)",
+                  background: "linear-gradient(90deg, #38bdf8 0%, #34d399 35%, #00e5ff 60%, #c084fc 80%, #fcd34d 100%)",
+                  boxShadow: "0 0 20px rgba(0, 229, 255, 0.25)",
                   position: "relative"
                 }} />
 
                 {/* Markers under the bar */}
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.6rem", fontSize: "0.7rem", color: "var(--text-muted)", flexWrap: "wrap", gap: "0.4rem" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.6rem", fontSize: "0.72rem", color: "var(--text-muted)", flexWrap: "wrap", gap: "0.4rem" }}>
                   <div style={{ textAlign: "left" }}>
-                    <strong style={{ color: "#94a3b8", display: "block" }}>15 PTS</strong>
-                    <span>Tier E</span>
+                    <strong style={{ color: "#38bdf8", display: "block" }}>15–39 PTS</strong>
+                    <span>Tier D (Темная лошадка)</span>
                   </div>
                   <div style={{ textAlign: "center" }}>
-                    <strong style={{ color: "#38bdf8", display: "block" }}>30–37 PTS</strong>
-                    <span>Tier D (Лошадки)</span>
+                    <strong style={{ color: "#34d399", display: "block" }}>40–55 PTS</strong>
+                    <span>Tier C (Саппорт)</span>
                   </div>
                   <div style={{ textAlign: "center" }}>
-                    <strong style={{ color: "#34d399", display: "block" }}>42–52 PTS</strong>
-                    <span>Tier C/C+ (Опорники)</span>
+                    <strong style={{ color: "var(--accent-cyan)", display: "block" }}>56–69 PTS</strong>
+                    <span>Tier B (Достойный соперник)</span>
                   </div>
                   <div style={{ textAlign: "center" }}>
-                    <strong style={{ color: "var(--accent-cyan)", display: "block" }}>59–65 PTS</strong>
-                    <span>Tier B (Саппорты)</span>
-                  </div>
-                  <div style={{ textAlign: "center" }}>
-                    <strong style={{ color: "#c084fc", display: "block" }}>73–74 PTS</strong>
-                    <span>Tier B+ (2-й эшелон)</span>
-                  </div>
-                  <div style={{ textAlign: "center" }}>
-                    <strong style={{ color: "#fbbf24", display: "block" }}>82–86 PTS</strong>
-                    <span>Tier A/A+ (Звёзды)</span>
+                    <strong style={{ color: "#c084fc", display: "block" }}>70–84 PTS</strong>
+                    <span>Tier A (Сильная боевая единица)</span>
                   </div>
                   <div style={{ textAlign: "right" }}>
-                    <strong style={{ color: "#f87171", display: "block" }}>95 PTS</strong>
-                    <span>Tier S (Босс)</span>
+                    <strong style={{ color: "#fcd34d", display: "block" }}>85–100 PTS</strong>
+                    <span>Tier S (Топ-тир)</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* TIERS DETAILED BREAKDOWN */}
+            {/* 5 TIERS DETAILED BREAKDOWN */}
             <div>
               <h4 style={{ color: "#fff", fontSize: "0.95rem", fontWeight: "900", marginBottom: "0.75rem" }}>
-                🏆 Градация тиров и роли игроков:
+                Градация 5 тиров и роли игроков:
               </h4>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "0.75rem" }}>
                 
-                {/* Tier S */}
-                <div style={{ background: "rgba(239, 68, 68, 0.08)", border: "1px solid rgba(239, 68, 68, 0.35)", borderRadius: "12px", padding: "0.85rem" }}>
+                {/* Tier S: Топ-тир */}
+                <div style={{ background: "rgba(245, 158, 11, 0.08)", border: "1px solid rgba(245, 158, 11, 0.35)", borderRadius: "12px", padding: "0.9rem" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontWeight: "900", color: "#f87171", fontSize: "0.85rem" }}>🌟 Tier S (91–100 PTS)</span>
-                    <span style={{ fontSize: "0.68rem", background: "rgba(239,68,68,0.2)", color: "#f87171", padding: "0.1rem 0.4rem", borderRadius: "4px", fontWeight: "800" }}>БОСС ХАБА</span>
+                    <span style={{ fontWeight: "900", color: "#fcd34d", fontSize: "0.88rem" }}>Tier S — Топ-тир (85–100 PTS)</span>
                   </div>
-                  <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.3rem" }}>
-                    <strong>Игрок:</strong> Porshen (95). Абсолютный керри турнира, решает исходы раундов в соло.
+                  <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.35rem", lineHeight: "1.4" }}>
+                    <strong>Игроки:</strong> Porshen (95), XZiBiTuM (86), nika_jok (86), su666nyak (85).<br />
+                    Главные капитаны, элитные стрелки и ключевые фраггеры турнира.
                   </div>
                 </div>
 
-                {/* Tier A+ */}
-                <div style={{ background: "rgba(245, 158, 11, 0.08)", border: "1px solid rgba(245, 158, 11, 0.35)", borderRadius: "12px", padding: "0.85rem" }}>
+                {/* Tier A: Сильная боевая единица */}
+                <div style={{ background: "rgba(168, 85, 247, 0.08)", border: "1px solid rgba(168, 85, 247, 0.35)", borderRadius: "12px", padding: "0.9rem" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontWeight: "900", color: "#fbbf24", fontSize: "0.85rem" }}>⭐ Tier A+ (85–90 PTS)</span>
-                    <span style={{ fontSize: "0.68rem", background: "rgba(245,158,11,0.2)", color: "#fbbf24", padding: "0.1rem 0.4rem", borderRadius: "4px", fontWeight: "800" }}>СУПЕР-ЗВЁЗДЫ</span>
+                    <span style={{ fontWeight: "900", color: "#d8b4fe", fontSize: "0.88rem" }}>Tier A — Сильная боевая единица (70–84 PTS)</span>
                   </div>
-                  <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.3rem" }}>
-                    <strong>Игроки:</strong> XZiBiTuM (86), nika_jok (86), su666nyak (85). Капитаны, топовые стрелки и коллеры.
+                  <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.35rem", lineHeight: "1.4" }}>
+                    <strong>Игроки:</strong> massao61 (82), Kups2-0 (82), nycujan (74), syrass (74), uncle007 (73), FCG_pilotiki (73).<br />
+                    Вторые керри, опытные стрелки первой линии и второй пик драфта.
                   </div>
                 </div>
 
-                {/* Tier A */}
-                <div style={{ background: "rgba(168, 85, 247, 0.08)", border: "1px solid rgba(168, 85, 247, 0.35)", borderRadius: "12px", padding: "0.85rem" }}>
+                {/* Tier B: Достойный соперник */}
+                <div style={{ background: "rgba(0, 229, 255, 0.08)", border: "1px solid rgba(0, 229, 255, 0.35)", borderRadius: "12px", padding: "0.9rem" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontWeight: "900", color: "#d8b4fe", fontSize: "0.85rem" }}>🔥 Tier A (81–84 PTS)</span>
-                    <span style={{ fontSize: "0.68rem", background: "rgba(168,85,247,0.2)", color: "#d8b4fe", padding: "0.1rem 0.4rem", borderRadius: "4px", fontWeight: "800" }}>ЗВЁЗДЫ ХАБА</span>
+                    <span style={{ fontWeight: "900", color: "var(--accent-cyan)", fontSize: "0.88rem" }}>Tier B — Достойный соперник (56–69 PTS)</span>
                   </div>
-                  <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.3rem" }}>
-                    <strong>Игроки:</strong> massao61 (82), Kups2-0 (82). Вторые керри команд, надежные лидеры.
+                  <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.35rem", lineHeight: "1.4" }}>
+                    <strong>Игроки:</strong> ANAKONDA1966 (67), Baltika--7 (62), RT_BERS (59), JIyHaTuK_1 (59).<br />
+                    Стабильные игроки основы, грамотные размены и командный импакт.
                   </div>
                 </div>
 
-                {/* Tier B+ */}
-                <div style={{ background: "rgba(99, 102, 241, 0.08)", border: "1px solid rgba(99, 102, 241, 0.35)", borderRadius: "12px", padding: "0.85rem" }}>
+                {/* Tier C: Саппорт */}
+                <div style={{ background: "rgba(16, 185, 129, 0.08)", border: "1px solid rgba(16, 185, 129, 0.35)", borderRadius: "12px", padding: "0.9rem" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontWeight: "900", color: "#a5b4fc", fontSize: "0.85rem" }}>⚔️ Tier B+ (66–80 PTS)</span>
-                    <span style={{ fontSize: "0.68rem", background: "rgba(99,102,241,0.2)", color: "#a5b4fc", padding: "0.1rem 0.4rem", borderRadius: "4px", fontWeight: "800" }}>2-Й ЭШЕЛОН</span>
+                    <span style={{ fontWeight: "900", color: "#6ee7b7", fontSize: "0.88rem" }}>Tier C — Саппорт (40–55 PTS)</span>
                   </div>
-                  <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.3rem" }}>
-                    <strong>Игроки:</strong> nycujan (74), syrass (74), uncle007 (73), FCG_pilotiki (73). Ключевой второй пик драфта.
+                  <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.35rem", lineHeight: "1.4" }}>
+                    <strong>Игроки:</strong> Gigant161 (52), Raul800 (51), BryanOKnish1 (49), MrChillout61 (46), avtolike (42).<br />
+                    Опорники позиций, полезные размены и гранаты. Безопасный выбор в слот Саппорта без штрафа.
                   </div>
                 </div>
 
-                {/* Tier B */}
-                <div style={{ background: "rgba(0, 229, 255, 0.08)", border: "1px solid rgba(0, 229, 255, 0.35)", borderRadius: "12px", padding: "0.85rem" }}>
+                {/* Tier D: Темная лошадка */}
+                <div style={{ background: "rgba(14, 165, 233, 0.08)", border: "1px solid rgba(14, 165, 233, 0.35)", borderRadius: "12px", padding: "0.9rem" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontWeight: "900", color: "var(--accent-cyan)", fontSize: "0.85rem" }}>🛡 Tier B (56–65 PTS)</span>
-                    <span style={{ fontSize: "0.68rem", background: "rgba(0,229,255,0.2)", color: "var(--accent-cyan)", padding: "0.1rem 0.4rem", borderRadius: "4px", fontWeight: "800" }}>САППОРТЫ</span>
+                    <span style={{ fontWeight: "900", color: "#7dd3fc", fontSize: "0.88rem" }}>Tier D — Темная лошадка (15–39 PTS)</span>
                   </div>
-                  <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.3rem" }}>
-                    <strong>Игроки:</strong> ANAKONDA (67), Baltika (62), RT_BERS (59), JIyHaTuK (59). Потолок роли «Саппорт» в Fantasy без штрафа (≤65).
-                  </div>
-                </div>
-
-                {/* Tier C & C+ */}
-                <div style={{ background: "rgba(16, 185, 129, 0.08)", border: "1px solid rgba(16, 185, 129, 0.35)", borderRadius: "12px", padding: "0.85rem" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontWeight: "900", color: "#6ee7b7", fontSize: "0.85rem" }}>🎯 Tier C/C+ (38–55 PTS)</span>
-                    <span style={{ fontSize: "0.68rem", background: "rgba(16,185,129,0.2)", color: "#6ee7b7", padding: "0.1rem 0.4rem", borderRadius: "4px", fontWeight: "800" }}>ОПОРНИКИ</span>
-                  </div>
-                  <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.3rem" }}>
-                    <strong>Игроки:</strong> Gigant (52), Raul (51), Bryan (49), MrChillout (46), avtolike (42). Опора позиций и размен.
-                  </div>
-                </div>
-
-                {/* Tier D */}
-                <div style={{ background: "rgba(14, 165, 233, 0.08)", border: "1px solid rgba(14, 165, 233, 0.35)", borderRadius: "12px", padding: "0.85rem" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontWeight: "900", color: "#7dd3fc", fontSize: "0.85rem" }}>📦 Tier D (25–37 PTS)</span>
-                    <span style={{ fontSize: "0.68rem", background: "rgba(14,165,233,0.2)", color: "#7dd3fc", padding: "0.1rem 0.4rem", borderRadius: "4px", fontWeight: "800" }}>ЛОШАДКИ</span>
-                  </div>
-                  <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.3rem" }}>
-                    <strong>Игроки:</strong> Bezhenec (37), khachik92 (37), Pach03 (37), DatObase (30), madmax (30), mendez (30), w1ndyyyk (30). Множитель Fantasy: <strong>x1.22 – x1.28</strong>.
-                  </div>
-                </div>
-
-                {/* Tier E */}
-                <div style={{ background: "rgba(148, 163, 184, 0.08)", border: "1px solid rgba(148, 163, 184, 0.35)", borderRadius: "12px", padding: "0.85rem" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontWeight: "900", color: "#cbd5e1", fontSize: "0.85rem" }}>⚓ Tier E (15–24 PTS)</span>
-                    <span style={{ fontSize: "0.68rem", background: "rgba(148,163,184,0.2)", color: "#cbd5e1", padding: "0.1rem 0.4rem", borderRadius: "4px", fontWeight: "800" }}>ЯКОРЯ</span>
-                  </div>
-                  <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.3rem" }}>
-                    <strong>Игроки:</strong> Stas1kudin (15), AK_NoScope (15). Максимальный бонус в Fantasy: <strong>x1.40</strong>.
+                  <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.35rem", lineHeight: "1.4" }}>
+                    <strong>Игроки:</strong> Bezhenec (37), khachik92 (37), Pach03 (37), DatObase (30), madmax14888 (30), mendez161 (30), w1ndyyyk_244 (30), Stas1kudin (15), AK_NoScope (15).<br />
+                    Высокий потенциал в Fantasy League (множители очков от <strong>x1.22</strong> до <strong>x1.40</strong>).
                   </div>
                 </div>
 
@@ -9732,7 +9690,7 @@ export default function Home() {
               gap: "0.75rem"
             }}>
               <span style={{ fontSize: "0.82rem", fontWeight: "800", color: "#fff", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                ⚙️ Методология расчёта очков скилла:
+                Методология расчёта очков скилла:
               </span>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "0.75rem", fontSize: "0.75rem", color: "var(--text-secondary)" }}>
                 <div>
@@ -9748,7 +9706,7 @@ export default function Home() {
                   </div>
                 </div>
                 <div>
-                  <strong style={{ color: "#fcd34d" }}>3. Контрастное растяжение:</strong>
+                  <strong style={{ color: "#fcd34d" }}>3. Контрастное масштабирование:</strong>
                   <div style={{ marginTop: "0.2rem" }}>
                     Шкала 15–95 устраняет случайные зазоры в 1 очко и даёт идеальный баланс при делении на 5 равных команд.
                   </div>

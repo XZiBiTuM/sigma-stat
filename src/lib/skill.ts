@@ -130,44 +130,39 @@ export function computeAdaptiveSkillScore(params: SkillParams): SkillResult {
 }
 
 function getTierProps(score: number, csRating: number, isRealPremier: boolean): SkillResult {
-  let tier = "D Tier";
-  let color = "#ff4d4d"; // Red
-  let bg = "rgba(255, 77, 77, 0.15)";
-  let border = "rgba(255, 77, 77, 0.4)";
+  let tier = "Tier D";
+  let color = "#38bdf8"; // Sky / Blue
+  let bg = "rgba(14, 165, 233, 0.15)";
+  let border = "rgba(14, 165, 233, 0.4)";
   let glow = "";
 
-  if (score >= 90) {
-    tier = "S+ Tier";
-    color = "#e9d5ff"; // Light Glowing Purple
-    bg = "rgba(168, 85, 247, 0.25)";
-    border = "rgba(192, 132, 252, 0.8)";
-    glow = "0 0 16px rgba(192, 132, 252, 0.7), 0 0 4px rgba(168, 85, 247, 0.9)";
-  } else if (score >= 80) {
-    tier = "S Tier";
-    color = "#c084fc"; // Vibrant Purple
-    bg = "rgba(168, 85, 247, 0.18)";
-    border = "rgba(168, 85, 247, 0.6)";
-    glow = "0 0 12px rgba(168, 85, 247, 0.5)";
+  if (score >= 85) {
+    tier = "Tier S";
+    color = "#fcd34d"; // Gold / Amber
+    bg = "rgba(245, 158, 11, 0.18)";
+    border = "rgba(245, 158, 11, 0.6)";
+    glow = "0 0 16px rgba(245, 158, 11, 0.7), 0 0 4px rgba(239, 68, 68, 0.9)";
   } else if (score >= 70) {
-    tier = "A+ Tier";
-    color = "#00e5ff"; // Cyan / Neon Aqua
+    tier = "Tier A";
+    color = "#c084fc"; // Purple
+    bg = "rgba(168, 85, 247, 0.18)";
+    border = "rgba(168, 85, 247, 0.5)";
+    glow = "0 0 10px rgba(168, 85, 247, 0.4)";
+  } else if (score >= 56) {
+    tier = "Tier B";
+    color = "#00e5ff"; // Cyan
     bg = "rgba(0, 229, 255, 0.15)";
     border = "rgba(0, 229, 255, 0.4)";
-  } else if (score >= 60) {
-    tier = "A Tier";
-    color = "#00e676"; // Bright Green
-    bg = "rgba(0, 230, 118, 0.15)";
-    border = "rgba(0, 230, 118, 0.4)";
-  } else if (score >= 50) {
-    tier = "B Tier";
-    color = "#ffd700"; // Yellow Gold
-    bg = "rgba(255, 215, 0, 0.15)";
-    border = "rgba(255, 215, 0, 0.4)";
   } else if (score >= 40) {
-    tier = "C Tier";
-    color = "#ff9100"; // Orange
-    bg = "rgba(255, 145, 0, 0.15)";
-    border = "rgba(255, 145, 0, 0.4)";
+    tier = "Tier C";
+    color = "#34d399"; // Green
+    bg = "rgba(16, 185, 129, 0.15)";
+    border = "rgba(16, 185, 129, 0.4)";
+  } else {
+    tier = "Tier D";
+    color = "#38bdf8"; // Blue
+    bg = "rgba(14, 165, 233, 0.15)";
+    border = "rgba(14, 165, 233, 0.4)";
   }
 
   return {
