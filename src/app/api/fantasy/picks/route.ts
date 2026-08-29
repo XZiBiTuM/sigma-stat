@@ -167,17 +167,31 @@ export async function POST(request: NextRequest) {
     }
 
     // Roll unique card buffs on save
-    // Roll unique card усиления on save
-    const sniperBuff = getRandomBuff();
-    const supportBuff = getRandomBuff();
-    const darkHorseBuff = getRandomBuff();
+    const TOUR_LOCAL_PATH = path.join(process.cwd(), "src", "lib", "fantasy_tournament.json");
+    const TOUR_PERSISTENT_PATH = path.join(process.cwd(), "..", "sigma_persistent_fantasy_tournament.json");
+    let tourStatus = "DRAFT_OPEN";
+    try {
+      let tourTarget = TOUR_LOCAL_PATH;
+      const pStat = await fs.stat(TOUR_PERSISTENT_PATH).catch(() => null);
+      if (pStat) tourTarget = TOUR_PERSISTENT_PATH;
+      const tourData = await fs.readFile(tourTarget, "utf8");
+      const tourObj = JSON.parse(tourData);
+      if (tourObj?.status) tourStatus = tourObj.status;
+    } catch {}
 
-    const allPicks = await getAllPicks();
-    if (allPicks[userId]) {
+    if (tourStatus === "LIVE" || tourStatus === "COMPLETED") {
       return NextResponse.json({
-        error: "Состав уже зафиксирован и не может быть изменен! Менять игроков после получения усилений запрещено правилами турнира."
+        error: "Прием и редактирование составов закрыты (турнир уже идет или завершен)."
       }, { status: 403 });
     }
+
+    const allPicks = await getAllPicks();
+    const existingPick = allPicks[userId];
+
+    // Roll unique card buffs or keep existing if same player
+    const sniperBuff = (existingPick && existingPick.sniper?.playerId === sniper.playerId && existingPick.sniper?.buff) ? existingPick.sniper.buff : getRandomBuff();
+    const supportBuff = (existingPick && existingPick.support?.playerId === support.playerId && existingPick.support?.buff) ? existingPick.support.buff : getRandomBuff();
+    const darkHorseBuff = (existingPick && existingPick.darkHorse?.playerId === darkHorse.playerId && existingPick.darkHorse?.buff) ? existingPick.darkHorse.buff : getRandomBuff();
 
     const newPick: FantasyPick = {
       userId,

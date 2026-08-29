@@ -486,6 +486,7 @@ export default function Home() {
   const [fantasyTour, setFantasyTour] = useState<any>(null);
   const [fantasyLeaderboard, setFantasyLeaderboard] = useState<any[]>([]);
   const [userFantasyPick, setUserFantasyPick] = useState<any>(null);
+  const [isEditingFantasyPick, setIsEditingFantasyPick] = useState<boolean>(false);
   const [draftSniper, setDraftSniper] = useState<any>(null);
   const [draftSupport, setDraftSupport] = useState<any>(null);
   const [draftDarkHorse, setDraftDarkHorse] = useState<any>(null);
@@ -4151,8 +4152,11 @@ export default function Home() {
                     {/* DRAFT PICKING SECTION */}
                     {(() => {
                       const isDraftWaiting = tourStatus === "DRAFT_WAITING";
-                      // During DRAFT_WAITING: don't show saved pick state — show clean empty interface
-                      const isPickLocked = isDraftWaiting ? false : !!userFantasyPick;
+                      const isPickLocked = isDraftWaiting 
+                        ? false 
+                        : (tourStatus === "LIVE" || tourStatus === "COMPLETED")
+                          ? !!userFantasyPick
+                          : (!!userFantasyPick && !isEditingFantasyPick);
 
                       const displaySniper = isDraftWaiting ? null : draftSniper;
                       const displaySupport = isDraftWaiting ? null : draftSupport;
@@ -4197,6 +4201,29 @@ export default function Home() {
                                 <span style={{ background: "#ffd700", color: "#000", width: "16px", height: "16px", borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: "0.7rem", fontWeight: "900" }}>!</span>
                                 Каталог усилений
                               </button>
+
+                              {userFantasyPick && isDraftOpen && !isDraftWaiting && (
+                                <button
+                                  type="button"
+                                  onClick={() => setIsEditingFantasyPick(!isEditingFantasyPick)}
+                                  style={{
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: "0.4rem",
+                                    background: isEditingFantasyPick ? "rgba(0, 229, 255, 0.15)" : "rgba(255, 255, 255, 0.08)",
+                                    border: isEditingFantasyPick ? "1px solid rgba(0, 229, 255, 0.4)" : "1px solid rgba(255, 255, 255, 0.15)",
+                                    color: isEditingFantasyPick ? "#00e5ff" : "#cbd5e1",
+                                    padding: "0.45rem 0.85rem",
+                                    borderRadius: "12px",
+                                    fontSize: "0.8rem",
+                                    fontWeight: "800",
+                                    cursor: "pointer",
+                                    transition: "all 0.2s ease"
+                                  }}
+                                >
+                                  {isEditingFantasyPick ? "👁️ Карточки" : "✏️ Изменить состав"}
+                                </button>
+                              )}
 
                               {!isPickLocked && isDraftOpen && !isDraftWaiting && (
                                 <button
@@ -4254,7 +4281,7 @@ export default function Home() {
                                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                                     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                                   </svg>
-                                  ЗАФИКСИРОВАН
+                                  {tourStatus === "LIVE" ? "ТУРНИР ИДЕТ (ЗАФИКСИРОВАН)" : tourStatus === "COMPLETED" ? "ТУРНИР ЗАВЕРШЕН" : "ЗАФИКСИРОВАН"}
                                 </div>
                               )}
                             </div>
@@ -5358,10 +5385,10 @@ export default function Home() {
                               padding: "0.85rem 1.1rem",
                               color: "#ffc107"
                             }}>
-                              <span style={{ fontSize: "1.15rem", lineHeight: 1 }}>⚠️</span>
+                              <span style={{ fontSize: "1.15rem", lineHeight: 1 }}>ℹ️</span>
                               <div style={{ fontSize: "0.82rem", lineHeight: "1.4" }}>
-                                <strong style={{ color: "#ffd54f" }}>Внимание: </strong>
-                                После нажатия кнопки «Сохранить состав» карточки получат случайные усиления, а состав будет <strong>зафиксирован на весь турнир</strong>. Заменить игроков или изменить усиления будет <strong>нельзя</strong> (риск за оверскилл принимается навсегда)!
+                                <strong style={{ color: "#ffd54f" }}>Подсказка: </strong>
+                                Вы можете настраивать и менять игроков в любой момент <strong>до старта турнира</strong>. Когда турнир перейдет в статус LIVE — составы окончательно зафиксируются!
                               </div>
                             </div>
 
@@ -5420,36 +5447,66 @@ export default function Home() {
                                   textAlign: "center"
                                 }}
                               >
-                                {isSavingFantasy ? "Сохранение и выбор усилений..." : isDraftOpen ? "Сохранить состав на турнир" : "Сбор составов закрыт"}
+                                {isSavingFantasy ? "Сохранение и выбор усилений..." : isDraftOpen ? (userFantasyPick ? "💾 Сохранить изменения состава" : "🔥 Сохранить состав на турнир") : "Сбор составов закрыт"}
                               </button>
                             </div>
                           </>
                         ) : (
                           /* SINGLE CLEAN CONFIRMED STATUS */
-                          <div 
-                            className="fantasy-confirmed-banner"
-                            style={{
-                              width: "100%",
-                              padding: "0.95rem 1.5rem",
-                              borderRadius: "14px",
-                              background: "rgba(34, 197, 94, 0.12)",
-                              border: "1px solid rgba(34, 197, 94, 0.35)",
-                              color: "#4ade80",
-                              fontSize: "0.95rem",
-                              fontWeight: "800",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              textAlign: "center",
-                              gap: "0.5rem",
-                              boxSizing: "border-box"
-                            }}
-                          >
-                            <svg style={{ flexShrink: 0 }} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                            </svg>
-                            <span style={{ textAlign: "center" }}>Состав подтвержден и участвует в турнире</span>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", width: "100%" }}>
+                            <div 
+                              className="fantasy-confirmed-banner"
+                              style={{
+                                width: "100%",
+                                padding: "0.95rem 1.5rem",
+                                borderRadius: "14px",
+                                background: "rgba(34, 197, 94, 0.12)",
+                                border: "1px solid rgba(34, 197, 94, 0.35)",
+                                color: "#4ade80",
+                                fontSize: "0.95rem",
+                                fontWeight: "800",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                textAlign: "center",
+                                gap: "0.5rem",
+                                boxSizing: "border-box"
+                              }}
+                            >
+                              <svg style={{ flexShrink: 0 }} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                              </svg>
+                              <span style={{ textAlign: "center" }}>
+                                {tourStatus === "LIVE" ? "Турнир идет · Состав зафиксирован" : tourStatus === "COMPLETED" ? "Турнир завершен" : "Состав сохранен и участвует в турнире"}
+                              </span>
+                            </div>
+
+                            {isDraftOpen && !isDraftWaiting && (
+                              <button
+                                type="button"
+                                onClick={() => setIsEditingFantasyPick(true)}
+                                style={{
+                                  padding: "0.85rem 1.5rem",
+                                  borderRadius: "14px",
+                                  background: "rgba(0, 229, 255, 0.12)",
+                                  border: "1.5px solid rgba(0, 229, 255, 0.4)",
+                                  color: "#00e5ff",
+                                  fontSize: "0.92rem",
+                                  fontWeight: "800",
+                                  cursor: "pointer",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  gap: "0.5rem",
+                                  transition: "all 0.2s ease"
+                                }}
+                                onMouseEnter={e => e.currentTarget.style.background = "rgba(0, 229, 255, 0.22)"}
+                                onMouseLeave={e => e.currentTarget.style.background = "rgba(0, 229, 255, 0.12)"}
+                              >
+                                ✏️ Изменить выбор игроков до старта турнира
+                              </button>
+                            )}
                           </div>
                         )}
                       </div>
