@@ -34,15 +34,6 @@ async function getTournament(): Promise<FantasyTournament> {
     if (pStat) fileToRead = PERSISTENT_FILE;
     const data = await fs.readFile(fileToRead, "utf8");
     const t: FantasyTournament = JSON.parse(data);
-    // Auto-transition: after 3 days from completion → DRAFT_WAITING
-    if (t.status === "COMPLETED") {
-      const completedTime = new Date(t.updatedAt || t.startTime).getTime();
-      if (Date.now() - completedTime > 3 * 24 * 60 * 60 * 1000) {
-        t.status = "DRAFT_WAITING";
-        await saveTournament(t);
-        await clearPicks();
-      }
-    }
     return t;
   } catch {
     // Default initial upcoming tournament (7 days from now)

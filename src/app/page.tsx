@@ -4376,7 +4376,6 @@ export default function Home() {
                                     e.currentTarget.style.transform = "none";
                                   }}
                                 >
-                                  <span style={{ fontSize: "0.95rem" }}>🎲</span>
                                   Случайный состав
                                 </button>
                               )}
@@ -5508,10 +5507,9 @@ export default function Home() {
                               padding: "0.85rem 1.1rem",
                               color: "#ffc107"
                             }}>
-                              <span style={{ fontSize: "1.15rem", lineHeight: 1 }}>⚠️</span>
                               <div style={{ fontSize: "0.82rem", lineHeight: "1.4" }}>
                                 <strong style={{ color: "#ffd54f" }}>Внимание: </strong>
-                                После нажатия кнопки «Сохранить состав» карточки получат случайные усиления, а состав будет <strong>зафиксирован на весь турнир</strong>. Заменить игроков или изменить усиления будет <strong>нельзя</strong> (риск за оверскилл принимается навсегда)!
+                                После нажатия кнопки «Зафиксировать состав» карточки получат случайные усиления, а состав будет <strong>зафиксирован на весь турнир</strong>. Заменить игроков или изменить усиления будет <strong>нельзя</strong> (риск за оверскилл принимается навсегда)!
                               </div>
                             </div>
 
@@ -5548,7 +5546,6 @@ export default function Home() {
                                   e.currentTarget.style.transform = "none";
                                 }}
                               >
-                                <span style={{ fontSize: "1.1rem" }}>🎲</span>
                                 Собрать случайный состав
                               </button>
 
@@ -5570,7 +5567,7 @@ export default function Home() {
                                   textAlign: "center"
                                 }}
                               >
-                                {isSavingFantasy ? "Сохранение и выбор усилений..." : isDraftOpen ? "🔥 Зафиксировать состав на турнир" : "Сбор составов закрыт"}
+                                {isSavingFantasy ? "Сохранение и выбор усилений..." : isDraftOpen ? "Зафиксировать состав на турнир" : "Сбор составов закрыт"}
                               </button>
                             </div>
                           </>
@@ -5604,32 +5601,6 @@ export default function Home() {
                                 {tourStatus === "LIVE" ? "Турнир идет · Состав зафиксирован" : tourStatus === "COMPLETED" ? "Турнир завершен" : "Состав сохранен и участвует в турнире"}
                               </span>
                             </div>
-
-                            {isDraftOpen && !isDraftWaiting && (
-                              <button
-                                type="button"
-                                onClick={() => setIsEditingFantasyPick(true)}
-                                style={{
-                                  padding: "0.85rem 1.5rem",
-                                  borderRadius: "14px",
-                                  background: "rgba(0, 229, 255, 0.12)",
-                                  border: "1.5px solid rgba(0, 229, 255, 0.4)",
-                                  color: "#00e5ff",
-                                  fontSize: "0.92rem",
-                                  fontWeight: "800",
-                                  cursor: "pointer",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  gap: "0.5rem",
-                                  transition: "all 0.2s ease"
-                                }}
-                                onMouseEnter={e => e.currentTarget.style.background = "rgba(0, 229, 255, 0.22)"}
-                                onMouseLeave={e => e.currentTarget.style.background = "rgba(0, 229, 255, 0.12)"}
-                              >
-                                ✏️ Изменить выбор игроков до старта турнира
-                              </button>
-                            )}
                           </div>
                         )}
                       </div>
@@ -9275,7 +9246,6 @@ export default function Home() {
                       e.currentTarget.style.boxShadow = "0 0 25px rgba(255, 215, 0, 0.35)";
                     }}
                   >
-                    <span style={{ fontSize: "1.15rem" }}>🎲</span>
                     Зашафлить команды по очкам скилла
                   </button>
 
@@ -9306,7 +9276,6 @@ export default function Home() {
                       e.currentTarget.style.background = "linear-gradient(135deg, rgba(157, 59, 245, 0.25), rgba(0, 229, 255, 0.25))";
                     }}
                   >
-                    <span>⚔️</span>
                     Ручной Драфт (Snake)
                   </button>
                 </div>
@@ -9577,7 +9546,7 @@ export default function Home() {
                             gap: "0.4rem"
                           }}
                         >
-                          <span>🎲</span> Перешафлить по скиллу
+                          Перешафлить по скиллу
                         </button>
 
                         <button 
