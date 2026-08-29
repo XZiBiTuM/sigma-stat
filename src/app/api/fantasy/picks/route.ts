@@ -158,12 +158,12 @@ export async function POST(request: NextRequest) {
     const supportSkill = resolvePlayerSkillScore(support, overrides, weeklyPlayers);
     const rawDarkSkill = resolvePlayerSkillScore(darkHorse, overrides, weeklyPlayers);
 
-    // Dynamic Underdog Multiplier with Overpower Penalty (>65)
+    // Dynamic Underdog Multiplier with Overpower Penalty (>55)
     let underdogBonus = 1.0;
-    if (rawDarkSkill <= 65) {
-      underdogBonus = Math.round((1.0 + ((65 - Math.max(10, rawDarkSkill)) / 65) * 0.40) * 100) / 100;
+    if (rawDarkSkill <= 55) {
+      underdogBonus = Math.round((1.0 + ((55 - Math.max(10, rawDarkSkill)) / 55) * 0.40) * 100) / 100;
     } else {
-      underdogBonus = Math.round(Math.max(0.60, 1.0 - ((rawDarkSkill - 65) / 35) * 0.40) * 100) / 100;
+      underdogBonus = Math.round(Math.max(0.60, 1.0 - ((rawDarkSkill - 55) / 45) * 0.40) * 100) / 100;
     }
 
     // Roll unique card buffs on save
@@ -194,7 +194,7 @@ export async function POST(request: NextRequest) {
         playerId: support.playerId,
         nickname: support.nickname,
         skillScore: supportSkill,
-        penaltyApplied: supportSkill > 65,
+        penaltyApplied: supportSkill > 55,
         buff: supportBuff
       },
       darkHorse: {
