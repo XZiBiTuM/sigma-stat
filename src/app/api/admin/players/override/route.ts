@@ -42,7 +42,20 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { passcode, batchOverrides, playerId, nickname, csRating, customElo, customSkillScore } = body;
+    const { 
+      passcode, 
+      batchOverrides, 
+      playerId, 
+      nickname, 
+      csRating, 
+      customElo, 
+      customSkillScore,
+      shooting,
+      calls,
+      mental,
+      gamesense,
+      aura
+    } = body;
 
     if (passcode !== "demon323161" && passcode !== "sigmaadmin") {
       return NextResponse.json({ error: "Неверный пароль администратора" }, { status: 403 });
@@ -61,6 +74,11 @@ export async function POST(request: NextRequest) {
           csRating: item.csRating !== undefined && item.csRating !== "" && item.csRating !== null ? Number(item.csRating) : current[key]?.csRating,
           customElo: item.customElo !== undefined && item.customElo !== "" && item.customElo !== null ? Number(item.customElo) : current[key]?.customElo,
           customSkillScore: item.customSkillScore !== undefined && item.customSkillScore !== "" && item.customSkillScore !== null ? Number(item.customSkillScore) : current[key]?.customSkillScore,
+          shooting: item.shooting !== undefined && item.shooting !== "" && item.shooting !== null ? Number(item.shooting) : current[key]?.shooting,
+          calls: item.calls !== undefined && item.calls !== "" && item.calls !== null ? Number(item.calls) : current[key]?.calls,
+          mental: item.mental !== undefined && item.mental !== "" && item.mental !== null ? Number(item.mental) : current[key]?.mental,
+          gamesense: item.gamesense !== undefined && item.gamesense !== "" && item.gamesense !== null ? Number(item.gamesense) : current[key]?.gamesense,
+          aura: item.aura !== undefined && item.aura !== "" && item.aura !== null ? Number(item.aura) : current[key]?.aura,
           updatedAt: new Date().toISOString()
         };
         if (item.playerId) current[item.playerId] = updatedObj;
@@ -86,6 +104,11 @@ export async function POST(request: NextRequest) {
       csRating: csRating !== undefined && csRating !== "" ? Number(csRating) : current[key]?.csRating,
       customElo: customElo !== undefined && customElo !== "" ? Number(customElo) : current[key]?.customElo,
       customSkillScore: customSkillScore !== undefined && customSkillScore !== "" ? Number(customSkillScore) : current[key]?.customSkillScore,
+      shooting: shooting !== undefined && shooting !== "" ? Number(shooting) : current[key]?.shooting,
+      calls: calls !== undefined && calls !== "" ? Number(calls) : current[key]?.calls,
+      mental: mental !== undefined && mental !== "" ? Number(mental) : current[key]?.mental,
+      gamesense: gamesense !== undefined && gamesense !== "" ? Number(gamesense) : current[key]?.gamesense,
+      aura: aura !== undefined && aura !== "" ? Number(aura) : current[key]?.aura,
       updatedAt: new Date().toISOString()
     };
 

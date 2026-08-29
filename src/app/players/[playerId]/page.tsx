@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import PlayerAchievements, { computePlayerAchievements } from "@/components/PlayerAchievements";
 import PlayerCommentsWall from "@/components/PlayerCommentsWall";
+import PlayerRadarChart, { computeAutoShooting, PlayerAttributes } from "@/components/PlayerRadarChart";
 import { computeAdaptiveSkillScore } from "@/lib/skill";
 
 // Normalized map name to match public/maps/ file names (e.g. Mirage -> de_mirage)
@@ -1595,6 +1596,39 @@ export default function PlayerProfilePage() {
             {hubStats && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", height: "100%" }}>
                 
+                {/* 5-Sided Radar Pentagon (Shooting, Calls, Mental, Gamesense, Aura) */}
+                {(() => {
+                  const ov = (playerId && playerOverridesMap[playerId]) || 
+                             (profile?.nickname && playerOverridesMap[profile.nickname]) || 
+                             (profile?.nickname && playerOverridesMap[profile.nickname.toLowerCase()]) || {};
+                  
+                  const effSkill = ov.customSkillScore !== undefined ? Number(ov.customSkillScore) : (profile?.skillScore || 50);
+
+                  const autoShooting = computeAutoShooting({
+                    kd: hubStats?.kd,
+                    hsPct: hubStats?.hsPct,
+                    adr: hubStats?.adr,
+                    skillScore: effSkill,
+                    leetifyAim: leetify?.rating?.aim
+                  });
+
+                  const radarAttributes: PlayerAttributes = {
+                    shooting: ov.shooting !== undefined && ov.shooting !== null ? Number(ov.shooting) : autoShooting,
+                    isShootingAuto: ov.shooting === undefined || ov.shooting === null,
+                    calls: ov.calls !== undefined && ov.calls !== null ? Number(ov.calls) : 50,
+                    mental: ov.mental !== undefined && ov.mental !== null ? Number(ov.mental) : 50,
+                    gamesense: ov.gamesense !== undefined && ov.gamesense !== null ? Number(ov.gamesense) : 50,
+                    aura: ov.aura !== undefined && ov.aura !== null ? Number(ov.aura) : 50,
+                  };
+
+                  return (
+                    <PlayerRadarChart 
+                      attributes={radarAttributes} 
+                      playerName={profile?.nickname} 
+                    />
+                  );
+                })()}
+
                 {/* Est HLTV Rating Prominent Card */}
                 <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", overflow: "hidden" }}>
                   <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "4px", background: "var(--accent-cyan)" }} />

@@ -8686,6 +8686,27 @@ export default function Home() {
               </div>
             </div>
 
+            <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "1rem" }}>
+              <Link 
+                href="/admin"
+                style={{
+                  fontSize: "0.8rem",
+                  color: "var(--accent-cyan)",
+                  textDecoration: "none",
+                  padding: "0.4rem 0.85rem",
+                  borderRadius: "8px",
+                  background: "rgba(0, 229, 255, 0.1)",
+                  border: "1px solid rgba(0, 229, 255, 0.3)",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.4rem",
+                  fontWeight: "700"
+                }}
+              >
+                Настроить 5D характеристики игроков (Стрельба, Коллы, Менталка, Геймсенс, Аура) в панели /admin →
+              </Link>
+            </div>
+
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem", marginBottom: "1.5rem" }}>
               {(rankings && rankings.length > 0 ? rankings : []).map((item: any, idx: number) => {
                 const nick = item.nickname || item.player?.nickname || "Игрок";

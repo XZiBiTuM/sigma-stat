@@ -39,6 +39,13 @@ export default function AdminLoginPage() {
   const [isLoadingPicks, setIsLoadingPicks] = useState(false);
   const [picksMsg, setPicksMsg] = useState("");
 
+  // 5D Player Traits state
+  const [playerTraitsMap, setPlayerTraitsMap] = useState<Record<string, any>>({});
+  const [traitsSearch, setTraitsSearch] = useState("");
+  const [isSavingTraits, setIsSavingTraits] = useState(false);
+  const [isLoadingTraits, setIsLoadingTraits] = useState(false);
+  const [traitsMsg, setTraitsMsg] = useState("");
+
   const fetchAnalytics = (code?: string) => {
     setIsLoadingAnalytics(true);
     const pass = code || passcode || localStorage.getItem("sigma_admin_pass") || "demon323161";
@@ -66,6 +73,74 @@ export default function AdminLoginPage() {
       })
       .catch(() => {})
       .finally(() => setIsLoadingPicks(false));
+  };
+
+  const fetchPlayerTraits = () => {
+    setIsLoadingTraits(true);
+    fetch("/api/admin/players/override")
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.overrides) {
+          const cleanMap: Record<string, any> = {};
+          Object.entries(data.overrides).forEach(([key, val]: [string, any]) => {
+            if (val && typeof val === "object" && val.nickname) {
+              const nick = val.nickname;
+              if (!cleanMap[nick] || key.length > 10) {
+                cleanMap[nick] = {
+                  nickname: nick,
+                  playerId: key.length > 20 ? key : (val.playerId || ""),
+                  customSkillScore: val.customSkillScore ?? 50,
+                  shooting: val.shooting ?? (val.customSkillScore || 50),
+                  calls: val.calls ?? 50,
+                  mental: val.mental ?? 50,
+                  gamesense: val.gamesense ?? 50,
+                  aura: val.aura ?? 50,
+                };
+              }
+            }
+          });
+          setPlayerTraitsMap(cleanMap);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setIsLoadingTraits(false));
+  };
+
+  const handleSavePlayerTraits = async () => {
+    setIsSavingTraits(true);
+    setTraitsMsg("Сохранение характеристик...");
+    try {
+      const batchArray = Object.values(playerTraitsMap).map((p: any) => ({
+        nickname: p.nickname,
+        playerId: p.playerId || undefined,
+        shooting: p.shooting !== "" && p.shooting !== undefined ? Number(p.shooting) : undefined,
+        calls: p.calls !== "" && p.calls !== undefined ? Number(p.calls) : undefined,
+        mental: p.mental !== "" && p.mental !== undefined ? Number(p.mental) : undefined,
+        gamesense: p.gamesense !== "" && p.gamesense !== undefined ? Number(p.gamesense) : undefined,
+        aura: p.aura !== "" && p.aura !== undefined ? Number(p.aura) : undefined,
+      }));
+
+      const res = await fetch("/api/admin/players/override", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          passcode: "sigmaadmin",
+          batchOverrides: batchArray
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setTraitsMsg("Характеристики всех игроков успешно сохранены!");
+        fetchPlayerTraits();
+      } else {
+        setTraitsMsg(`Ошибка: ${data.error || "Не удалось сохранить"}`);
+      }
+    } catch (e: any) {
+      setTraitsMsg(`Ошибка сети: ${e.message}`);
+    } finally {
+      setIsSavingTraits(false);
+    }
   };
 
   const handleDeletePick = async (userId: string, userName: string) => {
@@ -108,6 +183,7 @@ export default function AdminLoginPage() {
         if (saved === "ADMIN") {
           fetchAnalytics();
           fetchFantasyPicks();
+          fetchPlayerTraits();
         }
       }
     } catch (e) {}
@@ -139,6 +215,7 @@ export default function AdminLoginPage() {
       setError("");
       fetchAnalytics(p);
       fetchFantasyPicks();
+      fetchPlayerTraits();
     } else if (p === "chillout" || p === "mrchillout") {
       localStorage.setItem("sigma_user_role", "EVENT_MAKER");
       localStorage.setItem("sigma_user_name", "Mr.Chillout");
@@ -582,6 +659,298 @@ export default function AdminLoginPage() {
                         </button>
                       </div>
                     ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* 5D PLAYER ATTRIBUTES (PENTAGON RADAR) MANAGEMENT SECTION */}
+            {currentRole === "ADMIN" && (
+              <div style={{
+                marginTop: "1.5rem",
+                background: "rgba(0, 229, 255, 0.04)",
+                border: "1px solid rgba(0, 229, 255, 0.3)",
+                borderRadius: "18px",
+                padding: "1.5rem",
+                textAlign: "left"
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem", flexWrap: "wrap", gap: "0.75rem" }}>
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: "1.1rem", color: "#00e5ff", fontWeight: "800" }}>
+                      Характеристики игроков (5-угольник / Radar)
+                    </h3>
+                    <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.2rem", display: "block" }}>
+                      Стрельба (Aim), Коллы, Менталка, Геймсенс, Аура (значения 1–99)
+                    </span>
+                  </div>
+
+                  <div style={{ display: "flex", gap: "0.5rem" }}>
+                    <button
+                      type="button"
+                      onClick={fetchPlayerTraits}
+                      disabled={isLoadingTraits}
+                      style={{
+                        padding: "0.4rem 0.75rem",
+                        borderRadius: "8px",
+                        background: "rgba(0, 229, 255, 0.15)",
+                        border: "1px solid var(--accent-cyan)",
+                        color: "#00e5ff",
+                        fontSize: "0.75rem",
+                        fontWeight: "700",
+                        cursor: "pointer"
+                      }}
+                    >
+                      {isLoadingTraits ? "Загрузка..." : "Обновить"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSavePlayerTraits}
+                      disabled={isSavingTraits}
+                      style={{
+                        padding: "0.4rem 1rem",
+                        borderRadius: "8px",
+                        background: "linear-gradient(135deg, #00e5ff, #7c4dff)",
+                        border: "none",
+                        color: "#fff",
+                        fontSize: "0.75rem",
+                        fontWeight: "800",
+                        cursor: isSavingTraits ? "not-allowed" : "pointer",
+                        boxShadow: "0 0 15px rgba(0, 229, 255, 0.3)"
+                      }}
+                    >
+                      {isSavingTraits ? "Сохранение..." : "Сохранить характеристики"}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Explanation note */}
+                <div style={{
+                  background: "rgba(255, 215, 0, 0.06)",
+                  border: "1px solid rgba(255, 215, 0, 0.25)",
+                  borderRadius: "10px",
+                  padding: "0.7rem 0.9rem",
+                  fontSize: "0.78rem",
+                  color: "#ffc107",
+                  marginBottom: "1rem",
+                  lineHeight: "1.4"
+                }}>
+                  <strong style={{ color: "#ffd54f" }}>Субъективная оценка администратора:</strong> параметры <strong>Коллы</strong>, <strong>Менталка</strong>, <strong>Геймсенс</strong> и <strong>Аура</strong> оцениваются и выставляются вами лично. Параметр <strong>Стрельба</strong> можно задать вручную или оставить авто-расчёт.
+                </div>
+
+                {/* Search player input */}
+                <div style={{ marginBottom: "1rem" }}>
+                  <input
+                    type="text"
+                    className="input-field"
+                    value={traitsSearch}
+                    onChange={e => setTraitsSearch(e.target.value)}
+                    placeholder="Поиск игрока по никнейму..."
+                    style={{
+                      width: "100%",
+                      padding: "0.55rem 0.85rem",
+                      borderRadius: "10px",
+                      background: "#06050c",
+                      border: "1px solid var(--border-light)",
+                      color: "#fff",
+                      fontSize: "0.85rem",
+                      boxSizing: "border-box"
+                    }}
+                  />
+                </div>
+
+                {traitsMsg && (
+                  <div style={{ fontSize: "0.85rem", padding: "0.6rem 0.8rem", borderRadius: "8px", background: "rgba(255,255,255,0.05)", marginBottom: "1rem", color: traitsMsg.includes("успешно") ? "#00e5ff" : "#ff7b7b" }}>
+                    {traitsMsg}
+                  </div>
+                )}
+
+                {/* Table of players */}
+                {Object.keys(playerTraitsMap).length === 0 ? (
+                  <div style={{ textAlign: "center", padding: "1.5rem", color: "var(--text-muted)", fontSize: "0.85rem", border: "1px dashed var(--border-light)", borderRadius: "12px" }}>
+                    {isLoadingTraits ? "Загрузка игроков..." : "Нет данных об игроках."}
+                  </div>
+                ) : (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem", maxHeight: "420px", overflowY: "auto" }}>
+                    {Object.values(playerTraitsMap)
+                      .filter((p: any) => !traitsSearch || p.nickname.toLowerCase().includes(traitsSearch.toLowerCase()))
+                      .sort((a: any, b: any) => (b.customSkillScore || 0) - (a.customSkillScore || 0))
+                      .map((p: any) => (
+                        <div
+                          key={p.nickname}
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            padding: "0.65rem 0.85rem",
+                            borderRadius: "12px",
+                            background: "rgba(0,0,0,0.35)",
+                            border: "1px solid var(--border-light)",
+                            flexWrap: "wrap",
+                            gap: "0.75rem"
+                          }}
+                        >
+                          <div style={{ minWidth: "130px" }}>
+                            <div style={{ fontWeight: "800", color: "#fff", fontSize: "0.88rem" }}>
+                              {p.nickname}
+                            </div>
+                            <div style={{ fontSize: "0.7rem", color: "#c084fc", fontWeight: "700" }}>
+                              Скилл: {p.customSkillScore || "50"} PTS
+                            </div>
+                          </div>
+
+                          <div style={{ display: "flex", gap: "0.45rem", flexWrap: "wrap", alignItems: "center" }}>
+                            {/* Shooting */}
+                            <div style={{ textAlign: "center" }}>
+                              <span style={{ fontSize: "0.62rem", color: "#00e5ff", display: "block", fontWeight: "700" }}>Стрельба</span>
+                              <input
+                                type="number"
+                                min={1}
+                                max={99}
+                                value={p.shooting ?? ""}
+                                onChange={e => {
+                                  const val = e.target.value;
+                                  setPlayerTraitsMap(prev => ({
+                                    ...prev,
+                                    [p.nickname]: { ...prev[p.nickname], shooting: val }
+                                  }));
+                                }}
+                                placeholder="Auto"
+                                style={{
+                                  width: "52px",
+                                  padding: "0.25rem 0.35rem",
+                                  borderRadius: "6px",
+                                  background: "#06050c",
+                                  border: "1px solid rgba(0, 229, 255, 0.4)",
+                                  color: "#00e5ff",
+                                  fontWeight: "800",
+                                  fontSize: "0.8rem",
+                                  textAlign: "center"
+                                }}
+                              />
+                            </div>
+
+                            {/* Gamesense */}
+                            <div style={{ textAlign: "center" }}>
+                              <span style={{ fontSize: "0.62rem", color: "#a855f7", display: "block", fontWeight: "700" }}>Геймсенс</span>
+                              <input
+                                type="number"
+                                min={1}
+                                max={99}
+                                value={p.gamesense ?? ""}
+                                onChange={e => {
+                                  const val = e.target.value;
+                                  setPlayerTraitsMap(prev => ({
+                                    ...prev,
+                                    [p.nickname]: { ...prev[p.nickname], gamesense: val }
+                                  }));
+                                }}
+                                placeholder="50"
+                                style={{
+                                  width: "52px",
+                                  padding: "0.25rem 0.35rem",
+                                  borderRadius: "6px",
+                                  background: "#06050c",
+                                  border: "1px solid rgba(168, 85, 247, 0.4)",
+                                  color: "#a855f7",
+                                  fontWeight: "800",
+                                  fontSize: "0.8rem",
+                                  textAlign: "center"
+                                }}
+                              />
+                            </div>
+
+                            {/* Aura */}
+                            <div style={{ textAlign: "center" }}>
+                              <span style={{ fontSize: "0.62rem", color: "#ffd700", display: "block", fontWeight: "700" }}>Аура</span>
+                              <input
+                                type="number"
+                                min={1}
+                                max={99}
+                                value={p.aura ?? ""}
+                                onChange={e => {
+                                  const val = e.target.value;
+                                  setPlayerTraitsMap(prev => ({
+                                    ...prev,
+                                    [p.nickname]: { ...prev[p.nickname], aura: val }
+                                  }));
+                                }}
+                                placeholder="50"
+                                style={{
+                                  width: "52px",
+                                  padding: "0.25rem 0.35rem",
+                                  borderRadius: "6px",
+                                  background: "#06050c",
+                                  border: "1px solid rgba(255, 215, 0, 0.4)",
+                                  color: "#ffd700",
+                                  fontWeight: "800",
+                                  fontSize: "0.8rem",
+                                  textAlign: "center"
+                                }}
+                              />
+                            </div>
+
+                            {/* Mental */}
+                            <div style={{ textAlign: "center" }}>
+                              <span style={{ fontSize: "0.62rem", color: "#00e676", display: "block", fontWeight: "700" }}>Менталка</span>
+                              <input
+                                type="number"
+                                min={1}
+                                max={99}
+                                value={p.mental ?? ""}
+                                onChange={e => {
+                                  const val = e.target.value;
+                                  setPlayerTraitsMap(prev => ({
+                                    ...prev,
+                                    [p.nickname]: { ...prev[p.nickname], mental: val }
+                                  }));
+                                }}
+                                placeholder="50"
+                                style={{
+                                  width: "52px",
+                                  padding: "0.25rem 0.35rem",
+                                  borderRadius: "6px",
+                                  background: "#06050c",
+                                  border: "1px solid rgba(0, 230, 118, 0.4)",
+                                  color: "#00e676",
+                                  fontWeight: "800",
+                                  fontSize: "0.8rem",
+                                  textAlign: "center"
+                                }}
+                              />
+                            </div>
+
+                            {/* Calls */}
+                            <div style={{ textAlign: "center" }}>
+                              <span style={{ fontSize: "0.62rem", color: "#ff9100", display: "block", fontWeight: "700" }}>Коллы</span>
+                              <input
+                                type="number"
+                                min={1}
+                                max={99}
+                                value={p.calls ?? ""}
+                                onChange={e => {
+                                  const val = e.target.value;
+                                  setPlayerTraitsMap(prev => ({
+                                    ...prev,
+                                    [p.nickname]: { ...prev[p.nickname], calls: val }
+                                  }));
+                                }}
+                                placeholder="50"
+                                style={{
+                                  width: "52px",
+                                  padding: "0.25rem 0.35rem",
+                                  borderRadius: "6px",
+                                  background: "#06050c",
+                                  border: "1px solid rgba(255, 145, 0, 0.4)",
+                                  color: "#ff9100",
+                                  fontWeight: "800",
+                                  fontSize: "0.8rem",
+                                  textAlign: "center"
+                                }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                   </div>
                 )}
               </div>
