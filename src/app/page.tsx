@@ -9601,31 +9601,31 @@ export default function Home() {
                 <div style={{
                   height: "16px",
                   borderRadius: "999px",
-                  background: "linear-gradient(90deg, #38bdf8 0%, #34d399 35%, #00e5ff 60%, #c084fc 80%, #fcd34d 100%)",
-                  boxShadow: "0 0 20px rgba(0, 229, 255, 0.25)",
+                  background: "linear-gradient(90deg, #ef4444 0%, #ffd700 35%, #00e676 58%, #00e5ff 78%, #c084fc 100%)",
+                  boxShadow: "0 0 20px rgba(168, 85, 247, 0.25)",
                   position: "relative"
                 }} />
 
                 {/* Markers under the bar */}
                 <div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.6rem", fontSize: "0.72rem", color: "var(--text-muted)", flexWrap: "wrap", gap: "0.4rem" }}>
                   <div style={{ textAlign: "left" }}>
-                    <strong style={{ color: "#38bdf8", display: "block" }}>15–39 PTS</strong>
+                    <strong style={{ color: "#f87171", display: "block" }}>15–39 PTS</strong>
                     <span>Tier D (Темная лошадка)</span>
                   </div>
                   <div style={{ textAlign: "center" }}>
-                    <strong style={{ color: "#34d399", display: "block" }}>40–55 PTS</strong>
+                    <strong style={{ color: "#ffd700", display: "block" }}>40–55 PTS</strong>
                     <span>Tier C (Саппорт)</span>
                   </div>
                   <div style={{ textAlign: "center" }}>
-                    <strong style={{ color: "var(--accent-cyan)", display: "block" }}>56–69 PTS</strong>
+                    <strong style={{ color: "#69f0ae", display: "block" }}>56–69 PTS</strong>
                     <span>Tier B (Достойный соперник)</span>
                   </div>
                   <div style={{ textAlign: "center" }}>
-                    <strong style={{ color: "#c084fc", display: "block" }}>70–84 PTS</strong>
+                    <strong style={{ color: "var(--accent-cyan)", display: "block" }}>70–84 PTS</strong>
                     <span>Tier A (Сильная боевая единица)</span>
                   </div>
                   <div style={{ textAlign: "right" }}>
-                    <strong style={{ color: "#fcd34d", display: "block" }}>85–100 PTS</strong>
+                    <strong style={{ color: "#d8b4fe", display: "block" }}>85–100 PTS</strong>
                     <span>Tier S (Топ-тир)</span>
                   </div>
                 </div>
@@ -9640,9 +9640,9 @@ export default function Home() {
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "0.75rem" }}>
                 
                 {/* Tier S: Топ-тир */}
-                <div style={{ background: "rgba(245, 158, 11, 0.08)", border: "1px solid rgba(245, 158, 11, 0.35)", borderRadius: "12px", padding: "0.9rem" }}>
+                <div style={{ background: "rgba(168, 85, 247, 0.08)", border: "1px solid rgba(168, 85, 247, 0.35)", borderRadius: "12px", padding: "0.9rem" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontWeight: "900", color: "#fcd34d", fontSize: "0.88rem" }}>Tier S — Топ-тир (85–100 PTS)</span>
+                    <span style={{ fontWeight: "900", color: "#d8b4fe", fontSize: "0.88rem" }}>Tier S — Топ-тир (85–100 PTS)</span>
                   </div>
                   <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.35rem", lineHeight: "1.4" }}>
                     <strong>Игроки:</strong> Porshen (95), XZiBiTuM (86), nika_jok (86), su666nyak (85).<br />
@@ -9651,9 +9651,9 @@ export default function Home() {
                 </div>
 
                 {/* Tier A: Сильная боевая единица */}
-                <div style={{ background: "rgba(168, 85, 247, 0.08)", border: "1px solid rgba(168, 85, 247, 0.35)", borderRadius: "12px", padding: "0.9rem" }}>
+                <div style={{ background: "rgba(0, 229, 255, 0.08)", border: "1px solid rgba(0, 229, 255, 0.35)", borderRadius: "12px", padding: "0.9rem" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontWeight: "900", color: "#d8b4fe", fontSize: "0.88rem" }}>Tier A — Сильная боевая единица (70–84 PTS)</span>
+                    <span style={{ fontWeight: "900", color: "var(--accent-cyan)", fontSize: "0.88rem" }}>Tier A — Сильная боевая единица (70–84 PTS)</span>
                   </div>
                   <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.35rem", lineHeight: "1.4" }}>
                     <strong>Игроки:</strong> massao61 (82), Kups2-0 (82), nycujan (74), syrass (74), uncle007 (73), FCG_pilotiki (73).<br />
@@ -9662,20 +9662,20 @@ export default function Home() {
                 </div>
 
                 {/* Tier B: Достойный соперник */}
-                <div style={{ background: "rgba(0, 229, 255, 0.08)", border: "1px solid rgba(0, 229, 255, 0.35)", borderRadius: "12px", padding: "0.9rem" }}>
+                <div style={{ background: "rgba(0, 230, 118, 0.08)", border: "1px solid rgba(0, 230, 118, 0.35)", borderRadius: "12px", padding: "0.9rem" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontWeight: "900", color: "var(--accent-cyan)", fontSize: "0.88rem" }}>Tier B — Достойный соперник (56–69 PTS)</span>
+                    <span style={{ fontWeight: "900", color: "#69f0ae", fontSize: "0.88rem" }}>Tier B — Достойный соперник (56–69 PTS)</span>
                   </div>
                   <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.35rem", lineHeight: "1.4" }}>
-                    <strong>Игроки:</strong> ANAKONDA1966 (67), Baltika--7 (62), RT_BERS (59), JIyHaTuK_1 (59).<br />
+                    <strong>Игроки:</strong> ANAKONDA1966 (62), Baltika--7 (62), RT_BERS (59), JIyHaTuK_1 (59).<br />
                     Стабильные игроки основы, грамотные размены и командный импакт.
                   </div>
                 </div>
 
                 {/* Tier C: Саппорт */}
-                <div style={{ background: "rgba(16, 185, 129, 0.08)", border: "1px solid rgba(16, 185, 129, 0.35)", borderRadius: "12px", padding: "0.9rem" }}>
+                <div style={{ background: "rgba(255, 215, 0, 0.08)", border: "1px solid rgba(255, 215, 0, 0.35)", borderRadius: "12px", padding: "0.9rem" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontWeight: "900", color: "#6ee7b7", fontSize: "0.88rem" }}>Tier C — Саппорт (40–55 PTS)</span>
+                    <span style={{ fontWeight: "900", color: "#ffd700", fontSize: "0.88rem" }}>Tier C — Саппорт (40–55 PTS)</span>
                   </div>
                   <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.35rem", lineHeight: "1.4" }}>
                     <strong>Игроки:</strong> Gigant161 (52), Raul800 (51), BryanOKnish1 (49), MrChillout61 (46), avtolike (42).<br />
@@ -9684,9 +9684,9 @@ export default function Home() {
                 </div>
 
                 {/* Tier D: Темная лошадка */}
-                <div style={{ background: "rgba(14, 165, 233, 0.08)", border: "1px solid rgba(14, 165, 233, 0.35)", borderRadius: "12px", padding: "0.9rem" }}>
+                <div style={{ background: "rgba(239, 68, 68, 0.08)", border: "1px solid rgba(239, 68, 68, 0.35)", borderRadius: "12px", padding: "0.9rem" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontWeight: "900", color: "#7dd3fc", fontSize: "0.88rem" }}>Tier D — Темная лошадка (15–39 PTS)</span>
+                    <span style={{ fontWeight: "900", color: "#f87171", fontSize: "0.88rem" }}>Tier D — Темная лошадка (15–39 PTS)</span>
                   </div>
                   <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.35rem", lineHeight: "1.4" }}>
                     <strong>Игроки:</strong> Bezhenec (37), khachik92 (37), Pach03 (37), DatObase (30), madmax14888 (30), mendez161 (30), w1ndyyyk_244 (30), Stas1kudin (15), AK_NoScope (15).<br />

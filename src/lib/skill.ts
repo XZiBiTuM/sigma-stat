@@ -131,9 +131,9 @@ export function computeAdaptiveSkillScore(params: SkillParams): SkillResult {
 
 function getTierProps(score: number, csRating: number, isRealPremier: boolean): SkillResult {
   let tier = "Tier D";
-  let color = "#ff9100"; // Orange
-  let bg = "rgba(255, 145, 0, 0.15)";
-  let border = "rgba(255, 145, 0, 0.4)";
+  let color = "#ff4d4d"; // Red
+  let bg = "rgba(239, 68, 68, 0.15)";
+  let border = "rgba(239, 68, 68, 0.4)";
   let glow = "";
 
   if (score >= 85) {
@@ -160,9 +160,9 @@ function getTierProps(score: number, csRating: number, isRealPremier: boolean): 
     border = "rgba(255, 215, 0, 0.4)";
   } else {
     tier = "Tier D";
-    color = "#ff9100"; // Orange / Coral
-    bg = "rgba(255, 145, 0, 0.15)";
-    border = "rgba(255, 145, 0, 0.4)";
+    color = "#ff4d4d"; // Red
+    bg = "rgba(239, 68, 68, 0.15)";
+    border = "rgba(239, 68, 68, 0.4)";
   }
 
   return {
