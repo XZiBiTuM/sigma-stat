@@ -578,5 +578,41 @@
     "csRating": 13861,
     "updatedAt": "2026-08-29T07:51:52.618Z",
     "customSkillScore": 73
+  },
+  "2d1244a2-1265-4c93-ae69-0b23f8edb278": {
+    "nickname": "AK_NoScope",
+    "customSkillScore": 15,
+    "customElo": 997,
+    "csRating": 9500,
+    "updatedAt": "2026-08-29T08:00:48.699Z"
+  },
+  "ak_noscope": {
+    "nickname": "AK_NoScope",
+    "customSkillScore": 15,
+    "customElo": 997,
+    "csRating": 9500,
+    "updatedAt": "2026-08-29T08:00:48.699Z"
+  },
+  "AK_NoScope": {
+    "nickname": "AK_NoScope",
+    "customSkillScore": 15,
+    "customElo": 997,
+    "csRating": 9500,
+    "updatedAt": "2026-08-29T08:00:48.699Z"
+  },
+  "baltika-7": {
+    "nickname": "baltika-7",
+    "customSkillScore": 62,
+    "updatedAt": "2026-08-29T08:00:54.530Z"
+  },
+  "bryanokn1sh1": {
+    "nickname": "bryanokn1sh1",
+    "customSkillScore": 49,
+    "updatedAt": "2026-08-29T08:00:54.530Z"
+  },
+  "w1ndyyk_224": {
+    "nickname": "w1ndyyk_224",
+    "customSkillScore": 30,
+    "updatedAt": "2026-08-29T08:00:54.530Z"
   }
 }
