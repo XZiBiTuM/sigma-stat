@@ -705,18 +705,31 @@ export default function Home() {
     }
   };
 
+  // Dynamic team budget: sum of skill of all players in pool / 4 (+- 5)
+  const draftPoolNames = Array.from(new Set([
+    ...(draftCaptains || []).filter(c => c && !c.startsWith("Капитан ")),
+    ...(draftAvailablePlayers || []),
+    ...((draftTeams || []).flat() || []),
+    ...(draftPoolInput ? draftPoolInput.split("\n").map(n => n.trim()).filter(Boolean) : [])
+  ]));
+
+  const totalDraftPoolSkill = draftPoolNames.reduce((sum, name) => sum + getPlayerSkillNumber(name), 0);
+  const targetDraftTeamBudget = draftPoolNames.length >= 4 ? Math.round(totalDraftPoolSkill / 4) : 280;
+  const minDraftTeamBudget = targetDraftTeamBudget - 5;
+  const maxDraftTeamBudget = targetDraftTeamBudget + 5;
+
   const downloadDraftResultsFile = () => {
     const dateStr = new Date().toLocaleString("ru-RU");
     let content = "=================================================\n";
     content += "   РЕЗУЛЬТАТЫ КАПИТАНСКОГО ДРАФТА (СИГМА КИБЕР КЛУБ)\n";
-    content += "   Лимит очков на команду: 300 PTS (+- 10 PTS)\n";
+    content += `   Лимит очков на команду: ${targetDraftTeamBudget} PTS (+- 5 PTS)\n`;
     content += `   Дата: ${dateStr}\n`;
     content += "=================================================\n\n";
 
     draftCaptains.forEach((cap, idx) => {
       const roster = draftTeams[idx] || [];
       const teamPts = roster.reduce((sum, pName) => sum + getPlayerSkillNumber(pName), 0);
-      const remainingPts = 300 - teamPts;
+      const remainingPts = targetDraftTeamBudget - teamPts;
       let roomTag = "";
       if (draftRoomAssignment) {
         if (draftRoomAssignment.vip.includes(idx)) roomTag = " [ВИП-ЗАЛ]";
@@ -724,7 +737,7 @@ export default function Home() {
       }
 
       content += `--- КОМАНДА ${idx + 1} (Капитан: ${cap})${roomTag} ---\n`;
-      content += `Суммарный скилл: ${teamPts} / 300 PTS (Остаток: ${remainingPts} PTS)\n`;
+      content += `Суммарный скилл: ${teamPts} / ${targetDraftTeamBudget} PTS (Остаток: ${remainingPts} PTS)\n`;
       roster.forEach((member, i) => {
         const pSkill = getPlayerSkillNumber(member);
         content += `  ${i + 1}. ${member} [${pSkill} PTS]${i === 0 ? " (Капитан)" : ""}\n`;
@@ -8904,11 +8917,11 @@ export default function Home() {
                     Captain's Draft
                   </h3>
                   <span style={{ fontSize: "0.72rem", padding: "0.2rem 0.5rem", borderRadius: "6px", background: "rgba(0, 229, 255, 0.15)", color: "var(--accent-cyan)", fontWeight: "800" }}>
-                    ЛИМИТ: 300 ОЧКОВ СКИЛЛА (+- 10)
+                    ЛИМИТ: {targetDraftTeamBudget} ОЧКОВ СКИЛЛА (+- 5)
                   </span>
                 </div>
                 <span style={{ fontSize: "0.78rem", color: "var(--text-secondary)" }}>
-                  Пошаговый выбор игроков в реальном времени с балансировкой по очкам скилла
+                  Пошаговый выбор игроков в реальном времени с балансировкой по очкам скилла (пул: {totalDraftPoolSkill} PTS)
                 </span>
               </div>
               <button 
@@ -9002,7 +9015,7 @@ export default function Home() {
                     onChange={(e) => setDraftPoolInput(e.target.value)}
                   />
                   <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "0.25rem", display: "block" }}>
-                    Капитаны исключаются из общего пула выбора автоматически. Максимальный бюджет каждой команды — 300 очков Скилла (+- 10 очков).
+                    Капитаны исключаются из общего пула выбора автоматически. Бюджет каждой команды: {targetDraftTeamBudget} очков Скилла (+- 5 очков). Всего в пуле: {totalDraftPoolSkill} PTS.
                   </span>
                 </div>
 
@@ -9078,10 +9091,10 @@ export default function Home() {
                     const isMyTurn = draftStep === "picking" && draftTurnSequence[draftCurrentStepIndex] === cIdx;
                     const roster = draftTeams[cIdx] || [];
                     const teamPts = roster.reduce((sum, pName) => sum + getPlayerSkillNumber(pName), 0);
-                    const remainingPts = 300 - teamPts;
-                    const isOverLimit = teamPts > 310;
-                    const isUnderLimit = roster.length === 5 && teamPts < 290;
-                    const isBalanced = roster.length === 5 && teamPts >= 290 && teamPts <= 310;
+                    const remainingPts = targetDraftTeamBudget - teamPts;
+                    const isOverLimit = teamPts > maxDraftTeamBudget;
+                    const isUnderLimit = roster.length === 5 && teamPts < minDraftTeamBudget;
+                    const isBalanced = roster.length === 5 && teamPts >= minDraftTeamBudget && teamPts <= maxDraftTeamBudget;
 
                     let roomLabel = "";
                     if (draftRoomAssignment) {
@@ -9120,18 +9133,18 @@ export default function Home() {
                           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.78rem" }}>
                             <span style={{ color: "var(--text-secondary)" }}>Сумма очков:</span>
                             <strong style={{ color: isOverLimit ? "#ff5252" : isBalanced ? "#00e676" : "#fff", fontSize: "0.85rem" }}>
-                              {teamPts} / 300
+                              {teamPts} / {targetDraftTeamBudget}
                             </strong>
                           </div>
                           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.72rem", marginTop: "0.2rem" }}>
-                            <span style={{ color: "var(--text-muted)" }}>Осталось:</span>
-                            <span style={{ color: remainingPts < -10 ? "#ff5252" : remainingPts < 0 ? "#ffb74d" : "var(--accent-cyan)", fontWeight: "700" }}>
+                            <span style={{ color: "var(--text-muted)" }}>Остаток:</span>
+                            <span style={{ color: remainingPts < -5 ? "#ff5252" : remainingPts < 0 ? "#ffb74d" : "var(--accent-cyan)", fontWeight: "700" }}>
                               {remainingPts >= 0 ? `${remainingPts} очков` : `Перебор: +${Math.abs(remainingPts)} очков`}
                             </span>
                           </div>
                           {isBalanced && (
                             <div style={{ fontSize: "0.68rem", color: "#00e676", fontWeight: "800", marginTop: "0.25rem", textAlign: "center" }}>
-                              Баланс соблюден
+                              Баланс соблюден (±5)
                             </div>
                           )}
                           {isOverLimit && (
