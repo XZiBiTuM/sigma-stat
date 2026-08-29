@@ -3895,9 +3895,9 @@ export default function Home() {
 
                   const shuffle = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
 
-                  // 1. STAR PLAYER (Слот 1): skill 70 to 99
-                  let starPool = allPlayersList.filter(p => p.skillScore >= 70 && p.skillScore <= 99);
-                  if (starPool.length === 0) starPool = allPlayersList.filter(p => p.skillScore >= 60);
+                  // 1. STAR PLAYER (Слот 1): skill >= 66 (Star tier)
+                  let starPool = allPlayersList.filter(p => p.skillScore >= 66 && p.skillScore <= 99);
+                  if (starPool.length === 0) starPool = allPlayersList.filter(p => p.skillScore >= 55);
                   if (starPool.length === 0) starPool = [...allPlayersList];
                   const pickedStar = shuffle(starPool)[0];
 
