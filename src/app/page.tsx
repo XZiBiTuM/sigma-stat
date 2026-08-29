@@ -9213,7 +9213,7 @@ export default function Home() {
                     onChange={(e) => setDraftPoolInput(e.target.value)}
                   />
                   <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "0.25rem", display: "block" }}>
-                    Капитаны исключаются из общего пула выбора автоматически. Бюджет каждой команды: {targetDraftTeamBudget} очков Скилла (+- 5 очков). Всего в пуле: {totalDraftPoolSkill} PTS.
+                    Капитаны исключаются из общего пула выбора автоматически. Для 4 команд требуется 16 игроков + 4 капитана (всего 20 игроков).
                   </span>
                 </div>
 
