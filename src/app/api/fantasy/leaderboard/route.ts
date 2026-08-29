@@ -62,12 +62,12 @@ export async function GET() {
     const leaderboard = Object.values(picks).map((pick: any) => {
       const darkSkill = getPlayerSkill(pick.darkHorse, overrides, weeklyPlayers);
       
-      // Dynamic Underdog Multiplier with Overpower Penalty (>55)
+      // Dynamic Underdog Multiplier with Overpower Penalty (>65)
       let underdogBonus = 1.0;
-      if (darkSkill <= 55) {
-        underdogBonus = Math.round((1.0 + ((55 - Math.max(10, darkSkill)) / 55) * 0.40) * 100) / 100;
+      if (darkSkill <= 65) {
+        underdogBonus = Math.round((1.0 + ((65 - Math.max(10, darkSkill)) / 65) * 0.40) * 100) / 100;
       } else {
-        underdogBonus = Math.round(Math.max(0.60, 1.0 - ((darkSkill - 55) / 45) * 0.40) * 100) / 100;
+        underdogBonus = Math.round(Math.max(0.60, 1.0 - ((darkSkill - 65) / 35) * 0.40) * 100) / 100;
       }
 
       const snipSkill = getPlayerSkill(pick.sniper, overrides, weeklyPlayers);
@@ -86,7 +86,7 @@ export async function GET() {
       const isDarkLucky = darkBuff?.id === "lucky_loser";
 
       const effectiveUnderdogBonus = isDarkLucky && underdogBonus < 1.0 ? 1.0 : underdogBonus;
-      const suppPenalty = suppSkill > 55 && !isSuppLucky ? 0.50 : 1.0;
+      const suppPenalty = suppSkill > 65 && !isSuppLucky ? 0.50 : 1.0;
 
       if (!isLiveOrDone) {
         // Tournament draft is open / has not started yet -> 0 points
@@ -106,7 +106,7 @@ export async function GET() {
           support: {
             nickname: pick.support?.nickname,
             skill: suppSkill,
-            penaltyApplied: suppSkill > 55 && !isSuppLucky,
+            penaltyApplied: suppSkill > 65 && !isSuppLucky,
             buff: suppBuff,
             points: 0
           },

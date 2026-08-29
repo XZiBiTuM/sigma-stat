@@ -3887,10 +3887,10 @@ export default function Home() {
                 const fantasyPlayerPool = availableFantasyPlayers.length >= 3 ? availableFantasyPlayers : allPlayersList;
 
                 const calcDarkMultiplier = (skill: number) => {
-                  if (skill <= 55) {
-                    return (1.0 + ((55 - Math.max(10, skill)) / 55) * 0.40).toFixed(2);
+                  if (skill <= 65) {
+                    return (1.0 + ((65 - Math.max(10, skill)) / 65) * 0.40).toFixed(2);
                   }
-                  return Math.max(0.60, 1.0 - ((skill - 55) / 45) * 0.40).toFixed(2);
+                  return Math.max(0.60, 1.0 - ((skill - 65) / 35) * 0.40).toFixed(2);
                 };
 
                 const getLivePlayerSkill = (player: any): number => {
@@ -3918,17 +3918,17 @@ export default function Home() {
 
                   const shuffle = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
 
-                  // 1. STAR PLAYER (Слот 1): skill >= 56
-                  let starPool = poolToUse.filter(p => p.skillScore >= 56 && p.skillScore <= 99);
-                  if (starPool.length === 0) starPool = poolToUse.filter(p => p.skillScore >= 50);
+                  // 1. STAR PLAYER (Слот 1): skill >= 70
+                  let starPool = poolToUse.filter(p => p.skillScore >= 70 && p.skillScore <= 99);
+                  if (starPool.length === 0) starPool = poolToUse.filter(p => p.skillScore >= 60);
                   if (starPool.length === 0) starPool = [...poolToUse];
                   const pickedStar = shuffle(starPool)[0];
 
-                  // 2. SUPPORT (Слот 2): player without penalty (skill <= 55)
+                  // 2. SUPPORT (Слот 2): player without penalty (skill <= 65)
                   let supportPool = poolToUse.filter(p => 
                     p.playerId !== pickedStar?.playerId && 
                     p.nickname !== pickedStar?.nickname && 
-                    p.skillScore <= 55
+                    p.skillScore <= 65
                   );
                   if (supportPool.length === 0) {
                     supportPool = poolToUse.filter(p => 
@@ -3938,13 +3938,13 @@ export default function Home() {
                   }
                   const pickedSupport = shuffle(supportPool)[0];
 
-                  // 3. DARK HORSE (Слот 3): player without penalty (skill <= 55, darkMultiplier >= 1.00)
+                  // 3. DARK HORSE (Слот 3): player without penalty (skill <= 65, darkMultiplier >= 1.00)
                   let darkHorsePool = poolToUse.filter(p => 
                     p.playerId !== pickedStar?.playerId && 
                     p.nickname !== pickedStar?.nickname && 
                     p.playerId !== pickedSupport?.playerId && 
                     p.nickname !== pickedSupport?.nickname && 
-                    p.skillScore <= 55
+                    p.skillScore <= 65
                   );
                   if (darkHorsePool.length === 0) {
                     darkHorsePool = poolToUse.filter(p => 
@@ -4304,7 +4304,7 @@ export default function Home() {
                             {/* SLOT 2: SUPPORT */}
                             <div style={{
                               background: "rgba(0, 229, 255, 0.04)",
-                              border: displaySupport ? (supportSkill > 55 ? "1.5px solid #ff5252" : "1.5px solid var(--accent-cyan)") : "1px solid rgba(0, 229, 255, 0.3)",
+                              border: displaySupport ? (supportSkill > 65 ? "1.5px solid #ff5252" : "1.5px solid var(--accent-cyan)") : "1px solid rgba(0, 229, 255, 0.3)",
                               borderRadius: "18px",
                               padding: "1.5rem",
                               display: "flex",
@@ -4325,11 +4325,11 @@ export default function Home() {
                                   fontWeight: "800",
                                   padding: "0.2rem 0.5rem",
                                   borderRadius: "6px",
-                                  background: displaySupport && supportSkill > 55 ? "rgba(255, 73, 73, 0.2)" : "rgba(0, 229, 255, 0.15)",
-                                  color: displaySupport && supportSkill > 55 ? "#ff5252" : "var(--accent-cyan)",
+                                  background: displaySupport && supportSkill > 65 ? "rgba(255, 73, 73, 0.2)" : "rgba(0, 229, 255, 0.15)",
+                                  color: displaySupport && supportSkill > 65 ? "#ff5252" : "var(--accent-cyan)",
                                   flexShrink: 0
                                 }}>
-                                  {displaySupport && supportSkill > 55 ? "⚠️ ШТРАФ -50%" : "СЛОТ 2"}
+                                  {displaySupport && supportSkill > 65 ? "⚠️ ШТРАФ -50%" : "СЛОТ 2"}
                                 </span>
                               </div>
 
@@ -4348,7 +4348,7 @@ export default function Home() {
                                     padding: "0.75rem 1rem",
                                     borderRadius: "12px",
                                     background: "#06050c",
-                                    border: isPickLocked ? "1px solid rgba(0, 229, 255, 0.2)" : displaySupport && supportSkill > 55 ? "1px solid rgba(255, 82, 82, 0.5)" : "1px solid rgba(0, 229, 255, 0.4)",
+                                    border: isPickLocked ? "1px solid rgba(0, 229, 255, 0.2)" : displaySupport && supportSkill > 65 ? "1px solid rgba(255, 82, 82, 0.5)" : "1px solid rgba(0, 229, 255, 0.4)",
                                     color: "#fff",
                                     fontSize: "0.9rem",
                                     fontWeight: "600",
@@ -4360,7 +4360,7 @@ export default function Home() {
                                   {fantasyPlayerPool.map(p => {
                                     const isUsedInOtherSlot = (draftSniper && (draftSniper.nickname === p.nickname || draftSniper.playerId === p.playerId)) ||
                                                               (draftDarkHorse && (draftDarkHorse.nickname === p.nickname || draftDarkHorse.playerId === p.playerId));
-                                    const isPenalty = p.skillScore > 55;
+                                    const isPenalty = p.skillScore > 65;
                                     return (
                                       <option key={p.playerId || p.nickname} value={p.nickname} disabled={isUsedInOtherSlot}>
                                         {p.nickname} (Скилл: {p.skillScore}{isPenalty ? " ➔ ⚠️ ШТРАФ -50%" : ""})
@@ -4382,10 +4382,10 @@ export default function Home() {
                               <div style={{ flex: 1 }}>
                                 <div style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff" }}>{displaySupport.nickname}</div>
                                 <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
-                                  Скилл: <strong style={{ color: supportSkill > 55 ? "#ff5252" : "var(--accent-cyan)" }}>{supportSkill}</strong>
+                                  Скилл: <strong style={{ color: supportSkill > 65 ? "#ff5252" : "var(--accent-cyan)" }}>{supportSkill}</strong>
                                 </div>
                               </div>
-                              {supportSkill > 55 && (
+                              {supportSkill > 65 && (
                                 <span style={{ fontSize: "0.72rem", color: "#ff5252", fontWeight: "900", background: "rgba(255, 73, 73, 0.15)", padding: "0.2rem 0.5rem", borderRadius: "6px" }}>
                                   -50% очков
                                 </span>
@@ -4948,7 +4948,7 @@ export default function Home() {
                               {displaySupport && (() => {
                                 const buff = userFantasyPick?.support?.buff;
                                 const isLucky = buff?.id === "lucky_loser";
-                                const isPenalty = supportSkill > 55 && !isLucky;
+                                const isPenalty = supportSkill > 65 && !isLucky;
 
                                 return renderFUTCard({
                                   player: displaySupport,
