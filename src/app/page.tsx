@@ -2799,22 +2799,32 @@ export default function Home() {
                           <button
                             onClick={() => setShowSkillInfoModal(true)}
                             style={{
-                              background: "rgba(168, 85, 247, 0.15)",
-                              border: "1px solid rgba(168, 85, 247, 0.4)",
-                              color: "#d8b4fe",
+                              background: "rgba(255, 255, 255, 0.05)",
+                              border: "1px solid rgba(255, 255, 255, 0.15)",
+                              color: "var(--text-secondary)",
                               borderRadius: "6px",
                               padding: "0.15rem 0.5rem",
-                              fontSize: "0.7rem",
-                              fontWeight: "800",
+                              fontSize: "0.68rem",
+                              fontWeight: "700",
                               cursor: "pointer",
                               display: "inline-flex",
                               alignItems: "center",
                               gap: "0.25rem",
-                              transition: "all 0.2s"
+                              transition: "all 0.2s ease"
                             }}
-                            title="Открыть подробную шкалу и систему тиров"
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.color = "#fff";
+                              e.currentTarget.style.borderColor = "rgba(168, 85, 247, 0.5)";
+                              e.currentTarget.style.background = "rgba(168, 85, 247, 0.15)";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.color = "var(--text-secondary)";
+                              e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.15)";
+                              e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
+                            }}
+                            title="Открыть подробное описание шкалы и тиров"
                           >
-                            Шкала и Тиры
+                            Подробнее ↗
                           </button>
                         </div>
                         <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.15rem" }}>
