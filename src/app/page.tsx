@@ -9646,7 +9646,7 @@ export default function Home() {
                   </div>
                   <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.35rem", lineHeight: "1.4" }}>
                     <strong>Игроки:</strong> Porshen (95), XZiBiTuM (86), nika_jok (86), su666nyak (85).<br />
-                    Главные капитаны, элитные стрелки и ключевые фраггеры турнира.
+                    Стар-плееры, элитные стрелки и ключевые фраггеры турнира.
                   </div>
                 </div>
 
