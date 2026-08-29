@@ -2566,7 +2566,7 @@ export default function Home() {
 
                   const dotColor = isCompleted ? "#ff5252" : isDraftWaiting ? "#9d3bf5" : "#ffd700";
                   const labelColor = isCompleted ? "#ff5252" : isDraftWaiting ? "#9d3bf5" : "#ffd700";
-                  const labelText = fantasyTour.status === "LIVE" ? "ТУРНИР" : isCompleted ? "ТУРНИР" : isDraftWaiting ? "ФЕНТЕЗИ" : "ДО ТУРНИРА";
+                  const labelText = fantasyTour.status === "LIVE" ? "ТУРНИР" : isCompleted ? "ТУРНИР" : isDraftWaiting ? "ТУРНИР" : "ДО ТУРНИРА";
 
                   return (
                     <div 
