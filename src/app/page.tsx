@@ -633,6 +633,139 @@ export default function Home() {
     }
   };
 
+  const handleAutoShuffleTeams = async () => {
+    let names: string[] = [];
+    if (draftPoolInput.trim()) {
+      names = draftPoolInput.split("\n").map(n => n.trim()).filter(Boolean);
+    } else if (members && members.length > 0) {
+      names = members.map(m => m.nickname).filter(Boolean);
+    }
+
+    const captains = draftCaptains.map(c => c.trim()).filter(Boolean);
+    if (captains.length !== 4) {
+      alert("Необходимо заполнить никнеймы всех 4 Капитанов!");
+      return;
+    }
+
+    const captainsSet = new Set(captains.map(c => c.toLowerCase()));
+    const initialAvailable = names.filter(n => !captainsSet.has(n.toLowerCase()));
+
+    if (initialAvailable.length < 16) {
+      alert(`В пуле игроков должно быть минимум 16 человек (по 4 игрока в 4 команды + 4 капитана). Сейчас в пуле: ${initialAvailable.length}`);
+      return;
+    }
+
+    // Take top 16 or first 16 available players to fill 4 teams of 5
+    const poolToDistribute = initialAvailable.slice(0, 16);
+    const remainingAfterPick = initialAvailable.slice(16);
+
+    let bestDiff = Infinity;
+    let bestTeams: [string[], string[], string[], string[]] = [
+      [captains[0]],
+      [captains[1]],
+      [captains[2]],
+      [captains[3]]
+    ];
+
+    // Multi-start Simulated Optimizer
+    for (let iter = 0; iter < 4000; iter++) {
+      const shuffled = [...poolToDistribute].sort(() => Math.random() - 0.5);
+      shuffled.sort((a, b) => getPlayerSkillNumber(b) - getPlayerSkillNumber(a));
+      
+      const currentTeams: [string[], string[], string[], string[]] = [
+        [captains[0]],
+        [captains[1]],
+        [captains[2]],
+        [captains[3]]
+      ];
+
+      for (const p of shuffled) {
+        let minTeamIdx = -1;
+        let minScore = Infinity;
+        for (let t = 0; t < 4; t++) {
+          if (currentTeams[t].length < 5) {
+            const score = currentTeams[t].reduce((s, name) => s + getPlayerSkillNumber(name), 0);
+            if (score < minScore) {
+              minScore = score;
+              minTeamIdx = t;
+            }
+          }
+        }
+        if (minTeamIdx !== -1) {
+          currentTeams[minTeamIdx].push(p);
+        }
+      }
+
+      // Local swap optimizer between non-captain players (index >= 1)
+      let improved = true;
+      while (improved) {
+        improved = false;
+        const scores = currentTeams.map(t => t.reduce((s, n) => s + getPlayerSkillNumber(n), 0));
+        const currentDiff = Math.max(...scores) - Math.min(...scores);
+        
+        for (let t1 = 0; t1 < 4; t1++) {
+          for (let t2 = t1 + 1; t2 < 4; t2++) {
+            for (let p1 = 1; p1 < currentTeams[t1].length; p1++) {
+              for (let p2 = 1; p2 < currentTeams[t2].length; p2++) {
+                const diffSkill = getPlayerSkillNumber(currentTeams[t1][p1]) - getPlayerSkillNumber(currentTeams[t2][p2]);
+                const newScore1 = scores[t1] - diffSkill;
+                const newScore2 = scores[t2] + diffSkill;
+                const newScores = [...scores];
+                newScores[t1] = newScore1;
+                newScores[t2] = newScore2;
+                const newDiff = Math.max(...newScores) - Math.min(...newScores);
+                if (newDiff < currentDiff) {
+                  const temp = currentTeams[t1][p1];
+                  currentTeams[t1][p1] = currentTeams[t2][p2];
+                  currentTeams[t2][p2] = temp;
+                  improved = true;
+                  break;
+                }
+              }
+              if (improved) break;
+            }
+            if (improved) break;
+          }
+          if (improved) break;
+        }
+      }
+
+      const finalScores = currentTeams.map(t => t.reduce((s, n) => s + getPlayerSkillNumber(n), 0));
+      const finalDiff = Math.max(...finalScores) - Math.min(...finalScores);
+      if (finalDiff < bestDiff) {
+        bestDiff = finalDiff;
+        bestTeams = currentTeams.map(t => [...t]) as [string[], string[], string[], string[]];
+        if (bestDiff <= 2) break;
+      }
+    }
+
+    try {
+      const res = await fetch("/api/faceit/draft", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "auto_shuffle",
+          captains: draftCaptains,
+          poolInput: draftPoolInput,
+          availablePlayers: remainingAfterPick,
+          teams: bestTeams
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setDraftAvailablePlayers(data.availablePlayers);
+        setDraftTeams(data.teams);
+        setDraftTurnSequence([]);
+        setDraftCurrentStepIndex(0);
+        setDraftStep("finished");
+        setDraftRoomAssignment(null);
+        setDraftErrorMsg("");
+      }
+    } catch (err) {
+      console.error("Auto shuffle failed", err);
+    }
+  };
+
   const handlePickPlayer = async (playerPick: string) => {
     try {
       const res = await fetch("/api/faceit/draft", {
@@ -9115,23 +9248,70 @@ export default function Home() {
                   </span>
                 </div>
 
-                <button 
-                  onClick={startDraftSetup}
-                  style={{
-                    background: "linear-gradient(135deg, var(--accent-cyan), var(--accent-purple))",
-                    border: "none",
-                    borderRadius: "10px",
-                    padding: "0.85rem",
-                    color: "#fff",
-                    fontSize: "0.95rem",
-                    fontWeight: "900",
-                    cursor: "pointer",
-                    boxShadow: "0 0 20px rgba(0, 229, 255, 0.3)",
-                    marginTop: "0.5rem"
-                  }}
-                >
-                  Начать Драфт
-                </button>
+                <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginTop: "0.5rem" }}>
+                  <button 
+                    onClick={handleAutoShuffleTeams}
+                    style={{
+                      flex: "1 1 280px",
+                      background: "linear-gradient(135deg, #ffd700, #ff9100)",
+                      border: "none",
+                      borderRadius: "10px",
+                      padding: "0.9rem 1.4rem",
+                      color: "#000",
+                      fontSize: "0.95rem",
+                      fontWeight: "900",
+                      cursor: "pointer",
+                      boxShadow: "0 0 25px rgba(255, 215, 0, 0.35)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "0.55rem",
+                      transition: "all 0.2s ease"
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.transform = "translateY(-1px)";
+                      e.currentTarget.style.boxShadow = "0 0 35px rgba(255, 215, 0, 0.5)";
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.transform = "none";
+                      e.currentTarget.style.boxShadow = "0 0 25px rgba(255, 215, 0, 0.35)";
+                    }}
+                  >
+                    <span style={{ fontSize: "1.15rem" }}>🎲</span>
+                    Зашафлить команды по очкам скилла
+                  </button>
+
+                  <button 
+                    onClick={startDraftSetup}
+                    style={{
+                      flex: "1 1 200px",
+                      background: "linear-gradient(135deg, rgba(157, 59, 245, 0.25), rgba(0, 229, 255, 0.25))",
+                      border: "1.5px solid rgba(0, 229, 255, 0.4)",
+                      borderRadius: "10px",
+                      padding: "0.9rem 1.25rem",
+                      color: "#fff",
+                      fontSize: "0.95rem",
+                      fontWeight: "900",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "0.55rem",
+                      transition: "all 0.2s ease"
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.transform = "translateY(-1px)";
+                      e.currentTarget.style.background = "linear-gradient(135deg, rgba(157, 59, 245, 0.4), rgba(0, 229, 255, 0.4))";
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.transform = "none";
+                      e.currentTarget.style.background = "linear-gradient(135deg, rgba(157, 59, 245, 0.25), rgba(0, 229, 255, 0.25))";
+                    }}
+                  >
+                    <span>⚔️</span>
+                    Ручной Драфт (Snake)
+                  </button>
+                </div>
               </div>
             )}
 
@@ -9382,6 +9562,27 @@ export default function Home() {
 
                       <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
                         <button 
+                          onClick={handleAutoShuffleTeams}
+                          style={{
+                            background: "rgba(255, 215, 0, 0.15)",
+                            border: "1px solid rgba(255, 215, 0, 0.4)",
+                            borderRadius: "10px",
+                            padding: "0.65rem 1.1rem",
+                            color: "#ffd700",
+                            fontWeight: "900",
+                            fontSize: "0.85rem",
+                            cursor: "pointer",
+                            boxShadow: "0 0 15px rgba(255, 215, 0, 0.2)",
+                            transition: "all 0.2s",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "0.4rem"
+                          }}
+                        >
+                          <span>🎲</span> Перешафлить по скиллу
+                        </button>
+
+                        <button 
                           onClick={handleRollRooms}
                           disabled={isRollingRooms}
                           style={{
@@ -9397,7 +9598,7 @@ export default function Home() {
                             transition: "all 0.2s"
                           }}
                         >
-                          {isRollingRooms ? "Идет розыгрыш..." : draftRoomAssignment ? "Переиграть игровые зоны" : "Разыграть игровые зоны (VIP / Общий зал)"}
+                          {isRollingRooms ? "Идет розыгрыш..." : draftRoomAssignment ? "Переиграть игровые зоны" : "Разыграть зоны (VIP / Общий зал)"}
                         </button>
 
                         <button 

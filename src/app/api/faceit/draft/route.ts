@@ -132,6 +132,28 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(currentState);
     }
 
+    if (body.action === "auto_shuffle") {
+      const captains = body.captains || ["Капитан 1", "Капитан 2", "Капитан 3", "Капитан 4"];
+      const teams = body.teams || [[], [], [], []];
+      const poolInput = body.poolInput || "";
+      const remainingAvailable = body.availablePlayers || [];
+
+      const newState: DraftState = {
+        step: "finished",
+        captains: captains as [string, string, string, string],
+        poolInput,
+        availablePlayers: remainingAvailable,
+        teams: teams as [string[], string[], string[], string[]],
+        turnSequence: [],
+        currentStepIndex: 0,
+        roomAssignment: null,
+        updatedAt: Date.now()
+      };
+
+      writeDraftState(newState);
+      return NextResponse.json(newState);
+    }
+
     if (body.action === "roll_rooms") {
       const indices = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
       currentState.roomAssignment = {
