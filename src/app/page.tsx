@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useTransition, Component, ReactNode } from "react";
+import React, { useState, useEffect, useTransition, useMemo, Component, ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { computeAdaptiveSkillScore } from "@/lib/skill";
@@ -840,17 +840,24 @@ export default function Home() {
     }
   };
 
-  // Dynamic team budget: sum of skill of all players in pool / 4 (+- 5)
-  const draftPoolNames = Array.from(new Set([
-    ...(draftCaptains || []).filter(c => c && !c.startsWith("Капитан ")),
-    ...(draftAvailablePlayers || []),
-    ...((draftTeams || []).flat() || []),
-    ...(draftPoolInput ? draftPoolInput.split("\n").map(n => n.trim()).filter(Boolean) : [])
-  ]));
+  // Dynamic team budget: sum of skill of active tournament match players (4 captains + 16 draft picks = 20 players) / 4 (+- 5)
+  const activeDraftMatchPlayers = useMemo(() => {
+    const caps = (draftCaptains || []).filter(c => c && !c.startsWith("Капитан "));
+    if (draftStep === "picking" || draftStep === "finished") {
+      const inTeams = (draftTeams || []).flat();
+      const inAvailable = draftAvailablePlayers || [];
+      return Array.from(new Set([...caps, ...inTeams, ...inAvailable]));
+    }
+    // In setup mode: take the 4 captains + first 16 players from pool input if available
+    const rawPool = draftPoolInput ? draftPoolInput.split("\n").map(n => n.trim()).filter(Boolean) : [];
+    const poolWithoutCaps = rawPool.filter(p => !caps.some(c => c.toLowerCase() === p.toLowerCase()));
+    const match16 = poolWithoutCaps.slice(0, 16);
+    return Array.from(new Set([...caps, ...match16]));
+  }, [draftCaptains, draftStep, draftTeams, draftAvailablePlayers, draftPoolInput]);
 
-  const totalDraftPoolSkill = draftPoolNames.reduce((sum, name) => sum + getPlayerSkillNumber(name), 0);
-  const targetDraftTeamBudget = draftPoolNames.length >= 4 ? Math.round(totalDraftPoolSkill / 4) : 280;
-  const minDraftTeamBudget = targetDraftTeamBudget - 5;
+  const totalDraftPoolSkill = activeDraftMatchPlayers.reduce((sum, name) => sum + getPlayerSkillNumber(name), 0);
+  const targetDraftTeamBudget = activeDraftMatchPlayers.length >= 4 ? Math.round(totalDraftPoolSkill / 4) : 0;
+  const minDraftTeamBudget = Math.max(0, targetDraftTeamBudget - 5);
   const maxDraftTeamBudget = targetDraftTeamBudget + 5;
 
   const downloadDraftResultsFile = () => {
@@ -9145,12 +9152,20 @@ export default function Home() {
                   <h3 style={{ fontSize: "1.3rem", color: "#fff", fontWeight: "900", margin: 0 }}>
                     Captain's Draft
                   </h3>
-                  <span style={{ fontSize: "0.72rem", padding: "0.2rem 0.5rem", borderRadius: "6px", background: "rgba(0, 229, 255, 0.15)", color: "var(--accent-cyan)", fontWeight: "800" }}>
-                    ЛИМИТ: {targetDraftTeamBudget} ОЧКОВ СКИЛЛА (+- 5)
-                  </span>
+                  {draftStep === "setup" ? (
+                    <span style={{ fontSize: "0.72rem", padding: "0.2rem 0.55rem", borderRadius: "6px", background: "rgba(157, 59, 245, 0.15)", color: "#c084fc", fontWeight: "800" }}>
+                      РЕЖИМ: 4 КОМАНДЫ (5x5)
+                    </span>
+                  ) : (
+                    <span style={{ fontSize: "0.72rem", padding: "0.2rem 0.55rem", borderRadius: "6px", background: "rgba(0, 229, 255, 0.15)", color: "var(--accent-cyan)", fontWeight: "800" }}>
+                      ЛИМИТ: {targetDraftTeamBudget} ОЧКОВ СКИЛЛА (±5)
+                    </span>
+                  )}
                 </div>
                 <span style={{ fontSize: "0.78rem", color: "var(--text-secondary)" }}>
-                  Пошаговый выбор игроков в реальном времени с балансировкой по очкам скилла (пул: {totalDraftPoolSkill} PTS)
+                  {draftStep === "setup"
+                    ? "Укажите 4 Капитанов и список игроков. Лимит очков на команду рассчитывается при старте драфта (сумма пула / 4)."
+                    : `Пошаговый выбор игроков в реальном времени с балансировкой по очкам скилла (пул матча: ${totalDraftPoolSkill} PTS)`}
                 </span>
               </div>
               <button 
