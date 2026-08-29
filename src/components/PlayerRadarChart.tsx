@@ -344,7 +344,7 @@ export default function PlayerRadarChart({ attributes, playerName, size = 380, o
                     fontWeight="900"
                     fontFamily="monospace"
                   >
-                    {val} <tspan fontSize="8.5" fill="var(--text-muted)">{cfg.isAuto ? "(Авто)" : "(Админ)"}</tspan>
+                    {val}
                   </text>
                 </g>
               );
@@ -377,23 +377,13 @@ export default function PlayerRadarChart({ attributes, playerName, size = 380, o
                   <span style={{ fontSize: "0.75rem", fontWeight: "800", color: "#fff" }}>
                     {cfg.label}
                   </span>
-                  <span style={{
-                    fontSize: "0.6rem",
-                    color: cfg.isAuto ? "#00e5ff" : "#ffd700",
-                    background: cfg.isAuto ? "rgba(0, 229, 255, 0.1)" : "rgba(255, 215, 0, 0.1)",
-                    padding: "0.1rem 0.35rem",
-                    borderRadius: "4px",
-                    fontWeight: "700"
-                  }}>
-                    {cfg.isAuto ? "Авто" : "Админ"}
+                  <span style={{ fontSize: "1.05rem", fontWeight: "900", color: cfg.color }}>
+                    {val}
                   </span>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginTop: "0.15rem" }}>
                   <span style={{ fontSize: "0.65rem", color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {cfg.subLabel}
-                  </span>
-                  <span style={{ fontSize: "1.05rem", fontWeight: "900", color: cfg.color }}>
-                    {val}
                   </span>
                 </div>
               </div>
