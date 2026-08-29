@@ -58,11 +58,31 @@ export function computeAdaptiveSkillScore(params: SkillParams): SkillResult {
   const baseElo = rawElo || overrides?.customElo || 1000;
   const csRating = premierRating || overrides?.csRating || Math.round(baseElo * 9.5);
 
-  // 1. If explicit manual override exists, return it
+  // 4. Combat Stats Score (K/D, ADR, HLTV, AVG Kills, WinRate, HS%)
+  const kd = parseFloat(String(combatStats?.kd ?? 1.0)) || 1.0;
+  const adr = parseFloat(String(combatStats?.adr ?? 75.0)) || 75.0;
+  const hltv = parseFloat(String(combatStats?.hltv ?? 1.0)) || 1.0;
+  const avgKills = parseFloat(String(combatStats?.avgKills ?? (kd * 16))) || 16.0;
+  const hsPct = parseFloat(String(combatStats?.hsPct ?? 45.0)) || 45.0;
+  const winRate = parseFloat(String(combatStats?.winrate ?? 50.0)) || 50.0;
+  const hubMatchesCount = combatStats?.matchesCount || 0;
+
+  // 1. If explicit manual baseline exists, start from it as the anchor point
   if (overrides?.customSkillScore !== undefined && overrides?.customSkillScore !== null && String(overrides.customSkillScore).trim() !== "") {
-    const manualScore = Number(overrides.customSkillScore);
-    if (!isNaN(manualScore)) {
-      return getTierProps(manualScore, csRating, isRealPremier);
+    const manualBase = Number(overrides.customSkillScore);
+    if (!isNaN(manualBase)) {
+      if (hubMatchesCount === 0) {
+        return getTierProps(manualBase, csRating, isRealPremier);
+      }
+      // Dynamic shift around baseline based on recent hub matches
+      const dKd = (kd - 1.0) * 8; // kd 1.3 -> +2.4 pts, kd 0.7 -> -2.4 pts
+      const dAdr = (adr - 75) * 0.12; // adr 95 -> +2.4 pts, adr 55 -> -2.4 pts
+      const dHltv = (hltv - 1.0) * 6; // hltv 1.3 -> +1.8 pts
+      const dWr = (winRate - 50) * 0.08; // winrate 70% -> +1.6 pts
+      const rawDelta = (dKd * 0.35) + (dAdr * 0.30) + (dHltv * 0.20) + (dWr * 0.15);
+      const dynamicDelta = Math.max(-6, Math.min(6, rawDelta));
+      const adjustedScore = Math.min(99, Math.max(15, Math.round(manualBase + dynamicDelta)));
+      return getTierProps(adjustedScore, csRating, isRealPremier);
     }
   }
 
@@ -100,14 +120,6 @@ export function computeAdaptiveSkillScore(params: SkillParams): SkillResult {
 
   const sRank = (sElo * wElo) + (sPremier * wPremier);
 
-  // 4. Combat Stats Score (K/D, ADR, HLTV, AVG Kills, WinRate, HS%)
-  const kd = parseFloat(String(combatStats?.kd ?? 1.0)) || 1.0;
-  const adr = parseFloat(String(combatStats?.adr ?? 75.0)) || 75.0;
-  const hltv = parseFloat(String(combatStats?.hltv ?? 1.0)) || 1.0;
-  const avgKills = parseFloat(String(combatStats?.avgKills ?? (kd * 16))) || 16.0;
-  const hsPct = parseFloat(String(combatStats?.hsPct ?? 45.0)) || 45.0;
-  const winRate = parseFloat(String(combatStats?.winrate ?? 50.0)) || 50.0;
-
   const sKd = Math.min(100, Math.max(15, 50 + (kd - 1.0) * 55));
   const sAdr = Math.min(100, Math.max(15, 50 + (adr - 70) * 1.5));
   const sHltv = Math.min(100, Math.max(15, 50 + (hltv - 1.0) * 65));
@@ -120,7 +132,6 @@ export function computeAdaptiveSkillScore(params: SkillParams): SkillResult {
   // 5. Final Combination:
   // Rank has the primary weight (60%), Hub combat performance accounts for 40%
   // If player has few hub matches (< 5), Rank weight increases up to 85%
-  const hubMatchesCount = combatStats?.matchesCount || 0;
   const hubWeight = hubMatchesCount >= 5 ? 0.40 : Math.min(0.40, hubMatchesCount * 0.08);
   const rankWeight = 1 - hubWeight;
 
@@ -131,38 +142,38 @@ export function computeAdaptiveSkillScore(params: SkillParams): SkillResult {
 
 function getTierProps(score: number, csRating: number, isRealPremier: boolean): SkillResult {
   let tier = "Tier D";
-  let color = "#38bdf8"; // Sky / Blue
-  let bg = "rgba(14, 165, 233, 0.15)";
-  let border = "rgba(14, 165, 233, 0.4)";
+  let color = "#ff9100"; // Orange
+  let bg = "rgba(255, 145, 0, 0.15)";
+  let border = "rgba(255, 145, 0, 0.4)";
   let glow = "";
 
   if (score >= 85) {
     tier = "Tier S";
-    color = "#fcd34d"; // Gold / Amber
-    bg = "rgba(245, 158, 11, 0.18)";
-    border = "rgba(245, 158, 11, 0.6)";
-    glow = "0 0 16px rgba(245, 158, 11, 0.7), 0 0 4px rgba(239, 68, 68, 0.9)";
+    color = "#c084fc"; // Glowing Purple
+    bg = "rgba(168, 85, 247, 0.22)";
+    border = "rgba(168, 85, 247, 0.7)";
+    glow = "0 0 16px rgba(168, 85, 247, 0.7), 0 0 4px rgba(192, 132, 252, 0.9)";
   } else if (score >= 70) {
     tier = "Tier A";
-    color = "#c084fc"; // Purple
-    bg = "rgba(168, 85, 247, 0.18)";
-    border = "rgba(168, 85, 247, 0.5)";
-    glow = "0 0 10px rgba(168, 85, 247, 0.4)";
+    color = "#00e5ff"; // Neon Cyan / Aqua
+    bg = "rgba(0, 229, 255, 0.15)";
+    border = "rgba(0, 229, 255, 0.5)";
+    glow = "0 0 10px rgba(0, 229, 255, 0.4)";
   } else if (score >= 56) {
     tier = "Tier B";
-    color = "#00e5ff"; // Cyan
-    bg = "rgba(0, 229, 255, 0.15)";
-    border = "rgba(0, 229, 255, 0.4)";
+    color = "#00e676"; // Bright Green
+    bg = "rgba(0, 230, 118, 0.15)";
+    border = "rgba(0, 230, 118, 0.4)";
   } else if (score >= 40) {
     tier = "Tier C";
-    color = "#34d399"; // Green
-    bg = "rgba(16, 185, 129, 0.15)";
-    border = "rgba(16, 185, 129, 0.4)";
+    color = "#ffd700"; // Yellow / Gold
+    bg = "rgba(255, 215, 0, 0.15)";
+    border = "rgba(255, 215, 0, 0.4)";
   } else {
     tier = "Tier D";
-    color = "#38bdf8"; // Blue
-    bg = "rgba(14, 165, 233, 0.15)";
-    border = "rgba(14, 165, 233, 0.4)";
+    color = "#ff9100"; // Orange / Coral
+    bg = "rgba(255, 145, 0, 0.15)";
+    border = "rgba(255, 145, 0, 0.4)";
   }
 
   return {

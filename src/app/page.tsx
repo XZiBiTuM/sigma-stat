@@ -8426,19 +8426,27 @@ export default function Home() {
                 onClick={async () => {
                   try {
                     setAdminEditMsg("Сохранение...");
+                    const pId = adminEditingPlayer?.player_id || adminEditingPlayer?.playerId || adminEditingPlayer?.id || adminEditingPlayer?.user_id || "";
+                    const nick = adminEditingPlayer?.nickname || "";
                     const res = await fetch("/api/admin/players/override", {
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
                       body: JSON.stringify({
                         passcode: "sigmaadmin",
-                        playerId: adminEditingPlayer.player_id,
-                        nickname: adminEditingPlayer.nickname,
+                        playerId: pId || undefined,
+                        nickname: nick || undefined,
                         csRating: adminCsRatingInput !== "" ? Number(adminCsRatingInput) : undefined,
                         customElo: adminCustomEloInput !== "" ? Number(adminCustomEloInput) : undefined,
                         customSkillScore: adminCustomScoreInput !== "" ? Number(adminCustomScoreInput) : undefined
                       })
                     });
-                    const data = await res.json();
+                    let data: any = {};
+                    try {
+                      data = await res.json();
+                    } catch (e) {
+                      const text = await res.text().catch(() => "");
+                      data = { error: text || "Ошибка ответа сервера" };
+                    }
                     if (res.ok && data.success) {
                       setAdminEditMsg("Сохранено успешно!");
                       fetchPlayerOverrides();
