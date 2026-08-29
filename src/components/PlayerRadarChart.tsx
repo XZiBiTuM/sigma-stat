@@ -15,6 +15,7 @@ interface PlayerRadarChartProps {
   attributes: PlayerAttributes;
   playerName?: string;
   size?: number;
+  onEditClick?: () => void;
 }
 
 export function computeAutoShooting(stats: {
@@ -81,7 +82,7 @@ const AXIS_CONFIG = [
   }
 ] as const;
 
-export default function PlayerRadarChart({ attributes, playerName, size = 380 }: PlayerRadarChartProps) {
+export default function PlayerRadarChart({ attributes, playerName, size = 380, onEditClick }: PlayerRadarChartProps) {
   const center = size / 2;
   const radius = (size / 2) - 58;
   const numAxes = 5;
@@ -159,25 +160,50 @@ export default function PlayerRadarChart({ attributes, playerName, size = 380 }:
           </span>
         </div>
 
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "0.5rem",
-          background: "rgba(0, 0, 0, 0.4)",
-          padding: "0.4rem 0.8rem",
-          borderRadius: "10px",
-          border: "1px solid rgba(255, 255, 255, 0.08)"
-        }}>
-          <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "700" }}>
-            Общий балл:
-          </span>
-          <span style={{
-            fontSize: "1.2rem",
-            fontWeight: "900",
-            color: avgRating >= 80 ? "#c084fc" : avgRating >= 65 ? "var(--accent-cyan)" : "#ffd54f"
+        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+          {onEditClick && (
+            <button
+              type="button"
+              onClick={onEditClick}
+              style={{
+                background: "rgba(0, 229, 255, 0.12)",
+                border: "1px solid rgba(0, 229, 255, 0.4)",
+                color: "#00e5ff",
+                borderRadius: "8px",
+                padding: "0.4rem 0.8rem",
+                fontSize: "0.75rem",
+                fontWeight: "800",
+                cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.35rem",
+                transition: "all 0.2s ease"
+              }}
+            >
+              Редактировать
+            </button>
+          )}
+
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            background: "rgba(0, 0, 0, 0.4)",
+            padding: "0.4rem 0.8rem",
+            borderRadius: "10px",
+            border: "1px solid rgba(255, 255, 255, 0.08)"
           }}>
-            {avgRating}
-          </span>
+            <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "700" }}>
+              Общий балл:
+            </span>
+            <span style={{
+              fontSize: "1.2rem",
+              fontWeight: "900",
+              color: avgRating >= 80 ? "#c084fc" : avgRating >= 65 ? "var(--accent-cyan)" : "#ffd54f"
+            }}>
+              {avgRating}
+            </span>
+          </div>
         </div>
       </div>
 

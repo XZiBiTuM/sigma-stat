@@ -94,11 +94,33 @@ export default function PlayerProfilePage() {
   const [playerOverridesMap, setPlayerOverridesMap] = useState<Record<string, any>>({});
   const [weeklySkillMap, setWeeklySkillMap] = useState<Record<string, any>>({});
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [userRole, setUserRole] = useState<string>("GUEST");
+  const [showEditTraitsModal, setShowEditTraitsModal] = useState<boolean>(false);
+  const [editTraitsForm, setEditTraitsForm] = useState<{
+    shooting: string;
+    calls: string;
+    mental: string;
+    gamesense: string;
+    aura: string;
+    passcode: string;
+  }>({ shooting: "", calls: "", mental: "", gamesense: "", aura: "", passcode: "" });
+  const [isSavingTraits, setIsSavingTraits] = useState<boolean>(false);
+  const [traitsSaveMsg, setTraitsSaveMsg] = useState<string>("");
 
   useEffect(() => {
+    try {
+      const savedRole = localStorage.getItem("sigma_user_role");
+      if (savedRole) setUserRole(savedRole);
+    } catch (e) {}
+
     fetch("/api/auth/steam/me")
       .then(res => res.json())
-      .then(data => { if (data?.authenticated && data?.user) setCurrentUser(data.user); })
+      .then(data => { 
+        if (data?.authenticated && data?.user) {
+          setCurrentUser(data.user);
+          if (data.user.isAdmin) setUserRole("ADMIN");
+        }
+      })
       .catch(() => {});
 
     fetch("/api/faceit/weekly-skill?checkAuto=1")
@@ -125,6 +147,63 @@ export default function PlayerProfilePage() {
       })
       .catch(() => {});
   }, []);
+
+  const openTraitsEditModal = (currentAttrs: PlayerAttributes) => {
+    setTraitsSaveMsg("");
+    setEditTraitsForm({
+      shooting: currentAttrs.shooting ? currentAttrs.shooting.toString() : "",
+      calls: currentAttrs.calls ? currentAttrs.calls.toString() : "50",
+      mental: currentAttrs.mental ? currentAttrs.mental.toString() : "50",
+      gamesense: currentAttrs.gamesense ? currentAttrs.gamesense.toString() : "50",
+      aura: currentAttrs.aura ? currentAttrs.aura.toString() : "50",
+      passcode: localStorage.getItem("sigma_admin_pass") || "demon323161"
+    });
+    setShowEditTraitsModal(true);
+  };
+
+  const handleSaveTraitsFromProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSavingTraits(true);
+    setTraitsSaveMsg("Сохранение характеристик...");
+    try {
+      const pass = editTraitsForm.passcode || localStorage.getItem("sigma_admin_pass") || "demon323161";
+      const res = await fetch("/api/admin/players/override", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          passcode: pass,
+          nickname: profile?.nickname,
+          playerId: playerId,
+          shooting: editTraitsForm.shooting !== "" ? Number(editTraitsForm.shooting) : undefined,
+          calls: editTraitsForm.calls !== "" ? Number(editTraitsForm.calls) : 50,
+          mental: editTraitsForm.mental !== "" ? Number(editTraitsForm.mental) : 50,
+          gamesense: editTraitsForm.gamesense !== "" ? Number(editTraitsForm.gamesense) : 50,
+          aura: editTraitsForm.aura !== "" ? Number(editTraitsForm.aura) : 50,
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setTraitsSaveMsg("Характеристики успешно сохранены!");
+        const updated = data.override || {};
+        setPlayerOverridesMap(prev => ({
+          ...prev,
+          [playerId]: { ...prev[playerId], ...updated },
+          ...(profile?.nickname ? { [profile.nickname]: { ...prev[profile.nickname], ...updated } } : {})
+        }));
+        setTimeout(() => {
+          setShowEditTraitsModal(false);
+          setTraitsSaveMsg("");
+        }, 1000);
+      } else {
+        setTraitsSaveMsg(data.error || "Ошибка при сохранении");
+      }
+    } catch (err: any) {
+      setTraitsSaveMsg("Ошибка сети: " + err.message);
+    } finally {
+      setIsSavingTraits(false);
+    }
+  };
 
   const getPlayerSkillInfo = (
     playerIdVal: string, 
@@ -1596,6 +1675,18 @@ export default function PlayerProfilePage() {
             {hubStats && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", height: "100%" }}>
                 
+                {/* Est HLTV Rating Prominent Card (Placed above the Radar Pentagon) */}
+                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", overflow: "hidden" }}>
+                  <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "4px", background: "var(--accent-cyan)" }} />
+                  <div>
+                    <h4 style={{ fontSize: "0.9rem", fontWeight: "800", color: "var(--text-secondary)", textTransform: "uppercase" }}>Рейтинг HLTV 2.0</h4>
+                    <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block", marginTop: "0.15rem" }}>Рассчитано по матчам внутри этого хаба</span>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <span className="glow-text-cyan" style={{ fontSize: "2rem", fontWeight: "900", color: "var(--accent-cyan)" }}>{hubStats.hltvRating.toFixed(2)}</span>
+                  </div>
+                </div>
+
                 {/* 5-Sided Radar Pentagon (Shooting, Calls, Mental, Gamesense, Aura) */}
                 {(() => {
                   const ov = (playerId && playerOverridesMap[playerId]) || 
@@ -1625,21 +1716,10 @@ export default function PlayerProfilePage() {
                     <PlayerRadarChart 
                       attributes={radarAttributes} 
                       playerName={profile?.nickname} 
+                      onEditClick={() => openTraitsEditModal(radarAttributes)}
                     />
                   );
                 })()}
-
-                {/* Est HLTV Rating Prominent Card */}
-                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", overflow: "hidden" }}>
-                  <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "4px", background: "var(--accent-cyan)" }} />
-                  <div>
-                    <h4 style={{ fontSize: "0.9rem", fontWeight: "800", color: "var(--text-secondary)", textTransform: "uppercase" }}>Рейтинг HLTV 2.0</h4>
-                    <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "block", marginTop: "0.15rem" }}>Рассчитано по матчам внутри этого хаба</span>
-                  </div>
-                  <div style={{ textAlign: "right" }}>
-                    <span className="glow-text-cyan" style={{ fontSize: "2rem", fontWeight: "900", color: "var(--accent-cyan)" }}>{hubStats.hltvRating.toFixed(2)}</span>
-                  </div>
-                </div>
 
                 {/* Multi-Kills Statistics */}
                 <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)" }}>
@@ -2050,6 +2130,255 @@ export default function PlayerProfilePage() {
         </div>
 
       </div>
+
+      {/* QUICK ADMIN 5D TRAITS EDIT MODAL */}
+      {showEditTraitsModal && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "rgba(0, 0, 0, 0.85)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          zIndex: 1000000,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "1rem"
+        }}>
+          <div className="glass-card animate-fade-in" style={{
+            maxWidth: "500px",
+            width: "100%",
+            padding: "2rem",
+            borderRadius: "24px",
+            border: "1.5px solid var(--accent-cyan)",
+            boxShadow: "0 0 45px rgba(0, 229, 255, 0.25)",
+            position: "relative",
+            background: "#0c0a17"
+          }}>
+            <span 
+              className="modal-close-btn" 
+              onClick={() => setShowEditTraitsModal(false)}
+              style={{ top: "1.25rem", right: "1.25rem", cursor: "pointer", fontSize: "1.2rem", color: "var(--text-muted)" }}
+            >
+              ✕
+            </span>
+
+            <h3 style={{ fontSize: "1.2rem", fontWeight: "900", color: "#fff", margin: "0 0 0.4rem 0" }}>
+              Характеристики: <span style={{ color: "var(--accent-cyan)" }}>{profile?.nickname}</span>
+            </h3>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.8rem", margin: "0 0 1.25rem 0", lineHeight: "1.4" }}>
+              Задайте субъективные оценки (1–99) или оставьте поле пустым для авто-расчёта.
+            </p>
+
+            <form onSubmit={handleSaveTraitsFromProfile} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+                {/* Shooting */}
+                <div className="input-group">
+                  <label style={{ fontSize: "0.75rem", color: "#00e5ff", fontWeight: "700", display: "block", marginBottom: "0.25rem" }}>
+                    Стрельба (Aim)
+                  </label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={99}
+                    placeholder="Авто-расчёт"
+                    value={editTraitsForm.shooting}
+                    onChange={e => setEditTraitsForm(prev => ({ ...prev, shooting: e.target.value }))}
+                    style={{
+                      width: "100%",
+                      padding: "0.55rem 0.75rem",
+                      borderRadius: "8px",
+                      background: "#06050c",
+                      border: "1px solid rgba(0, 229, 255, 0.4)",
+                      color: "#00e5ff",
+                      fontWeight: "800",
+                      fontSize: "0.9rem",
+                      boxSizing: "border-box"
+                    }}
+                  />
+                </div>
+
+                {/* Gamesense */}
+                <div className="input-group">
+                  <label style={{ fontSize: "0.75rem", color: "#a855f7", fontWeight: "700", display: "block", marginBottom: "0.25rem" }}>
+                    Геймсенс
+                  </label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={99}
+                    placeholder="50"
+                    value={editTraitsForm.gamesense}
+                    onChange={e => setEditTraitsForm(prev => ({ ...prev, gamesense: e.target.value }))}
+                    style={{
+                      width: "100%",
+                      padding: "0.55rem 0.75rem",
+                      borderRadius: "8px",
+                      background: "#06050c",
+                      border: "1px solid rgba(168, 85, 247, 0.4)",
+                      color: "#a855f7",
+                      fontWeight: "800",
+                      fontSize: "0.9rem",
+                      boxSizing: "border-box"
+                    }}
+                  />
+                </div>
+
+                {/* Aura */}
+                <div className="input-group">
+                  <label style={{ fontSize: "0.75rem", color: "#ffd700", fontWeight: "700", display: "block", marginBottom: "0.25rem" }}>
+                    Аура (Авторитет)
+                  </label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={99}
+                    placeholder="50"
+                    value={editTraitsForm.aura}
+                    onChange={e => setEditTraitsForm(prev => ({ ...prev, aura: e.target.value }))}
+                    style={{
+                      width: "100%",
+                      padding: "0.55rem 0.75rem",
+                      borderRadius: "8px",
+                      background: "#06050c",
+                      border: "1px solid rgba(255, 215, 0, 0.4)",
+                      color: "#ffd700",
+                      fontWeight: "800",
+                      fontSize: "0.9rem",
+                      boxSizing: "border-box"
+                    }}
+                  />
+                </div>
+
+                {/* Mental */}
+                <div className="input-group">
+                  <label style={{ fontSize: "0.75rem", color: "#00e676", fontWeight: "700", display: "block", marginBottom: "0.25rem" }}>
+                    Менталка
+                  </label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={99}
+                    placeholder="50"
+                    value={editTraitsForm.mental}
+                    onChange={e => setEditTraitsForm(prev => ({ ...prev, mental: e.target.value }))}
+                    style={{
+                      width: "100%",
+                      padding: "0.55rem 0.75rem",
+                      borderRadius: "8px",
+                      background: "#06050c",
+                      border: "1px solid rgba(0, 230, 118, 0.4)",
+                      color: "#00e676",
+                      fontWeight: "800",
+                      fontSize: "0.9rem",
+                      boxSizing: "border-box"
+                    }}
+                  />
+                </div>
+
+                {/* Calls */}
+                <div className="input-group" style={{ gridColumn: "span 2" }}>
+                  <label style={{ fontSize: "0.75rem", color: "#ff9100", fontWeight: "700", display: "block", marginBottom: "0.25rem" }}>
+                    Коллы (Коммуникация & Инфа)
+                  </label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={99}
+                    placeholder="50"
+                    value={editTraitsForm.calls}
+                    onChange={e => setEditTraitsForm(prev => ({ ...prev, calls: e.target.value }))}
+                    style={{
+                      width: "100%",
+                      padding: "0.55rem 0.75rem",
+                      borderRadius: "8px",
+                      background: "#06050c",
+                      border: "1px solid rgba(255, 145, 0, 0.4)",
+                      color: "#ff9100",
+                      fontWeight: "800",
+                      fontSize: "0.9rem",
+                      boxSizing: "border-box"
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Passcode (if not saved) */}
+              {!localStorage.getItem("sigma_admin_pass") && (
+                <div>
+                  <label style={{ fontSize: "0.72rem", color: "var(--text-muted)", display: "block", marginBottom: "0.25rem" }}>
+                    Пароль администратора:
+                  </label>
+                  <input
+                    type="password"
+                    value={editTraitsForm.passcode}
+                    onChange={e => setEditTraitsForm(prev => ({ ...prev, passcode: e.target.value }))}
+                    placeholder="Пароль доступа..."
+                    style={{
+                      width: "100%",
+                      padding: "0.5rem 0.75rem",
+                      borderRadius: "8px",
+                      background: "#06050c",
+                      border: "1px solid var(--border-light)",
+                      color: "#fff",
+                      fontSize: "0.85rem",
+                      boxSizing: "border-box"
+                    }}
+                  />
+                </div>
+              )}
+
+              {traitsSaveMsg && (
+                <div style={{ fontSize: "0.82rem", textAlign: "center", color: traitsSaveMsg.includes("успешно") ? "#00e5ff" : "#ff4949" }}>
+                  {traitsSaveMsg}
+                </div>
+              )}
+
+              <div style={{ display: "flex", gap: "0.75rem", marginTop: "0.5rem" }}>
+                <button
+                  type="button"
+                  onClick={() => setShowEditTraitsModal(false)}
+                  style={{
+                    flex: 1,
+                    padding: "0.75rem",
+                    borderRadius: "10px",
+                    background: "rgba(255,255,255,0.06)",
+                    border: "1px solid var(--border-light)",
+                    color: "var(--text-secondary)",
+                    fontWeight: "700",
+                    fontSize: "0.85rem",
+                    cursor: "pointer"
+                  }}
+                >
+                  Отмена
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSavingTraits}
+                  style={{
+                    flex: 1.5,
+                    padding: "0.75rem",
+                    borderRadius: "10px",
+                    background: "linear-gradient(135deg, #00e5ff, #7c4dff)",
+                    border: "none",
+                    color: "#fff",
+                    fontWeight: "800",
+                    fontSize: "0.85rem",
+                    cursor: isSavingTraits ? "not-allowed" : "pointer",
+                    boxShadow: "0 0 20px rgba(0, 229, 255, 0.35)"
+                  }}
+                >
+                  {isSavingTraits ? "Сохранение..." : "Сохранить параметры"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
