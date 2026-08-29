@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
       batchOverrides.forEach((item: any) => {
         const key = item.playerId || item.nickname;
         if (!key) return;
-        current[key] = {
+        const updatedObj = {
           ...(current[key] || {}),
           nickname: item.nickname || current[key]?.nickname || key,
           csRating: item.csRating !== undefined && item.csRating !== "" && item.csRating !== null ? Number(item.csRating) : current[key]?.csRating,
@@ -63,8 +63,10 @@ export async function POST(request: NextRequest) {
           customSkillScore: item.customSkillScore !== undefined && item.customSkillScore !== "" && item.customSkillScore !== null ? Number(item.customSkillScore) : current[key]?.customSkillScore,
           updatedAt: new Date().toISOString()
         };
-        if (item.nickname && item.nickname !== key) {
-          current[item.nickname] = current[key];
+        if (item.playerId) current[item.playerId] = updatedObj;
+        if (item.nickname) {
+          current[item.nickname] = updatedObj;
+          current[item.nickname.toLowerCase()] = updatedObj;
         }
       });
 
@@ -78,7 +80,7 @@ export async function POST(request: NextRequest) {
 
     const key = playerId || nickname;
 
-    current[key] = {
+    const updatedObj = {
       ...(current[key] || {}),
       nickname: nickname || current[key]?.nickname || key,
       csRating: csRating !== undefined && csRating !== "" ? Number(csRating) : current[key]?.csRating,
@@ -87,8 +89,10 @@ export async function POST(request: NextRequest) {
       updatedAt: new Date().toISOString()
     };
 
-    if (nickname && nickname !== key) {
-      current[nickname] = current[key];
+    if (playerId) current[playerId] = updatedObj;
+    if (nickname) {
+      current[nickname] = updatedObj;
+      current[nickname.toLowerCase()] = updatedObj;
     }
 
     await saveOverrides(current);

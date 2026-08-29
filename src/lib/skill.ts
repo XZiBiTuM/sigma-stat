@@ -67,22 +67,11 @@ export function computeAdaptiveSkillScore(params: SkillParams): SkillResult {
   const winRate = parseFloat(String(combatStats?.winrate ?? 50.0)) || 50.0;
   const hubMatchesCount = combatStats?.matchesCount || 0;
 
-  // 1. If explicit manual baseline exists, start from it as the anchor point
+  // 1. If explicit manual override exists, return it directly
   if (overrides?.customSkillScore !== undefined && overrides?.customSkillScore !== null && String(overrides.customSkillScore).trim() !== "") {
-    const manualBase = Number(overrides.customSkillScore);
-    if (!isNaN(manualBase)) {
-      if (hubMatchesCount === 0) {
-        return getTierProps(manualBase, csRating, isRealPremier);
-      }
-      // Dynamic shift around baseline based on recent hub matches
-      const dKd = (kd - 1.0) * 8; // kd 1.3 -> +2.4 pts, kd 0.7 -> -2.4 pts
-      const dAdr = (adr - 75) * 0.12; // adr 95 -> +2.4 pts, adr 55 -> -2.4 pts
-      const dHltv = (hltv - 1.0) * 6; // hltv 1.3 -> +1.8 pts
-      const dWr = (winRate - 50) * 0.08; // winrate 70% -> +1.6 pts
-      const rawDelta = (dKd * 0.35) + (dAdr * 0.30) + (dHltv * 0.20) + (dWr * 0.15);
-      const dynamicDelta = Math.max(-6, Math.min(6, rawDelta));
-      const adjustedScore = Math.min(99, Math.max(15, Math.round(manualBase + dynamicDelta)));
-      return getTierProps(adjustedScore, csRating, isRealPremier);
+    const manualScore = Number(overrides.customSkillScore);
+    if (!isNaN(manualScore)) {
+      return getTierProps(manualScore, csRating, isRealPremier);
     }
   }
 
