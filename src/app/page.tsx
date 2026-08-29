@@ -472,7 +472,17 @@ export default function Home() {
     // Fetch Fantasy tournament & leaderboard
     fetch("/api/fantasy/tournament")
       .then(r => r.json())
-      .then(d => { if (d?.tournament) setFantasyTour(d.tournament); })
+      .then(d => { 
+        if (d?.tournament) {
+          setFantasyTour(d.tournament);
+          if (d.tournament.status === "DRAFT_WAITING") {
+            setUserFantasyPick(null);
+            setDraftSniper(null);
+            setDraftSupport(null);
+            setDraftDarkHorse(null);
+          }
+        }
+      })
       .catch(() => {});
 
     fetch("/api/fantasy/leaderboard")
@@ -4292,11 +4302,7 @@ export default function Home() {
                     {/* DRAFT PICKING SECTION */}
                     {(() => {
                       const isDraftWaiting = tourStatus === "DRAFT_WAITING";
-                      const isPickLocked = isDraftWaiting 
-                        ? false 
-                        : (tourStatus === "LIVE" || tourStatus === "COMPLETED")
-                          ? !!userFantasyPick
-                          : (!!userFantasyPick && !isEditingFantasyPick);
+                      const isPickLocked = isDraftWaiting ? false : !!userFantasyPick;
 
                       const displaySniper = isDraftWaiting ? null : draftSniper;
                       const displaySupport = isDraftWaiting ? null : draftSupport;
@@ -4341,29 +4347,6 @@ export default function Home() {
                                 <span style={{ background: "#ffd700", color: "#000", width: "16px", height: "16px", borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: "0.7rem", fontWeight: "900" }}>!</span>
                                 Каталог усилений
                               </button>
-
-                              {userFantasyPick && isDraftOpen && !isDraftWaiting && (
-                                <button
-                                  type="button"
-                                  onClick={() => setIsEditingFantasyPick(!isEditingFantasyPick)}
-                                  style={{
-                                    display: "inline-flex",
-                                    alignItems: "center",
-                                    gap: "0.4rem",
-                                    background: isEditingFantasyPick ? "rgba(0, 229, 255, 0.15)" : "rgba(255, 255, 255, 0.08)",
-                                    border: isEditingFantasyPick ? "1px solid rgba(0, 229, 255, 0.4)" : "1px solid rgba(255, 255, 255, 0.15)",
-                                    color: isEditingFantasyPick ? "#00e5ff" : "#cbd5e1",
-                                    padding: "0.45rem 0.85rem",
-                                    borderRadius: "12px",
-                                    fontSize: "0.8rem",
-                                    fontWeight: "800",
-                                    cursor: "pointer",
-                                    transition: "all 0.2s ease"
-                                  }}
-                                >
-                                  {isEditingFantasyPick ? "👁️ Карточки" : "✏️ Изменить состав"}
-                                </button>
-                              )}
 
                               {!isPickLocked && isDraftOpen && !isDraftWaiting && (
                                 <button
@@ -5525,10 +5508,10 @@ export default function Home() {
                               padding: "0.85rem 1.1rem",
                               color: "#ffc107"
                             }}>
-                              <span style={{ fontSize: "1.15rem", lineHeight: 1 }}>ℹ️</span>
+                              <span style={{ fontSize: "1.15rem", lineHeight: 1 }}>⚠️</span>
                               <div style={{ fontSize: "0.82rem", lineHeight: "1.4" }}>
-                                <strong style={{ color: "#ffd54f" }}>Подсказка: </strong>
-                                Вы можете настраивать и менять игроков в любой момент <strong>до старта турнира</strong>. Когда турнир перейдет в статус LIVE — составы окончательно зафиксируются!
+                                <strong style={{ color: "#ffd54f" }}>Внимание: </strong>
+                                После нажатия кнопки «Сохранить состав» карточки получат случайные усиления, а состав будет <strong>зафиксирован на весь турнир</strong>. Заменить игроков или изменить усиления будет <strong>нельзя</strong> (риск за оверскилл принимается навсегда)!
                               </div>
                             </div>
 
@@ -5587,7 +5570,7 @@ export default function Home() {
                                   textAlign: "center"
                                 }}
                               >
-                                {isSavingFantasy ? "Сохранение и выбор усилений..." : isDraftOpen ? (userFantasyPick ? "💾 Сохранить изменения состава" : "🔥 Сохранить состав на турнир") : "Сбор составов закрыт"}
+                                {isSavingFantasy ? "Сохранение и выбор усилений..." : isDraftOpen ? "🔥 Зафиксировать состав на турнир" : "Сбор составов закрыт"}
                               </button>
                             </div>
                           </>

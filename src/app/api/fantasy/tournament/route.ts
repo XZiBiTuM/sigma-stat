@@ -16,6 +16,17 @@ interface FantasyTournament {
   updatedAt: string;
 }
 
+const PICKS_LOCAL_FILE = path.join(process.cwd(), "src", "lib", "fantasy_picks.json");
+const PICKS_PERSISTENT_FILE = path.join(process.cwd(), "..", "sigma_persistent_fantasy_picks.json");
+
+async function clearPicks() {
+  try {
+    const emptyJson = JSON.stringify({}, null, 2);
+    await fs.writeFile(PICKS_LOCAL_FILE, emptyJson, "utf8").catch(() => {});
+    await fs.writeFile(PICKS_PERSISTENT_FILE, emptyJson, "utf8").catch(() => {});
+  } catch (e) {}
+}
+
 async function getTournament(): Promise<FantasyTournament> {
   let fileToRead = LOCAL_FILE;
   try {
@@ -29,6 +40,7 @@ async function getTournament(): Promise<FantasyTournament> {
       if (Date.now() - completedTime > 3 * 24 * 60 * 60 * 1000) {
         t.status = "DRAFT_WAITING";
         await saveTournament(t);
+        await clearPicks();
       }
     }
     return t;
@@ -73,16 +85,21 @@ export async function POST(request: NextRequest) {
     }
 
     const current = await getTournament();
+    const newStatus = status || current.status;
     const updated: FantasyTournament = {
       ...current,
       title: title !== undefined ? title.trim() : current.title,
       startTime: startTime !== undefined ? startTime : current.startTime,
-      status: status || current.status,
+      status: newStatus,
       winnerSteamId: winnerSteamId !== undefined ? winnerSteamId : current.winnerSteamId,
       winnerNickname: winnerNickname !== undefined ? winnerNickname : current.winnerNickname,
       completedLeaderboard: completedLeaderboard !== undefined ? completedLeaderboard : current.completedLeaderboard,
       updatedAt: new Date().toISOString()
     };
+
+    if (newStatus === "DRAFT_WAITING") {
+      await clearPicks();
+    }
 
     await saveTournament(updated);
     return NextResponse.json({ success: true, tournament: updated, message: "Настройки турнира успешно сохранены!" });
