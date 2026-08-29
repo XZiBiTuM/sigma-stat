@@ -4,5 +4,124 @@
   "startTime": "2026-08-25T19:30",
   "status": "COMPLETED",
   "updatedAt": "2026-08-26T06:14:23.961Z",
-  "winnerNickname": "nika_jok"
+  "winnerSteamId": "76561198089636979",
+  "winnerNickname": "nika_jok",
+  "completedLeaderboard": [
+    {
+      "userId": "76561198089636979",
+      "userName": "Nika_Jok",
+      "avatar": "https://avatars.steamstatic.com/eb02e5295dfe147392b0e5393ef862413e2f6fc8_full.jpg",
+      "faceitNickname": "nika_jok",
+      "submittedAt": "2026-08-22T14:32:50.415Z",
+      "status": "COMPLETED",
+      "sniper": {
+        "nickname": "nika_jok",
+        "skill": 86,
+        "buff": null,
+        "points": 143.8
+      },
+      "support": {
+        "nickname": "Porshen",
+        "skill": 87,
+        "penaltyApplied": true,
+        "buff": null,
+        "points": 69.4
+      },
+      "darkHorse": {
+        "nickname": "uncle007",
+        "skill": 64,
+        "multiplier": 1.14,
+        "buff": null,
+        "points": 119.0
+      },
+      "totalPoints": 332.2
+    },
+    {
+      "userId": "76561199274883682",
+      "userName": "SIGMA I Лунатик",
+      "avatar": "https://avatars.steamstatic.com/0359055050d8386fdbddba96330d5dfc7d6bf356_full.jpg",
+      "faceitNickname": "JIyHaTuK_1",
+      "submittedAt": "2026-08-22T14:44:51.360Z",
+      "status": "COMPLETED",
+      "sniper": {
+        "nickname": "su666nyak",
+        "skill": 92,
+        "buff": null,
+        "points": 149.6
+      },
+      "support": {
+        "nickname": "nika_jok",
+        "skill": 86,
+        "penaltyApplied": true,
+        "buff": null,
+        "points": 69.4
+      },
+      "darkHorse": {
+        "nickname": "JIyHaTuK_1",
+        "skill": 68,
+        "multiplier": 1.13,
+        "buff": null,
+        "points": 101.7
+      },
+      "totalPoints": 320.7
+    },
+    {
+      "userId": "76561198444058436",
+      "userName": "major ruinner",
+      "avatar": "https://avatars.steamstatic.com/68721e1357548d12ffd629574ff9f0418a073bbe_full.jpg",
+      "faceitNickname": "XZiBiTuM",
+      "submittedAt": "2026-08-24T09:13:25.257Z",
+      "status": "COMPLETED",
+      "sniper": {
+        "nickname": "XZiBiTuM",
+        "skill": 82,
+        "buff": null,
+        "points": 133.6
+      },
+      "support": {
+        "nickname": "su666nyak",
+        "skill": 92,
+        "penaltyApplied": true,
+        "buff": null,
+        "points": 71.9
+      },
+      "darkHorse": {
+        "nickname": "ANAKONDA1966",
+        "skill": 66,
+        "multiplier": 1.14,
+        "buff": null,
+        "points": 106.7
+      },
+      "totalPoints": 312.2
+    },
+    {
+      "userId": "76561199792583259",
+      "userName": "uncle",
+      "avatar": "https://avatars.steamstatic.com/efb191c89f63d3c38b8ee12405b8502ebc8eb80d_full.jpg",
+      "faceitNickname": "uncle007",
+      "submittedAt": "2026-08-25T10:50:12.607Z",
+      "status": "COMPLETED",
+      "sniper": {
+        "nickname": "nika_jok",
+        "skill": 50,
+        "buff": null,
+        "points": 143.8
+      },
+      "support": {
+        "nickname": "Porshen",
+        "skill": 50,
+        "penaltyApplied": true,
+        "buff": null,
+        "points": 69.4
+      },
+      "darkHorse": {
+        "nickname": "Bezhenec",
+        "skill": 50,
+        "multiplier": 1.2,
+        "buff": null,
+        "points": 90.7
+      },
+      "totalPoints": 303.9
+    }
+  ]
 }

@@ -59,6 +59,16 @@ export async function GET() {
 
     const isLiveOrDone = tour?.status === "LIVE" || tour?.status === "COMPLETED" || tour?.status === "DRAFT_WAITING";
 
+    // 1. If tournament is COMPLETED or DRAFT_WAITING and has a frozen snapshot, return it directly!
+    if ((tour?.status === "COMPLETED" || tour?.status === "DRAFT_WAITING") && Array.isArray(tour?.completedLeaderboard) && tour.completedLeaderboard.length > 0) {
+      return NextResponse.json({
+        success: true,
+        tourStatus: tour?.status,
+        count: tour.completedLeaderboard.length,
+        leaderboard: tour.completedLeaderboard
+      });
+    }
+
     const leaderboard = Object.values(picks).map((pick: any) => {
       const darkSkill = getPlayerSkill(pick.darkHorse, overrides, weeklyPlayers);
       
@@ -186,6 +196,20 @@ export async function GET() {
 
     // Sort by total points descending (or submittedAt if equal)
     leaderboard.sort((a, b) => b.totalPoints - a.totalPoints || (b.submittedAt || "").localeCompare(a.submittedAt || ""));
+
+    // Auto-freeze completed tournament snapshot if not frozen yet
+    if (tour?.status === "COMPLETED" && (!tour?.completedLeaderboard || tour.completedLeaderboard.length === 0)) {
+      try {
+        const updatedTour = {
+          ...tour,
+          completedLeaderboard: leaderboard,
+          updatedAt: new Date().toISOString()
+        };
+        const str = JSON.stringify(updatedTour, null, 2);
+        await fs.writeFile(TOUR_LOCAL, str, "utf8").catch(() => {});
+        await fs.writeFile(TOUR_PERSISTENT, str, "utf8").catch(() => {});
+      } catch (e) {}
+    }
 
     return NextResponse.json({
       success: true,

@@ -12,6 +12,7 @@ interface FantasyTournament {
   status: "DRAFT_OPEN" | "LIVE" | "COMPLETED" | "DRAFT_WAITING";
   winnerSteamId?: string;
   winnerNickname?: string;
+  completedLeaderboard?: any[];
   updatedAt: string;
 }
 
@@ -64,7 +65,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => ({}));
-    const { passcode, title, startTime, status, winnerSteamId, winnerNickname } = body;
+    const { passcode, title, startTime, status, winnerSteamId, winnerNickname, completedLeaderboard } = body;
 
     const p = (passcode || "").toString().trim().toLowerCase();
     if (p !== "demon323161" && p !== "sigmaadmin" && p !== "admin") {
@@ -79,6 +80,7 @@ export async function POST(request: NextRequest) {
       status: status || current.status,
       winnerSteamId: winnerSteamId !== undefined ? winnerSteamId : current.winnerSteamId,
       winnerNickname: winnerNickname !== undefined ? winnerNickname : current.winnerNickname,
+      completedLeaderboard: completedLeaderboard !== undefined ? completedLeaderboard : current.completedLeaderboard,
       updatedAt: new Date().toISOString()
     };
 
