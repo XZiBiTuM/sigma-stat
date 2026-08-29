@@ -65,9 +65,9 @@ export async function GET() {
       // Dynamic Underdog Multiplier with Overpower Penalty (>65)
       let underdogBonus = 1.0;
       if (darkSkill <= 65) {
-        underdogBonus = Math.round((1.0 + ((65 - Math.max(10, darkSkill)) / 65) * 0.40) * 100) / 100;
+        underdogBonus = Math.round((1.0 + ((65 - Math.max(15, darkSkill)) / 50) * 0.40) * 100) / 100;
       } else {
-        underdogBonus = Math.round(Math.max(0.60, 1.0 - ((darkSkill - 65) / 35) * 0.40) * 100) / 100;
+        underdogBonus = Math.round(Math.max(0.60, 1.0 - ((darkSkill - 65) / 30) * 0.40) * 100) / 100;
       }
 
       const snipSkill = getPlayerSkill(pick.sniper, overrides, weeklyPlayers);

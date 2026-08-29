@@ -161,9 +161,9 @@ export async function POST(request: NextRequest) {
     // Dynamic Underdog Multiplier with Overpower Penalty (>65)
     let underdogBonus = 1.0;
     if (rawDarkSkill <= 65) {
-      underdogBonus = Math.round((1.0 + ((65 - Math.max(10, rawDarkSkill)) / 65) * 0.40) * 100) / 100;
+      underdogBonus = Math.round((1.0 + ((65 - Math.max(15, rawDarkSkill)) / 50) * 0.40) * 100) / 100;
     } else {
-      underdogBonus = Math.round(Math.max(0.60, 1.0 - ((rawDarkSkill - 65) / 35) * 0.40) * 100) / 100;
+      underdogBonus = Math.round(Math.max(0.60, 1.0 - ((rawDarkSkill - 65) / 30) * 0.40) * 100) / 100;
     }
 
     // Roll unique card buffs on save

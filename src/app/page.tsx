@@ -3888,9 +3888,9 @@ export default function Home() {
 
                 const calcDarkMultiplier = (skill: number) => {
                   if (skill <= 65) {
-                    return (1.0 + ((65 - Math.max(10, skill)) / 65) * 0.40).toFixed(2);
+                    return (1.0 + ((65 - Math.max(15, skill)) / 50) * 0.40).toFixed(2);
                   }
-                  return Math.max(0.60, 1.0 - ((skill - 65) / 35) * 0.40).toFixed(2);
+                  return Math.max(0.60, 1.0 - ((skill - 65) / 30) * 0.40).toFixed(2);
                 };
 
                 const getLivePlayerSkill = (player: any): number => {
