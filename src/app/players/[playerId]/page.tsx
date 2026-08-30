@@ -1669,6 +1669,39 @@ export default function PlayerProfilePage() {
 
               {/* HLTV Rating 2.0 SVG Trend Chart */}
               {renderRatingChart()}
+
+              {/* Grenades detailed performance & Hub Average Comparison (Balanced to Left Column) */}
+              {hubStats && (
+                <>
+                  <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)" }}>
+                    <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", marginBottom: "1rem" }}>Гранаты</h3>
+                    
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                      {[
+                        { label: "Использовано гранат", val: hubStats.utility?.utilityCount || "0", suffix: "" },
+                        { label: "Процент эффективности использования гранат", val: hubStats.utility?.utilitySuccessRate ? `${hubStats.utility.utilitySuccessRate}%` : "0%", suffix: "" },
+                        { label: "Общий урон гранатами", val: hubStats.utility?.utilityDamage ? `${hubStats.utility.utilityDamage} HP` : "0 HP", suffix: "" },
+                        { 
+                          label: "Флешки", 
+                          val: `${hubStats.utility?.flashCount || 0} бр / ${hubStats.utility?.flashSuccesses || 0} усп (${hubStats.utility?.flashSuccessRate || 0}%)`, 
+                          suffix: `[ослеплено: ${hubStats.utility?.enemiesFlashed || 0}]` 
+                        }
+                      ].map((item, idx) => (
+                        <div key={idx} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.03)", paddingBottom: "0.4rem", fontSize: "0.8rem", minHeight: "28px" }}>
+                          <span style={{ color: "var(--text-secondary)" }}>{item.label}</span>
+                          <span style={{ fontWeight: "700", color: "#fff", textAlign: "right", display: "flex", alignItems: "center", gap: "0.35rem" }}>
+                            {item.val} 
+                            {item.suffix && <span style={{ color: "var(--text-muted)", fontSize: "0.72rem", fontWeight: "normal" }}>{item.suffix}</span>}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Comparison with Hub Average */}
+                  {renderComparisonCard()}
+                </>
+              )}
             </div>
 
             {/* Right Panel: Advanced Tactical Breakdowns & Multi-Kills */}
@@ -1764,34 +1797,6 @@ export default function PlayerProfilePage() {
                     ))}
                   </div>
                 </div>
-
-                {/* Granades detailed performance */}
-                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)" }}>
-                  <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", marginBottom: "1rem" }}>Гранаты</h3>
-                  
-                  <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-                    {[
-                      { label: "Использовано гранат", val: hubStats.utility?.utilityCount || "0", suffix: "" },
-                      { label: "Процент эффективности использования гранат", val: hubStats.utility?.utilitySuccessRate ? `${hubStats.utility.utilitySuccessRate}%` : "0%", suffix: "" },
-                      { label: "Общий урон гранатами", val: hubStats.utility?.utilityDamage ? `${hubStats.utility.utilityDamage} HP` : "0 HP", suffix: "" },
-                      { 
-                        label: "Флешки", 
-                        val: `${hubStats.utility?.flashCount || 0} бр / ${hubStats.utility?.flashSuccesses || 0} усп (${hubStats.utility?.flashSuccessRate || 0}%)`, 
-                        suffix: `[ослеплено: ${hubStats.utility?.enemiesFlashed || 0}]` 
-                      }
-                    ].map((item, idx) => (
-                      <div key={idx} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.03)", paddingBottom: "0.4rem", fontSize: "0.8rem", minHeight: "28px" }}>
-                        <span style={{ color: "var(--text-secondary)" }}>{item.label}</span>
-                        <span style={{ fontWeight: "700", color: "#fff", textAlign: "right", display: "flex", alignItems: "center", gap: "0.35rem" }}>
-                          {item.val} 
-                          {item.suffix && <span style={{ color: "var(--text-muted)", fontSize: "0.72rem", fontWeight: "normal" }}>{item.suffix}</span>}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                {/* Comparison Card - moved from left panel */}
-                {renderComparisonCard()}
 
               </div>
             )}
