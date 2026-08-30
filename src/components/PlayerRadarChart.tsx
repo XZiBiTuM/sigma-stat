@@ -11,11 +11,14 @@ export interface PlayerAttributes {
   isShootingAuto?: boolean;
 }
 
-interface PlayerRadarChartProps {
+export interface PlayerRadarChartProps {
   attributes: PlayerAttributes;
   playerName?: string;
   size?: number;
   onEditClick?: () => void;
+  themeColor?: "cyan" | "purple" | "gold" | "green";
+  hideHeader?: boolean;
+  hideDisclaimer?: boolean;
 }
 
 export function computeAutoShooting(stats: {
@@ -82,7 +85,15 @@ const AXIS_CONFIG = [
   }
 ] as const;
 
-export default function PlayerRadarChart({ attributes, playerName, size = 380, onEditClick }: PlayerRadarChartProps) {
+export default function PlayerRadarChart({ 
+  attributes, 
+  playerName, 
+  size = 380, 
+  onEditClick,
+  themeColor = "cyan",
+  hideHeader = false,
+  hideDisclaimer = false
+}: PlayerRadarChartProps) {
   const center = size / 2;
   const radius = (size / 2) - 58;
   const numAxes = 5;
@@ -118,94 +129,107 @@ export default function PlayerRadarChart({ attributes, playerName, size = 380, o
 
   const avgRating = Math.round(values.reduce((sum, v) => sum + v, 0) / values.length);
 
+  const isPurpleTheme = themeColor === "purple";
+  const primaryColor = isPurpleTheme ? "#c084fc" : "#00e5ff";
+  const gradientStart = isPurpleTheme ? "rgba(192, 132, 252, 0.5)" : "rgba(0, 229, 255, 0.45)";
+  const gradientEnd = isPurpleTheme ? "rgba(124, 77, 255, 0.15)" : "rgba(124, 77, 255, 0.12)";
+  const borderColor = isPurpleTheme ? "rgba(168, 85, 247, 0.3)" : "rgba(0, 229, 255, 0.25)";
+  const shadowColor = isPurpleTheme ? "rgba(168, 85, 247, 0.15)" : "rgba(0, 229, 255, 0.1)";
+  const filterId = `radarGlow_${themeColor}_${playerName ? playerName.replace(/[^a-zA-Z0-9]/g, "") : "def"}`;
+  const gradientId = `radarGradient_${themeColor}_${playerName ? playerName.replace(/[^a-zA-Z0-9]/g, "") : "def"}`;
+
   return (
     <div className="glass-card animate-fade-in" style={{
       padding: "1.5rem",
       borderRadius: "20px",
-      border: "1px solid rgba(0, 229, 255, 0.25)",
+      border: `1px solid ${borderColor}`,
       background: "linear-gradient(135deg, rgba(12, 10, 23, 0.95) 0%, rgba(20, 15, 35, 0.9) 100%)",
-      boxShadow: "0 0 30px rgba(0, 229, 255, 0.1)",
+      boxShadow: `0 0 30px ${shadowColor}`,
       position: "relative",
-      overflow: "hidden"
+      overflow: "hidden",
+      width: "100%",
+      boxSizing: "border-box"
     }}>
-      <div style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "flex-start",
-        borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
-        paddingBottom: "1rem",
-        marginBottom: "1rem",
-        flexWrap: "wrap",
-        gap: "0.75rem"
-      }}>
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-            <h3 style={{ fontSize: "1.15rem", fontWeight: "900", color: "#fff", margin: 0 }}>
-              Характеристики игрока
-            </h3>
-            <span style={{
-              fontSize: "0.68rem",
-              fontWeight: "800",
-              color: "var(--accent-cyan)",
-              background: "rgba(0, 229, 255, 0.12)",
-              border: "1px solid rgba(0, 229, 255, 0.3)",
-              padding: "0.15rem 0.5rem",
-              borderRadius: "6px"
-            }}>
-              5D RADAR
-            </span>
-          </div>
-          <span style={{ fontSize: "0.76rem", color: "var(--text-secondary)", marginTop: "0.2rem", display: "block" }}>
-            {playerName ? `Индивидуальный профиль навыков: ${playerName}` : "Профиль ключевых навыков и качеств"}
-          </span>
-        </div>
-
-        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-          {onEditClick && (
-            <button
-              type="button"
-              onClick={onEditClick}
-              style={{
-                background: "rgba(0, 229, 255, 0.12)",
-                border: "1px solid rgba(0, 229, 255, 0.4)",
-                color: "#00e5ff",
-                borderRadius: "8px",
-                padding: "0.4rem 0.8rem",
-                fontSize: "0.75rem",
+      {!hideHeader && (
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+          paddingBottom: "1rem",
+          marginBottom: "1rem",
+          flexWrap: "wrap",
+          gap: "0.75rem"
+        }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+              <h3 style={{ fontSize: "1.15rem", fontWeight: "900", color: "#fff", margin: 0 }}>
+                {playerName || "Характеристики игрока"}
+              </h3>
+              <span style={{
+                fontSize: "0.68rem",
                 fontWeight: "800",
-                cursor: "pointer",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.35rem",
-                transition: "all 0.2s ease"
-              }}
-            >
-              Редактировать
-            </button>
-          )}
-
-          <div style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-            background: "rgba(0, 0, 0, 0.4)",
-            padding: "0.4rem 0.8rem",
-            borderRadius: "10px",
-            border: "1px solid rgba(255, 255, 255, 0.08)"
-          }}>
-            <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "700" }}>
-              Общий балл:
-            </span>
-            <span style={{
-              fontSize: "1.2rem",
-              fontWeight: "900",
-              color: avgRating >= 80 ? "#c084fc" : avgRating >= 65 ? "var(--accent-cyan)" : "#ffd54f"
-            }}>
-              {avgRating}
+                color: primaryColor,
+                background: isPurpleTheme ? "rgba(168, 85, 247, 0.12)" : "rgba(0, 229, 255, 0.12)",
+                border: `1px solid ${borderColor}`,
+                padding: "0.15rem 0.5rem",
+                borderRadius: "6px"
+              }}>
+                5D RADAR
+              </span>
+            </div>
+            <span style={{ fontSize: "0.76rem", color: "var(--text-secondary)", marginTop: "0.2rem", display: "block" }}>
+              {playerName ? `Индивидуальный профиль: ${playerName}` : "Профиль ключевых навыков и качеств"}
             </span>
           </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+            {onEditClick && (
+              <button
+                type="button"
+                onClick={onEditClick}
+                style={{
+                  background: isPurpleTheme ? "rgba(168, 85, 247, 0.12)" : "rgba(0, 229, 255, 0.12)",
+                  border: `1px solid ${primaryColor}`,
+                  color: primaryColor,
+                  borderRadius: "8px",
+                  padding: "0.4rem 0.8rem",
+                  fontSize: "0.75rem",
+                  fontWeight: "800",
+                  cursor: "pointer",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.35rem",
+                  transition: "all 0.2s ease"
+                }}
+              >
+                Редактировать
+              </button>
+            )}
+
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              background: "rgba(0, 0, 0, 0.4)",
+              padding: "0.4rem 0.8rem",
+              borderRadius: "10px",
+              border: "1px solid rgba(255, 255, 255, 0.08)"
+            }}>
+              <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "700" }}>
+                Общий балл:
+              </span>
+              <span style={{
+                fontSize: "1.2rem",
+                fontWeight: "900",
+                color: isPurpleTheme ? "#c084fc" : avgRating >= 80 ? "#c084fc" : avgRating >= 65 ? "var(--accent-cyan)" : "#ffd54f"
+              }}>
+                {avgRating}
+              </span>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
 
       <div style={{
         display: "flex",
@@ -220,13 +244,13 @@ export default function PlayerRadarChart({ attributes, playerName, size = 380, o
             style={{ width: "100%", height: "auto", display: "block", overflow: "visible" }}
           >
             <defs>
-              <radialGradient id="radarGradient" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="rgba(0, 229, 255, 0.55)" />
+              <radialGradient id={gradientId} cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor={gradientStart} />
                 <stop offset="60%" stopColor="rgba(168, 85, 247, 0.35)" />
-                <stop offset="100%" stopColor="rgba(0, 229, 255, 0.15)" />
+                <stop offset="100%" stopColor={gradientEnd} />
               </radialGradient>
 
-              <filter id="radarGlow" x="-30%" y="-30%" width="160%" height="160%">
+              <filter id={filterId} x="-30%" y="-30%" width="160%" height="160%">
                 <feGaussianBlur stdDeviation="3.5" result="blur" />
                 <feComposite in="SourceGraphic" in2="blur" operator="over" />
               </filter>
@@ -277,10 +301,10 @@ export default function PlayerRadarChart({ attributes, playerName, size = 380, o
 
             <polygon
               points={dataPolygonString}
-              fill="url(#radarGradient)"
-              stroke="#00e5ff"
+              fill={`url(#${gradientId})`}
+              stroke={primaryColor}
               strokeWidth="2.5"
-              filter="url(#radarGlow)"
+              filter={`url(#${filterId})`}
               style={{ transition: "all 0.35s ease-out" }}
             />
 
@@ -391,28 +415,30 @@ export default function PlayerRadarChart({ attributes, playerName, size = 380, o
           })}
         </div>
 
-        <div style={{
-          width: "100%",
-          boxSizing: "border-box",
-          background: "rgba(255, 215, 0, 0.06)",
-          border: "1px solid rgba(255, 215, 0, 0.3)",
-          borderRadius: "12px",
-          padding: "0.75rem 1rem",
-          display: "flex",
-          alignItems: "flex-start",
-          gap: "0.65rem"
-        }}>
+        {!hideDisclaimer && (
           <div style={{
-            fontSize: "0.75rem",
-            color: "var(--text-secondary)",
-            lineHeight: "1.45"
+            width: "100%",
+            boxSizing: "border-box",
+            background: "rgba(255, 215, 0, 0.06)",
+            border: "1px solid rgba(255, 215, 0, 0.3)",
+            borderRadius: "12px",
+            padding: "0.75rem 1rem",
+            display: "flex",
+            alignItems: "flex-start",
+            gap: "0.65rem"
           }}>
-            <strong style={{ color: "#ffd54f", display: "block", marginBottom: "0.15rem", fontSize: "0.8rem" }}>
-              Субъективная оценка администратора хаба
-            </strong>
-            Параметры <strong>Коллы</strong>, <strong>Менталка</strong>, <strong>Геймсенс</strong> и <strong>Аура</strong> выставляются администратором хаба лично на основе наблюдений за играми. Параметр <strong>Стрельба</strong> рассчитывается автоматически по боевой статистике и точности.
+            <div style={{
+              fontSize: "0.75rem",
+              color: "var(--text-secondary)",
+              lineHeight: "1.45"
+            }}>
+              <strong style={{ color: "#ffd54f", display: "block", marginBottom: "0.15rem", fontSize: "0.8rem" }}>
+                Субъективная оценка администратора хаба
+              </strong>
+              Параметры <strong>Коллы</strong>, <strong>Менталка</strong>, <strong>Геймсенс</strong> и <strong>Аура</strong> выставляются администратором хаба лично на основе наблюдений за играми. Параметр <strong>Стрельба</strong> рассчитывается автоматически по боевой статистике и точности.
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

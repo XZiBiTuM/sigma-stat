@@ -4,6 +4,7 @@ import React, { useState, useEffect, useTransition, useMemo, Component, ReactNod
 import Image from "next/image";
 import Link from "next/link";
 import { computeAdaptiveSkillScore } from "@/lib/skill";
+import PlayerRadarChart, { PlayerAttributes, computeAutoShooting } from "@/components/PlayerRadarChart";
 
 class ErrorBoundary extends Component<
   { children: ReactNode },
@@ -5978,12 +5979,160 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* Stats comparison table */}
+                    {/* Stats comparison table & 5D Radar comparison */}
                     {p1 && p2 ? (
                       <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-                        <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "16px", overflow: "hidden" }}>
+                        
+                        {/* 5D RADAR COMPARISON BLOCK */}
+                        {(() => {
+                          const nick1 = getItemNick(p1);
+                          const nick2 = getItemNick(p2);
+                          const id1 = getItemId(p1);
+                          const id2 = getItemId(p2);
+
+                          const ov1 = (id1 && playerOverridesMap[id1]) || (nick1 && playerOverridesMap[nick1]) || (nick1 && playerOverridesMap[nick1.toLowerCase()]) || {};
+                          const ov2 = (id2 && playerOverridesMap[id2]) || (nick2 && playerOverridesMap[nick2]) || (nick2 && playerOverridesMap[nick2.toLowerCase()]) || {};
+
+                          const skillScore1 = sk1?.score || 50;
+                          const skillScore2 = sk2?.score || 50;
+
+                          const autoShoot1 = computeAutoShooting({
+                            kd: (p1 as any).hubStats?.kd,
+                            hsPct: (p1 as any).hubStats?.hsPct,
+                            adr: (p1 as any).hubStats?.adr,
+                            skillScore: skillScore1
+                          });
+
+                          const autoShoot2 = computeAutoShooting({
+                            kd: (p2 as any).hubStats?.kd,
+                            hsPct: (p2 as any).hubStats?.hsPct,
+                            adr: (p2 as any).hubStats?.adr,
+                            skillScore: skillScore2
+                          });
+
+                          const traits1: PlayerAttributes = {
+                            shooting: ov1.shooting !== undefined && ov1.shooting !== null ? Number(ov1.shooting) : autoShoot1,
+                            gamesense: ov1.gamesense !== undefined && ov1.gamesense !== null ? Number(ov1.gamesense) : 50,
+                            aura: ov1.aura !== undefined && ov1.aura !== null ? Number(ov1.aura) : 50,
+                            mental: ov1.mental !== undefined && ov1.mental !== null ? Number(ov1.mental) : 50,
+                            calls: ov1.calls !== undefined && ov1.calls !== null ? Number(ov1.calls) : 50,
+                          };
+
+                          const traits2: PlayerAttributes = {
+                            shooting: ov2.shooting !== undefined && ov2.shooting !== null ? Number(ov2.shooting) : autoShoot2,
+                            gamesense: ov2.gamesense !== undefined && ov2.gamesense !== null ? Number(ov2.gamesense) : 50,
+                            aura: ov2.aura !== undefined && ov2.aura !== null ? Number(ov2.aura) : 50,
+                            mental: ov2.mental !== undefined && ov2.mental !== null ? Number(ov2.mental) : 50,
+                            calls: ov2.calls !== undefined && ov2.calls !== null ? Number(ov2.calls) : 50,
+                          };
+
+                          const traitList = [
+                            { label: "Стрельба (Aim)", val1: traits1.shooting, val2: traits2.shooting, color: "#00e5ff" },
+                            { label: "Геймсенс", val1: traits1.gamesense, val2: traits2.gamesense, color: "#a855f7" },
+                            { label: "Аура", val1: traits1.aura, val2: traits2.aura, color: "#ffd700" },
+                            { label: "Менталка", val1: traits1.mental, val2: traits2.mental, color: "#00e676" },
+                            { label: "Коллы", val1: traits1.calls, val2: traits2.calls, color: "#ff9100" },
+                          ];
+
+                          return (
+                            <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+                              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>
+                                <h4 style={{ fontSize: "1.05rem", color: "#fff", fontWeight: "900", margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                                  5D Характеристики (Radar Сравнение)
+                                </h4>
+                                <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
+                                  Стрельба, Геймсенс, Аура, Менталка, Коллы
+                                </span>
+                              </div>
+
+                              {/* 2 RADARS SIDE-BY-SIDE ON PC / STACKED ON MOBILE */}
+                              <div className="compare-radar-grid">
+                                <PlayerRadarChart 
+                                  attributes={traits1} 
+                                  playerName={nick1} 
+                                  size={340} 
+                                  themeColor="cyan" 
+                                  hideDisclaimer={true} 
+                                />
+                                <PlayerRadarChart 
+                                  attributes={traits2} 
+                                  playerName={nick2} 
+                                  size={340} 
+                                  themeColor="purple" 
+                                  hideDisclaimer={true} 
+                                />
+                              </div>
+
+                              {/* TRAITS COMPARATIVE BATTLE BREAKDOWN */}
+                              <div style={{
+                                background: "rgba(255, 255, 255, 0.02)",
+                                border: "1px solid var(--border-light)",
+                                borderRadius: "16px",
+                                padding: "1.25rem",
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: "0.85rem"
+                              }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--border-light)", paddingBottom: "0.6rem" }}>
+                                  <span style={{ fontWeight: "800", color: "var(--accent-cyan)", fontSize: "0.85rem" }}>{nick1}</span>
+                                  <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", fontWeight: "700", textTransform: "uppercase" }}>ДУЭЛЬ ПАРАМЕТРОВ</span>
+                                  <span style={{ fontWeight: "800", color: "#c084fc", fontSize: "0.85rem" }}>{nick2}</span>
+                                </div>
+
+                                <div style={{ display: "flex", flexDirection: "column", gap: "0.65rem" }}>
+                                  {traitList.map((t, idx) => {
+                                    const diff = t.val1 - t.val2;
+                                    const winner = diff > 0 ? 1 : diff < 0 ? 2 : 0;
+                                    const total = (t.val1 + t.val2) || 1;
+                                    const pct1 = Math.round((t.val1 / total) * 100);
+
+                                    return (
+                                      <div key={idx} style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.78rem" }}>
+                                          <span style={{ fontWeight: "800", color: winner === 1 ? "var(--accent-cyan)" : "#fff", minWidth: "36px" }}>
+                                            {t.val1} {winner === 1 && <span style={{ fontSize: "0.65rem", color: "#00e676" }}>(+{Math.abs(diff)})</span>}
+                                          </span>
+
+                                          <span style={{ color: "var(--text-secondary)", fontWeight: "700", fontSize: "0.76rem" }}>
+                                            {t.label}
+                                          </span>
+
+                                          <span style={{ fontWeight: "800", color: winner === 2 ? "#c084fc" : "#fff", minWidth: "36px", textAlign: "right" }}>
+                                            {winner === 2 && <span style={{ fontSize: "0.65rem", color: "#00e676" }}>(+{Math.abs(diff)}) </span>}{t.val2}
+                                          </span>
+                                        </div>
+
+                                        {/* Comparative Visual Bar */}
+                                        <div style={{
+                                          height: "6px",
+                                          borderRadius: "3px",
+                                          background: "rgba(255, 255, 255, 0.08)",
+                                          display: "flex",
+                                          overflow: "hidden"
+                                        }}>
+                                          <div style={{
+                                            width: `${pct1}%`,
+                                            background: "linear-gradient(90deg, #00e5ff, rgba(0, 229, 255, 0.6))",
+                                            transition: "width 0.5s ease"
+                                          }} />
+                                          <div style={{
+                                            width: `${100 - pct1}%`,
+                                            background: "linear-gradient(90deg, rgba(192, 132, 252, 0.6), #c084fc)",
+                                            transition: "width 0.5s ease"
+                                          }} />
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })()}
+
+                        <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-light)", borderRadius: "16px", overflowX: "auto", width: "100%" }}>
                           {/* Header */}
-                          <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", background: "rgba(255,255,255,0.04)", padding: "0.75rem 1rem", borderBottom: "1px solid var(--border-light)" }}>
+                          <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", background: "rgba(255,255,255,0.04)", padding: "0.75rem 1rem", borderBottom: "1px solid var(--border-light)", minWidth: "320px" }}>
                             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", justifyContent: "flex-end" }}>
                               {getItemAvatar(p1) && <img src={getItemAvatar(p1)} alt="" style={{ width: "22px", height: "22px", borderRadius: "50%" }} />}
                               <span style={{ fontWeight: "700", color: "var(--accent-cyan)", fontSize: "0.9rem" }}>{getItemNick(p1)}</span>

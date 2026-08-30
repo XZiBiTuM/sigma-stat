@@ -708,6 +708,14 @@ html, body {
   width: 100%;
 }
 
+.compare-radar-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+  width: 100%;
+}
+
 .compare-vs-divider {
   display: flex;
   align-items: center;
@@ -1201,6 +1209,13 @@ html, body {
 
   /* Compare Players tab on Mobile (Column stack) */
   .compare-selectors-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.25rem !important;
+    width: 100% !important;
+  }
+
+  .compare-radar-grid {
     display: flex !important;
     flex-direction: column !important;
     gap: 1.25rem !important;
