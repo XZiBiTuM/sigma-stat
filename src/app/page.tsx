@@ -870,6 +870,102 @@ export default function Home() {
   const minDraftTeamBudget = Math.max(0, targetDraftTeamBudget - 5);
   const maxDraftTeamBudget = targetDraftTeamBudget + 5;
 
+  const getDraftRecommendation = () => {
+    if (draftStep !== "picking" || draftAvailablePlayers.length === 0) return null;
+    const activeCapIdx = draftTurnSequence[draftCurrentStepIndex];
+    if (activeCapIdx === undefined) return null;
+    const currentRoster = draftTeams[activeCapIdx] || [];
+    const currentTeamPts = currentRoster.reduce((sum, p) => sum + getPlayerSkillNumber(p), 0);
+    const remainingSlots = 5 - currentRoster.length;
+    if (remainingSlots <= 0) return null;
+
+    const targetBudget = targetDraftTeamBudget;
+    const maxBudget = maxDraftTeamBudget;
+    const remainingBudget = maxBudget - currentTeamPts;
+
+    const sortedAvail = [...draftAvailablePlayers]
+      .map(p => ({ name: p, skill: getPlayerSkillNumber(p) }))
+      .sort((a, b) => b.skill - a.skill);
+
+    if (sortedAvail.length === 0) return null;
+
+    // Final pick for this team
+    if (remainingSlots === 1) {
+      const validPicks = sortedAvail.filter(p => p.skill <= remainingBudget);
+      if (validPicks.length > 0) {
+        const best = validPicks[0];
+        const diff = (currentTeamPts + best.skill) - targetBudget;
+        const diffStr = diff > 0 ? `+${diff}` : `${diff}`;
+        return {
+          bestPlayer: best.name,
+          bestPlayerSkill: best.skill,
+          reason: `Финальный пик: закрывает состав ровно на ${currentTeamPts + best.skill} PTS (отклонение ${diffStr} от цели ${targetBudget} PTS)`,
+          isOverBudgetRisk: false
+        };
+      } else {
+        const lowest = sortedAvail[sortedAvail.length - 1];
+        const over = (currentTeamPts + lowest.skill) - maxBudget;
+        return {
+          bestPlayer: lowest.name,
+          bestPlayerSkill: lowest.skill,
+          reason: `Минимальный перебор бюджета (+${over} очков выше лимита команды)`,
+          isOverBudgetRisk: true
+        };
+      }
+    }
+
+    // Multiple picks remaining
+    const subsequentPicksCount = remainingSlots - 1;
+    const scoredCandidates = sortedAvail.map(cand => {
+      const remainingPool = sortedAvail.filter(p => p.name !== cand.name);
+      const cheapestSubsequent = [...remainingPool].sort((a, b) => a.skill - b.skill).slice(0, subsequentPicksCount);
+      const minSubsequentSum = cheapestSubsequent.reduce((sum, p) => sum + p.skill, 0);
+
+      const budgetAfterCand = maxBudget - (currentTeamPts + cand.skill);
+      const targetBudgetAfterCand = targetBudget - (currentTeamPts + cand.skill);
+      const idealAvgForRemaining = subsequentPicksCount > 0 ? targetBudgetAfterCand / subsequentPicksCount : 0;
+
+      const isFeasible = minSubsequentSum <= budgetAfterCand;
+      const overflow = minSubsequentSum > budgetAfterCand ? (minSubsequentSum - budgetAfterCand) : 0;
+
+      let score = cand.skill;
+      if (!isFeasible) {
+        score -= (1000 + overflow * 20);
+      } else {
+        if (idealAvgForRemaining < 30) {
+          score -= (30 - idealAvgForRemaining) * 6;
+        }
+        if (idealAvgForRemaining > 85) {
+          score -= (idealAvgForRemaining - 85) * 4;
+        }
+      }
+
+      return {
+        cand,
+        isFeasible,
+        overflow,
+        idealAvgForRemaining: Math.round(idealAvgForRemaining),
+        score
+      };
+    });
+
+    scoredCandidates.sort((a, b) => b.score - a.score);
+    const best = scoredCandidates[0];
+    const alt = scoredCandidates.length > 1 && scoredCandidates[1].isFeasible && scoredCandidates[1].cand.name !== best.cand.name ? scoredCandidates[1] : null;
+
+    return {
+      bestPlayer: best.cand.name,
+      bestPlayerSkill: best.cand.skill,
+      reason: best.isFeasible 
+        ? `Идеальный баланс: оставляет в среднем ~${best.idealAvgForRemaining} PTS на след. ${subsequentPicksCount} ${subsequentPicksCount === 1 ? "пик" : "пика"}` 
+        : `Внимание: перебор бюджета команды на +${best.overflow} PTS`,
+      isOverBudgetRisk: !best.isFeasible,
+      altPlayer: alt ? alt.cand.name : null,
+      altPlayerSkill: alt ? alt.cand.skill : undefined,
+      altReason: alt ? `Альтернатива: оставляет ~${alt.idealAvgForRemaining} PTS/слот` : undefined
+    };
+  };
+
   const downloadDraftResultsFile = () => {
     const dateStr = new Date().toLocaleString("ru-RU");
     let content = "=================================================\n";
@@ -9469,16 +9565,130 @@ export default function Home() {
                       </span>
                     </div>
 
+                    {/* SMART RECOMMENDATION BANNER */}
+                    {(() => {
+                      const rec = getDraftRecommendation();
+                      if (!rec || !rec.bestPlayer) return null;
+                      const activeCapName = draftCaptains[draftTurnSequence[draftCurrentStepIndex]];
+
+                      return (
+                        <div style={{
+                          background: "linear-gradient(135deg, rgba(0, 229, 255, 0.08) 0%, rgba(124, 77, 255, 0.08) 100%)",
+                          border: "1.5px solid rgba(0, 229, 255, 0.4)",
+                          borderRadius: "14px",
+                          padding: "0.85rem 1.1rem",
+                          marginBottom: "1rem",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          flexWrap: "wrap",
+                          gap: "0.75rem",
+                          boxShadow: "0 0 25px rgba(0, 229, 255, 0.15)"
+                        }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
+                            <div style={{
+                              width: "38px",
+                              height: "38px",
+                              borderRadius: "10px",
+                              background: "linear-gradient(135deg, #00e5ff, #7c4dff)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontWeight: "900",
+                              color: "#fff",
+                              fontSize: "0.95rem",
+                              boxShadow: "0 0 15px rgba(0, 229, 255, 0.4)"
+                            }}>
+                              AI
+                            </div>
+                            <div>
+                              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                                <span style={{ fontSize: "0.75rem", color: "var(--accent-cyan)", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                                  Совет системы для {activeCapName}:
+                                </span>
+                                <span style={{
+                                  fontSize: "0.68rem",
+                                  background: rec.isOverBudgetRisk ? "rgba(255, 82, 82, 0.2)" : "rgba(0, 230, 118, 0.15)",
+                                  color: rec.isOverBudgetRisk ? "#ff5252" : "#00e676",
+                                  border: rec.isOverBudgetRisk ? "1px solid rgba(255, 82, 82, 0.4)" : "1px solid rgba(0, 230, 118, 0.4)",
+                                  borderRadius: "4px",
+                                  padding: "0.1rem 0.4rem",
+                                  fontWeight: "800"
+                                }}>
+                                  {rec.isOverBudgetRisk ? "Риск перебора" : "Smart Pick"}
+                                </span>
+                              </div>
+                              <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem", marginTop: "0.15rem" }}>
+                                <strong style={{ color: "#fff", fontSize: "1.05rem", fontWeight: "900" }}>
+                                  {rec.bestPlayer}
+                                </strong>
+                                <span style={{ fontSize: "0.8rem", color: "#c084fc", fontWeight: "800" }}>
+                                  ({rec.bestPlayerSkill} PTS)
+                                </span>
+                              </div>
+                              <div style={{ fontSize: "0.74rem", color: "var(--text-secondary)", marginTop: "0.1rem" }}>
+                                {rec.reason}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div style={{ display: "flex", gap: "0.6rem", alignItems: "center" }}>
+                            {rec.altPlayer && (
+                              <button
+                                type="button"
+                                onClick={() => handlePickPlayer(rec.altPlayer!)}
+                                style={{
+                                  padding: "0.5rem 0.85rem",
+                                  borderRadius: "8px",
+                                  background: "rgba(255, 255, 255, 0.06)",
+                                  border: "1px solid var(--border-light)",
+                                  color: "#fff",
+                                  fontSize: "0.75rem",
+                                  fontWeight: "700",
+                                  cursor: "pointer",
+                                  transition: "all 0.2s"
+                                }}
+                                title={rec.altReason}
+                              >
+                                {rec.altPlayer} ({rec.altPlayerSkill} PTS)
+                              </button>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => handlePickPlayer(rec.bestPlayer!)}
+                              style={{
+                                padding: "0.55rem 1.1rem",
+                                borderRadius: "9px",
+                                background: "linear-gradient(135deg, #00e5ff, #7c4dff)",
+                                border: "none",
+                                color: "#fff",
+                                fontSize: "0.8rem",
+                                fontWeight: "900",
+                                cursor: "pointer",
+                                boxShadow: "0 0 18px rgba(0, 229, 255, 0.4)",
+                                transition: "all 0.2s"
+                              }}
+                            >
+                              Пикнуть {rec.bestPlayer}
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })()}
+
                     {draftAvailablePlayers.length === 0 ? (
                       <div style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>Все игроки выбраны.</div>
                     ) : (
-                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(185px, 1fr))", gap: "0.6rem", maxHeight: "260px", overflowY: "auto", padding: "0.25rem" }}>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(195px, 1fr))", gap: "0.6rem", maxHeight: "280px", overflowY: "auto", padding: "0.25rem" }}>
                         {[...draftAvailablePlayers].sort((a, b) => getPlayerSkillNumber(b) - getPlayerSkillNumber(a)).map((pName) => {
                           const pSkill = getPlayerSkillNumber(pName);
                           const activeCapIdx = draftTurnSequence[draftCurrentStepIndex];
                           const currentRoster = draftTeams[activeCapIdx] || [];
                           const currentTeamPts = currentRoster.reduce((sum, p) => sum + getPlayerSkillNumber(p), 0);
                           const wouldExceedLimit = currentTeamPts + pSkill > maxDraftTeamBudget;
+                          const exceedPts = (currentTeamPts + pSkill) - maxDraftTeamBudget;
+                          const rec = getDraftRecommendation();
+                          const isRecommended = rec?.bestPlayer === pName;
 
                           return (
                             <div 
@@ -9487,37 +9697,58 @@ export default function Home() {
                                 display: "flex",
                                 justifyContent: "space-between",
                                 alignItems: "center",
-                                background: wouldExceedLimit ? "rgba(255, 82, 82, 0.04)" : "rgba(255,255,255,0.03)",
-                                border: wouldExceedLimit ? "1px solid rgba(255, 82, 82, 0.3)" : "1px solid var(--border-light)",
-                                borderRadius: "8px",
-                                padding: "0.5rem 0.75rem",
-                                opacity: wouldExceedLimit ? 0.6 : 1.0,
+                                background: isRecommended 
+                                  ? "rgba(0, 229, 255, 0.08)" 
+                                  : wouldExceedLimit 
+                                  ? "rgba(255, 145, 0, 0.05)" 
+                                  : "rgba(255,255,255,0.03)",
+                                border: isRecommended
+                                  ? "1.5px solid var(--accent-cyan)"
+                                  : wouldExceedLimit
+                                  ? "1px solid rgba(255, 145, 0, 0.4)"
+                                  : "1px solid var(--border-light)",
+                                borderRadius: "9px",
+                                padding: "0.55rem 0.75rem",
+                                boxShadow: isRecommended ? "0 0 15px rgba(0, 229, 255, 0.25)" : "none",
                                 transition: "all 0.2s"
                               }}
                             >
-                              <div style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "90px" }}>
-                                <div style={{ fontSize: "0.82rem", fontWeight: "700", color: "#fff" }}>
-                                  {pName}
+                              <div style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "105px" }}>
+                                <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                                  <span style={{ fontSize: "0.82rem", fontWeight: "700", color: "#fff", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
+                                    {pName}
+                                  </span>
+                                  {isRecommended && (
+                                    <span style={{ fontSize: "0.58rem", background: "var(--accent-cyan)", color: "#000", padding: "0.08rem 0.3rem", borderRadius: "3px", fontWeight: "900" }}>
+                                      СОВЕТ
+                                    </span>
+                                  )}
                                 </div>
-                                <div style={{ fontSize: "0.7rem", color: wouldExceedLimit ? "#ff8a80" : pSkill >= 80 ? "#c084fc" : pSkill >= 60 ? "var(--accent-cyan)" : "var(--text-muted)", fontWeight: "800" }}>
-                                  {pSkill} очков
+                                <div style={{ fontSize: "0.7rem", color: wouldExceedLimit ? "#ffb74d" : pSkill >= 80 ? "#c084fc" : pSkill >= 60 ? "var(--accent-cyan)" : "var(--text-muted)", fontWeight: "800" }}>
+                                  {pSkill} очков {wouldExceedLimit && <span style={{ color: "#ff9100", fontSize: "0.65rem" }}>(+{exceedPts} овер)</span>}
                                 </div>
                               </div>
                               <button 
                                 onClick={() => handlePickPlayer(pName)}
-                                disabled={wouldExceedLimit}
                                 style={{
-                                  background: wouldExceedLimit ? "rgba(255,255,255,0.08)" : "var(--accent-cyan)",
-                                  border: "none",
+                                  background: isRecommended 
+                                    ? "linear-gradient(135deg, #00e5ff, #7c4dff)" 
+                                    : wouldExceedLimit 
+                                    ? "rgba(255, 145, 0, 0.2)" 
+                                    : "var(--accent-cyan)",
+                                  border: wouldExceedLimit ? "1px solid rgba(255, 145, 0, 0.5)" : "none",
                                   borderRadius: "6px",
-                                  padding: "0.3rem 0.6rem",
-                                  color: wouldExceedLimit ? "var(--text-muted)" : "#000",
+                                  padding: "0.32rem 0.65rem",
+                                  color: isRecommended ? "#fff" : wouldExceedLimit ? "#ffb74d" : "#000",
                                   fontSize: "0.72rem",
                                   fontWeight: "800",
-                                  cursor: wouldExceedLimit ? "not-allowed" : "pointer"
+                                  cursor: "pointer",
+                                  boxShadow: isRecommended ? "0 0 10px rgba(0, 229, 255, 0.4)" : "none",
+                                  transition: "all 0.2s"
                                 }}
+                                title={wouldExceedLimit ? `Превышение лимита команды на +${exceedPts} очков (итого будет ${currentTeamPts + pSkill} из ${targetDraftTeamBudget} PTS)` : undefined}
                               >
-                                {wouldExceedLimit ? "Лимит" : "Пикнуть"}
+                                {wouldExceedLimit ? `Пикнуть (+${exceedPts})` : "Пикнуть"}
                               </button>
                             </div>
                           );
