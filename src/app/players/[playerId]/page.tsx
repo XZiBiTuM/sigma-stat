@@ -503,7 +503,7 @@ export default function PlayerProfilePage() {
     };
 
     return (
-      <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "0.85rem", marginTop: "0rem", flex: 1, minHeight: "280px", justifyContent: "space-between", boxSizing: "border-box" }}>
+      <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "0.85rem", marginTop: "0rem", height: "auto", boxSizing: "border-box" }}>
         
         {/* Header with Switcher Tabs & Arrows */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.6rem" }}>
@@ -1080,10 +1080,10 @@ export default function PlayerProfilePage() {
           })()}
 
           {/* Detailed Statistics Container */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "1.25rem", alignItems: "stretch" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "1.25rem", alignItems: "start" }}>
             
             {/* Left Panel: Tabs & Metrics */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", height: "100%" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", height: "auto" }}>
               
               {/* Disclaimer */}
               <div style={{
@@ -1673,7 +1673,7 @@ export default function PlayerProfilePage() {
 
             {/* Right Panel: Advanced Tactical Breakdowns & Multi-Kills */}
             {hubStats && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", height: "100%" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", height: "auto" }}>
                 
                 {/* Est HLTV Rating Prominent Card (Placed above the Radar Pentagon) */}
                 <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", overflow: "hidden" }}>
