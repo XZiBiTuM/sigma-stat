@@ -716,6 +716,13 @@ html, body {
   width: 100%;
 }
 
+.radar-traits-row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.5rem;
+  width: 100%;
+}
+
 .compare-vs-divider {
   display: flex;
   align-items: center;

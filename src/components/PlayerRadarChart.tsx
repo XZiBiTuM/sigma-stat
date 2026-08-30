@@ -376,12 +376,7 @@ export default function PlayerRadarChart({
           </svg>
         </div>
 
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))",
-          gap: "0.55rem",
-          width: "100%"
-        }}>
+        <div className="radar-traits-row">
           {AXIS_CONFIG.map((cfg, idx) => {
             const val = values[idx];
             return (
@@ -389,24 +384,25 @@ export default function PlayerRadarChart({
                 background: "rgba(0, 0, 0, 0.3)",
                 border: `1px solid ${cfg.color}30`,
                 borderRadius: "10px",
-                padding: "0.65rem 0.75rem",
+                padding: "0.5rem 0.55rem",
                 display: "flex",
                 flexDirection: "column",
-                gap: "0.2rem",
+                gap: "0.15rem",
                 position: "relative",
-                overflow: "hidden"
+                overflow: "hidden",
+                minWidth: 0
               }}>
                 <div style={{ position: "absolute", top: 0, left: 0, bottom: 0, width: "3px", background: cfg.color }} />
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontSize: "0.75rem", fontWeight: "800", color: "#fff" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.2rem" }}>
+                  <span style={{ fontSize: "0.72rem", fontWeight: "800", color: "#fff", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                     {cfg.label}
                   </span>
-                  <span style={{ fontSize: "1.05rem", fontWeight: "900", color: cfg.color }}>
+                  <span style={{ fontSize: "0.98rem", fontWeight: "900", color: cfg.color, flexShrink: 0 }}>
                     {val}
                   </span>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginTop: "0.15rem" }}>
-                  <span style={{ fontSize: "0.65rem", color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginTop: "0.1rem" }}>
+                  <span style={{ fontSize: "0.6rem", color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {cfg.subLabel}
                   </span>
                 </div>
