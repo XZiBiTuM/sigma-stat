@@ -97,30 +97,55 @@ export async function POST(request: NextRequest) {
     }
 
     const key = playerId || nickname;
+    const targetNick = (nickname || current[key]?.nickname || "").trim();
+    const targetId = playerId || current[key]?.playerId || (key.includes("-") ? key : undefined);
+
+    // Compute automatic customSkillScore as the average of 5 traits if customSkillScore is not explicitly sent
+    let effSkill = customSkillScore !== undefined && customSkillScore !== "" ? Number(customSkillScore) : current[key]?.customSkillScore;
+    const finalShooting = shooting !== undefined && shooting !== "" ? Number(shooting) : current[key]?.shooting;
+    const finalCalls = calls !== undefined && calls !== "" ? Number(calls) : current[key]?.calls;
+    const finalMental = mental !== undefined && mental !== "" ? Number(mental) : current[key]?.mental;
+    const finalGamesense = gamesense !== undefined && gamesense !== "" ? Number(gamesense) : current[key]?.gamesense;
+    const finalAura = aura !== undefined && aura !== "" ? Number(aura) : current[key]?.aura;
+
+    if (finalShooting && finalCalls && finalMental && finalGamesense && finalAura) {
+      effSkill = Math.round((finalShooting + finalCalls + finalMental + finalGamesense + finalAura) / 5);
+    }
 
     const updatedObj = {
       ...(current[key] || {}),
-      nickname: nickname || current[key]?.nickname || key,
+      nickname: targetNick || key,
+      ...(targetId ? { playerId: targetId } : {}),
       csRating: csRating !== undefined && csRating !== "" ? Number(csRating) : current[key]?.csRating,
       customElo: customElo !== undefined && customElo !== "" ? Number(customElo) : current[key]?.customElo,
-      customSkillScore: customSkillScore !== undefined && customSkillScore !== "" ? Number(customSkillScore) : current[key]?.customSkillScore,
-      shooting: shooting !== undefined && shooting !== "" ? Number(shooting) : current[key]?.shooting,
-      calls: calls !== undefined && calls !== "" ? Number(calls) : current[key]?.calls,
-      mental: mental !== undefined && mental !== "" ? Number(mental) : current[key]?.mental,
-      gamesense: gamesense !== undefined && gamesense !== "" ? Number(gamesense) : current[key]?.gamesense,
-      aura: aura !== undefined && aura !== "" ? Number(aura) : current[key]?.aura,
+      customSkillScore: effSkill,
+      shooting: finalShooting,
+      calls: finalCalls,
+      mental: finalMental,
+      gamesense: finalGamesense,
+      aura: finalAura,
       updatedAt: new Date().toISOString()
     };
 
-    if (playerId) current[playerId] = updatedObj;
-    if (nickname) {
-      current[nickname] = updatedObj;
-      current[nickname.toLowerCase()] = updatedObj;
+    // Update all existing entries that reference this player
+    Object.keys(current).forEach((k) => {
+      const entry = current[k];
+      const matchNick = targetNick && (k.toLowerCase() === targetNick.toLowerCase() || entry?.nickname?.toLowerCase() === targetNick.toLowerCase());
+      const matchId = targetId && (k === targetId || entry?.playerId === targetId);
+      if (matchNick || matchId) {
+        current[k] = { ...entry, ...updatedObj };
+      }
+    });
+
+    if (targetId) current[targetId] = updatedObj;
+    if (targetNick) {
+      current[targetNick] = updatedObj;
+      current[targetNick.toLowerCase()] = updatedObj;
     }
 
     await saveOverrides(current);
 
-    return NextResponse.json({ success: true, override: current[key], allOverrides: current });
+    return NextResponse.json({ success: true, override: updatedObj, allOverrides: current });
   } catch (err: any) {
     return NextResponse.json({ error: err.message || "Ошибка при сохранении данных игрока" }, { status: 500 });
   }

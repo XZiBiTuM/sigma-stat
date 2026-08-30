@@ -346,7 +346,17 @@ export default function Home() {
   useEffect(() => {
     fetchPlayerOverrides();
     fetchWeeklySkill();
+
+    const handleFocus = () => {
+      fetchPlayerOverrides();
+    };
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
   }, []);
+
+  useEffect(() => {
+    fetchPlayerOverrides();
+  }, [activeTab]);
 
   const getPlayerSkillInfo = (
     playerId: string, 
