@@ -718,9 +718,40 @@ html, body {
 
 .radar-traits-row {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 0.5rem;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.65rem;
   width: 100%;
+}
+
+.radar-trait-card-0 {
+  grid-column: span 3;
+}
+
+.radar-trait-card-1 {
+  grid-column: span 3;
+}
+
+.radar-trait-card-2 {
+  grid-column: span 2;
+}
+
+.radar-trait-card-3 {
+  grid-column: span 2;
+}
+
+.radar-trait-card-4 {
+  grid-column: span 2;
+}
+
+@media (max-width: 580px) {
+  .radar-traits-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  .radar-trait-card-0 { grid-column: span 1 !important; }
+  .radar-trait-card-1 { grid-column: span 1 !important; }
+  .radar-trait-card-2 { grid-column: span 1 !important; }
+  .radar-trait-card-3 { grid-column: span 1 !important; }
+  .radar-trait-card-4 { grid-column: span 2 !important; }
 }
 
 .compare-vs-divider {

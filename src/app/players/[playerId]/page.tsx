@@ -87,6 +87,8 @@ export default function PlayerProfilePage() {
   const [visibleMatches, setVisibleMatches] = useState(10);
   const [chartMetricIndex, setChartMetricIndex] = useState<number>(0);
   const [steamStats, setSteamStats] = useState<any>(null);
+  const [inventoryData, setInventoryData] = useState<any>(null);
+  const [inventoryLoading, setInventoryLoading] = useState<boolean>(true);
   const [copied, setCopied] = useState(false);
   const [steamHover, setSteamHover] = useState(false);
   const [faceitHover, setFaceitHover] = useState(false);
@@ -793,6 +795,15 @@ export default function PlayerProfilePage() {
             if (data && !data.error) setSteamStats(data);
           })
           .catch(() => {});
+
+        setInventoryLoading(true);
+        fetch(`/api/faceit/players/${playerId}/inventory`)
+          .then(r => r.ok ? r.json() : null)
+          .then(data => {
+            if (data && data.success) setInventoryData(data);
+            setInventoryLoading(false);
+          })
+          .catch(() => setInventoryLoading(false));
 
       } catch (err) {
         console.error(err);
@@ -1796,6 +1807,187 @@ export default function PlayerProfilePage() {
                       </div>
                     ))}
                   </div>
+                </div>
+
+                {/* CS2 Inventory & Most Valuable Skin Showcase Card */}
+                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", position: "relative", overflow: "hidden" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.1rem" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-yellow)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                      </svg>
+                      <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", margin: 0 }}>CS2 Инвентарь</h3>
+                    </div>
+                    {inventoryData?.totalItems > 0 && (
+                      <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", background: "rgba(255,255,255,0.06)", padding: "0.2rem 0.6rem", borderRadius: "20px" }}>
+                        {inventoryData.totalItems} скинов
+                      </span>
+                    )}
+                  </div>
+
+                  {inventoryLoading ? (
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "2rem 1rem", gap: "0.75rem" }}>
+                      <div className="animate-spin" style={{ width: "24px", height: "24px", border: "2px solid rgba(255,255,255,0.1)", borderTopColor: "var(--accent-yellow)", borderRadius: "50%" }} />
+                      <span style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>Поиск топовых скинов CS2...</span>
+                    </div>
+                  ) : inventoryData?.isPrivate ? (
+                    <div style={{ background: "rgba(0,0,0,0.25)", border: "1px dashed rgba(255,255,255,0.1)", borderRadius: "12px", padding: "1.25rem", textAlign: "center" }}>
+                      <div style={{ fontSize: "1.8rem", marginBottom: "0.5rem" }}>🔒</div>
+                      <div style={{ fontSize: "0.85rem", fontWeight: "700", color: "#fff", marginBottom: "0.3rem" }}>Инвентарь скрыт</div>
+                      <p style={{ fontSize: "0.72rem", color: "var(--text-muted)", margin: "0 0 0.85rem 0" }}>
+                        Доступ к инвентарю закрыт в настройках приватности Steam игрока.
+                      </p>
+                      {inventoryData?.profileUrl && (
+                        <a 
+                          href={inventoryData.profileUrl} 
+                          target="_blank" 
+                          rel="noreferrer"
+                          style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "8px", padding: "0.4rem 0.8rem", fontSize: "0.75rem", color: "#fff", textDecoration: "none" }}
+                        >
+                          <span>Профиль Steam</span>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        </a>
+                      )}
+                    </div>
+                  ) : inventoryData?.topItem ? (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                      {/* Top Valuable Weapon Card */}
+                      <div style={{ 
+                        background: `radial-gradient(circle at 50% 30%, ${inventoryData.topItem.rarityColor}18 0%, rgba(0,0,0,0.35) 75%)`, 
+                        border: `1px solid ${inventoryData.topItem.rarityColor}55`, 
+                        borderRadius: "14px", 
+                        padding: "1.1rem", 
+                        position: "relative",
+                        overflow: "hidden"
+                      }}>
+                        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: `linear-gradient(90deg, transparent, ${inventoryData.topItem.rarityColor}, transparent)` }} />
+                        
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.5rem" }}>
+                          <div>
+                            <span style={{ fontSize: "0.65rem", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.5px", color: inventoryData.topItem.rarityColor, display: "block" }}>
+                              {inventoryData.topItem.rarityName || "Главный трофей"}
+                            </span>
+                            <h4 style={{ fontSize: "0.95rem", fontWeight: "900", color: "#fff", margin: "0.2rem 0 0.1rem 0" }}>
+                              {inventoryData.topItem.name}
+                            </h4>
+                            {inventoryData.topItem.exterior && (
+                              <span style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>
+                                {inventoryData.topItem.exterior}
+                              </span>
+                            )}
+                          </div>
+                          {inventoryData.topItem.isStatTrak && (
+                            <span style={{ fontSize: "0.65rem", fontWeight: "900", background: "rgba(255, 136, 0, 0.15)", border: "1px solid #ff8800", color: "#ff8800", padding: "0.15rem 0.45rem", borderRadius: "6px" }}>
+                              StatTrak™
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Weapon Image Showcase */}
+                        {inventoryData.topItem.iconUrl && (
+                          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", margin: "0.75rem 0 1rem 0", minHeight: "100px" }}>
+                            <img 
+                              src={inventoryData.topItem.iconUrl} 
+                              alt={inventoryData.topItem.name}
+                              style={{ maxHeight: "105px", maxWidth: "100%", objectFit: "contain", filter: `drop-shadow(0 8px 16px ${inventoryData.topItem.rarityColor}40)` }} 
+                            />
+                          </div>
+                        )}
+
+                        {/* Pricing block */}
+                        <div style={{ background: "rgba(0,0,0,0.4)", borderRadius: "10px", padding: "0.75rem 0.9rem", display: "flex", justifyContent: "space-between", alignItems: "center", border: "1px solid rgba(255,255,255,0.06)" }}>
+                          <div>
+                            <span style={{ fontSize: "0.65rem", color: "var(--text-muted)", display: "block" }}>Оценка на LIS-SKINS</span>
+                            <span style={{ fontSize: "1.15rem", fontWeight: "900", color: "#10b981", display: "flex", alignItems: "center", gap: "0.2rem" }}>
+                              {inventoryData.topItem.lisSkinsPrice ? `~${inventoryData.topItem.lisSkinsPrice.toLocaleString('ru-RU')} ₽` : "По запросу"}
+                            </span>
+                          </div>
+                          {inventoryData.topItem.steamPrice && (
+                            <div style={{ textAlign: "right" }}>
+                              <span style={{ fontSize: "0.65rem", color: "var(--text-muted)", display: "block" }}>Steam ТП</span>
+                              <span style={{ fontSize: "0.85rem", fontWeight: "700", color: "var(--text-secondary)" }}>
+                                ~{inventoryData.topItem.steamPrice.toLocaleString('ru-RU')} ₽
+                              </span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Action Button to Lis-Skins */}
+                        <div style={{ marginTop: "0.75rem", display: "flex", gap: "0.5rem" }}>
+                          <a
+                            href={inventoryData.topItem.lisSkinsUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            style={{
+                              flex: 1,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              gap: "0.4rem",
+                              background: "linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.08))",
+                              border: "1px solid rgba(16, 185, 129, 0.4)",
+                              borderRadius: "8px",
+                              padding: "0.5rem 0.75rem",
+                              fontSize: "0.75rem",
+                              fontWeight: "700",
+                              color: "#34d399",
+                              textDecoration: "none"
+                            }}
+                          >
+                            <span>Посмотреть на Lis-Skins</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                          </a>
+                        </div>
+                      </div>
+
+                      {/* Secondary Top Items (if available) */}
+                      {inventoryData.otherTopItems?.length > 0 && (
+                        <div>
+                          <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", fontWeight: "700", marginBottom: "0.4rem", display: "block" }}>
+                            Другие скины инвентаря
+                          </span>
+                          <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(3, inventoryData.otherTopItems.length)}, 1fr)`, gap: "0.5rem" }}>
+                            {inventoryData.otherTopItems.map((item: any, i: number) => (
+                              <a 
+                                key={i}
+                                href={item.lisSkinsUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                style={{ 
+                                  background: "rgba(0,0,0,0.25)", 
+                                  border: `1px solid ${item.rarityColor}35`, 
+                                  borderRadius: "8px", 
+                                  padding: "0.5rem", 
+                                  display: "flex", 
+                                  flexDirection: "column", 
+                                  alignItems: "center",
+                                  textDecoration: "none",
+                                  position: "relative",
+                                  overflow: "hidden"
+                                }}
+                              >
+                                {item.iconUrl && (
+                                  <img src={item.iconUrl} alt={item.name} style={{ height: "42px", maxWidth: "100%", objectFit: "contain" }} />
+                                )}
+                                <span style={{ fontSize: "0.62rem", color: "#fff", fontWeight: "700", textAlign: "center", marginTop: "0.3rem", width: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                  {item.name}
+                                </span>
+                                {item.lisSkinsPrice ? (
+                                  <span style={{ fontSize: "0.62rem", color: "#10b981", fontWeight: "800", marginTop: "0.1rem" }}>
+                                    ~{item.lisSkinsPrice.toLocaleString('ru-RU')} ₽
+                                  </span>
+                                ) : null}
+                              </a>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div style={{ background: "rgba(0,0,0,0.2)", borderRadius: "10px", padding: "1.25rem", textAlign: "center" }}>
+                      <span style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>Инвентарь пуст или не содержит скинов CS2</span>
+                    </div>
+                  )}
                 </div>
 
               </div>
