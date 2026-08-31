@@ -754,29 +754,6 @@ html, body {
   .radar-trait-card-4 { grid-column: span 2 !important; }
 }
 
-/* Player Profile Masonry Tile Grid */
-.profile-tiles-container {
-  column-count: 2;
-  column-gap: 1.25rem;
-  width: 100%;
-}
-
-.profile-tile-item {
-  break-inside: avoid;
-  page-break-inside: avoid;
-  -webkit-column-break-inside: avoid;
-  margin-bottom: 1.25rem;
-  display: inline-block;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-@media (max-width: 900px) {
-  .profile-tiles-container {
-    column-count: 1;
-  }
-}
-
 .compare-vs-divider {
   display: flex;
   align-items: center;
