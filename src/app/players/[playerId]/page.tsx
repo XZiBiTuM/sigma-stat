@@ -1090,58 +1090,60 @@ export default function PlayerProfilePage() {
             );
           })()}
 
-          {/* Detailed Statistics Container */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "1.25rem", alignItems: "start" }}>
+          {/* Detailed Statistics Top Controls */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", marginBottom: "1.25rem", width: "100%" }}>
+            {/* Disclaimer */}
+            <div style={{
+              padding: "0.75rem 1rem",
+              background: "rgba(0, 212, 255, 0.05)",
+              border: "1px solid rgba(0, 212, 255, 0.15)",
+              borderRadius: "10px",
+              fontSize: "0.78rem",
+              color: "var(--text-secondary)",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.6rem"
+            }}>
+              <svg viewBox="0 0 24 24" style={{ width: "16px", height: "16px", fill: "var(--accent-cyan)", flexShrink: 0 }}>
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+              </svg>
+              <span>Вся статистика собрана по матчам Хаба, за исключением вкладки <strong>«Статистика (все игры)»</strong>.</span>
+            </div>
+
+            {/* Tabs Navigation Card */}
+            <div className="glass-card" style={{ padding: "0.5rem", borderRadius: "12px", border: "1px solid var(--border-light)", display: "flex", gap: "0.25rem" }}>
+              {[
+                { id: "general", label: "Статистика (хаб)" },
+                { id: "tactical", label: "Статистика (все игры)" },
+                { id: "maps", label: "Статистика по картам" }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as any)}
+                  style={{
+                    flex: 1,
+                    background: activeTab === tab.id ? "linear-gradient(135deg, var(--accent-purple), var(--accent-cyan))" : "transparent",
+                    color: activeTab === tab.id ? "#fff" : "var(--text-secondary)",
+                    border: "none",
+                    padding: "0.65rem 1rem",
+                    fontSize: "0.85rem",
+                    fontWeight: "700",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    transition: "all 0.2s"
+                  }}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Masonry Tile Grid: Seamless tile flow without trailing empty spaces */}
+          <div className="profile-tiles-container">
             
-            {/* Left Panel: Tabs & Metrics */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", height: "auto" }}>
-              
-              {/* Disclaimer */}
-              <div style={{
-                padding: "0.75rem 1rem",
-                background: "rgba(0, 212, 255, 0.05)",
-                border: "1px solid rgba(0, 212, 255, 0.15)",
-                borderRadius: "10px",
-                fontSize: "0.78rem",
-                color: "var(--text-secondary)",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.6rem"
-              }}>
-                <svg viewBox="0 0 24 24" style={{ width: "16px", height: "16px", fill: "var(--accent-cyan)", flexShrink: 0 }}>
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
-                </svg>
-                <span>Вся статистика собрана по матчам Хаба, за исключением вкладки <strong>«Статистика (все игры)»</strong>.</span>
-              </div>
-
-              {/* Tabs Navigation Card */}
-              <div className="glass-card" style={{ padding: "0.5rem", borderRadius: "12px", border: "1px solid var(--border-light)", display: "flex", gap: "0.25rem" }}>
-                {[
-                  { id: "general", label: "Статистика (хаб)" },
-                  { id: "tactical", label: "Статистика (все игры)" },
-                  { id: "maps", label: "Статистика по картам" }
-                ].map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id as any)}
-                    style={{
-                      flex: 1,
-                      background: activeTab === tab.id ? "linear-gradient(135deg, var(--accent-purple), var(--accent-cyan))" : "transparent",
-                      color: activeTab === tab.id ? "#fff" : "var(--text-secondary)",
-                      border: "none",
-                      padding: "0.65rem 1rem",
-                      fontSize: "0.85rem",
-                      fontWeight: "700",
-                      borderRadius: "8px",
-                      cursor: "pointer",
-                      transition: "all 0.2s"
-                    }}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
-
+            {/* TILE 1: Tab Specific Stats (Hub / All Games / Maps) */}
+            <div className="profile-tile-item">
               {/* General Tab Content */}
               {activeTab === "general" && hubStats && (
                 <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1.25rem", height: "auto", overflow: "hidden", boxSizing: "border-box" }}>
@@ -1676,50 +1678,11 @@ export default function PlayerProfilePage() {
                   )}
                 </div>
               )}
-
-
-              {/* HLTV Rating 2.0 SVG Trend Chart */}
-              {renderRatingChart()}
-
-              {/* Grenades detailed performance & Hub Average Comparison (Balanced to Left Column) */}
-              {hubStats && (
-                <>
-                  <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)" }}>
-                    <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", marginBottom: "1rem" }}>Гранаты</h3>
-                    
-                    <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-                      {[
-                        { label: "Использовано гранат", val: hubStats.utility?.utilityCount || "0", suffix: "" },
-                        { label: "Процент эффективности использования гранат", val: hubStats.utility?.utilitySuccessRate ? `${hubStats.utility.utilitySuccessRate}%` : "0%", suffix: "" },
-                        { label: "Общий урон гранатами", val: hubStats.utility?.utilityDamage ? `${hubStats.utility.utilityDamage} HP` : "0 HP", suffix: "" },
-                        { 
-                          label: "Флешки", 
-                          val: `${hubStats.utility?.flashCount || 0} бр / ${hubStats.utility?.flashSuccesses || 0} усп (${hubStats.utility?.flashSuccessRate || 0}%)`, 
-                          suffix: `[ослеплено: ${hubStats.utility?.enemiesFlashed || 0}]` 
-                        }
-                      ].map((item, idx) => (
-                        <div key={idx} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.03)", paddingBottom: "0.4rem", fontSize: "0.8rem", minHeight: "28px" }}>
-                          <span style={{ color: "var(--text-secondary)" }}>{item.label}</span>
-                          <span style={{ fontWeight: "700", color: "#fff", textAlign: "right", display: "flex", alignItems: "center", gap: "0.35rem" }}>
-                            {item.val} 
-                            {item.suffix && <span style={{ color: "var(--text-muted)", fontSize: "0.72rem", fontWeight: "normal" }}>{item.suffix}</span>}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Comparison with Hub Average */}
-                  {renderComparisonCard()}
-                </>
-              )}
             </div>
 
-            {/* Right Panel: Advanced Tactical Breakdowns & Multi-Kills */}
+            {/* TILE 2: HLTV Rating 2.0 Card */}
             {hubStats && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", height: "auto" }}>
-                
-                {/* Est HLTV Rating Prominent Card (Placed above the Radar Pentagon) */}
+              <div className="profile-tile-item">
                 <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", overflow: "hidden" }}>
                   <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "4px", background: "var(--accent-cyan)" }} />
                   <div>
@@ -1730,8 +1693,12 @@ export default function PlayerProfilePage() {
                     <span className="glow-text-cyan" style={{ fontSize: "2rem", fontWeight: "900", color: "var(--accent-cyan)" }}>{hubStats.hltvRating.toFixed(2)}</span>
                   </div>
                 </div>
+              </div>
+            )}
 
-                {/* 5-Sided Radar Pentagon (Shooting, Calls, Mental, Gamesense, Aura) */}
+            {/* TILE 3: 5-Sided Radar Pentagon (Shooting, Calls, Mental, Gamesense, Aura) */}
+            {hubStats && (
+              <div className="profile-tile-item">
                 {(() => {
                   const ov = (playerId && playerOverridesMap[playerId]) || 
                              (profile?.nickname && playerOverridesMap[profile.nickname]) || 
@@ -1764,8 +1731,200 @@ export default function PlayerProfilePage() {
                     />
                   );
                 })()}
+              </div>
+            )}
 
-                {/* Multi-Kills Statistics */}
+            {/* TILE 4: HLTV Rating 2.0 SVG Trend Chart */}
+            <div className="profile-tile-item">
+              {renderRatingChart()}
+            </div>
+
+            {/* TILE 5: CS2 Inventory & Most Valuable Skin Showcase Card */}
+            <div className="profile-tile-item">
+              <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", position: "relative", overflow: "hidden" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.1rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-yellow)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                    <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", margin: 0 }}>CS2 Инвентарь</h3>
+                  </div>
+                  {inventoryData?.totalItems > 0 && (
+                    <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", background: "rgba(255,255,255,0.06)", padding: "0.2rem 0.6rem", borderRadius: "20px" }}>
+                      {inventoryData.totalItems} скинов
+                    </span>
+                  )}
+                </div>
+
+                {inventoryLoading ? (
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "2rem 1rem", gap: "0.75rem" }}>
+                    <div className="animate-spin" style={{ width: "24px", height: "24px", border: "2px solid rgba(255,255,255,0.1)", borderTopColor: "var(--accent-yellow)", borderRadius: "50%" }} />
+                    <span style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>Поиск топовых скинов CS2...</span>
+                  </div>
+                ) : inventoryData?.isPrivate ? (
+                  <div style={{ background: "rgba(0,0,0,0.25)", border: "1px dashed rgba(255,255,255,0.1)", borderRadius: "12px", padding: "1.25rem", textAlign: "center" }}>
+                    <div style={{ fontSize: "1.8rem", marginBottom: "0.5rem" }}>🔒</div>
+                    <div style={{ fontSize: "0.85rem", fontWeight: "700", color: "#fff", marginBottom: "0.3rem" }}>Инвентарь скрыт</div>
+                    <p style={{ fontSize: "0.72rem", color: "var(--text-muted)", margin: "0 0 0.85rem 0" }}>
+                      Доступ к инвентарю закрыт в настройках приватности Steam игрока.
+                    </p>
+                    {inventoryData?.profileUrl && (
+                      <a 
+                        href={inventoryData.profileUrl} 
+                        target="_blank" 
+                        rel="noreferrer"
+                        style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "8px", padding: "0.4rem 0.8rem", fontSize: "0.75rem", color: "#fff", textDecoration: "none" }}
+                      >
+                        <span>Профиль Steam</span>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                      </a>
+                    )}
+                  </div>
+                ) : inventoryData?.topItem ? (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                    {/* Top Valuable Weapon Card */}
+                    <div style={{ 
+                      background: `radial-gradient(circle at 50% 30%, ${inventoryData.topItem.rarityColor}18 0%, rgba(0,0,0,0.35) 75%)`, 
+                      border: `1px solid ${inventoryData.topItem.rarityColor}55`, 
+                      borderRadius: "14px", 
+                      padding: "1.1rem", 
+                      position: "relative",
+                      overflow: "hidden"
+                    }}>
+                      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: `linear-gradient(90deg, transparent, ${inventoryData.topItem.rarityColor}, transparent)` }} />
+                      
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.5rem" }}>
+                        <div>
+                          <span style={{ fontSize: "0.65rem", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.5px", color: inventoryData.topItem.rarityColor, display: "block" }}>
+                            {inventoryData.topItem.rarityName || "Главный трофей"}
+                          </span>
+                          <h4 style={{ fontSize: "0.95rem", fontWeight: "900", color: "#fff", margin: "0.2rem 0 0.1rem 0" }}>
+                            {inventoryData.topItem.name}
+                          </h4>
+                          {inventoryData.topItem.exterior && (
+                            <span style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>
+                              {inventoryData.topItem.exterior}
+                            </span>
+                          )}
+                        </div>
+                        {inventoryData.topItem.isStatTrak && (
+                          <span style={{ fontSize: "0.65rem", fontWeight: "900", background: "rgba(255, 136, 0, 0.15)", border: "1px solid #ff8800", color: "#ff8800", padding: "0.15rem 0.45rem", borderRadius: "6px" }}>
+                            StatTrak™
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Weapon Image Showcase */}
+                      {inventoryData.topItem.iconUrl && (
+                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", margin: "0.75rem 0 1rem 0", minHeight: "100px" }}>
+                          <img 
+                            src={inventoryData.topItem.iconUrl} 
+                            alt={inventoryData.topItem.name}
+                            style={{ maxHeight: "105px", maxWidth: "100%", objectFit: "contain", filter: `drop-shadow(0 8px 16px ${inventoryData.topItem.rarityColor}40)` }} 
+                          />
+                        </div>
+                      )}
+
+                      {/* Pricing block */}
+                      <div style={{ background: "rgba(0,0,0,0.4)", borderRadius: "10px", padding: "0.75rem 0.9rem", display: "flex", justifyContent: "space-between", alignItems: "center", border: "1px solid rgba(255,255,255,0.06)" }}>
+                        <div>
+                          <span style={{ fontSize: "0.65rem", color: "var(--text-muted)", display: "block" }}>Оценка на LIS-SKINS</span>
+                          <span style={{ fontSize: "1.15rem", fontWeight: "900", color: "#10b981", display: "flex", alignItems: "center", gap: "0.2rem" }}>
+                            {inventoryData.topItem.lisSkinsPrice ? `~${inventoryData.topItem.lisSkinsPrice.toLocaleString('ru-RU')} ₽` : "По запросу"}
+                          </span>
+                        </div>
+                        {inventoryData.topItem.steamPrice && (
+                          <div style={{ textAlign: "right" }}>
+                            <span style={{ fontSize: "0.65rem", color: "var(--text-muted)", display: "block" }}>Steam ТП</span>
+                            <span style={{ fontSize: "0.85rem", fontWeight: "700", color: "var(--text-secondary)" }}>
+                              ~{inventoryData.topItem.steamPrice.toLocaleString('ru-RU')} ₽
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Action Button to Lis-Skins */}
+                      <div style={{ marginTop: "0.75rem", display: "flex", gap: "0.5rem" }}>
+                        <a
+                          href={inventoryData.topItem.lisSkinsUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{
+                            flex: 1,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "0.4rem",
+                            background: "linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.08))",
+                            border: "1px solid rgba(16, 185, 129, 0.4)",
+                            borderRadius: "8px",
+                            padding: "0.5rem 0.75rem",
+                            fontSize: "0.75rem",
+                            fontWeight: "700",
+                            color: "#34d399",
+                            textDecoration: "none"
+                          }}
+                        >
+                          <span>Посмотреть на Lis-Skins</span>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        </a>
+                      </div>
+                    </div>
+
+                    {/* Secondary Top Items (if available) */}
+                    {inventoryData.otherTopItems?.length > 0 && (
+                      <div>
+                        <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", fontWeight: "700", marginBottom: "0.4rem", display: "block" }}>
+                          Другие скины инвентаря
+                        </span>
+                        <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(3, inventoryData.otherTopItems.length)}, 1fr)`, gap: "0.5rem" }}>
+                          {inventoryData.otherTopItems.map((item: any, i: number) => (
+                            <a 
+                              key={i} 
+                              href={item.lisSkinsUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              style={{ 
+                                background: "rgba(0,0,0,0.25)", 
+                                border: `1px solid ${item.rarityColor}35`, 
+                                borderRadius: "8px", 
+                                padding: "0.5rem", 
+                                display: "flex", 
+                                flexDirection: "column", 
+                                alignItems: "center",
+                                textDecoration: "none",
+                                position: "relative",
+                                overflow: "hidden"
+                              }}
+                            >
+                              {item.iconUrl && (
+                                <img src={item.iconUrl} alt={item.name} style={{ height: "42px", maxWidth: "100%", objectFit: "contain" }} />
+                              )}
+                              <span style={{ fontSize: "0.62rem", color: "#fff", fontWeight: "700", textAlign: "center", marginTop: "0.3rem", width: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                {item.name}
+                              </span>
+                              {item.lisSkinsPrice ? (
+                                <span style={{ fontSize: "0.62rem", color: "#10b981", fontWeight: "800", marginTop: "0.1rem" }}>
+                                  ~{item.lisSkinsPrice.toLocaleString('ru-RU')} ₽
+                                </span>
+                              ) : null}
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div style={{ background: "rgba(0,0,0,0.2)", borderRadius: "10px", padding: "1.25rem", textAlign: "center" }}>
+                    <span style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>Инвентарь пуст или не содержит скинов CS2</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* TILE 6: Multi-Kills Statistics */}
+            {hubStats && (
+              <div className="profile-tile-item">
                 <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)" }}>
                   <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", marginBottom: "1rem" }}>Мульти-киллы</h3>
                   
@@ -1783,8 +1942,12 @@ export default function PlayerProfilePage() {
                     ))}
                   </div>
                 </div>
+              </div>
+            )}
 
-                {/* Opening Duels & Clutches */}
+            {/* TILE 7: Opening Duels & Clutches */}
+            {hubStats && (
+              <div className="profile-tile-item">
                 <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)" }}>
                   <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", marginBottom: "1rem" }}>Дуэли и Клатчи</h3>
                   
@@ -1808,188 +1971,43 @@ export default function PlayerProfilePage() {
                     ))}
                   </div>
                 </div>
+              </div>
+            )}
 
-                {/* CS2 Inventory & Most Valuable Skin Showcase Card */}
-                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", position: "relative", overflow: "hidden" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.1rem" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-yellow)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                      </svg>
-                      <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", margin: 0 }}>CS2 Инвентарь</h3>
-                    </div>
-                    {inventoryData?.totalItems > 0 && (
-                      <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", background: "rgba(255,255,255,0.06)", padding: "0.2rem 0.6rem", borderRadius: "20px" }}>
-                        {inventoryData.totalItems} скинов
-                      </span>
-                    )}
-                  </div>
-
-                  {inventoryLoading ? (
-                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "2rem 1rem", gap: "0.75rem" }}>
-                      <div className="animate-spin" style={{ width: "24px", height: "24px", border: "2px solid rgba(255,255,255,0.1)", borderTopColor: "var(--accent-yellow)", borderRadius: "50%" }} />
-                      <span style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>Поиск топовых скинов CS2...</span>
-                    </div>
-                  ) : inventoryData?.isPrivate ? (
-                    <div style={{ background: "rgba(0,0,0,0.25)", border: "1px dashed rgba(255,255,255,0.1)", borderRadius: "12px", padding: "1.25rem", textAlign: "center" }}>
-                      <div style={{ fontSize: "1.8rem", marginBottom: "0.5rem" }}>🔒</div>
-                      <div style={{ fontSize: "0.85rem", fontWeight: "700", color: "#fff", marginBottom: "0.3rem" }}>Инвентарь скрыт</div>
-                      <p style={{ fontSize: "0.72rem", color: "var(--text-muted)", margin: "0 0 0.85rem 0" }}>
-                        Доступ к инвентарю закрыт в настройках приватности Steam игрока.
-                      </p>
-                      {inventoryData?.profileUrl && (
-                        <a 
-                          href={inventoryData.profileUrl} 
-                          target="_blank" 
-                          rel="noreferrer"
-                          style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "8px", padding: "0.4rem 0.8rem", fontSize: "0.75rem", color: "#fff", textDecoration: "none" }}
-                        >
-                          <span>Профиль Steam</span>
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                        </a>
-                      )}
-                    </div>
-                  ) : inventoryData?.topItem ? (
-                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                      {/* Top Valuable Weapon Card */}
-                      <div style={{ 
-                        background: `radial-gradient(circle at 50% 30%, ${inventoryData.topItem.rarityColor}18 0%, rgba(0,0,0,0.35) 75%)`, 
-                        border: `1px solid ${inventoryData.topItem.rarityColor}55`, 
-                        borderRadius: "14px", 
-                        padding: "1.1rem", 
-                        position: "relative",
-                        overflow: "hidden"
-                      }}>
-                        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: `linear-gradient(90deg, transparent, ${inventoryData.topItem.rarityColor}, transparent)` }} />
-                        
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.5rem" }}>
-                          <div>
-                            <span style={{ fontSize: "0.65rem", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.5px", color: inventoryData.topItem.rarityColor, display: "block" }}>
-                              {inventoryData.topItem.rarityName || "Главный трофей"}
-                            </span>
-                            <h4 style={{ fontSize: "0.95rem", fontWeight: "900", color: "#fff", margin: "0.2rem 0 0.1rem 0" }}>
-                              {inventoryData.topItem.name}
-                            </h4>
-                            {inventoryData.topItem.exterior && (
-                              <span style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>
-                                {inventoryData.topItem.exterior}
-                              </span>
-                            )}
-                          </div>
-                          {inventoryData.topItem.isStatTrak && (
-                            <span style={{ fontSize: "0.65rem", fontWeight: "900", background: "rgba(255, 136, 0, 0.15)", border: "1px solid #ff8800", color: "#ff8800", padding: "0.15rem 0.45rem", borderRadius: "6px" }}>
-                              StatTrak™
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Weapon Image Showcase */}
-                        {inventoryData.topItem.iconUrl && (
-                          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", margin: "0.75rem 0 1rem 0", minHeight: "100px" }}>
-                            <img 
-                              src={inventoryData.topItem.iconUrl} 
-                              alt={inventoryData.topItem.name}
-                              style={{ maxHeight: "105px", maxWidth: "100%", objectFit: "contain", filter: `drop-shadow(0 8px 16px ${inventoryData.topItem.rarityColor}40)` }} 
-                            />
-                          </div>
-                        )}
-
-                        {/* Pricing block */}
-                        <div style={{ background: "rgba(0,0,0,0.4)", borderRadius: "10px", padding: "0.75rem 0.9rem", display: "flex", justifyContent: "space-between", alignItems: "center", border: "1px solid rgba(255,255,255,0.06)" }}>
-                          <div>
-                            <span style={{ fontSize: "0.65rem", color: "var(--text-muted)", display: "block" }}>Оценка на LIS-SKINS</span>
-                            <span style={{ fontSize: "1.15rem", fontWeight: "900", color: "#10b981", display: "flex", alignItems: "center", gap: "0.2rem" }}>
-                              {inventoryData.topItem.lisSkinsPrice ? `~${inventoryData.topItem.lisSkinsPrice.toLocaleString('ru-RU')} ₽` : "По запросу"}
-                            </span>
-                          </div>
-                          {inventoryData.topItem.steamPrice && (
-                            <div style={{ textAlign: "right" }}>
-                              <span style={{ fontSize: "0.65rem", color: "var(--text-muted)", display: "block" }}>Steam ТП</span>
-                              <span style={{ fontSize: "0.85rem", fontWeight: "700", color: "var(--text-secondary)" }}>
-                                ~{inventoryData.topItem.steamPrice.toLocaleString('ru-RU')} ₽
-                              </span>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Action Button to Lis-Skins */}
-                        <div style={{ marginTop: "0.75rem", display: "flex", gap: "0.5rem" }}>
-                          <a
-                            href={inventoryData.topItem.lisSkinsUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            style={{
-                              flex: 1,
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              gap: "0.4rem",
-                              background: "linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.08))",
-                              border: "1px solid rgba(16, 185, 129, 0.4)",
-                              borderRadius: "8px",
-                              padding: "0.5rem 0.75rem",
-                              fontSize: "0.75rem",
-                              fontWeight: "700",
-                              color: "#34d399",
-                              textDecoration: "none"
-                            }}
-                          >
-                            <span>Посмотреть на Lis-Skins</span>
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                          </a>
-                        </div>
+            {/* TILE 8: Grenades detailed performance */}
+            {hubStats && (
+              <div className="profile-tile-item">
+                <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)" }}>
+                  <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", marginBottom: "1rem" }}>Гранаты</h3>
+                  
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                    {[
+                      { label: "Использовано гранат", val: hubStats.utility?.utilityCount || "0", suffix: "" },
+                      { label: "Процент эффективности использования гранат", val: hubStats.utility?.utilitySuccessRate ? `${hubStats.utility.utilitySuccessRate}%` : "0%", suffix: "" },
+                      { label: "Общий урон гранатами", val: hubStats.utility?.utilityDamage ? `${hubStats.utility.utilityDamage} HP` : "0 HP", suffix: "" },
+                      { 
+                        label: "Флешки", 
+                        val: `${hubStats.utility?.flashCount || 0} бр / ${hubStats.utility?.flashSuccesses || 0} усп (${hubStats.utility?.flashSuccessRate || 0}%)`, 
+                        suffix: `[ослеплено: ${hubStats.utility?.enemiesFlashed || 0}]` 
+                      }
+                    ].map((item, idx) => (
+                      <div key={idx} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.03)", paddingBottom: "0.4rem", fontSize: "0.8rem", minHeight: "28px" }}>
+                        <span style={{ color: "var(--text-secondary)" }}>{item.label}</span>
+                        <span style={{ fontWeight: "700", color: "#fff", textAlign: "right", display: "flex", alignItems: "center", gap: "0.35rem" }}>
+                          {item.val} 
+                          {item.suffix && <span style={{ color: "var(--text-muted)", fontSize: "0.72rem", fontWeight: "normal" }}>{item.suffix}</span>}
+                        </span>
                       </div>
-
-                      {/* Secondary Top Items (if available) */}
-                      {inventoryData.otherTopItems?.length > 0 && (
-                        <div>
-                          <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", fontWeight: "700", marginBottom: "0.4rem", display: "block" }}>
-                            Другие скины инвентаря
-                          </span>
-                          <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(3, inventoryData.otherTopItems.length)}, 1fr)`, gap: "0.5rem" }}>
-                            {inventoryData.otherTopItems.map((item: any, i: number) => (
-                              <a 
-                                key={i}
-                                href={item.lisSkinsUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                style={{ 
-                                  background: "rgba(0,0,0,0.25)", 
-                                  border: `1px solid ${item.rarityColor}35`, 
-                                  borderRadius: "8px", 
-                                  padding: "0.5rem", 
-                                  display: "flex", 
-                                  flexDirection: "column", 
-                                  alignItems: "center",
-                                  textDecoration: "none",
-                                  position: "relative",
-                                  overflow: "hidden"
-                                }}
-                              >
-                                {item.iconUrl && (
-                                  <img src={item.iconUrl} alt={item.name} style={{ height: "42px", maxWidth: "100%", objectFit: "contain" }} />
-                                )}
-                                <span style={{ fontSize: "0.62rem", color: "#fff", fontWeight: "700", textAlign: "center", marginTop: "0.3rem", width: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                                  {item.name}
-                                </span>
-                                {item.lisSkinsPrice ? (
-                                  <span style={{ fontSize: "0.62rem", color: "#10b981", fontWeight: "800", marginTop: "0.1rem" }}>
-                                    ~{item.lisSkinsPrice.toLocaleString('ru-RU')} ₽
-                                  </span>
-                                ) : null}
-                              </a>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div style={{ background: "rgba(0,0,0,0.2)", borderRadius: "10px", padding: "1.25rem", textAlign: "center" }}>
-                      <span style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>Инвентарь пуст или не содержит скинов CS2</span>
-                    </div>
-                  )}
+                    ))}
+                  </div>
                 </div>
+              </div>
+            )}
 
+            {/* TILE 9: Comparison with Hub Average */}
+            {hubStats && (
+              <div className="profile-tile-item">
+                {renderComparisonCard()}
               </div>
             )}
 
