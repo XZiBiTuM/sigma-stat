@@ -68,12 +68,16 @@ export async function POST(request: NextRequest) {
       batchOverrides.forEach((item: any) => {
         const key = item.playerId || item.nickname;
         if (!key) return;
+        let bSkill = current[key]?.customSkillScore;
+        if (item.customSkillScore !== undefined) {
+          bSkill = (item.customSkillScore !== "" && item.customSkillScore !== null) ? Number(item.customSkillScore) : undefined;
+        }
         const updatedObj = {
           ...(current[key] || {}),
           nickname: item.nickname || current[key]?.nickname || key,
           csRating: item.csRating !== undefined && item.csRating !== "" && item.csRating !== null ? Number(item.csRating) : current[key]?.csRating,
           customElo: item.customElo !== undefined && item.customElo !== "" && item.customElo !== null ? Number(item.customElo) : current[key]?.customElo,
-          customSkillScore: item.customSkillScore !== undefined && item.customSkillScore !== "" && item.customSkillScore !== null ? Number(item.customSkillScore) : current[key]?.customSkillScore,
+          customSkillScore: bSkill,
           shooting: item.shooting !== undefined && item.shooting !== "" && item.shooting !== null ? Number(item.shooting) : current[key]?.shooting,
           calls: item.calls !== undefined && item.calls !== "" && item.calls !== null ? Number(item.calls) : current[key]?.calls,
           mental: item.mental !== undefined && item.mental !== "" && item.mental !== null ? Number(item.mental) : current[key]?.mental,
@@ -100,17 +104,15 @@ export async function POST(request: NextRequest) {
     const targetNick = (nickname || current[key]?.nickname || "").trim();
     const targetId = playerId || current[key]?.playerId || (key.includes("-") ? key : undefined);
 
-    // Compute automatic customSkillScore as the average of 5 traits if customSkillScore is not explicitly sent
-    let effSkill = customSkillScore !== undefined && customSkillScore !== "" ? Number(customSkillScore) : current[key]?.customSkillScore;
-    const finalShooting = shooting !== undefined && shooting !== "" ? Number(shooting) : current[key]?.shooting;
-    const finalCalls = calls !== undefined && calls !== "" ? Number(calls) : current[key]?.calls;
-    const finalMental = mental !== undefined && mental !== "" ? Number(mental) : current[key]?.mental;
-    const finalGamesense = gamesense !== undefined && gamesense !== "" ? Number(gamesense) : current[key]?.gamesense;
-    const finalAura = aura !== undefined && aura !== "" ? Number(aura) : current[key]?.aura;
-
-    if (finalShooting && finalCalls && finalMental && finalGamesense && finalAura) {
-      effSkill = Math.round((finalShooting + finalCalls + finalMental + finalGamesense + finalAura) / 5);
+    let effSkill = current[key]?.customSkillScore;
+    if (customSkillScore !== undefined) {
+      effSkill = (customSkillScore !== "" && customSkillScore !== null) ? Number(customSkillScore) : undefined;
     }
+    const finalShooting = shooting !== undefined && shooting !== "" && shooting !== null ? Number(shooting) : current[key]?.shooting;
+    const finalCalls = calls !== undefined && calls !== "" && calls !== null ? Number(calls) : current[key]?.calls;
+    const finalMental = mental !== undefined && mental !== "" && mental !== null ? Number(mental) : current[key]?.mental;
+    const finalGamesense = gamesense !== undefined && gamesense !== "" && gamesense !== null ? Number(gamesense) : current[key]?.gamesense;
+    const finalAura = aura !== undefined && aura !== "" && aura !== null ? Number(aura) : current[key]?.aura;
 
     const updatedObj = {
       ...(current[key] || {}),

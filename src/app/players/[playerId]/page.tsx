@@ -2011,7 +2011,7 @@ export default function PlayerProfilePage() {
             let csRating = ov.csRating || Math.round(elo * 9.5);
             const sElo = Math.min(100, Math.max(10, (elo - 300) / 22));
             const sPremier = Math.min(100, Math.max(10, csRating / 260));
-            const skillScore = ov.customSkillScore ?? Math.round((0.45 * sElo) + (0.55 * sPremier));
+            const skillScore = ov.customSkillScore ?? profile?.skillScore ?? Math.round((0.45 * sElo) + (0.55 * sPremier));
             const underdogBonus = Math.round((1.0 + ((100 - Math.min(100, Math.max(10, skillScore))) / 100) * 0.40) * 100) / 100;
 
             const recent = hubStats?.recentMatches || [];
