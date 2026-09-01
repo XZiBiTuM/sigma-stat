@@ -99,13 +99,14 @@ export default function PlayerProfilePage() {
   const [userRole, setUserRole] = useState<string>("GUEST");
   const [showEditTraitsModal, setShowEditTraitsModal] = useState<boolean>(false);
   const [editTraitsForm, setEditTraitsForm] = useState<{
+    customSkillScore: string;
     shooting: string;
     calls: string;
     mental: string;
     gamesense: string;
     aura: string;
     passcode: string;
-  }>({ shooting: "", calls: "", mental: "", gamesense: "", aura: "", passcode: "" });
+  }>({ customSkillScore: "", shooting: "", calls: "", mental: "", gamesense: "", aura: "", passcode: "" });
   const [isSavingTraits, setIsSavingTraits] = useState<boolean>(false);
   const [traitsSaveMsg, setTraitsSaveMsg] = useState<string>("");
 
@@ -118,9 +119,9 @@ export default function PlayerProfilePage() {
     fetch("/api/auth/steam/me")
       .then(res => res.json())
       .then(data => { 
-        if (data?.authenticated && data?.user) {
+        if (data?.user) {
           setCurrentUser(data.user);
-          if (data.user.isAdmin) setUserRole("ADMIN");
+          if (data.user.role) setUserRole(data.user.role);
         }
       })
       .catch(() => {});
@@ -152,7 +153,12 @@ export default function PlayerProfilePage() {
 
   const openTraitsEditModal = (currentAttrs: PlayerAttributes) => {
     setTraitsSaveMsg("");
+    const ov = (playerId && playerOverridesMap[playerId]) || 
+               (profile?.nickname && playerOverridesMap[profile.nickname]) || 
+               (profile?.nickname && playerOverridesMap[profile.nickname.toLowerCase()]) || {};
+
     setEditTraitsForm({
+      customSkillScore: ov.customSkillScore !== undefined && ov.customSkillScore !== null ? ov.customSkillScore.toString() : (profile?.skillScore ? profile.skillScore.toString() : ""),
       shooting: currentAttrs.shooting ? currentAttrs.shooting.toString() : "",
       calls: currentAttrs.calls ? currentAttrs.calls.toString() : "50",
       mental: currentAttrs.mental ? currentAttrs.mental.toString() : "50",
@@ -176,6 +182,7 @@ export default function PlayerProfilePage() {
           passcode: pass,
           nickname: profile?.nickname,
           playerId: playerId,
+          customSkillScore: editTraitsForm.customSkillScore !== "" ? Number(editTraitsForm.customSkillScore) : undefined,
           shooting: editTraitsForm.shooting !== "" ? Number(editTraitsForm.shooting) : undefined,
           calls: editTraitsForm.calls !== "" ? Number(editTraitsForm.calls) : 50,
           mental: editTraitsForm.mental !== "" ? Number(editTraitsForm.mental) : 50,
@@ -2371,6 +2378,35 @@ export default function PlayerProfilePage() {
             </p>
 
             <form onSubmit={handleSaveTraitsFromProfile} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              {/* Overall Skill Score */}
+              <div className="input-group" style={{ background: "rgba(192, 132, 252, 0.08)", padding: "0.75rem", borderRadius: "10px", border: "1px solid rgba(192, 132, 252, 0.3)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.25rem" }}>
+                  <label style={{ fontSize: "0.8rem", color: "#c084fc", fontWeight: "800", display: "block" }}>
+                    ⭐ Общие очки Скилла (Skill Score 1–99)
+                  </label>
+                  <span style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>Оставьте пустым для авто-расчёта</span>
+                </div>
+                <input
+                  type="number"
+                  min={1}
+                  max={99}
+                  placeholder="Авто (по Elo/Premier/Матчам)"
+                  value={editTraitsForm.customSkillScore}
+                  onChange={e => setEditTraitsForm(prev => ({ ...prev, customSkillScore: e.target.value }))}
+                  style={{
+                    width: "100%",
+                    padding: "0.55rem 0.75rem",
+                    borderRadius: "8px",
+                    background: "#06050c",
+                    border: "1px solid rgba(192, 132, 252, 0.5)",
+                    color: "#c084fc",
+                    fontWeight: "900",
+                    fontSize: "1rem",
+                    boxSizing: "border-box"
+                  }}
+                />
+              </div>
+
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
                 {/* Shooting */}
                 <div className="input-group">

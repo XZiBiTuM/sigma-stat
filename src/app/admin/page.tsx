@@ -113,6 +113,7 @@ export default function AdminLoginPage() {
       const batchArray = Object.values(playerTraitsMap).map((p: any) => ({
         nickname: p.nickname,
         playerId: p.playerId || undefined,
+        customSkillScore: p.customSkillScore !== "" && p.customSkillScore !== undefined ? Number(p.customSkillScore) : undefined,
         shooting: p.shooting !== "" && p.shooting !== undefined ? Number(p.shooting) : undefined,
         calls: p.calls !== "" && p.calls !== undefined ? Number(p.calls) : undefined,
         mental: p.mental !== "" && p.mental !== undefined ? Number(p.mental) : undefined,
@@ -789,16 +790,46 @@ export default function AdminLoginPage() {
                             gap: "0.75rem"
                           }}
                         >
-                          <div style={{ minWidth: "130px" }}>
+                          <div style={{ minWidth: "120px" }}>
                             <div style={{ fontWeight: "800", color: "#fff", fontSize: "0.88rem" }}>
                               {p.nickname}
                             </div>
-                            <div style={{ fontSize: "0.7rem", color: "#c084fc", fontWeight: "700" }}>
-                              Скилл: {p.customSkillScore || "50"} PTS
+                            <div style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>
+                              {p.playerId ? `${p.playerId.slice(0, 8)}...` : ""}
                             </div>
                           </div>
 
                           <div style={{ display: "flex", gap: "0.45rem", flexWrap: "wrap", alignItems: "center" }}>
+                            {/* Skill Score */}
+                            <div style={{ textAlign: "center" }}>
+                              <span style={{ fontSize: "0.62rem", color: "#c084fc", display: "block", fontWeight: "800" }}>⭐ Скилл</span>
+                              <input
+                                type="number"
+                                min={1}
+                                max={99}
+                                value={p.customSkillScore ?? ""}
+                                onChange={e => {
+                                  const val = e.target.value;
+                                  setPlayerTraitsMap(prev => ({
+                                    ...prev,
+                                    [p.nickname]: { ...prev[p.nickname], customSkillScore: val }
+                                  }));
+                                }}
+                                placeholder="Auto"
+                                style={{
+                                  width: "52px",
+                                  padding: "0.25rem 0.35rem",
+                                  borderRadius: "6px",
+                                  background: "#06050c",
+                                  border: "1px solid rgba(192, 132, 252, 0.6)",
+                                  color: "#c084fc",
+                                  fontWeight: "900",
+                                  fontSize: "0.82rem",
+                                  textAlign: "center"
+                                }}
+                              />
+                            </div>
+
                             {/* Shooting */}
                             <div style={{ textAlign: "center" }}>
                               <span style={{ fontSize: "0.62rem", color: "#00e5ff", display: "block", fontWeight: "700" }}>Стрельба</span>
