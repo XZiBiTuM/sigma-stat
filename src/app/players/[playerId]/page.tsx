@@ -704,28 +704,38 @@ export default function PlayerProfilePage() {
     ];
 
     return (
-      <div className="glass-card" style={{ padding: "1.25rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <div className="glass-card" style={{ 
+        padding: "1.5rem", 
+        borderRadius: "16px", 
+        border: "1px solid var(--border-light)", 
+        display: "flex", 
+        flexDirection: "column", 
+        flex: 1, 
+        justifyContent: "space-between", 
+        gap: "1.25rem",
+        minHeight: "220px"
+      }}>
         <div>
-          <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff", display: "block" }}>Сравнение со средним значением по Хабу</span>
-          <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", display: "block", marginTop: "0.15rem" }}>Сопоставление ваших показателей со средней статистикой игроков хаба</span>
+          <span style={{ fontSize: "1rem", fontWeight: "800", color: "#fff", display: "block" }}>Сравнение со средним значением по Хабу</span>
+          <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", display: "block", marginTop: "0.2rem" }}>Сопоставление ваших показателей со средней статистикой игроков хаба</span>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.1rem", flex: 1, justifyContent: "space-around" }}>
           {metrics.map((m, idx) => {
             const playerPct = Math.min(100, Math.max(10, (m.player / m.max) * 100));
             const avgPct = Math.min(100, Math.max(10, (m.avg / m.max) * 100));
             const isBetter = m.player >= m.avg;
 
             return (
-              <div key={idx} style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
+              <div key={idx} style={{ display: "flex", flexDirection: "column", gap: "0.45rem" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.82rem" }}>
                   <span style={{ fontWeight: "700", color: "var(--text-secondary)" }}>{m.name}</span>
                   <span style={{ color: isBetter ? "var(--success)" : "var(--danger)", fontWeight: "800" }}>
-                    {m.format(m.player)} <span style={{ color: "var(--text-muted)", fontWeight: "normal", fontSize: "0.7rem" }}>vs {m.format(m.avg)} Ср.</span>
+                    {m.format(m.player)} <span style={{ color: "var(--text-muted)", fontWeight: "normal", fontSize: "0.72rem" }}>vs {m.format(m.avg)} Ср.</span>
                   </span>
                 </div>
                 {/* Visual Progress Bar */}
-                <div style={{ height: "6px", background: "rgba(255,255,255,0.05)", borderRadius: "3px", position: "relative", overflow: "hidden" }}>
+                <div style={{ height: "7px", background: "rgba(255,255,255,0.06)", borderRadius: "4px", position: "relative", overflow: "hidden" }}>
                   {/* Avg Marker Line */}
                   <div style={{
                     position: "absolute",
@@ -742,7 +752,7 @@ export default function PlayerProfilePage() {
                     height: "100%",
                     width: `${playerPct}%`,
                     background: isBetter ? "linear-gradient(90deg, var(--accent-purple), var(--accent-cyan))" : "linear-gradient(90deg, var(--accent-purple), var(--danger))",
-                    borderRadius: "3px",
+                    borderRadius: "4px",
                     zIndex: 1
                   }} />
                 </div>
@@ -1098,10 +1108,10 @@ export default function PlayerProfilePage() {
           })()}
 
           {/* Detailed Statistics Container */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "1.25rem", alignItems: "start" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "1.25rem", alignItems: "stretch" }}>
             
             {/* Left Panel: Tabs & Metrics */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", height: "auto" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", height: "100%" }}>
               
               {/* Disclaimer */}
               <div style={{
@@ -1724,7 +1734,7 @@ export default function PlayerProfilePage() {
 
             {/* Right Panel: Advanced Tactical Breakdowns & Multi-Kills */}
             {hubStats && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", height: "auto" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", height: "100%" }}>
                 
                 {/* Est HLTV Rating Prominent Card (Placed above the Radar Pentagon) */}
                 <div className="glass-card" style={{ padding: "1.5rem", borderRadius: "16px", border: "1px solid var(--border-light)", display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", overflow: "hidden" }}>
