@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { faceitFetch } from "@/lib/faceit";
-import { getStoragePath } from "@/lib/storage";
+import { getStoragePath, isMatchExcluded } from "@/lib/storage";
 import { promises as fs } from "fs";
 import path from "path";
 
@@ -69,10 +69,10 @@ export async function GET(
       allMatches = [...customMatches, ...allMatches];
     }
 
-    // Filter out CANCELLED / ABORTED matches
+    // Filter out CANCELLED / ABORTED matches and excluded casual matches
     allMatches = allMatches.filter((m: any) => {
       const st = String(m.status || "").toUpperCase();
-      return st !== "CANCELLED" && st !== "CANCEL" && st !== "ABORTED";
+      return st !== "CANCELLED" && st !== "CANCEL" && st !== "ABORTED" && !isMatchExcluded(m.match_id);
     });
 
     // Sort chronologically by timestamp (newest first)

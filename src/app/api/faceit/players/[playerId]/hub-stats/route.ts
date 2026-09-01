@@ -6,7 +6,7 @@ import { promises as fs } from "fs";
 import fsSync from "fs";
 import path from "path";
 import { faceitFetch, getPlayerProfile } from "@/lib/faceit";
-import { getStoragePath, getPersistentPath } from "@/lib/storage";
+import { getStoragePath, getPersistentPath, isMatchExcluded } from "@/lib/storage";
 
 const cacheFilePath = getStoragePath("match_stats_cache.json");
 
@@ -79,13 +79,13 @@ export async function GET(
       const playerHistory = historyRes?.items || [];
 
       hubMatches.forEach((m: any) => {
-        if (m.match_id) {
+        if (m.match_id && !isMatchExcluded(m.match_id)) {
           matchTimestamps[m.match_id] = m.finished_at || m.started_at || m.created_at || 0;
         }
       });
 
       playerHistory.forEach((h: any) => {
-        if (h.match_id && !matchTimestamps[h.match_id]) {
+        if (h.match_id && !matchTimestamps[h.match_id] && !isMatchExcluded(h.match_id)) {
           matchTimestamps[h.match_id] = h.finished_at || h.started_at || 0;
         }
       });
@@ -174,6 +174,7 @@ export async function GET(
     const playerMatchesList: any[] = [];
 
     for (const matchId in cacheData) {
+      if (isMatchExcluded(matchId)) continue;
       const match = cacheData[matchId];
       if (!match || !Array.isArray(match.rounds)) continue;
 

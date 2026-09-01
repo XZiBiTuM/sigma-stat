@@ -35,3 +35,22 @@ export function getStoragePath(filename: string): string {
 
   return p1;
 }
+
+export function isMatchExcluded(matchId: string | undefined | null): boolean {
+  if (!matchId) return false;
+  const p = getStoragePath("excluded_matches.json");
+  try {
+    if (fs.existsSync(p)) {
+      const list = JSON.parse(fs.readFileSync(p, "utf8"));
+      if (Array.isArray(list) && list.includes(matchId)) {
+        return true;
+      }
+    }
+  } catch (e) {}
+
+  const fallbackExcluded = new Set([
+    "1-33cb631c-9e98-4a87-94e0-c307fa6f999c",
+    "1-61116a2e-6818-4505-8c91-1bcab96b3e13"
+  ]);
+  return fallbackExcluded.has(matchId);
+}

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { faceitFetch } from "@/lib/faceit";
-import { getStoragePath } from "@/lib/storage";
+import { getStoragePath, isMatchExcluded } from "@/lib/storage";
 import { promises as fs } from "fs";
 import path from "path";
 
@@ -45,7 +45,7 @@ export async function GET(
     });
 
     const finishedMatches = (matchesData.items || []).filter(
-      (m: any) => m.status === "FINISHED"
+      (m: any) => m.status === "FINISHED" && !isMatchExcluded(m.match_id)
     );
 
     // Sort chronologically (oldest to newest)
