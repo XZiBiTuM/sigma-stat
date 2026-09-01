@@ -735,7 +735,7 @@ export default function PlayerProfilePage() {
                   </span>
                 </div>
                 {/* Visual Progress Bar */}
-                <div style={{ height: "12px", background: "rgba(255,255,255,0.06)", borderRadius: "6px", position: "relative", overflow: "hidden", border: "1px solid rgba(255,255,255,0.05)" }}>
+                <div style={{ height: "26px", background: "rgba(255,255,255,0.04)", borderRadius: "13px", position: "relative", overflow: "hidden", border: "1px solid rgba(255,255,255,0.08)" }}>
                   {/* Avg Marker Line */}
                   <div style={{
                     position: "absolute",
@@ -743,9 +743,9 @@ export default function PlayerProfilePage() {
                     top: 0, bottom: 0,
                     width: "3px",
                     background: "#ffd54f",
-                    zIndex: 2,
-                    boxShadow: "0 0 8px rgba(255, 213, 79, 0.9)",
-                    borderRadius: "1px"
+                    zIndex: 3,
+                    boxShadow: "0 0 10px rgba(255, 213, 79, 0.95)",
+                    borderRadius: "1.5px"
                   }} title={`Среднее по хабу: ${m.format(m.avg)}`} />
                   
                   {/* Player Fill */}
@@ -753,9 +753,9 @@ export default function PlayerProfilePage() {
                     height: "100%",
                     width: `${playerPct}%`,
                     background: isBetter ? "linear-gradient(90deg, var(--accent-purple), var(--accent-cyan))" : "linear-gradient(90deg, var(--accent-purple), var(--danger))",
-                    borderRadius: "6px",
+                    borderRadius: "13px",
                     zIndex: 1,
-                    boxShadow: isBetter ? "0 0 10px rgba(0, 229, 255, 0.35)" : "0 0 10px rgba(255, 73, 73, 0.35)"
+                    boxShadow: isBetter ? "0 0 14px rgba(0, 229, 255, 0.4)" : "0 0 14px rgba(255, 73, 73, 0.4)"
                   }} />
                 </div>
               </div>
