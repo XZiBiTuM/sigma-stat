@@ -618,11 +618,14 @@ export default function Home() {
     const captainsSet = new Set(draftCaptains.map(c => c.trim().toLowerCase()));
     const initialAvailable = names.filter(n => !captainsSet.has(n.toLowerCase()));
 
+    // Randomized Snake Draft: randomly shuffle captain order for Round 1
+    const order = Array.from({ length: draftCaptains.length }, (_, i) => i).sort(() => Math.random() - 0.5);
+    const revOrder = [...order].reverse();
     const seq: number[] = [];
     let r = 0;
     while (seq.length < initialAvailable.length) {
-      if (r % 2 === 0) seq.push(0, 1, 2, 3);
-      else seq.push(3, 2, 1, 0);
+      if (r % 2 === 0) seq.push(...order);
+      else seq.push(...revOrder);
       r++;
     }
     const finalSeq = seq.slice(0, initialAvailable.length);
@@ -807,6 +810,23 @@ export default function Home() {
       }
     } catch (err) {
       console.error("Draft pick failed", err);
+    }
+  };
+
+  const handleRerollDraftOrder = async () => {
+    try {
+      const res = await fetch("/api/faceit/draft", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "reroll_order" })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setDraftTurnSequence(data.turnSequence);
+        setDraftCurrentStepIndex(data.currentStepIndex || 0);
+      }
+    } catch (err) {
+      console.error("Failed to reroll draft order", err);
     }
   };
 
@@ -9552,7 +9572,7 @@ export default function Home() {
                       e.currentTarget.style.background = "linear-gradient(135deg, rgba(157, 59, 245, 0.25), rgba(0, 229, 255, 0.25))";
                     }}
                   >
-                    Ручной Драфт (Snake)
+                    🎲 Начать Драфт (Жеребьёвка)
                   </button>
                 </div>
               </div>
@@ -9564,27 +9584,99 @@ export default function Home() {
                   <div style={{
                     background: "linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(124, 77, 255, 0.15))",
                     border: "1.5px solid var(--accent-cyan)",
-                    borderRadius: "12px",
-                    padding: "1rem 1.25rem",
+                    borderRadius: "14px",
+                    padding: "1.1rem 1.4rem",
                     display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    boxShadow: "0 0 20px rgba(0, 229, 255, 0.2)",
-                    flexWrap: "wrap",
-                    gap: "0.75rem"
+                    flexDirection: "column",
+                    gap: "0.85rem",
+                    boxShadow: "0 0 25px rgba(0, 229, 255, 0.2)",
                   }}>
-                    <div>
-                      <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", textTransform: "uppercase", fontWeight: "700", letterSpacing: "0.05em" }}>
-                        Текущий ход (Snake Draft #{draftCurrentStepIndex + 1} из 16)
-                      </span>
-                      <div style={{ fontSize: "1.2rem", fontWeight: "900", color: "#fff", marginTop: "0.1rem" }}>
-                        Выбирает: <span style={{ color: "var(--accent-cyan)" }}>{draftCaptains[draftTurnSequence[draftCurrentStepIndex]]}</span>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.75rem" }}>
+                      <div>
+                        <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", textTransform: "uppercase", fontWeight: "700", letterSpacing: "0.05em" }}>
+                          Текущий ход (Snake Draft #{draftCurrentStepIndex + 1} из {draftTurnSequence.length || 16})
+                        </span>
+                        <div style={{ fontSize: "1.25rem", fontWeight: "900", color: "#fff", marginTop: "0.15rem" }}>
+                          Выбирает: <span style={{ color: "var(--accent-cyan)" }}>{draftCaptains[draftTurnSequence[draftCurrentStepIndex]]}</span>
+                        </div>
+                      </div>
+
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
+                        {draftCurrentStepIndex === 0 && (
+                          <button
+                            type="button"
+                            onClick={handleRerollDraftOrder}
+                            style={{
+                              background: "rgba(255, 215, 0, 0.15)",
+                              border: "1px solid rgba(255, 215, 0, 0.4)",
+                              borderRadius: "8px",
+                              color: "#ffd700",
+                              padding: "0.35rem 0.75rem",
+                              fontSize: "0.75rem",
+                              fontWeight: "800",
+                              cursor: "pointer",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "0.35rem",
+                              boxShadow: "0 0 10px rgba(255, 215, 0, 0.2)"
+                            }}
+                            title="Переиграть случайную очередность драфта"
+                          >
+                            🎲 Переиграть жеребьёвку
+                          </button>
+                        )}
+                        <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", background: "rgba(0,0,0,0.35)", padding: "0.4rem 0.8rem", borderRadius: "8px" }}>
+                          Осталось в пуле: <strong style={{ color: "#fff" }}>{draftAvailablePlayers.length}</strong> игроков
+                        </div>
                       </div>
                     </div>
 
-                    <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", background: "rgba(0,0,0,0.3)", padding: "0.4rem 0.8rem", borderRadius: "8px" }}>
-                      Осталось в пуле: <strong style={{ color: "#fff" }}>{draftAvailablePlayers.length}</strong> игроков
-                    </div>
+                    {/* Randomized Draft Order (Жеребьёвка) strip */}
+                    {draftTurnSequence.length >= 4 && (
+                      <div style={{
+                        background: "rgba(0,0,0,0.3)",
+                        border: "1px solid rgba(255,255,255,0.08)",
+                        borderRadius: "10px",
+                        padding: "0.55rem 0.85rem",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                        flexWrap: "wrap",
+                        fontSize: "0.78rem"
+                      }}>
+                        <span style={{ color: "#ffd54f", fontWeight: "900", display: "inline-flex", alignItems: "center", gap: "0.3rem" }}>
+                          🎲 Жеребьёвка (Раунд 1):
+                        </span>
+                        {draftTurnSequence.slice(0, 4).map((capIdx, pos) => {
+                          const isCurrent = draftTurnSequence[draftCurrentStepIndex] === capIdx;
+                          return (
+                            <div 
+                              key={pos}
+                              style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "0.35rem",
+                                background: isCurrent ? "rgba(0, 229, 255, 0.22)" : "rgba(255, 255, 255, 0.05)",
+                                border: isCurrent ? "1px solid var(--accent-cyan)" : "1px solid rgba(255, 255, 255, 0.08)",
+                                color: isCurrent ? "var(--accent-cyan)" : "#fff",
+                                padding: "0.18rem 0.5rem",
+                                borderRadius: "6px",
+                                fontWeight: isCurrent ? "900" : "700",
+                                boxShadow: isCurrent ? "0 0 10px rgba(0, 229, 255, 0.3)" : "none"
+                              }}
+                            >
+                              <span style={{ color: isCurrent ? "var(--accent-cyan)" : "#ffd54f", fontSize: "0.7rem", fontWeight: "900" }}>
+                                #{pos + 1}
+                              </span>
+                              <span>{draftCaptains[capIdx]}</span>
+                            </div>
+                          );
+                        })}
+                        <span style={{ color: "var(--text-muted)", fontSize: "0.7rem", marginLeft: "auto" }}>
+                          (далее змейкой)
+                        </span>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -9637,7 +9729,18 @@ export default function Home() {
                           <span style={{ fontWeight: "900", fontSize: "0.95rem", color: isMyTurn ? "var(--accent-cyan)" : "#fff" }}>
                             Команда {cIdx + 1}
                           </span>
-                          <div style={{ display: "flex", gap: "0.3rem" }}>
+                          <div style={{ display: "flex", gap: "0.3rem", alignItems: "center" }}>
+                            {draftStep === "picking" && draftTurnSequence.length >= 4 && (() => {
+                              const pickPos = draftTurnSequence.slice(0, 4).indexOf(cIdx);
+                              if (pickPos !== -1) {
+                                return (
+                                  <span style={{ fontSize: "0.62rem", background: "rgba(255, 215, 0, 0.15)", border: "1px solid rgba(255, 215, 0, 0.35)", color: "#ffd700", padding: "0.15rem 0.45rem", borderRadius: "4px", fontWeight: "800" }}>
+                                    🎲 #{pickPos + 1} пик
+                                  </span>
+                                );
+                              }
+                              return null;
+                            })()}
                             {roomLabel && (
                               <span style={{ fontSize: "0.65rem", background: roomLabel === "ВИП-ЗАЛ" ? "linear-gradient(135deg, #ffd700, #ff9100)" : "rgba(0, 229, 255, 0.2)", color: roomLabel === "ВИП-ЗАЛ" ? "#000" : "var(--accent-cyan)", padding: "0.15rem 0.45rem", borderRadius: "4px", fontWeight: "900" }}>
                                 {roomLabel}

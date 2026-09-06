@@ -74,13 +74,24 @@ export async function POST(request: NextRequest) {
       const captains = body.captains || ["Капитан 1", "Капитан 2", "Капитан 3", "Капитан 4"];
       const poolInput = body.poolInput || "";
       const availablePlayers: string[] = body.availablePlayers || [];
-      // Standard 5v5 Snake Draft (4 captains + 4 picks per team = 16 total picks)
-      const turnSequence: number[] = [
-        0, 1, 2, 3,
-        3, 2, 1, 0,
-        0, 1, 2, 3,
-        3, 2, 1, 0
-      ];
+
+      // Randomized Snake Draft (captains' pick order is chosen at random)
+      let turnSequence: number[] = [];
+      if (Array.isArray(body.turnSequence) && body.turnSequence.length > 0) {
+        turnSequence = body.turnSequence;
+      } else {
+        const count = captains.length || 4;
+        const order = Array.from({ length: count }, (_, i) => i).sort(() => Math.random() - 0.5);
+        const revOrder = [...order].reverse();
+        const totalPicks = availablePlayers.length > 0 ? availablePlayers.length : 16;
+        let round = 0;
+        while (turnSequence.length < totalPicks) {
+          if (round % 2 === 0) turnSequence.push(...order);
+          else turnSequence.push(...revOrder);
+          round++;
+        }
+        turnSequence = turnSequence.slice(0, totalPicks);
+      }
 
       const newState: DraftState = {
         step: "picking",
@@ -96,6 +107,28 @@ export async function POST(request: NextRequest) {
 
       writeDraftState(newState);
       return NextResponse.json(newState);
+    }
+
+    if (body.action === "reroll_order") {
+      if (currentState.step === "picking" && currentState.currentStepIndex === 0) {
+        const count = currentState.captains.length || 4;
+        const order = Array.from({ length: count }, (_, i) => i).sort(() => Math.random() - 0.5);
+        const revOrder = [...order].reverse();
+        const totalPicks = currentState.availablePlayers.length > 0 ? currentState.availablePlayers.length : 16;
+        const turnSequence: number[] = [];
+        let round = 0;
+        while (turnSequence.length < totalPicks) {
+          if (round % 2 === 0) turnSequence.push(...order);
+          else turnSequence.push(...revOrder);
+          round++;
+        }
+        currentState.turnSequence = turnSequence.slice(0, totalPicks);
+        currentState.currentStepIndex = 0;
+        currentState.updatedAt = Date.now();
+        writeDraftState(currentState);
+        return NextResponse.json(currentState);
+      }
+      return NextResponse.json(currentState);
     }
 
     if (body.action === "pick") {
