@@ -9572,7 +9572,7 @@ export default function Home() {
                       e.currentTarget.style.background = "linear-gradient(135deg, rgba(157, 59, 245, 0.25), rgba(0, 229, 255, 0.25))";
                     }}
                   >
-                    🎲 Начать Драфт (Жеребьёвка)
+                    Начать Драфт (Жеребьёвка)
                   </button>
                 </div>
               </div>
@@ -9622,7 +9622,7 @@ export default function Home() {
                             }}
                             title="Переиграть случайную очередность драфта"
                           >
-                            🎲 Переиграть жеребьёвку
+                            Переиграть жеребьёвку
                           </button>
                         )}
                         <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", background: "rgba(0,0,0,0.35)", padding: "0.4rem 0.8rem", borderRadius: "8px" }}>
@@ -9645,7 +9645,7 @@ export default function Home() {
                         fontSize: "0.78rem"
                       }}>
                         <span style={{ color: "#ffd54f", fontWeight: "900", display: "inline-flex", alignItems: "center", gap: "0.3rem" }}>
-                          🎲 Жеребьёвка (Раунд 1):
+                          Жеребьёвка (Раунд 1):
                         </span>
                         {draftTurnSequence.slice(0, 4).map((capIdx, pos) => {
                           const isCurrent = draftTurnSequence[draftCurrentStepIndex] === capIdx;
@@ -9735,7 +9735,7 @@ export default function Home() {
                               if (pickPos !== -1) {
                                 return (
                                   <span style={{ fontSize: "0.62rem", background: "rgba(255, 215, 0, 0.15)", border: "1px solid rgba(255, 215, 0, 0.35)", color: "#ffd700", padding: "0.15rem 0.45rem", borderRadius: "4px", fontWeight: "800" }}>
-                                    🎲 #{pickPos + 1} пик
+                                    #{pickPos + 1} пик
                                   </span>
                                 );
                               }
