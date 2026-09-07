@@ -71,27 +71,29 @@ export async function POST(request: NextRequest) {
     const currentState = readDraftState();
 
     if (body.action === "setup") {
-      const captains = body.captains || ["Капитан 1", "Капитан 2", "Капитан 3", "Капитан 4"];
+      const rawCaptains = body.captains || ["Капитан 1", "Капитан 2", "Капитан 3", "Капитан 4"];
       const poolInput = body.poolInput || "";
       const availablePlayers: string[] = body.availablePlayers || [];
 
-      // Randomized Snake Draft (captains' pick order is chosen at random)
-      let turnSequence: number[] = [];
-      if (Array.isArray(body.turnSequence) && body.turnSequence.length > 0) {
-        turnSequence = body.turnSequence;
-      } else {
-        const count = captains.length || 4;
-        const order = Array.from({ length: count }, (_, i) => i).sort(() => Math.random() - 0.5);
-        const revOrder = [...order].reverse();
-        const totalPicks = availablePlayers.length > 0 ? availablePlayers.length : 16;
-        let round = 0;
-        while (turnSequence.length < totalPicks) {
-          if (round % 2 === 0) turnSequence.push(...order);
-          else turnSequence.push(...revOrder);
-          round++;
+      // Randomly shuffle captains so Team 1 is 1st pick, Team 2 is 2nd, etc.
+      let captains = [...rawCaptains];
+      if (body.randomize !== false) {
+        for (let i = captains.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [captains[i], captains[j]] = [captains[j], captains[i]];
         }
-        turnSequence = turnSequence.slice(0, totalPicks);
       }
+
+      // Standard Snake Sequence: 0, 1, 2, 3, 3, 2, 1, 0...
+      const totalPicks = availablePlayers.length > 0 ? availablePlayers.length : 16;
+      const turnSequence: number[] = [];
+      let round = 0;
+      while (turnSequence.length < totalPicks) {
+        if (round % 2 === 0) turnSequence.push(0, 1, 2, 3);
+        else turnSequence.push(3, 2, 1, 0);
+        round++;
+      }
+      const finalTurnSeq = turnSequence.slice(0, totalPicks);
 
       const newState: DraftState = {
         step: "picking",
@@ -99,7 +101,7 @@ export async function POST(request: NextRequest) {
         poolInput,
         availablePlayers,
         teams: [[captains[0]], [captains[1]], [captains[2]], [captains[3]]],
-        turnSequence,
+        turnSequence: finalTurnSeq,
         currentStepIndex: 0,
         roomAssignment: null,
         updatedAt: Date.now()
@@ -111,18 +113,13 @@ export async function POST(request: NextRequest) {
 
     if (body.action === "reroll_order") {
       if (currentState.step === "picking" && currentState.currentStepIndex === 0) {
-        const count = currentState.captains.length || 4;
-        const order = Array.from({ length: count }, (_, i) => i).sort(() => Math.random() - 0.5);
-        const revOrder = [...order].reverse();
-        const totalPicks = currentState.availablePlayers.length > 0 ? currentState.availablePlayers.length : 16;
-        const turnSequence: number[] = [];
-        let round = 0;
-        while (turnSequence.length < totalPicks) {
-          if (round % 2 === 0) turnSequence.push(...order);
-          else turnSequence.push(...revOrder);
-          round++;
+        const captains = [...currentState.captains];
+        for (let i = captains.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [captains[i], captains[j]] = [captains[j], captains[i]];
         }
-        currentState.turnSequence = turnSequence.slice(0, totalPicks);
+        currentState.captains = captains as [string, string, string, string];
+        currentState.teams = [[captains[0]], [captains[1]], [captains[2]], [captains[3]]];
         currentState.currentStepIndex = 0;
         currentState.updatedAt = Date.now();
         writeDraftState(currentState);
