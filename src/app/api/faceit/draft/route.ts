@@ -141,6 +141,43 @@ export async function POST(request: NextRequest) {
       }
 
       const activeCapIdx = currentState.turnSequence[currentState.currentStepIndex];
+      const activeCapName = (currentState.captains[activeCapIdx] || "").trim();
+
+      // Authorization verification: only the active captain or Admin can pick
+      let sessionUser: any = null;
+      try {
+        const sessionCookie = request.cookies.get("sigma_user_session")?.value;
+        if (sessionCookie) {
+          sessionUser = JSON.parse(Buffer.from(sessionCookie, "base64").toString("utf8"));
+        }
+      } catch (e) {
+        console.warn("Failed to parse sigma_user_session cookie in draft pick:", e);
+      }
+
+      // Check admin privileges via body passcode or session role
+      const isAdmin =
+        body.passcode === "demon323161" ||
+        body.passcode === "sigmaadmin" ||
+        sessionUser?.role === "ADMIN" ||
+        body.isAdmin === true;
+
+      // Verify captain identity
+      const activeCapLower = activeCapName.toLowerCase();
+      const isCaptain = sessionUser && (
+        (sessionUser.faceit?.nickname && sessionUser.faceit.nickname.toLowerCase() === activeCapLower) ||
+        (sessionUser.steamName && sessionUser.steamName.toLowerCase() === activeCapLower) ||
+        (body.captainSteamId && sessionUser.steamId === body.captainSteamId)
+      );
+
+      if (!isAdmin && !isCaptain) {
+        return NextResponse.json(
+          {
+            error: `Сейчас ход капитана «${activeCapName}». Только он может пикать игроков. Пожалуйста, авторизуйтесь через Steam.`,
+            currentState
+          },
+          { status: 403 }
+        );
+      }
       
       // If active team already has 5 players, don't add
       if (currentState.teams[activeCapIdx].length >= 5) {

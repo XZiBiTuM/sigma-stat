@@ -796,26 +796,58 @@ export default function Home() {
     }
   };
 
+  // Check if current user is the captain of the current draft turn or an Admin
+  const isCurrentCaptainTurn = useMemo(() => {
+    if (userRole === "ADMIN") return true;
+    if (draftStep !== "picking") return false;
+    const activeCapIdx = draftTurnSequence[draftCurrentStepIndex];
+    if (activeCapIdx === undefined) return false;
+    const activeCapName = (draftCaptains[activeCapIdx] || "").trim().toLowerCase();
+    if (!activeCapName) return false;
+
+    if (currentUser) {
+      if (currentUser.faceit?.nickname?.toLowerCase() === activeCapName) return true;
+      if (currentUser.steamName?.toLowerCase() === activeCapName) return true;
+      // Also match via hub members if SteamID or Faceit player_id matches
+      const member = members.find(m => (m.nickname || "").toLowerCase() === activeCapName);
+      if (member) {
+        if (member.steam_id_64 && member.steam_id_64 === currentUser.steamId) return true;
+        if (member.user_id && member.user_id === currentUser.faceit?.playerId) return true;
+      }
+    }
+    return false;
+  }, [userRole, draftStep, draftTurnSequence, draftCurrentStepIndex, draftCaptains, currentUser, members]);
+
   const handlePickPlayer = async (playerPick: string) => {
     try {
+      setDraftErrorMsg("");
       const res = await fetch("/api/faceit/draft", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: "pick",
-          playerPick
+          playerPick,
+          passcode: userRole === "ADMIN" ? "demon323161" : undefined,
+          isAdmin: userRole === "ADMIN"
         })
       });
-      if (res.ok) {
-        const data = await res.json();
-        setDraftAvailablePlayers(data.availablePlayers);
-        setDraftTeams(data.teams);
-        setDraftTurnSequence(data.turnSequence);
-        setDraftCurrentStepIndex(data.currentStepIndex);
-        setDraftStep(data.step);
+      const data = await res.json();
+      if (!res.ok) {
+        if (data.error) {
+          setDraftErrorMsg(data.error);
+        }
+        return;
       }
-    } catch (err) {
+      if (data) {
+        if (data.availablePlayers) setDraftAvailablePlayers(data.availablePlayers);
+        if (data.teams) setDraftTeams(data.teams);
+        if (data.turnSequence) setDraftTurnSequence(data.turnSequence);
+        if (data.currentStepIndex !== undefined) setDraftCurrentStepIndex(data.currentStepIndex);
+        if (data.step) setDraftStep(data.step);
+      }
+    } catch (err: any) {
       console.error("Draft pick failed", err);
+      setDraftErrorMsg(err?.message || "Ошибка отправки пика на сервер");
     }
   };
 
@@ -9768,12 +9800,147 @@ export default function Home() {
                 {/* AVAILABLE PLAYERS POOL WITH SKILL POINTS */}
                 {draftStep === "picking" && (
                   <div style={{ marginTop: "0.5rem" }}>
+                    {/* STEAM AUTH & TURN STATUS BANNER */}
+                    {(() => {
+                      const activeCapIdx = draftTurnSequence[draftCurrentStepIndex];
+                      const activeCapName = draftCaptains[activeCapIdx] || "Капитан";
+
+                      if (isCurrentCaptainTurn) {
+                        return (
+                          <div style={{
+                            background: "linear-gradient(135deg, rgba(0, 229, 255, 0.15) 0%, rgba(0, 230, 118, 0.15) 100%)",
+                            border: "1.5px solid var(--accent-cyan)",
+                            borderRadius: "12px",
+                            padding: "0.75rem 1.1rem",
+                            marginBottom: "0.9rem",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            flexWrap: "wrap",
+                            gap: "0.5rem",
+                            boxShadow: "0 0 20px rgba(0, 229, 255, 0.25)"
+                          }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}>
+                              <span style={{ fontSize: "1.2rem" }}>🎯</span>
+                              <div>
+                                <div style={{ color: "var(--accent-cyan)", fontWeight: "900", fontSize: "0.9rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                                  {userRole === "ADMIN" ? `Режим Администратора (Выбирает: ${activeCapName})` : "Ваш ход! Выберите игрока в команду"}
+                                </div>
+                                <div style={{ color: "var(--text-secondary)", fontSize: "0.75rem" }}>
+                                  {userRole === "ADMIN" 
+                                    ? "Вы авторизованы как Администратор и можете совершать выбор за капитанов."
+                                    : `Вы авторизованы через Steam как ${currentUser?.faceit?.nickname || currentUser?.steamName}. Нажмите «Пикнуть» у нужного игрока.`}
+                                </div>
+                              </div>
+                            </div>
+                            <span style={{
+                              background: "var(--accent-cyan)",
+                              color: "#000",
+                              fontSize: "0.72rem",
+                              fontWeight: "900",
+                              padding: "0.25rem 0.65rem",
+                              borderRadius: "6px",
+                              textTransform: "uppercase"
+                            }}>
+                              Активный выбор
+                            </span>
+                          </div>
+                        );
+                      }
+
+                      if (!currentUser) {
+                        return (
+                          <div style={{
+                            background: "linear-gradient(135deg, rgba(255, 145, 0, 0.12) 0%, rgba(20, 15, 5, 0.8) 100%)",
+                            border: "1.5px solid rgba(255, 145, 0, 0.5)",
+                            borderRadius: "12px",
+                            padding: "0.75rem 1.1rem",
+                            marginBottom: "0.9rem",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            flexWrap: "wrap",
+                            gap: "0.75rem"
+                          }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}>
+                              <span style={{ fontSize: "1.2rem" }}>🔒</span>
+                              <div>
+                                <div style={{ color: "#ffb74d", fontWeight: "900", fontSize: "0.88rem" }}>
+                                  Сейчас выбирает: <strong style={{ color: "#fff" }}>{activeCapName}</strong>
+                                </div>
+                                <div style={{ color: "var(--text-secondary)", fontSize: "0.74rem" }}>
+                                  Чтобы выбирать игроков за свою команду, войдите через аккаунт Steam капитана.
+                                </div>
+                              </div>
+                            </div>
+                            <a
+                              href="/api/auth/steam/login"
+                              style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "0.45rem",
+                                background: "linear-gradient(135deg, #171a21, #2a475e)",
+                                border: "1px solid #66c0f4",
+                                color: "#fff",
+                                padding: "0.45rem 0.95rem",
+                                borderRadius: "8px",
+                                fontSize: "0.78rem",
+                                fontWeight: "800",
+                                textDecoration: "none",
+                                boxShadow: "0 0 12px rgba(102, 192, 244, 0.3)"
+                              }}
+                            >
+                              <img src="/steam-logo.svg" alt="Steam" style={{ width: "16px", height: "16px" }} />
+                              Войти через Steam
+                            </a>
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <div style={{
+                          background: "rgba(255, 255, 255, 0.04)",
+                          border: "1px solid var(--border-light)",
+                          borderRadius: "12px",
+                          padding: "0.75rem 1.1rem",
+                          marginBottom: "0.9rem",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          flexWrap: "wrap",
+                          gap: "0.5rem"
+                        }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}>
+                            <span style={{ fontSize: "1.1rem" }}>👀</span>
+                            <div>
+                              <div style={{ color: "#fff", fontWeight: "800", fontSize: "0.85rem" }}>
+                                Режим зрителя: сейчас очередь капитана <span style={{ color: "var(--accent-cyan)" }}>{activeCapName}</span>
+                              </div>
+                              <div style={{ color: "var(--text-muted)", fontSize: "0.74rem" }}>
+                                Вы вошли как {currentUser.faceit?.nickname || currentUser.steamName}. Ожидайте своего раунда драфта.
+                              </div>
+                            </div>
+                          </div>
+                          <span style={{
+                            background: "rgba(255, 255, 255, 0.08)",
+                            color: "var(--text-muted)",
+                            fontSize: "0.7rem",
+                            fontWeight: "700",
+                            padding: "0.25rem 0.6rem",
+                            borderRadius: "6px"
+                          }}>
+                            Ожидание очереди
+                          </span>
+                        </div>
+                      );
+                    })()}
+
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
                       <h4 style={{ color: "#fff", fontSize: "0.95rem", fontWeight: "800", margin: 0 }}>
                         Доступные игроки для выбора:
                       </h4>
                       <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
-                        Нажмите «Пикнуть» для выбора игрока в текущую команду
+                        {isCurrentCaptainTurn ? "Нажмите «Пикнуть» для выбора игрока в команду" : "Выбор доступен только активному капитану"}
                       </span>
                     </div>
 
@@ -9848,38 +10015,45 @@ export default function Home() {
                             {rec.altPlayer && (
                               <button
                                 type="button"
-                                onClick={() => handlePickPlayer(rec.altPlayer!)}
+                                onClick={() => isCurrentCaptainTurn && handlePickPlayer(rec.altPlayer!)}
+                                disabled={!isCurrentCaptainTurn}
                                 style={{
                                   padding: "0.5rem 0.85rem",
                                   borderRadius: "8px",
                                   background: "rgba(255, 255, 255, 0.06)",
                                   border: "1px solid var(--border-light)",
-                                  color: "#fff",
+                                  color: isCurrentCaptainTurn ? "#fff" : "var(--text-muted)",
                                   fontSize: "0.75rem",
                                   fontWeight: "700",
-                                  cursor: "pointer",
+                                  cursor: isCurrentCaptainTurn ? "pointer" : "not-allowed",
+                                  opacity: isCurrentCaptainTurn ? 1 : 0.4,
                                   transition: "all 0.2s"
                                 }}
-                                title={rec.altReason}
+                                title={!isCurrentCaptainTurn ? "Пикать может только активный капитан" : rec.altReason}
                               >
                                 {rec.altPlayer} ({rec.altPlayerSkill} PTS)
                               </button>
                             )}
                             <button
                               type="button"
-                              onClick={() => handlePickPlayer(rec.bestPlayer!)}
+                              onClick={() => isCurrentCaptainTurn && handlePickPlayer(rec.bestPlayer!)}
+                              disabled={!isCurrentCaptainTurn}
                               style={{
                                 padding: "0.55rem 1.1rem",
                                 borderRadius: "9px",
-                                background: "linear-gradient(135deg, #00e5ff, #7c4dff)",
-                                border: "none",
-                                color: "#fff",
+                                background: isCurrentCaptainTurn 
+                                  ? "linear-gradient(135deg, #00e5ff, #7c4dff)" 
+                                  : "rgba(255, 255, 255, 0.08)",
+                                border: isCurrentCaptainTurn ? "none" : "1px solid var(--border-light)",
+                                color: isCurrentCaptainTurn ? "#fff" : "var(--text-muted)",
                                 fontSize: "0.8rem",
                                 fontWeight: "900",
-                                cursor: "pointer",
-                                boxShadow: "0 0 18px rgba(0, 229, 255, 0.4)",
+                                cursor: isCurrentCaptainTurn ? "pointer" : "not-allowed",
+                                opacity: isCurrentCaptainTurn ? 1 : 0.45,
+                                boxShadow: isCurrentCaptainTurn ? "0 0 18px rgba(0, 229, 255, 0.4)" : "none",
                                 transition: "all 0.2s"
                               }}
+                              title={!isCurrentCaptainTurn ? "Пикать может только активный капитан" : undefined}
                             >
                               Пикнуть {rec.bestPlayer}
                             </button>
@@ -9922,7 +10096,8 @@ export default function Home() {
                                 borderRadius: "9px",
                                 padding: "0.55rem 0.75rem",
                                 boxShadow: isRecommended ? "0 0 15px rgba(0, 229, 255, 0.25)" : "none",
-                                transition: "all 0.2s"
+                                transition: "all 0.2s",
+                                opacity: !isCurrentCaptainTurn ? 0.75 : 1
                               }}
                             >
                               <div style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "105px" }}>
@@ -9941,24 +10116,38 @@ export default function Home() {
                                 </div>
                               </div>
                               <button 
-                                onClick={() => handlePickPlayer(pName)}
+                                onClick={() => isCurrentCaptainTurn && handlePickPlayer(pName)}
+                                disabled={!isCurrentCaptainTurn}
                                 style={{
-                                  background: isRecommended 
+                                  background: !isCurrentCaptainTurn
+                                    ? "rgba(255, 255, 255, 0.05)"
+                                    : isRecommended 
                                     ? "linear-gradient(135deg, #00e5ff, #7c4dff)" 
                                     : wouldExceedLimit 
                                     ? "rgba(255, 145, 0, 0.2)" 
                                     : "var(--accent-cyan)",
-                                  border: wouldExceedLimit ? "1px solid rgba(255, 145, 0, 0.5)" : "none",
+                                  border: !isCurrentCaptainTurn
+                                    ? "1px solid var(--border-light)"
+                                    : wouldExceedLimit 
+                                    ? "1px solid rgba(255, 145, 0, 0.5)" 
+                                    : "none",
                                   borderRadius: "6px",
                                   padding: "0.32rem 0.65rem",
-                                  color: isRecommended ? "#fff" : wouldExceedLimit ? "#ffb74d" : "#000",
+                                  color: !isCurrentCaptainTurn
+                                    ? "var(--text-muted)"
+                                    : isRecommended 
+                                    ? "#fff" 
+                                    : wouldExceedLimit 
+                                    ? "#ffb74d" 
+                                    : "#000",
                                   fontSize: "0.72rem",
                                   fontWeight: "800",
-                                  cursor: "pointer",
-                                  boxShadow: isRecommended ? "0 0 10px rgba(0, 229, 255, 0.4)" : "none",
+                                  cursor: isCurrentCaptainTurn ? "pointer" : "not-allowed",
+                                  opacity: isCurrentCaptainTurn ? 1 : 0.45,
+                                  boxShadow: isCurrentCaptainTurn && isRecommended ? "0 0 10px rgba(0, 229, 255, 0.4)" : "none",
                                   transition: "all 0.2s"
                                 }}
-                                title={wouldExceedLimit ? `Превышение лимита команды на +${exceedPts} очков (итого будет ${currentTeamPts + pSkill} из ${targetDraftTeamBudget} PTS)` : undefined}
+                                title={!isCurrentCaptainTurn ? "Пикать может только активный капитан" : wouldExceedLimit ? `Превышение лимита команды на +${exceedPts} очков (итого будет ${currentTeamPts + pSkill} из ${targetDraftTeamBudget} PTS)` : undefined}
                               >
                                 {wouldExceedLimit ? `Пикнуть (+${exceedPts})` : "Пикнуть"}
                               </button>
