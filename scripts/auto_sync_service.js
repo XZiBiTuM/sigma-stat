@@ -66,10 +66,15 @@ async function syncAll() {
           playerPings++;
         }
       }
+    }
+
     // Check weekly skill recalibration
     const rWeekly = await pingEndpoint(`/api/faceit/weekly-skill?checkAuto=1`);
 
-    console.log(`[SYNC COMPLETE] ${r1} | ${r3} | ${r4} | ${rWeekly} | Refreshed ${playerPings} players | Synced ${statsPings} match stats`);
+    // Sync tournament bracket matches with FACEIT Hub matches in real-time
+    const rBracket = await pingEndpoint(`/api/tournament/bracket/sync`);
+
+    console.log(`[SYNC COMPLETE] ${r1} | ${r3} | ${r4} | ${rWeekly} | ${rBracket} | Refreshed ${playerPings} players | Synced ${statsPings} match stats`);
   } catch (e) {
     console.error("Sync error:", e);
   }

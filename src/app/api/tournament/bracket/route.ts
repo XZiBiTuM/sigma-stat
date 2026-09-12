@@ -39,6 +39,7 @@ export interface BracketMatch {
   status: "UPCOMING" | "LIVE" | "FINISHED";
   roomZone?: "vip" | "main" | null;
   scheduledTime?: string;
+  faceitMatchId?: string;
 }
 
 export interface BracketState {
@@ -95,17 +96,17 @@ export function generateDefaultBracket(captains: string[] = ["nycujan", "nika_jo
     };
   });
 
-  // Standard 4-Team Round-Robin (3 Rounds, 2 BO2 matches per round = 6 matches total)
-  // Round 1: Team 1 vs Team 4, Team 2 vs Team 3
-  // Round 2: Team 1 vs Team 3, Team 4 vs Team 2
-  // Round 3: Team 1 vs Team 2, Team 3 vs Team 4
+  // Round-Robin Match schedule:
+  // Round 1: XZiBiTuM (team_3) vs massao61 (team_4), nika_jok (team_2) vs nycujan (team_1)
+  // Round 2: XZiBiTuM (team_3) vs nycujan (team_1), massao61 (team_4) vs nika_jok (team_2)
+  // Round 3: XZiBiTuM (team_3) vs nika_jok (team_2), massao61 (team_4) vs nycujan (team_1)
   const matches: BracketMatch[] = [
-    { id: "m1", round: 1, team1Id: "team_1", team2Id: "team_4", score1: null, score2: null, map1: "de_mirage", map2: "de_dust2", status: "UPCOMING", roomZone: "vip" },
-    { id: "m2", round: 1, team1Id: "team_2", team2Id: "team_3", score1: null, score2: null, map1: "de_inferno", map2: "de_nuke", status: "UPCOMING", roomZone: "main" },
-    { id: "m3", round: 2, team1Id: "team_1", team2Id: "team_3", score1: null, score2: null, map1: "de_ancient", map2: "de_anubis", status: "UPCOMING", roomZone: "vip" },
-    { id: "m4", round: 2, team1Id: "team_4", team2Id: "team_2", score1: null, score2: null, map1: "de_mirage", map2: "de_inferno", status: "UPCOMING", roomZone: "main" },
-    { id: "m5", round: 3, team1Id: "team_1", team2Id: "team_2", score1: null, score2: null, map1: "de_nuke", map2: "de_ancient", status: "UPCOMING", roomZone: "vip" },
-    { id: "m6", round: 3, team1Id: "team_3", team2Id: "team_4", score1: null, score2: null, map1: "de_dust2", map2: "de_anubis", status: "UPCOMING", roomZone: "main" }
+    { id: "m1", round: 1, team1Id: "team_3", team2Id: "team_4", score1: null, score2: null, status: "UPCOMING", roomZone: "vip" },
+    { id: "m2", round: 1, team1Id: "team_2", team2Id: "team_1", score1: null, score2: null, status: "UPCOMING", roomZone: "main" },
+    { id: "m3", round: 2, team1Id: "team_3", team2Id: "team_1", score1: null, score2: null, status: "UPCOMING", roomZone: "vip" },
+    { id: "m4", round: 2, team1Id: "team_4", team2Id: "team_2", score1: null, score2: null, status: "UPCOMING", roomZone: "main" },
+    { id: "m5", round: 3, team1Id: "team_3", team2Id: "team_2", score1: null, score2: null, status: "UPCOMING", roomZone: "vip" },
+    { id: "m6", round: 3, team1Id: "team_4", team2Id: "team_1", score1: null, score2: null, status: "UPCOMING", roomZone: "main" }
   ];
 
   return {
@@ -252,6 +253,7 @@ export async function POST(request: NextRequest) {
 
     // 2. Action: update match score / status / maps
     if (body.action === "update_match") {
+      const u = body.updates || body;
       const { 
         matchId, 
         score1, 
@@ -263,8 +265,9 @@ export async function POST(request: NextRequest) {
         map1Score2, 
         map2Score1, 
         map2Score2, 
-        roomZone 
-      } = body;
+        roomZone,
+        faceitMatchId
+      } = { ...body, ...u, matchId: body.matchId || u.matchId };
       const mIdx = current.matches.findIndex(m => m.id === matchId);
       if (mIdx === -1) {
         return NextResponse.json({ error: "Матч не найден" }, { status: 404 });
@@ -281,6 +284,7 @@ export async function POST(request: NextRequest) {
       if (map2Score1 !== undefined) match.map2Score1 = map2Score1 === null || map2Score1 === "" ? null : Number(map2Score1);
       if (map2Score2 !== undefined) match.map2Score2 = map2Score2 === null || map2Score2 === "" ? null : Number(map2Score2);
       if (roomZone !== undefined) match.roomZone = roomZone;
+      if (faceitMatchId !== undefined) match.faceitMatchId = faceitMatchId;
 
       current.updatedAt = Date.now();
       writeBracket(current);
@@ -289,7 +293,9 @@ export async function POST(request: NextRequest) {
 
     // 3. Action: update team name / logo
     if (body.action === "update_team") {
-      const { teamId, name, primaryColor, secondaryColor, players } = body;
+      const u = body.updates || body;
+      const teamId = body.teamId || u.teamId;
+      const { name, primaryColor, secondaryColor, players } = { ...body, ...u };
       const tIdx = current.teams.findIndex(t => t.id === teamId);
       if (tIdx === -1) {
         return NextResponse.json({ error: "Команда не найдена" }, { status: 404 });
