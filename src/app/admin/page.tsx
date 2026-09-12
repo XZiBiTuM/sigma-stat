@@ -773,23 +773,20 @@ export default function AdminLoginPage() {
             {currentRole === "ADMIN" && (
               <div style={{
                 marginTop: "1.5rem",
-                background: "rgba(245, 158, 11, 0.05)",
-                border: "1px solid rgba(245, 158, 11, 0.35)",
+                background: "rgba(255, 198, 25, 0.05)",
+                border: "1px solid rgba(255, 198, 25, 0.35)",
                 borderRadius: "18px",
                 padding: "1.5rem",
                 textAlign: "left"
               }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem", flexWrap: "wrap", gap: "0.75rem" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <span style={{ fontSize: "1.35rem" }}>🏆</span>
-                    <div>
-                      <h3 style={{ margin: 0, fontSize: "1.1rem", color: "#fbbf24" }}>
-                        Сетка и Матчи Турнира (Round-Robin)
-                      </h3>
-                      <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-muted)" }}>
-                        Управление счетом матчей, картами, статусами и составами команд
-                      </p>
-                    </div>
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: "1.1rem", color: "#ffc619" }}>
+                      Сетка и Матчи Турнира (Round-Robin BO2)
+                    </h3>
+                    <p style={{ margin: "0.2rem 0 0 0", fontSize: "0.75rem", color: "var(--text-muted)" }}>
+                      Формат BO2 (2:0 = 2 очка, 1:1 = 1 очко, 0:2 = 0 очков). Управление счетом матчей, картами и составами.
+                    </p>
                   </div>
 
                   <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
@@ -808,7 +805,7 @@ export default function AdminLoginPage() {
                         cursor: "pointer"
                       }}
                     >
-                      {isLoadingBracket ? "Загрузка..." : "🔄 Обновить"}
+                      {isLoadingBracket ? "Загрузка..." : "Обновить"}
                     </button>
                     <button
                       type="button"
@@ -817,15 +814,15 @@ export default function AdminLoginPage() {
                       style={{
                         padding: "0.4rem 0.9rem",
                         borderRadius: "8px",
-                        background: "rgba(245, 158, 11, 0.2)",
-                        border: "1px solid rgba(245, 158, 11, 0.5)",
-                        color: "#fbbf24",
+                        background: "rgba(255, 198, 25, 0.15)",
+                        border: "1px solid rgba(255, 198, 25, 0.4)",
+                        color: "#ffc619",
                         fontSize: "0.75rem",
                         fontWeight: "800",
                         cursor: isSavingBracket ? "not-allowed" : "pointer"
                       }}
                     >
-                      ⚡ Импорт из Драфта
+                      Импорт из Драфта
                     </button>
                   </div>
                 </div>
@@ -834,9 +831,9 @@ export default function AdminLoginPage() {
                   <div style={{
                     padding: "0.6rem 0.9rem",
                     borderRadius: "8px",
-                    background: bracketMsg.startsWith("Ошибка") ? "rgba(255, 73, 73, 0.15)" : "rgba(245, 158, 11, 0.15)",
-                    border: `1px solid ${bracketMsg.startsWith("Ошибка") ? "#ff4949" : "#fbbf24"}`,
-                    color: bracketMsg.startsWith("Ошибка") ? "#ff7b7b" : "#fbbf24",
+                    background: bracketMsg.startsWith("Ошибка") ? "rgba(255, 73, 73, 0.15)" : "rgba(255, 198, 25, 0.15)",
+                    border: `1px solid ${bracketMsg.startsWith("Ошибка") ? "#ff4949" : "#ffc619"}`,
+                    color: bracketMsg.startsWith("Ошибка") ? "#ff7b7b" : "#ffc619",
                     fontSize: "0.82rem",
                     marginBottom: "1rem"
                   }}>
@@ -847,14 +844,16 @@ export default function AdminLoginPage() {
                 {/* TEAMS SUMMARY */}
                 {bracketData?.teams && (
                   <div style={{ marginBottom: "1.5rem" }}>
-                    <div style={{ fontSize: "0.8rem", fontWeight: "700", color: "#fbbf24", textTransform: "uppercase", marginBottom: "0.5rem" }}>
+                    <div style={{ fontSize: "0.8rem", fontWeight: "700", color: "#ffc619", textTransform: "uppercase", marginBottom: "0.5rem" }}>
                       Команды ({bracketData.teams.length})
                     </div>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "0.75rem" }}>
                       {bracketData.teams.map((t: any) => (
                         <div key={t.id} style={{ background: "rgba(0,0,0,0.35)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "10px", padding: "0.75rem" }}>
                           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.4rem" }}>
-                            <span style={{ fontSize: "1.2rem" }}>{t.logo?.icon || "🛡️"}</span>
+                            <span style={{ fontSize: "0.75rem", padding: "0.2rem 0.4rem", borderRadius: "6px", background: "rgba(255,198,25,0.15)", color: "#ffc619", fontWeight: "800", fontFamily: "var(--font-mono)" }}>
+                              {t.name.replace(/^team\s+/i, "").slice(0, 2).toUpperCase()}
+                            </span>
                             <input
                               type="text"
                               value={t.name}
@@ -878,10 +877,10 @@ export default function AdminLoginPage() {
                             />
                           </div>
                           <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
-                            Капитан: <strong style={{ color: "#fbbf24" }}>{t.captain || "—"}</strong>
+                            Капитан: <strong style={{ color: "#ffc619" }}>{t.captain || "—"}</strong>
                           </div>
                           <div style={{ fontSize: "0.7rem", color: "var(--text-secondary)", marginTop: "0.25rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                            Состав: {t.members?.join(", ") || "—"}
+                            Состав: {t.players?.join(", ") || t.members?.join(", ") || "—"}
                           </div>
                         </div>
                       ))}
@@ -892,8 +891,8 @@ export default function AdminLoginPage() {
                 {/* MATCHES LIST */}
                 {bracketData?.matches && (
                   <div>
-                    <div style={{ fontSize: "0.8rem", fontWeight: "700", color: "#fbbf24", textTransform: "uppercase", marginBottom: "0.75rem" }}>
-                      Расписание матчей и счёт (3 тура)
+                    <div style={{ fontSize: "0.8rem", fontWeight: "700", color: "#ffc619", textTransform: "uppercase", marginBottom: "0.75rem" }}>
+                      Матчи турнира (BO2 - вводите счёт по картам: 2:0, 1:1, 0:2)
                     </div>
                     <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                       {bracketData.matches.map((m: any) => {
@@ -905,7 +904,7 @@ export default function AdminLoginPage() {
                             key={m.id} 
                             style={{ 
                               background: "rgba(0,0,0,0.45)", 
-                              border: m.status === 'LIVE' ? "1px solid rgba(239, 68, 68, 0.6)" : "1px solid rgba(255,255,255,0.1)", 
+                              border: m.status === 'LIVE' ? "1px solid rgba(255, 23, 68, 0.6)" : "1px solid rgba(255,255,255,0.1)", 
                               borderRadius: "12px", 
                               padding: "0.85rem 1rem",
                               display: "flex",
@@ -914,23 +913,47 @@ export default function AdminLoginPage() {
                             }}
                           >
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.75rem" }}>
-                              <span style={{ fontWeight: "700", color: "#fbbf24" }}>ТУР {m.round} • {m.id}</span>
+                              <span style={{ fontWeight: "700", color: "#ffc619" }}>ТУР {m.round} • BO2</span>
                               <div style={{ display: "flex", gap: "0.4rem", alignItems: "center" }}>
-                                <label style={{ color: "var(--text-muted)", fontSize: "0.7rem" }}>Карта:</label>
+                                <label style={{ color: "var(--text-muted)", fontSize: "0.7rem" }}>Карта 1:</label>
                                 <input
                                   type="text"
                                   placeholder="de_mirage"
-                                  value={m.map || ""}
+                                  value={m.map1 || m.map || ""}
                                   onChange={e => {
                                     const val = e.target.value;
                                     setBracketData((prev: any) => ({
                                       ...prev,
-                                      matches: prev.matches.map((item: any) => item.id === m.id ? { ...item, map: val } : item)
+                                      matches: prev.matches.map((item: any) => item.id === m.id ? { ...item, map1: val } : item)
                                     }));
                                   }}
-                                  onBlur={e => handleUpdateBracketMatch(m.id, { map: e.target.value })}
+                                  onBlur={e => handleUpdateBracketMatch(m.id, { map1: e.target.value })}
                                   style={{
-                                    width: "90px",
+                                    width: "80px",
+                                    padding: "0.2rem 0.4rem",
+                                    borderRadius: "6px",
+                                    background: "#06050c",
+                                    border: "1px solid rgba(255,255,255,0.15)",
+                                    color: "#fff",
+                                    fontSize: "0.72rem"
+                                  }}
+                                />
+
+                                <label style={{ color: "var(--text-muted)", fontSize: "0.7rem" }}>Карта 2:</label>
+                                <input
+                                  type="text"
+                                  placeholder="de_dust2"
+                                  value={m.map2 || ""}
+                                  onChange={e => {
+                                    const val = e.target.value;
+                                    setBracketData((prev: any) => ({
+                                      ...prev,
+                                      matches: prev.matches.map((item: any) => item.id === m.id ? { ...item, map2: val } : item)
+                                    }));
+                                  }}
+                                  onBlur={e => handleUpdateBracketMatch(m.id, { map2: e.target.value })}
+                                  style={{
+                                    width: "80px",
                                     padding: "0.2rem 0.4rem",
                                     borderRadius: "6px",
                                     background: "#06050c",
@@ -953,16 +976,16 @@ export default function AdminLoginPage() {
                                   style={{
                                     padding: "0.2rem 0.4rem",
                                     borderRadius: "6px",
-                                    background: m.status === 'LIVE' ? 'rgba(239, 68, 68, 0.2)' : '#06050c',
-                                    border: m.status === 'LIVE' ? '1px solid #ef4444' : '1px solid rgba(255,255,255,0.15)',
-                                    color: m.status === 'LIVE' ? '#f87171' : m.status === 'FINISHED' ? '#4ade80' : '#60a5fa',
+                                    background: m.status === 'LIVE' ? 'rgba(255, 23, 68, 0.2)' : '#06050c',
+                                    border: m.status === 'LIVE' ? '1px solid #ff1744' : '1px solid rgba(255,255,255,0.15)',
+                                    color: m.status === 'LIVE' ? '#ff1744' : m.status === 'FINISHED' ? 'var(--success)' : 'var(--text-secondary)',
                                     fontSize: "0.72rem",
                                     fontWeight: "700"
                                   }}
                                 >
                                   <option value="UPCOMING">Ожидается</option>
-                                  <option value="LIVE">LIVE 🔴</option>
-                                  <option value="FINISHED">Завершён 🏁</option>
+                                  <option value="LIVE">LIVE</option>
+                                  <option value="FINISHED">Завершён</option>
                                 </select>
                               </div>
                             </div>
@@ -971,16 +994,18 @@ export default function AdminLoginPage() {
                             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
                               {/* Team 1 */}
                               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flex: 1, minWidth: "120px" }}>
-                                <span>{t1?.logo?.icon || "🛡️"}</span>
+                                <span style={{ fontSize: "0.75rem", padding: "0.15rem 0.35rem", borderRadius: "4px", background: "rgba(255,255,255,0.06)", color: "#fff", fontWeight: "800" }}>
+                                  {(t1?.name || "T1").replace(/^team\s+/i, "").slice(0, 2).toUpperCase()}
+                                </span>
                                 <span style={{ fontWeight: "700", fontSize: "0.85rem", color: "#fff" }}>{t1?.name || "Команда 1"}</span>
                               </div>
 
-                              {/* Scores inputs */}
+                              {/* Scores inputs (BO2 format: 0, 1, or 2) */}
                               <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
                                 <input
                                   type="number"
                                   min={0}
-                                  max={30}
+                                  max={2}
                                   placeholder="0"
                                   value={m.score1 ?? ""}
                                   onChange={e => {
@@ -996,8 +1021,8 @@ export default function AdminLoginPage() {
                                     padding: "0.3rem",
                                     borderRadius: "6px",
                                     background: "#06050c",
-                                    border: "1px solid rgba(245, 158, 11, 0.4)",
-                                    color: "#fbbf24",
+                                    border: "1px solid rgba(255, 198, 25, 0.4)",
+                                    color: "#ffc619",
                                     fontWeight: "800",
                                     fontSize: "0.95rem"
                                   }}
@@ -1006,7 +1031,7 @@ export default function AdminLoginPage() {
                                 <input
                                   type="number"
                                   min={0}
-                                  max={30}
+                                  max={2}
                                   placeholder="0"
                                   value={m.score2 ?? ""}
                                   onChange={e => {
@@ -1022,8 +1047,8 @@ export default function AdminLoginPage() {
                                     padding: "0.3rem",
                                     borderRadius: "6px",
                                     background: "#06050c",
-                                    border: "1px solid rgba(245, 158, 11, 0.4)",
-                                    color: "#fbbf24",
+                                    border: "1px solid rgba(255, 198, 25, 0.4)",
+                                    color: "#ffc619",
                                     fontWeight: "800",
                                     fontSize: "0.95rem"
                                   }}
@@ -1041,22 +1066,24 @@ export default function AdminLoginPage() {
                                     marginLeft: "0.4rem",
                                     padding: "0.3rem 0.6rem",
                                     borderRadius: "6px",
-                                    background: "rgba(245, 158, 11, 0.2)",
-                                    border: "1px solid rgba(245, 158, 11, 0.4)",
-                                    color: "#fbbf24",
+                                    background: "rgba(255, 198, 25, 0.15)",
+                                    border: "1px solid rgba(255, 198, 25, 0.4)",
+                                    color: "#ffc619",
                                     fontSize: "0.72rem",
                                     fontWeight: "700",
                                     cursor: "pointer"
                                   }}
                                 >
-                                  💾 Сохранить
+                                  Сохранить
                                 </button>
                               </div>
 
                               {/* Team 2 */}
                               <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "0.5rem", flex: 1, minWidth: "120px" }}>
                                 <span style={{ fontWeight: "700", fontSize: "0.85rem", color: "#fff" }}>{t2?.name || "Команда 2"}</span>
-                                <span>{t2?.logo?.icon || "🛡️"}</span>
+                                <span style={{ fontSize: "0.75rem", padding: "0.15rem 0.35rem", borderRadius: "4px", background: "rgba(255,255,255,0.06)", color: "#fff", fontWeight: "800" }}>
+                                  {(t2?.name || "T2").replace(/^team\s+/i, "").slice(0, 2).toUpperCase()}
+                                </span>
                               </div>
                             </div>
                           </div>

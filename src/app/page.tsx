@@ -3043,11 +3043,11 @@ export default function Home() {
                       .catch(() => {});
                   }}
                   style={{
-                    borderColor: activeTab === 'bracket' ? '#f59e0b' : undefined,
-                    color: activeTab === 'bracket' ? '#f59e0b' : undefined
+                    borderColor: activeTab === 'bracket' ? '#ffc619' : undefined,
+                    color: activeTab === 'bracket' ? '#ffc619' : undefined
                   }}
                 >
-                  🏆 Сетка турнира
+                  Сетка турнира
                 </button>
               </div>
 

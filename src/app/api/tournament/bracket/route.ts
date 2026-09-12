@@ -6,7 +6,7 @@ const BRACKET_FILE = path.join(process.cwd(), "src/lib/tournament_bracket.json")
 const PERSISTENT_FILE = path.join(process.cwd(), "..", "sigma_persistent_tournament_bracket.json");
 
 export interface TeamLogo {
-  mascot: string;
+  mascot?: string;
   badgeShape: "shield" | "hexagon" | "diamond" | "circle";
   primaryColor: string;
   secondaryColor: string;
@@ -26,9 +26,16 @@ export interface BracketMatch {
   round: number; // 1, 2, 3
   team1Id: string;
   team2Id: string;
+  // BO2 series score: e.g. 2:0, 1:1, 0:2
   score1: number | null;
   score2: number | null;
-  map: string; // e.g. "de_mirage"
+  // Individual map rounds if tracked
+  map1?: string;
+  map2?: string;
+  map1Score1?: number | null;
+  map1Score2?: number | null;
+  map2Score1?: number | null;
+  map2Score2?: number | null;
   status: "UPCOMING" | "LIVE" | "FINISHED";
   roomZone?: "vip" | "main" | null;
   scheduledTime?: string;
@@ -39,33 +46,35 @@ export interface BracketState {
   status: "NOT_STARTED" | "LIVE" | "COMPLETED";
   teams: BracketTeam[];
   matches: BracketMatch[];
+  rules: {
+    pointsWin: number; // 2
+    pointsDraw: number; // 1
+    pointsLoss: number; // 0
+    format: "BO2";
+  };
   updatedAt: number;
 }
 
 const PRESET_LOGOS: TeamLogo[] = [
   {
-    mascot: "🐺",
     badgeShape: "shield",
     primaryColor: "#00e5ff",
     secondaryColor: "#0070f3",
     bgGradient: "linear-gradient(135deg, rgba(0, 229, 255, 0.25), rgba(0, 112, 243, 0.45))"
   },
   {
-    mascot: "🦅",
     badgeShape: "hexagon",
     primaryColor: "#c084fc",
     secondaryColor: "#7c4dff",
     bgGradient: "linear-gradient(135deg, rgba(192, 132, 252, 0.25), rgba(124, 77, 255, 0.45))"
   },
   {
-    mascot: "🐯",
     badgeShape: "diamond",
     primaryColor: "#ff9100",
     secondaryColor: "#ff5252",
     bgGradient: "linear-gradient(135deg, rgba(255, 145, 0, 0.25), rgba(255, 82, 82, 0.45))"
   },
   {
-    mascot: "⚡",
     badgeShape: "shield",
     primaryColor: "#ffd700",
     secondaryColor: "#ffab00",
@@ -86,26 +95,71 @@ export function generateDefaultBracket(captains: string[] = ["nycujan", "nika_jo
     };
   });
 
-  // Standard 4-Team Round-Robin (3 Rounds, 2 matches per round = 6 matches total)
+  // Standard 4-Team Round-Robin (3 Rounds, 2 BO2 matches per round = 6 matches total)
   // Round 1: Team 1 vs Team 4, Team 2 vs Team 3
   // Round 2: Team 1 vs Team 3, Team 4 vs Team 2
   // Round 3: Team 1 vs Team 2, Team 3 vs Team 4
   const matches: BracketMatch[] = [
-    { id: "m1", round: 1, team1Id: "team_1", team2Id: "team_4", score1: null, score2: null, map: "de_mirage", status: "UPCOMING", roomZone: "vip" },
-    { id: "m2", round: 1, team1Id: "team_2", team2Id: "team_3", score1: null, score2: null, map: "de_dust2", status: "UPCOMING", roomZone: "main" },
-    { id: "m3", round: 2, team1Id: "team_1", team2Id: "team_3", score1: null, score2: null, map: "de_inferno", status: "UPCOMING", roomZone: "vip" },
-    { id: "m4", round: 2, team1Id: "team_4", team2Id: "team_2", score1: null, score2: null, map: "de_nuke", status: "UPCOMING", roomZone: "main" },
-    { id: "m5", round: 3, team1Id: "team_1", team2Id: "team_2", score1: null, score2: null, map: "de_ancient", status: "UPCOMING", roomZone: "vip" },
-    { id: "m6", round: 3, team1Id: "team_3", team2Id: "team_4", score1: null, score2: null, map: "de_anubis", status: "UPCOMING", roomZone: "main" }
+    { id: "m1", round: 1, team1Id: "team_1", team2Id: "team_4", score1: null, score2: null, map1: "de_mirage", map2: "de_dust2", status: "UPCOMING", roomZone: "vip" },
+    { id: "m2", round: 1, team1Id: "team_2", team2Id: "team_3", score1: null, score2: null, map1: "de_inferno", map2: "de_nuke", status: "UPCOMING", roomZone: "main" },
+    { id: "m3", round: 2, team1Id: "team_1", team2Id: "team_3", score1: null, score2: null, map1: "de_ancient", map2: "de_anubis", status: "UPCOMING", roomZone: "vip" },
+    { id: "m4", round: 2, team1Id: "team_4", team2Id: "team_2", score1: null, score2: null, map1: "de_mirage", map2: "de_inferno", status: "UPCOMING", roomZone: "main" },
+    { id: "m5", round: 3, team1Id: "team_1", team2Id: "team_2", score1: null, score2: null, map1: "de_nuke", map2: "de_ancient", status: "UPCOMING", roomZone: "vip" },
+    { id: "m6", round: 3, team1Id: "team_3", team2Id: "team_4", score1: null, score2: null, map1: "de_dust2", map2: "de_anubis", status: "UPCOMING", roomZone: "main" }
   ];
 
   return {
-    tournamentTitle: "Sigma Cyber Cup: Round-Robin 5x5",
+    tournamentTitle: "SIGMA CS2 TOURNAMENT",
     status: "LIVE",
     teams,
     matches,
+    rules: {
+      pointsWin: 2,
+      pointsDraw: 1,
+      pointsLoss: 0,
+      format: "BO2"
+    },
     updatedAt: Date.now()
   };
+}
+
+function sanitizeBracket(bracket: any): BracketState {
+  if (!bracket.rules) {
+    bracket.rules = {
+      pointsWin: 2,
+      pointsDraw: 1,
+      pointsLoss: 0,
+      format: "BO2"
+    };
+  } else {
+    bracket.rules.pointsWin = 2;
+    bracket.rules.pointsDraw = 1;
+    bracket.rules.pointsLoss = 0;
+    bracket.rules.format = "BO2";
+  }
+
+  // Remove any emoji mascots from team logos
+  if (Array.isArray(bracket.teams)) {
+    bracket.teams.forEach((t: any, idx: number) => {
+      if (!t.logo) {
+        t.logo = PRESET_LOGOS[idx % PRESET_LOGOS.length];
+      }
+      delete t.logo.mascot;
+      delete t.logo.icon;
+    });
+  }
+
+  // Ensure BO2 fields
+  if (Array.isArray(bracket.matches)) {
+    bracket.matches.forEach((m: any) => {
+      if (!m.map1 && m.map) {
+        m.map1 = m.map;
+        m.map2 = "de_dust2";
+      }
+    });
+  }
+
+  return bracket as BracketState;
 }
 
 function readBracket(): BracketState {
@@ -116,7 +170,8 @@ function readBracket(): BracketState {
     }
     if (fs.existsSync(target)) {
       const data = fs.readFileSync(target, "utf8");
-      return JSON.parse(data);
+      const parsed = JSON.parse(data);
+      return sanitizeBracket(parsed);
     }
   } catch (e) {
     console.error("Failed to read bracket state:", e);
@@ -195,9 +250,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, bracket: newBracket, message: "Команды успешно импортированы из драфта!" });
     }
 
-    // 2. Action: update match score / status / map
+    // 2. Action: update match score / status / maps
     if (body.action === "update_match") {
-      const { matchId, score1, score2, status, map, roomZone } = body;
+      const { 
+        matchId, 
+        score1, 
+        score2, 
+        status, 
+        map1, 
+        map2, 
+        map1Score1, 
+        map1Score2, 
+        map2Score1, 
+        map2Score2, 
+        roomZone 
+      } = body;
       const mIdx = current.matches.findIndex(m => m.id === matchId);
       if (mIdx === -1) {
         return NextResponse.json({ error: "Матч не найден" }, { status: 404 });
@@ -207,7 +274,12 @@ export async function POST(request: NextRequest) {
       if (score1 !== undefined) match.score1 = score1 === null || score1 === "" ? null : Number(score1);
       if (score2 !== undefined) match.score2 = score2 === null || score2 === "" ? null : Number(score2);
       if (status) match.status = status;
-      if (map) match.map = map;
+      if (map1 !== undefined) match.map1 = map1;
+      if (map2 !== undefined) match.map2 = map2;
+      if (map1Score1 !== undefined) match.map1Score1 = map1Score1 === null || map1Score1 === "" ? null : Number(map1Score1);
+      if (map1Score2 !== undefined) match.map1Score2 = map1Score2 === null || map1Score2 === "" ? null : Number(map1Score2);
+      if (map2Score1 !== undefined) match.map2Score1 = map2Score1 === null || map2Score1 === "" ? null : Number(map2Score1);
+      if (map2Score2 !== undefined) match.map2Score2 = map2Score2 === null || map2Score2 === "" ? null : Number(map2Score2);
       if (roomZone !== undefined) match.roomZone = roomZone;
 
       current.updatedAt = Date.now();
@@ -215,9 +287,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, bracket: current, message: "Матч успешно обновлен!" });
     }
 
-    // 3. Action: update team name / logo / mascot
+    // 3. Action: update team name / logo
     if (body.action === "update_team") {
-      const { teamId, name, mascot, primaryColor, secondaryColor, players } = body;
+      const { teamId, name, primaryColor, secondaryColor, players } = body;
       const tIdx = current.teams.findIndex(t => t.id === teamId);
       if (tIdx === -1) {
         return NextResponse.json({ error: "Команда не найдена" }, { status: 404 });
@@ -225,7 +297,6 @@ export async function POST(request: NextRequest) {
 
       if (name) current.teams[tIdx].name = name.trim();
       if (players && Array.isArray(players)) current.teams[tIdx].players = players;
-      if (mascot) current.teams[tIdx].logo.mascot = mascot;
       if (primaryColor) current.teams[tIdx].logo.primaryColor = primaryColor;
       if (secondaryColor) current.teams[tIdx].logo.secondaryColor = secondaryColor;
 
@@ -236,9 +307,10 @@ export async function POST(request: NextRequest) {
 
     // 4. Action: save whole bracket
     if (body.bracket) {
-      body.bracket.updatedAt = Date.now();
-      writeBracket(body.bracket);
-      return NextResponse.json({ success: true, bracket: body.bracket, message: "Сетка турнира успешно сохранена!" });
+      const sanitized = sanitizeBracket(body.bracket);
+      sanitized.updatedAt = Date.now();
+      writeBracket(sanitized);
+      return NextResponse.json({ success: true, bracket: sanitized, message: "Сетка турнира успешно сохранена!" });
     }
 
     return NextResponse.json({ success: true, bracket: current });

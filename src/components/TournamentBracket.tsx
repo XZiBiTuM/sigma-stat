@@ -1,21 +1,19 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 export interface TeamLogo {
-  shape: 'shield' | 'circle' | 'hexagon' | 'diamond' | 'badge';
+  badgeShape?: "shield" | "hexagon" | "diamond" | "circle";
   primaryColor: string;
   secondaryColor: string;
-  accentColor: string;
-  icon: string;
-  pattern: 'stripes' | 'solid' | 'gradient' | 'glow';
+  bgGradient?: string;
 }
 
 export interface BracketTeam {
   id: string;
   name: string;
   captain: string;
-  members: string[];
+  players: string[];
   logo: TeamLogo;
 }
 
@@ -24,66 +22,87 @@ export interface BracketMatch {
   round: number; // 1, 2, 3
   team1Id: string;
   team2Id: string;
-  score1: number | null;
-  score2: number | null;
-  status: 'UPCOMING' | 'LIVE' | 'FINISHED';
-  map?: string;
-  startTime?: string;
-  winnerId?: string;
+  score1: number | null; // e.g. 2, 1, 0
+  score2: number | null; // e.g. 0, 1, 2
+  map1?: string;
+  map2?: string;
+  map1Score1?: number | null;
+  map1Score2?: number | null;
+  map2Score1?: number | null;
+  map2Score2?: number | null;
+  status: "UPCOMING" | "LIVE" | "FINISHED";
+  roomZone?: "vip" | "main" | null;
+  scheduledTime?: string;
 }
 
 export interface BracketState {
-  tournamentName: string;
-  season: string;
-  isCompleted: boolean;
+  tournamentTitle: string;
+  status: "NOT_STARTED" | "LIVE" | "COMPLETED";
   teams: BracketTeam[];
   matches: BracketMatch[];
-  rules: {
+  rules?: {
     pointsWin: number;
     pointsDraw: number;
     pointsLoss: number;
+    format: string;
   };
 }
 
-export const TeamBadgeLogo = ({ logo, name, size = 'md' }: { logo?: TeamLogo; name: string; size?: 'sm' | 'md' | 'lg' | 'xl' }) => {
-  const sClass = size === 'sm' ? 'w-8 h-8 text-xs' : size === 'lg' ? 'w-16 h-16 text-2xl' : size === 'xl' ? 'w-24 h-24 text-4xl' : 'w-11 h-11 text-base';
-  const iconSize = size === 'sm' ? 'text-sm' : size === 'lg' ? 'text-2xl' : size === 'xl' ? 'text-4xl' : 'text-lg';
+export const TeamBadgeLogo = ({
+  logo,
+  name,
+  size = "md"
+}: {
+  logo?: TeamLogo;
+  name: string;
+  size?: "sm" | "md" | "lg" | "xl";
+}) => {
+  const s = size === "sm" ? 34 : size === "lg" ? 54 : size === "xl" ? 72 : 42;
+  const fontSize = size === "sm" ? "0.75rem" : size === "lg" ? "1.1rem" : size === "xl" ? "1.4rem" : "0.9rem";
 
-  if (!logo) {
-    return (
-      <div className={`${sClass} rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-600/30 border border-amber-500/40 flex items-center justify-center font-black text-amber-300 shadow-md shadow-amber-500/10`}>
-        {name.slice(0, 2).toUpperCase()}
-      </div>
-    );
-  }
+  const primary = logo?.primaryColor || "#ffc619";
+  const secondary = logo?.secondaryColor || "#9d3bf5";
 
-  const shapeClass = 
-    logo.shape === 'circle' ? 'rounded-full' :
-    logo.shape === 'diamond' ? 'rounded-xl rotate-45 scale-90' :
-    logo.shape === 'hexagon' ? 'rounded-2xl' :
-    'rounded-xl';
+  // Initials (2 letters, max 3)
+  const cleanName = (name || "T").replace(/^team\s+/i, "").trim();
+  const initials = cleanName.length >= 2 ? cleanName.slice(0, 2).toUpperCase() : cleanName.toUpperCase();
 
   return (
-    <div className="relative group flex items-center justify-center select-none">
-      <div 
-        className={`${sClass} ${shapeClass} flex items-center justify-center font-black relative overflow-hidden transition-transform duration-300 group-hover:scale-105`}
+    <div
+      style={{
+        width: `${s}px`,
+        height: `${s}px`,
+        minWidth: `${s}px`,
+        borderRadius: size === "sm" ? "8px" : "12px",
+        background: `linear-gradient(135deg, ${primary}22, ${secondary}33)`,
+        border: `1.5px solid ${primary}88`,
+        boxShadow: `0 0 16px ${primary}33, inset 0 0 10px ${secondary}22`,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontWeight: "900",
+        fontSize,
+        letterSpacing: "0.05em",
+        color: "#ffffff",
+        fontFamily: "var(--font-mono, monospace)",
+        textShadow: `0 0 8px ${primary}`,
+        userSelect: "none",
+        position: "relative",
+        overflow: "hidden"
+      }}
+    >
+      <div
         style={{
-          background: `linear-gradient(135deg, ${logo.primaryColor}dd, ${logo.secondaryColor}ee)`,
-          borderColor: logo.accentColor,
-          borderWidth: '2px',
-          boxShadow: `0 0 16px ${logo.accentColor}55, inset 0 0 10px ${logo.accentColor}33`
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundImage: "radial-gradient(circle at 30% 20%, rgba(255,255,255,0.2) 0%, transparent 60%)",
+          pointerEvents: "none"
         }}
-      >
-        <div 
-          className="absolute inset-0 opacity-20 pointer-events-none" 
-          style={{
-            backgroundImage: logo.pattern === 'stripes' ? 'repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(255,255,255,0.2) 5px, rgba(255,255,255,0.2) 10px)' : 'none'
-          }}
-        />
-        <div className={`relative z-10 ${iconSize} drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] ${logo.shape === 'diamond' ? '-rotate-45' : ''}`}>
-          {logo.icon}
-        </div>
-      </div>
+      />
+      <span style={{ position: "relative", zIndex: 2 }}>{initials}</span>
     </div>
   );
 };
@@ -94,13 +113,18 @@ export interface TeamStanding {
   won: number;
   drawn: number;
   lost: number;
-  roundsFor: number;
-  roundsAgainst: number;
+  mapsWon: number;
+  mapsLost: number;
+  mapDiff: number;
   roundDiff: number;
   points: number;
 }
 
-export function computeStandings(teams: BracketTeam[], matches: BracketMatch[], rules = { pointsWin: 3, pointsDraw: 1, pointsLoss: 0 }): TeamStanding[] {
+export function computeStandings(
+  teams: BracketTeam[],
+  matches: BracketMatch[],
+  rules = { pointsWin: 2, pointsDraw: 1, pointsLoss: 0 }
+): TeamStanding[] {
   const standingsMap: Record<string, TeamStanding> = {};
 
   teams.forEach(t => {
@@ -110,53 +134,70 @@ export function computeStandings(teams: BracketTeam[], matches: BracketMatch[], 
       won: 0,
       drawn: 0,
       lost: 0,
-      roundsFor: 0,
-      roundsAgainst: 0,
+      mapsWon: 0,
+      mapsLost: 0,
+      mapDiff: 0,
       roundDiff: 0,
       points: 0
     };
   });
 
   matches.forEach(m => {
-    if (m.status !== 'FINISHED' || m.score1 === null || m.score2 === null) return;
+    if (m.status !== "FINISHED" || m.score1 === null || m.score2 === null) return;
     const st1 = standingsMap[m.team1Id];
     const st2 = standingsMap[m.team2Id];
     if (!st1 || !st2) return;
 
     st1.played += 1;
     st2.played += 1;
-    st1.roundsFor += m.score1;
-    st1.roundsAgainst += m.score2;
-    st2.roundsFor += m.score2;
-    st2.roundsAgainst += m.score1;
+    st1.mapsWon += m.score1;
+    st1.mapsLost += m.score2;
+    st2.mapsWon += m.score2;
+    st2.mapsLost += m.score1;
 
+    // Optional round scores difference if provided
+    let r1 = 0;
+    let r2 = 0;
+    if (m.map1Score1 !== undefined && m.map1Score2 !== undefined && m.map1Score1 !== null && m.map1Score2 !== null) {
+      r1 += m.map1Score1;
+      r2 += m.map1Score2;
+    }
+    if (m.map2Score1 !== undefined && m.map2Score2 !== undefined && m.map2Score1 !== null && m.map2Score2 !== null) {
+      r1 += m.map2Score1;
+      r2 += m.map2Score2;
+    }
+    st1.roundDiff += r1 - r2;
+    st2.roundDiff += r2 - r1;
+
+    // BO2 Rules: 2 points for win (2:0), 1 point for draw (1:1), 0 points for loss (0:2)
     if (m.score1 > m.score2) {
       st1.won += 1;
-      st1.points += rules.pointsWin;
+      st1.points += rules.pointsWin; // 2
       st2.lost += 1;
-      st2.points += rules.pointsLoss;
+      st2.points += rules.pointsLoss; // 0
     } else if (m.score2 > m.score1) {
       st2.won += 1;
-      st2.points += rules.pointsWin;
+      st2.points += rules.pointsWin; // 2
       st1.lost += 1;
-      st1.points += rules.pointsLoss;
+      st1.points += rules.pointsLoss; // 0
     } else {
       st1.drawn += 1;
       st2.drawn += 1;
-      st1.points += rules.pointsDraw;
-      st2.points += rules.pointsDraw;
+      st1.points += rules.pointsDraw; // 1
+      st2.points += rules.pointsDraw; // 1
     }
   });
 
   const list = Object.values(standingsMap);
   list.forEach(item => {
-    item.roundDiff = item.roundsFor - item.roundsAgainst;
+    item.mapDiff = item.mapsWon - item.mapsLost;
   });
 
   list.sort((a, b) => {
     if (b.points !== a.points) return b.points - a.points;
+    if (b.mapDiff !== a.mapDiff) return b.mapDiff - a.mapDiff;
+    if (b.mapsWon !== a.mapsWon) return b.mapsWon - a.mapsWon;
     if (b.roundDiff !== a.roundDiff) return b.roundDiff - a.roundDiff;
-    if (b.roundsFor !== a.roundsFor) return b.roundsFor - a.roundsFor;
     if (b.won !== a.won) return b.won - a.won;
     return a.team.name.localeCompare(b.team.name);
   });
@@ -165,129 +206,222 @@ export function computeStandings(teams: BracketTeam[], matches: BracketMatch[], 
 }
 
 export function TournamentBracketView({ bracket }: { bracket: BracketState }) {
-  const [selectedRound, setSelectedRound] = useState<number | 'ALL'>('ALL');
-  const standings = computeStandings(bracket.teams, bracket.matches, bracket.rules);
+  const [selectedRound, setSelectedRound] = useState<number | "ALL">("ALL");
+
+  const rules = bracket.rules || { pointsWin: 2, pointsDraw: 1, pointsLoss: 0, format: "BO2" };
+  const standings = computeStandings(bracket.teams || [], bracket.matches || [], rules);
 
   const teamMap = new Map<string, BracketTeam>();
-  bracket.teams.forEach(t => teamMap.set(t.id, t));
+  (bracket.teams || []).forEach(t => teamMap.set(t.id, t));
 
-  const filteredMatches = selectedRound === 'ALL' 
-    ? bracket.matches 
-    : bracket.matches.filter(m => m.round === selectedRound);
+  const filteredMatches =
+    selectedRound === "ALL"
+      ? bracket.matches || []
+      : (bracket.matches || []).filter(m => m.round === selectedRound);
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-300">
-      {/* Header Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-500/10 via-purple-600/10 to-blue-600/10 border border-white/10 p-6 sm:p-8 backdrop-blur-md">
-        <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-500/20 text-amber-400 border border-amber-500/30">
-                Round-Robin • 4 Команды
-              </span>
-              <span className="text-xs text-white/50">Каждый играет с каждым</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-center gap-3">
-              🏆 {bracket.tournamentName || 'SIGMA CS2 TOURNAMENT'}
-            </h2>
-            <p className="text-sm text-white/70 mt-1 max-w-xl">
-              Всего 3 тура (6 матчей). Победитель определяется по максимальному количеству набранных очков (Победа = 3 очка, Ничья = 1 очко).
-            </p>
+    <div style={{ display: "flex", flexDirection: "column", gap: "2rem", width: "100%" }}>
+      {/* 1. TOURNAMENT HERO BANNER (matching Fantasy Banner style) */}
+      <div
+        className="glass-card animate-fade-in"
+        style={{
+          padding: "2rem 2.5rem",
+          borderRadius: "24px",
+          background: "linear-gradient(135deg, rgba(255, 198, 25, 0.12) 0%, rgba(157, 59, 245, 0.1) 50%, rgba(6, 5, 10, 0.95) 100%)",
+          border: "1.5px solid rgba(255, 198, 25, 0.35)",
+          boxShadow: "0 0 50px rgba(255, 198, 25, 0.12)",
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: "1.5rem"
+        }}
+      >
+        <div style={{ maxWidth: "620px" }}>
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              padding: "0.3rem 0.8rem",
+              borderRadius: "20px",
+              background: "rgba(255, 198, 25, 0.15)",
+              border: "1px solid rgba(255, 198, 25, 0.4)",
+              color: "#ffc619",
+              fontSize: "0.75rem",
+              fontWeight: "800",
+              marginBottom: "0.75rem",
+              textTransform: "uppercase",
+              letterSpacing: "1px"
+            }}
+          >
+            СИСТЕМА ROUND-ROBIN • 4 КОМАНДЫ • BO2
           </div>
+          <h2
+            style={{
+              fontSize: "1.9rem",
+              fontWeight: "900",
+              margin: "0 0 0.5rem 0",
+              color: "#ffffff",
+              textShadow: "0 0 20px rgba(255, 198, 25, 0.3)",
+              letterSpacing: "-0.02em"
+            }}
+          >
+            {bracket.tournamentTitle || "SIGMA CS2 TOURNAMENT"}
+          </h2>
+          <p style={{ color: "var(--text-secondary)", fontSize: "0.88rem", margin: 0, lineHeight: "1.55" }}>
+            Формат BO2 (две карты). Каждый играет с каждым. Начисление очков:{" "}
+            <strong style={{ color: "#ffc619" }}>Победа (2:0) = 2 очка</strong>,{" "}
+            <strong style={{ color: "#ab9ebc" }}>Ничья (1:1) = 1 очко</strong>,{" "}
+            <strong style={{ color: "var(--text-muted)" }}>Поражение (0:2) = 0 очков</strong>.
+          </p>
+        </div>
 
-          {standings.length > 0 && standings[0].played > 0 && (
-            <div className="bg-black/40 border border-amber-500/40 rounded-xl p-4 flex items-center gap-4 backdrop-blur-sm">
-              <div className="text-3xl animate-bounce">👑</div>
-              <div>
-                <div className="text-xs text-amber-400 font-bold uppercase tracking-wider">Текущий лидер</div>
-                <div className="text-base font-extrabold text-white flex items-center gap-2 mt-0.5">
-                  <TeamBadgeLogo logo={standings[0].team.logo} name={standings[0].team.name} size="sm" />
-                  <span>{standings[0].team.name}</span>
-                </div>
-                <div className="text-xs text-white/60 font-medium mt-0.5">
-                  {standings[0].points} очков • {standings[0].won}W {standings[0].drawn}D {standings[0].lost}L (RD: {standings[0].roundDiff > 0 ? '+' : ''}{standings[0].roundDiff})
-                </div>
+        {standings.length > 0 && standings[0].played > 0 && (
+          <div
+            style={{
+              background: "rgba(10, 8, 18, 0.7)",
+              border: "1px solid rgba(255, 198, 25, 0.4)",
+              borderRadius: "16px",
+              padding: "1rem 1.4rem",
+              display: "flex",
+              alignItems: "center",
+              gap: "1rem",
+              boxShadow: "0 8px 30px rgba(0,0,0,0.5)"
+            }}
+          >
+            <TeamBadgeLogo logo={standings[0].team.logo} name={standings[0].team.name} size="lg" />
+            <div>
+              <div style={{ fontSize: "0.72rem", color: "#ffc619", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                1 МЕСТО В ТАБЛИЦЕ
+              </div>
+              <div style={{ fontSize: "1.1rem", fontWeight: "900", color: "#fff", marginTop: "0.15rem" }}>
+                {standings[0].team.name}
+              </div>
+              <div style={{ fontSize: "0.78rem", color: "var(--text-secondary)", marginTop: "0.2rem" }}>
+                <strong style={{ color: "#ffc619" }}>{standings[0].points} PTS</strong> ({standings[0].won}W - {standings[0].drawn}D - {standings[0].lost}L)
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
-      {/* Standings Table */}
-      <div className="bg-black/30 border border-white/10 rounded-2xl p-5 sm:p-6 backdrop-blur-md shadow-xl">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-bold text-white flex items-center gap-2">
-            <span className="text-amber-400">📊</span> Турнирная таблица
-          </h3>
-          <span className="text-xs text-white/50">Сортировка: Очки &gt; Разница раундов &gt; Взятые раунды</span>
+      {/* 2. STANDINGS TABLE */}
+      <div
+        className="glass-card animate-fade-in"
+        style={{
+          padding: "1.75rem",
+          borderRadius: "20px",
+          background: "var(--bg-secondary)",
+          border: "1px solid var(--border-light)",
+          boxShadow: "var(--glass-shadow)"
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem", flexWrap: "wrap", gap: "0.5rem" }}>
+          <div>
+            <h3 style={{ fontSize: "1.15rem", fontWeight: "800", color: "#fff", margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              Турнирная таблица
+            </h3>
+            <span style={{ fontSize: "0.76rem", color: "var(--text-muted)" }}>
+              Сортировка: Очки (PTS) &gt; Разница карт &gt; Выигранные карты &gt; Победы
+            </span>
+          </div>
+          <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", background: "rgba(255,255,255,0.04)", padding: "0.3rem 0.75rem", borderRadius: "8px", border: "1px solid var(--border-light)" }}>
+            Победа 2:0 = 2 очка | Ничья 1:1 = 1 очко
+          </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
+        <div className="custom-table-container" style={{ border: "1px solid var(--border-light)", borderRadius: "14px" }}>
+          <table className="custom-table" style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
-              <tr className="border-b border-white/10 text-xs font-semibold text-white/50 uppercase tracking-wider">
-                <th className="py-3 px-3 w-12 text-center">#</th>
-                <th className="py-3 px-4">Команда</th>
-                <th className="py-3 px-3 text-center">И</th>
-                <th className="py-3 px-3 text-center">В</th>
-                <th className="py-3 px-3 text-center">Н</th>
-                <th className="py-3 px-3 text-center">П</th>
-                <th className="py-3 px-3 text-center">РД (Счёт)</th>
-                <th className="py-3 px-4 text-center font-bold text-amber-400">Очки (PTS)</th>
+              <tr style={{ background: "rgba(22, 17, 38, 0.8)", borderBottom: "1px solid var(--border-light)" }}>
+                <th style={{ textAlign: "center", width: "48px", padding: "0.9rem 0.6rem" }}>#</th>
+                <th style={{ textAlign: "left", padding: "0.9rem 1rem" }}>Команда</th>
+                <th style={{ textAlign: "center", padding: "0.9rem 0.6rem" }}>И</th>
+                <th style={{ textAlign: "center", padding: "0.9rem 0.6rem", color: "var(--success)" }}>В (2:0)</th>
+                <th style={{ textAlign: "center", padding: "0.9rem 0.6rem", color: "var(--text-secondary)" }}>Н (1:1)</th>
+                <th style={{ textAlign: "center", padding: "0.9rem 0.6rem", color: "var(--danger)" }}>П (0:2)</th>
+                <th style={{ textAlign: "center", padding: "0.9rem 0.8rem" }}>Карты</th>
+                <th style={{ textAlign: "center", padding: "0.9rem 1.2rem", color: "#ffc619", fontWeight: "900" }}>Очки (PTS)</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody>
               {standings.map((st, idx) => {
                 const isLeader = idx === 0 && st.played > 0;
                 return (
-                  <tr 
-                    key={st.team.id} 
-                    className={`transition-colors hover:bg-white/5 ${isLeader ? 'bg-amber-500/5' : ''}`}
+                  <tr
+                    key={st.team.id}
+                    style={{
+                      borderBottom: idx === standings.length - 1 ? "none" : "1px solid var(--border-light)",
+                      background: isLeader ? "rgba(255, 198, 25, 0.05)" : undefined,
+                      transition: "background 0.2s ease"
+                    }}
                   >
-                    <td className="py-3.5 px-3 text-center font-bold">
-                      {idx === 0 ? (
-                        <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-500 text-black text-xs font-black shadow-lg shadow-amber-500/30">
-                          1
-                        </span>
-                      ) : idx === 1 ? (
-                        <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-slate-300 text-black text-xs font-black">
-                          2
-                        </span>
-                      ) : idx === 2 ? (
-                        <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-700 text-white text-xs font-black">
-                          3
-                        </span>
-                      ) : (
-                        <span className="text-white/40 text-xs">{idx + 1}</span>
-                      )}
+                    <td style={{ textAlign: "center", padding: "0.85rem 0.6rem" }}>
+                      <span
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          width: "26px",
+                          height: "26px",
+                          borderRadius: "8px",
+                          fontSize: "0.78rem",
+                          fontWeight: "900",
+                          background: idx === 0 ? "#ffc619" : idx === 1 ? "rgba(255,255,255,0.15)" : idx === 2 ? "rgba(205, 127, 50, 0.3)" : "rgba(255,255,255,0.05)",
+                          color: idx === 0 ? "#000" : "#fff"
+                        }}
+                      >
+                        {idx + 1}
+                      </span>
                     </td>
-                    <td className="py-3.5 px-4">
-                      <div className="flex items-center gap-3">
+                    <td style={{ padding: "0.85rem 1rem" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
                         <TeamBadgeLogo logo={st.team.logo} name={st.team.name} size="sm" />
                         <div>
-                          <div className="font-bold text-white flex items-center gap-1.5">
+                          <div style={{ fontWeight: "800", fontSize: "0.92rem", color: isLeader ? "#ffc619" : "#fff" }}>
                             {st.team.name}
-                            {isLeader && <span className="text-xs text-amber-400">👑</span>}
                           </div>
-                          <div className="text-xs text-white/40">
-                            Капитан: <span className="text-white/70">{st.team.captain || 'Не назначен'}</span>
+                          <div style={{ fontSize: "0.74rem", color: "var(--text-muted)", marginTop: "0.15rem" }}>
+                            Капитан: <span style={{ color: "var(--text-secondary)" }}>{st.team.captain || "—"}</span>
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="py-3.5 px-3 text-center text-white/80 font-medium">{st.played}</td>
-                    <td className="py-3.5 px-3 text-center text-emerald-400 font-bold">{st.won}</td>
-                    <td className="py-3.5 px-3 text-center text-white/50 font-medium">{st.drawn}</td>
-                    <td className="py-3.5 px-3 text-center text-red-400 font-bold">{st.lost}</td>
-                    <td className="py-3.5 px-3 text-center font-mono text-xs">
-                      <span className={st.roundDiff > 0 ? 'text-emerald-400' : st.roundDiff < 0 ? 'text-red-400' : 'text-white/50'}>
-                        {st.roundDiff > 0 ? `+${st.roundDiff}` : st.roundDiff}
-                      </span>
-                      <span className="text-white/30 ml-1">({st.roundsFor}:{st.roundsAgainst})</span>
+                    <td style={{ textAlign: "center", padding: "0.85rem 0.6rem", fontWeight: "700", color: "var(--text-primary)" }}>
+                      {st.played}
                     </td>
-                    <td className="py-3.5 px-4 text-center">
-                      <span className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 font-black text-sm shadow-inner">
+                    <td style={{ textAlign: "center", padding: "0.85rem 0.6rem", fontWeight: "800", color: "var(--success)" }}>
+                      {st.won}
+                    </td>
+                    <td style={{ textAlign: "center", padding: "0.85rem 0.6rem", fontWeight: "700", color: "var(--text-secondary)" }}>
+                      {st.drawn}
+                    </td>
+                    <td style={{ textAlign: "center", padding: "0.85rem 0.6rem", fontWeight: "800", color: "var(--danger)" }}>
+                      {st.lost}
+                    </td>
+                    <td style={{ textAlign: "center", padding: "0.85rem 0.8rem", fontFamily: "var(--font-mono)", fontSize: "0.82rem" }}>
+                      <span style={{ color: st.mapDiff > 0 ? "var(--success)" : st.mapDiff < 0 ? "var(--danger)" : "var(--text-secondary)" }}>
+                        {st.mapsWon}:{st.mapsLost}
+                      </span>
+                      <span style={{ color: "var(--text-muted)", marginLeft: "0.4rem", fontSize: "0.74rem" }}>
+                        ({st.mapDiff > 0 ? `+${st.mapDiff}` : st.mapDiff})
+                      </span>
+                    </td>
+                    <td style={{ textAlign: "center", padding: "0.85rem 1.2rem" }}>
+                      <span
+                        style={{
+                          display: "inline-block",
+                          padding: "0.3rem 0.8rem",
+                          borderRadius: "8px",
+                          background: "rgba(255, 198, 25, 0.12)",
+                          border: "1px solid rgba(255, 198, 25, 0.4)",
+                          color: "#ffc619",
+                          fontWeight: "900",
+                          fontSize: "0.95rem",
+                          fontFamily: "var(--font-mono)"
+                        }}
+                      >
                         {st.points}
                       </span>
                     </td>
@@ -299,74 +433,152 @@ export function TournamentBracketView({ bracket }: { bracket: BracketState }) {
         </div>
       </div>
 
-      {/* Matches Schedule & Results */}
-      <div>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-5">
+      {/* 3. MATCHES SCHEDULE & RESULTS */}
+      <div
+        className="glass-card animate-fade-in"
+        style={{
+          padding: "1.75rem",
+          borderRadius: "20px",
+          background: "var(--bg-secondary)",
+          border: "1px solid var(--border-light)",
+          boxShadow: "var(--glass-shadow)"
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
           <div>
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
-              <span className="text-amber-400">⚔️</span> Расписание и Результаты Матчей
+            <h3 style={{ fontSize: "1.15rem", fontWeight: "800", color: "#fff", margin: 0 }}>
+              Расписание и Результаты Матчей
             </h3>
-            <p className="text-xs text-white/50 mt-0.5">3 раунда, по 2 матча в каждом</p>
+            <span style={{ fontSize: "0.76rem", color: "var(--text-muted)" }}>
+              3 тура, по 2 матча в каждом (формат BO2)
+            </span>
           </div>
 
-          <div className="flex items-center gap-1.5 bg-black/40 p-1 rounded-xl border border-white/10 text-xs">
-            {(['ALL', 1, 2, 3] as const).map(rnd => (
+          {/* Round Selector Tabs */}
+          <div style={{ display: "flex", gap: "0.4rem", background: "rgba(0,0,0,0.4)", padding: "0.25rem", borderRadius: "12px", border: "1px solid var(--border-light)" }}>
+            {(["ALL", 1, 2, 3] as const).map(rnd => (
               <button
                 key={rnd}
                 onClick={() => setSelectedRound(rnd)}
-                className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
-                  selectedRound === rnd
-                    ? 'bg-amber-500 text-black shadow-md shadow-amber-500/20'
-                    : 'text-white/60 hover:text-white hover:bg-white/5'
-                }`}
+                className="btn"
+                style={{
+                  padding: "0.35rem 0.85rem",
+                  fontSize: "0.78rem",
+                  fontWeight: "700",
+                  borderRadius: "8px",
+                  background: selectedRound === rnd ? "#ffc619" : "transparent",
+                  color: selectedRound === rnd ? "#000" : "var(--text-secondary)",
+                  border: "none",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease"
+                }}
               >
-                {rnd === 'ALL' ? 'Все матчи' : `Тур ${rnd}`}
+                {rnd === "ALL" ? "Все матчи" : `Тур ${rnd}`}
               </button>
             ))}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "1rem" }}>
           {filteredMatches.map(match => {
             const team1 = teamMap.get(match.team1Id);
             const team2 = teamMap.get(match.team2Id);
-            const isFinished = match.status === 'FINISHED';
-            const isLive = match.status === 'LIVE';
+            const isFinished = match.status === "FINISHED";
+            const isLive = match.status === "LIVE";
 
             const team1Won = isFinished && (match.score1 ?? 0) > (match.score2 ?? 0);
             const team2Won = isFinished && (match.score2 ?? 0) > (match.score1 ?? 0);
+            const isDraw = isFinished && match.score1 === match.score2 && match.score1 !== null;
 
             return (
-              <div 
+              <div
                 key={match.id}
-                className={`relative rounded-2xl border p-5 backdrop-blur-md transition-all ${
-                  isLive 
-                    ? 'bg-red-500/10 border-red-500/50 shadow-lg shadow-red-500/10' 
-                    : isFinished 
-                    ? 'bg-black/30 border-white/10 hover:border-white/20' 
-                    : 'bg-black/20 border-white/5 hover:border-white/15'
-                }`}
+                style={{
+                  background: isLive
+                    ? "rgba(255, 23, 68, 0.08)"
+                    : isFinished
+                    ? "rgba(22, 17, 38, 0.4)"
+                    : "rgba(16, 12, 28, 0.3)",
+                  border: isLive
+                    ? "1px solid rgba(255, 23, 68, 0.5)"
+                    : isFinished
+                    ? "1px solid rgba(255, 198, 25, 0.2)"
+                    : "1px solid var(--border-light)",
+                  borderRadius: "16px",
+                  padding: "1.25rem",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.9rem",
+                  position: "relative",
+                  boxShadow: isLive ? "0 0 25px rgba(255, 23, 68, 0.15)" : undefined
+                }}
               >
-                <div className="flex items-center justify-between mb-3 text-xs">
-                  <span className="font-bold text-amber-400/80 uppercase tracking-wider">
-                    Тур {match.round}
-                  </span>
-                  <div className="flex items-center gap-2">
-                    {match.map && (
-                      <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white/60 font-mono text-[11px]">
-                        🗺️ {match.map}
+                {/* Match Header */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.74rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <span style={{ fontWeight: "800", color: "#ffc619", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                      ТУР {match.round}
+                    </span>
+                    <span style={{ color: "var(--text-muted)", fontSize: "0.7rem" }}>• BO2</span>
+                  </div>
+
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    {match.map1 && (
+                      <span
+                        style={{
+                          padding: "0.15rem 0.45rem",
+                          borderRadius: "6px",
+                          background: "rgba(255,255,255,0.05)",
+                          border: "1px solid var(--border-light)",
+                          color: "var(--text-secondary)",
+                          fontFamily: "var(--font-mono)",
+                          fontSize: "0.7rem"
+                        }}
+                      >
+                        {match.map1} {match.map2 ? `/ ${match.map2}` : ""}
                       </span>
                     )}
+
                     {isLive ? (
-                      <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 font-bold border border-red-500/40 animate-pulse flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-red-400"></span> LIVE
+                      <span
+                        style={{
+                          padding: "0.15rem 0.55rem",
+                          borderRadius: "12px",
+                          background: "rgba(255, 23, 68, 0.2)",
+                          border: "1px solid rgba(255, 23, 68, 0.4)",
+                          color: "#ff1744",
+                          fontWeight: "800",
+                          fontSize: "0.7rem",
+                          letterSpacing: "0.05em"
+                        }}
+                      >
+                        LIVE
                       </span>
                     ) : isFinished ? (
-                      <span className="px-2 py-0.5 rounded-full bg-white/10 text-white/70 font-semibold">
+                      <span
+                        style={{
+                          padding: "0.15rem 0.55rem",
+                          borderRadius: "12px",
+                          background: "rgba(0, 230, 118, 0.12)",
+                          border: "1px solid rgba(0, 230, 118, 0.3)",
+                          color: "var(--success)",
+                          fontWeight: "700",
+                          fontSize: "0.7rem"
+                        }}
+                      >
                         Завершён
                       </span>
                     ) : (
-                      <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                      <span
+                        style={{
+                          padding: "0.15rem 0.55rem",
+                          borderRadius: "12px",
+                          background: "rgba(255,255,255,0.04)",
+                          border: "1px solid var(--border-light)",
+                          color: "var(--text-muted)",
+                          fontSize: "0.7rem"
+                        }}
+                      >
                         Ожидается
                       </span>
                     )}
@@ -374,58 +586,97 @@ export function TournamentBracketView({ bracket }: { bracket: BracketState }) {
                 </div>
 
                 {/* Team 1 Row */}
-                <div className={`flex items-center justify-between p-3 rounded-xl transition-all ${
-                  team1Won ? 'bg-amber-500/10 border border-amber-500/30' : 'bg-white/5'
-                }`}>
-                  <div className="flex items-center gap-3 min-w-0">
-                    <TeamBadgeLogo logo={team1?.logo} name={team1?.name || 'T1'} size="md" />
-                    <div className="min-w-0">
-                      <div className={`font-bold truncate ${team1Won ? 'text-amber-300' : 'text-white'}`}>
-                        {team1?.name || 'Команда 1'}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "0.75rem 0.9rem",
+                    borderRadius: "12px",
+                    background: team1Won ? "rgba(255, 198, 25, 0.1)" : "rgba(255,255,255,0.03)",
+                    border: team1Won ? "1px solid rgba(255, 198, 25, 0.3)" : "1px solid transparent"
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", minWidth: 0 }}>
+                    <TeamBadgeLogo logo={team1?.logo} name={team1?.name || "T1"} size="sm" />
+                    <div style={{ minWidth: 0 }}>
+                      <div
+                        style={{
+                          fontWeight: "800",
+                          fontSize: "0.88rem",
+                          color: team1Won ? "#ffc619" : "#fff",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis"
+                        }}
+                      >
+                        {team1?.name || "Команда 1"}
                       </div>
-                      <div className="text-xs text-white/40 truncate">
-                        Капитан: {team1?.captain || '—'}
+                      <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
+                        Капитан: {team1?.captain || "—"}
                       </div>
                     </div>
                   </div>
-                  <div className="text-xl font-black font-mono ml-4">
-                    {isFinished || isLive ? (
-                      <span className={team1Won ? 'text-amber-300' : 'text-white/80'}>
-                        {match.score1 ?? 0}
-                      </span>
-                    ) : (
-                      <span className="text-white/20">-</span>
-                    )}
+                  <div
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "1.2rem",
+                      fontWeight: "900",
+                      color: team1Won ? "#ffc619" : isFinished ? "#fff" : "var(--text-muted)",
+                      marginLeft: "1rem"
+                    }}
+                  >
+                    {isFinished || isLive ? match.score1 ?? 0 : "-"}
                   </div>
                 </div>
 
-                <div className="text-center my-1.5 text-xs text-white/20 font-black tracking-widest">
-                  VS
+                {/* VS Indicator */}
+                <div style={{ textAlign: "center", fontSize: "0.7rem", fontWeight: "900", color: "var(--text-muted)", letterSpacing: "0.1em" }}>
+                  {isDraw ? "НИЧЬЯ (1:1)" : "VS"}
                 </div>
 
                 {/* Team 2 Row */}
-                <div className={`flex items-center justify-between p-3 rounded-xl transition-all ${
-                  team2Won ? 'bg-amber-500/10 border border-amber-500/30' : 'bg-white/5'
-                }`}>
-                  <div className="flex items-center gap-3 min-w-0">
-                    <TeamBadgeLogo logo={team2?.logo} name={team2?.name || 'T2'} size="md" />
-                    <div className="min-w-0">
-                      <div className={`font-bold truncate ${team2Won ? 'text-amber-300' : 'text-white'}`}>
-                        {team2?.name || 'Команда 2'}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "0.75rem 0.9rem",
+                    borderRadius: "12px",
+                    background: team2Won ? "rgba(255, 198, 25, 0.1)" : "rgba(255,255,255,0.03)",
+                    border: team2Won ? "1px solid rgba(255, 198, 25, 0.3)" : "1px solid transparent"
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", minWidth: 0 }}>
+                    <TeamBadgeLogo logo={team2?.logo} name={team2?.name || "T2"} size="sm" />
+                    <div style={{ minWidth: 0 }}>
+                      <div
+                        style={{
+                          fontWeight: "800",
+                          fontSize: "0.88rem",
+                          color: team2Won ? "#ffc619" : "#fff",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis"
+                        }}
+                      >
+                        {team2?.name || "Команда 2"}
                       </div>
-                      <div className="text-xs text-white/40 truncate">
-                        Капитан: {team2?.captain || '—'}
+                      <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
+                        Капитан: {team2?.captain || "—"}
                       </div>
                     </div>
                   </div>
-                  <div className="text-xl font-black font-mono ml-4">
-                    {isFinished || isLive ? (
-                      <span className={team2Won ? 'text-amber-300' : 'text-white/80'}>
-                        {match.score2 ?? 0}
-                      </span>
-                    ) : (
-                      <span className="text-white/20">-</span>
-                    )}
+                  <div
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "1.2rem",
+                      fontWeight: "900",
+                      color: team2Won ? "#ffc619" : isFinished ? "#fff" : "var(--text-muted)",
+                      marginLeft: "1rem"
+                    }}
+                  >
+                    {isFinished || isLive ? match.score2 ?? 0 : "-"}
                   </div>
                 </div>
               </div>
@@ -434,44 +685,84 @@ export function TournamentBracketView({ bracket }: { bracket: BracketState }) {
         </div>
       </div>
 
-      {/* Teams Roster with Logos Preview */}
-      <div className="bg-black/30 border border-white/10 rounded-2xl p-5 sm:p-6 backdrop-blur-md">
-        <h3 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
-          <span className="text-amber-400">🛡️</span> Составы и Символика Команд
+      {/* 4. TEAMS ROSTER OVERVIEW */}
+      <div
+        className="glass-card animate-fade-in"
+        style={{
+          padding: "1.75rem",
+          borderRadius: "20px",
+          background: "var(--bg-secondary)",
+          border: "1px solid var(--border-light)",
+          boxShadow: "var(--glass-shadow)"
+        }}
+      >
+        <h3 style={{ fontSize: "1.15rem", fontWeight: "800", color: "#fff", marginBottom: "1.25rem", margin: 0 }}>
+          Составы Команд Турнира
         </h3>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {bracket.teams.map(team => (
-            <div 
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))", gap: "1rem", marginTop: "1rem" }}>
+          {(bracket.teams || []).map(team => (
+            <div
               key={team.id}
-              className="bg-white/5 border border-white/10 rounded-xl p-4 flex flex-col items-center text-center relative overflow-hidden group hover:border-amber-500/40 transition-all"
+              style={{
+                background: "rgba(22, 17, 38, 0.4)",
+                border: "1px solid var(--border-light)",
+                borderRadius: "14px",
+                padding: "1.25rem",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                textAlign: "center"
+              }}
             >
-              <div 
-                className="absolute -top-12 -right-12 w-28 h-28 rounded-full blur-2xl opacity-20 pointer-events-none"
-                style={{ backgroundColor: team.logo?.primaryColor || '#f59e0b' }}
-              />
-              <div className="mb-3">
+              <div style={{ marginBottom: "0.75rem" }}>
                 <TeamBadgeLogo logo={team.logo} name={team.name} size="lg" />
               </div>
-              <h4 className="font-black text-white text-base tracking-tight mb-1">
+              <div style={{ fontWeight: "900", color: "#fff", fontSize: "1rem" }}>
                 {team.name}
-              </h4>
-              <div className="text-xs font-semibold text-amber-400/90 mb-3">
-                Капитан: {team.captain || 'Не назначен'}
+              </div>
+              <div style={{ fontSize: "0.78rem", color: "#ffc619", fontWeight: "700", marginTop: "0.2rem", marginBottom: "0.9rem" }}>
+                Капитан: {team.captain || "—"}
               </div>
 
-              <div className="w-full text-left bg-black/40 rounded-lg p-2.5 border border-white/5 text-xs space-y-1 mt-auto">
-                <div className="text-[10px] uppercase font-bold text-white/40 mb-1">Состав:</div>
-                {team.members && team.members.length > 0 ? (
-                  team.members.map((m, idx) => (
-                    <div key={idx} className="text-white/80 truncate flex items-center gap-1.5">
-                      <span className="text-white/30 text-[10px]">#{idx + 1}</span>
-                      <span className={m === team.captain ? 'font-bold text-amber-300' : ''}>{m}</span>
-                      {m === team.captain && <span className="text-[10px] text-amber-400 font-bold">(C)</span>}
+              <div
+                style={{
+                  width: "100%",
+                  background: "rgba(10, 8, 18, 0.6)",
+                  borderRadius: "10px",
+                  padding: "0.75rem",
+                  border: "1px solid rgba(255,255,255,0.04)",
+                  textAlign: "left",
+                  fontSize: "0.76rem"
+                }}
+              >
+                <div style={{ fontSize: "0.68rem", color: "var(--text-muted)", fontWeight: "800", textTransform: "uppercase", marginBottom: "0.4rem" }}>
+                  Состав (5 игроков):
+                </div>
+                {(team.players || []).length > 0 ? (
+                  (team.players || []).map((m, idx) => (
+                    <div
+                      key={idx}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.4rem",
+                        padding: "0.2rem 0",
+                        color: m.toLowerCase() === (team.captain || "").toLowerCase() ? "#ffc619" : "var(--text-primary)",
+                        fontWeight: m.toLowerCase() === (team.captain || "").toLowerCase() ? "800" : "500"
+                      }}
+                    >
+                      <span style={{ color: "var(--text-muted)", fontSize: "0.68rem", width: "16px" }}>#{idx + 1}</span>
+                      <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{m}</span>
+                      {m.toLowerCase() === (team.captain || "").toLowerCase() && (
+                        <span style={{ fontSize: "0.65rem", padding: "0.05rem 0.25rem", borderRadius: "4px", background: "rgba(255, 198, 25, 0.15)", border: "1px solid rgba(255, 198, 25, 0.3)", color: "#ffc619" }}>
+                          (C)
+                        </span>
+                      )}
                     </div>
                   ))
                 ) : (
-                  <div className="text-white/30 italic">Игроки не выбраны</div>
+                  <div style={{ color: "var(--text-muted)", fontStyle: "italic" }}>Игроки не сформированы</div>
                 )}
               </div>
             </div>
