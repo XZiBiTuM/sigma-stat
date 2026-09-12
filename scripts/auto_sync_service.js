@@ -74,7 +74,10 @@ async function syncAll() {
     // Sync tournament bracket matches with FACEIT Hub matches in real-time
     const rBracket = await pingEndpoint(`/api/tournament/bracket/sync`);
 
-    console.log(`[SYNC COMPLETE] ${r1} | ${r3} | ${r4} | ${rWeekly} | ${rBracket} | Refreshed ${playerPings} players | Synced ${statsPings} match stats`);
+    // Settle tournament bets
+    const rBets = await pingEndpoint(`/api/bets`);
+
+    console.log(`[SYNC COMPLETE] ${r1} | ${r3} | ${r4} | ${rWeekly} | ${rBracket} | ${rBets} | Refreshed ${playerPings} players | Synced ${statsPings} match stats`);
   } catch (e) {
     console.error("Sync error:", e);
   }

@@ -2583,6 +2583,35 @@ export default function Home() {
                 {currentUser.faceit?.nickname || currentUser.steamName}
               </span>
 
+              {/* SIGMANAT BALANCE BADGE */}
+              <a
+                href="#bracket"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setActiveTab("bracket");
+                }}
+                title="Ваш баланс СИГМАНАТ (нажмите для перехода к ставкам)"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.3rem",
+                  fontSize: "0.75rem",
+                  fontWeight: "900",
+                  padding: "0.2rem 0.6rem",
+                  borderRadius: "8px",
+                  background: "rgba(255, 198, 25, 0.15)",
+                  color: "#ffc619",
+                  border: "1px solid rgba(255, 198, 25, 0.4)",
+                  textDecoration: "none",
+                  cursor: "pointer",
+                  fontFamily: "var(--font-mono)",
+                  boxShadow: "0 0 10px rgba(255, 198, 25, 0.15)"
+                }}
+              >
+                <span>💰</span>
+                <span>СИГМАНАТ</span>
+              </a>
+
               {currentUser.faceit?.elo && (
                 <span style={{
                   fontSize: "0.72rem",
@@ -6518,7 +6547,7 @@ export default function Home() {
               {activeTab === 'bracket' && (
                 <div>
                   {bracketState ? (
-                    <TournamentBracketView bracket={bracketState} />
+                    <TournamentBracketView bracket={bracketState} currentUser={currentUser} />
                   ) : (
                     <div style={{ textAlign: "center", padding: "4rem 2rem", color: "var(--text-muted)" }}>
                       <div className="spinner" style={{ margin: "0 auto 1.5rem" }}></div>
