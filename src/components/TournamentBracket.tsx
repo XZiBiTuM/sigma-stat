@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export interface TeamLogo {
   badgeShape?: "shield" | "hexagon" | "diamond" | "circle";
@@ -48,6 +48,73 @@ export interface BracketState {
   };
 }
 
+export interface PlayerOverrideItem {
+  customSkillScore?: number;
+  shooting?: number;
+  calls?: number;
+  mental?: number;
+  gamesense?: number;
+  aura?: number;
+  customElo?: number;
+  csRating?: number;
+  nickname?: string;
+}
+
+export function calculateTeamSkill(team: BracketTeam | undefined, overridesMap: Record<string, PlayerOverrideItem>): { avgSkill: number; membersCount: number } {
+  if (!team) return { avgSkill: 65, membersCount: 0 };
+  const members = (team.players && team.players.length > 0) ? team.players : [team.captain];
+  let totalSkill = 0;
+  let count = 0;
+
+  members.forEach(pName => {
+    if (!pName) return;
+    const clean = pName.trim();
+    const lower = clean.toLowerCase();
+    const ov = overridesMap[clean] || overridesMap[lower] || Object.values(overridesMap).find(o => o.nickname?.toLowerCase() === lower);
+    
+    let skill = 65; // realistic default average
+    if (ov) {
+      if (typeof ov.customSkillScore === "number" && ov.customSkillScore > 0) {
+        skill = ov.customSkillScore;
+      } else if (typeof ov.customElo === "number" && ov.customElo > 0) {
+        // Approximate skill from Faceit Elo: 1000->50, 1500->70, 2000->85, 2500->95
+        skill = Math.min(99, Math.max(30, Math.round(30 + (ov.customElo / 2500) * 65)));
+      }
+    }
+    totalSkill += skill;
+    count++;
+  });
+
+  const avg = count > 0 ? Math.round(totalSkill / count) : 65;
+  return { avgSkill: avg, membersCount: count };
+}
+
+export function calculateMatchWinProbability(
+  team1: BracketTeam | undefined,
+  team2: BracketTeam | undefined,
+  overridesMap: Record<string, PlayerOverrideItem>
+): { prob1: number; prob2: number; skill1: number; skill2: number } {
+  const { avgSkill: s1 } = calculateTeamSkill(team1, overridesMap);
+  const { avgSkill: s2 } = calculateTeamSkill(team2, overridesMap);
+
+  // Logistic Elo-style win probability based on skill difference
+  // Skill difference of 10 gives ~65% / 35%
+  const delta = s1 - s2;
+  const p1 = 1 / (1 + Math.pow(10, -delta / 28));
+  
+  // Bound probability between 15% and 85% to keep match odds sensible and exciting
+  const prob1 = Math.round(Math.min(85, Math.max(15, p1 * 100)));
+  const prob2 = 100 - prob1;
+
+  return { prob1, prob2, skill1: s1, skill2: s2 };
+}
+
+// Map team names or badgeShape to tailored esports emblem paths & accents
+function getEmblemShape(shape: string | undefined, indexHint: number): string {
+  const s = shape || (indexHint % 4 === 0 ? "shield" : indexHint % 4 === 1 ? "hexagon" : indexHint % 4 === 2 ? "diamond" : "circle");
+  return s;
+}
+
 export const TeamBadgeLogo = ({
   logo,
   name,
@@ -57,15 +124,26 @@ export const TeamBadgeLogo = ({
   name: string;
   size?: "sm" | "md" | "lg" | "xl";
 }) => {
-  const s = size === "sm" ? 34 : size === "lg" ? 54 : size === "xl" ? 72 : 42;
-  const fontSize = size === "sm" ? "0.75rem" : size === "lg" ? "1.1rem" : size === "xl" ? "1.4rem" : "0.9rem";
+  const s = size === "sm" ? 36 : size === "lg" ? 56 : size === "xl" ? 76 : 44;
+  const fontSize = size === "sm" ? "0.75rem" : size === "lg" ? "1.15rem" : size === "xl" ? "1.45rem" : "0.92rem";
 
   const primary = logo?.primaryColor || "#ffc619";
   const secondary = logo?.secondaryColor || "#9d3bf5";
+  const shape = logo?.badgeShape || "shield";
 
   // Initials (2 letters, max 3)
   const cleanName = (name || "T").replace(/^team\s+/i, "").trim();
   const initials = cleanName.length >= 2 ? cleanName.slice(0, 2).toUpperCase() : cleanName.toUpperCase();
+
+  // Polygon clip path based on shape for an authentic pro esports emblem cut
+  let clipPath = "polygon(50% 0%, 100% 15%, 100% 75%, 50% 100%, 0% 75%, 0% 15%)"; // default shield
+  if (shape === "hexagon") {
+    clipPath = "polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%)";
+  } else if (shape === "diamond") {
+    clipPath = "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)";
+  } else if (shape === "circle") {
+    clipPath = "circle(48% at 50% 50%)";
+  }
 
   return (
     <div
@@ -73,36 +151,92 @@ export const TeamBadgeLogo = ({
         width: `${s}px`,
         height: `${s}px`,
         minWidth: `${s}px`,
-        borderRadius: size === "sm" ? "8px" : "12px",
-        background: `linear-gradient(135deg, ${primary}22, ${secondary}33)`,
-        border: `1.5px solid ${primary}88`,
-        boxShadow: `0 0 16px ${primary}33, inset 0 0 10px ${secondary}22`,
+        position: "relative",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        fontWeight: "900",
-        fontSize,
-        letterSpacing: "0.05em",
-        color: "#ffffff",
-        fontFamily: "var(--font-mono, monospace)",
-        textShadow: `0 0 8px ${primary}`,
         userSelect: "none",
-        position: "relative",
-        overflow: "hidden"
+        filter: `drop-shadow(0 0 10px ${primary}55)`
       }}
     >
+      {/* Outer Glow Shield Badge */}
       <div
         style={{
           position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundImage: "radial-gradient(circle at 30% 20%, rgba(255,255,255,0.2) 0%, transparent 60%)",
-          pointerEvents: "none"
+          inset: 0,
+          clipPath,
+          background: `linear-gradient(135deg, ${primary} 0%, ${secondary} 100%)`,
+          opacity: 0.95
         }}
       />
-      <span style={{ position: "relative", zIndex: 2 }}>{initials}</span>
+
+      {/* Inner Inset Background with Cyber Gradients */}
+      <div
+        style={{
+          position: "absolute",
+          inset: size === "sm" ? "2px" : "3px",
+          clipPath,
+          background: `linear-gradient(160deg, #161026 0%, #0d0918 60%, ${primary}22 100%)`,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
+        }}
+      >
+        {/* Subtle Cyber Grid / Radial Flare */}
+        <div
+          style={{
+            position: "absolute",
+            top: "-20%",
+            left: "-20%",
+            right: "-20%",
+            bottom: "-20%",
+            backgroundImage: `radial-gradient(circle at 50% 20%, ${primary}44 0%, transparent 60%)`,
+            pointerEvents: "none"
+          }}
+        />
+
+        {/* Diagonal Tech Scanline Accent */}
+        <div
+          style={{
+            position: "absolute",
+            width: "120%",
+            height: "1px",
+            background: `linear-gradient(90deg, transparent, ${secondary}88, transparent)`,
+            transform: "rotate(-35deg)",
+            pointerEvents: "none"
+          }}
+        />
+
+        {/* Team Initials */}
+        <span
+          style={{
+            position: "relative",
+            zIndex: 3,
+            fontWeight: "900",
+            fontSize,
+            letterSpacing: "0.05em",
+            color: "#ffffff",
+            fontFamily: "var(--font-mono, monospace)",
+            textShadow: `0 0 10px ${primary}, 0 2px 4px rgba(0,0,0,0.8)`
+          }}
+        >
+          {initials}
+        </span>
+      </div>
+
+      {/* Corner / Top Crest Micro-Dot */}
+      <div
+        style={{
+          position: "absolute",
+          top: "4px",
+          width: size === "sm" ? "3px" : "4px",
+          height: size === "sm" ? "3px" : "4px",
+          borderRadius: "50%",
+          background: "#fff",
+          boxShadow: `0 0 6px ${primary}`,
+          zIndex: 4
+        }}
+      />
     </div>
   );
 };
@@ -207,6 +341,26 @@ export function computeStandings(
 
 export function TournamentBracketView({ bracket }: { bracket: BracketState }) {
   const [selectedRound, setSelectedRound] = useState<number | "ALL">("ALL");
+  const [playerOverrides, setPlayerOverrides] = useState<Record<string, PlayerOverrideItem>>({});
+
+  useEffect(() => {
+    fetch("/api/admin/players/override")
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.overrides) {
+          const map: Record<string, PlayerOverrideItem> = {};
+          Object.entries(data.overrides).forEach(([k, v]: [string, any]) => {
+            map[k] = v;
+            if (v && v.nickname) {
+              map[v.nickname] = v;
+              map[v.nickname.toLowerCase()] = v;
+            }
+          });
+          setPlayerOverrides(map);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const rules = bracket.rules || { pointsWin: 2, pointsDraw: 1, pointsLoss: 0, format: "BO2" };
   const standings = computeStandings(bracket.teams || [], bracket.matches || [], rules);
@@ -490,6 +644,11 @@ export function TournamentBracketView({ bracket }: { bracket: BracketState }) {
             const team2Won = isFinished && (match.score2 ?? 0) > (match.score1 ?? 0);
             const isDraw = isFinished && match.score1 === match.score2 && match.score1 !== null;
 
+            // Calculate win probability based on players skill scores
+            const { prob1, prob2, skill1, skill2 } = calculateMatchWinProbability(team1, team2, playerOverrides);
+            const team1Color = team1?.logo?.primaryColor || "#ffc619";
+            const team2Color = team2?.logo?.primaryColor || "#00e5ff";
+
             return (
               <div
                 key={match.id}
@@ -614,9 +773,54 @@ export function TournamentBracketView({ bracket }: { bracket: BracketState }) {
                   </div>
                 </div>
 
-                {/* VS Indicator */}
-                <div style={{ textAlign: "center", fontSize: "0.7rem", fontWeight: "900", color: "var(--text-muted)", letterSpacing: "0.1em" }}>
-                  {isDraw ? "НИЧЬЯ (1:1)" : "VS"}
+                {/* VS Indicator & Win Probability Bar */}
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", padding: "0.2rem 0.4rem" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.68rem", fontWeight: "800" }}>
+                    <span style={{ color: prob1 >= prob2 ? team1Color : "var(--text-secondary)", display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                      <span>{prob1}%</span>
+                      <span style={{ fontSize: "0.6rem", color: "var(--text-muted)", fontWeight: "500" }}>({skill1} PWR)</span>
+                    </span>
+
+                    <span style={{ fontSize: "0.68rem", fontWeight: "900", color: isDraw ? "#ffc619" : "var(--text-muted)", letterSpacing: "0.08em" }}>
+                      {isDraw ? "НИЧЬЯ (1:1)" : "Шанс на победу"}
+                    </span>
+
+                    <span style={{ color: prob2 >= prob1 ? team2Color : "var(--text-secondary)", display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                      <span style={{ fontSize: "0.6rem", color: "var(--text-muted)", fontWeight: "500" }}>({skill2} PWR)</span>
+                      <span>{prob2}%</span>
+                    </span>
+                  </div>
+
+                  {/* Dual-Color Probability Progress Bar */}
+                  <div
+                    style={{
+                      height: "5px",
+                      width: "100%",
+                      borderRadius: "6px",
+                      background: "rgba(255, 255, 255, 0.08)",
+                      display: "flex",
+                      overflow: "hidden",
+                      position: "relative"
+                    }}
+                    title={`Шанс на победу: ${team1?.name || "Команда 1"} ${prob1}% vs ${prob2}% ${team2?.name || "Команда 2"}`}
+                  >
+                    <div
+                      style={{
+                        width: `${prob1}%`,
+                        height: "100%",
+                        background: `linear-gradient(90deg, ${team1Color}cc, ${team1Color})`,
+                        transition: "width 0.4s ease"
+                      }}
+                    />
+                    <div
+                      style={{
+                        width: `${prob2}%`,
+                        height: "100%",
+                        background: `linear-gradient(90deg, ${team2Color}, ${team2Color}cc)`,
+                        transition: "width 0.4s ease"
+                      }}
+                    />
+                  </div>
                 </div>
 
                 {/* Team 2 Row */}
