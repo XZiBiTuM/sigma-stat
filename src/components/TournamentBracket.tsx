@@ -523,22 +523,6 @@ export function TournamentBracketView({ bracket }: { bracket: BracketState }) {
                   </div>
 
                   <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    {match.map1 && (
-                      <span
-                        style={{
-                          padding: "0.15rem 0.45rem",
-                          borderRadius: "6px",
-                          background: "rgba(255,255,255,0.05)",
-                          border: "1px solid var(--border-light)",
-                          color: "var(--text-secondary)",
-                          fontFamily: "var(--font-mono)",
-                          fontSize: "0.7rem"
-                        }}
-                      >
-                        {match.map1} {match.map2 ? `/ ${match.map2}` : ""}
-                      </span>
-                    )}
-
                     {isLive ? (
                       <span
                         style={{
