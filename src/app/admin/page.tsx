@@ -46,6 +46,12 @@ export default function AdminLoginPage() {
   const [isLoadingTraits, setIsLoadingTraits] = useState(false);
   const [traitsMsg, setTraitsMsg] = useState("");
 
+  // Bracket Management state
+  const [bracketData, setBracketData] = useState<any>(null);
+  const [isLoadingBracket, setIsLoadingBracket] = useState(false);
+  const [bracketMsg, setBracketMsg] = useState("");
+  const [isSavingBracket, setIsSavingBracket] = useState(false);
+
   const fetchAnalytics = (code?: string) => {
     setIsLoadingAnalytics(true);
     const pass = code || passcode || localStorage.getItem("sigma_admin_pass") || "demon323161";
@@ -104,6 +110,102 @@ export default function AdminLoginPage() {
       })
       .catch(() => {})
       .finally(() => setIsLoadingTraits(false));
+  };
+
+  const fetchBracket = () => {
+    setIsLoadingBracket(true);
+    fetch("/api/tournament/bracket")
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.bracket) {
+          setBracketData(data.bracket);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setIsLoadingBracket(false));
+  };
+
+  const handleImportDraftToBracket = async () => {
+    if (!window.confirm("Импортировать составы команд из текущего драфта капитанов в сетку турнира?")) return;
+    setIsSavingBracket(true);
+    setBracketMsg("Импорт составов из драфта...");
+    try {
+      const res = await fetch("/api/tournament/bracket", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "import_draft",
+          passcode: passcode || localStorage.getItem("sigma_admin_pass") || "demon323161"
+        })
+      });
+      const d = await res.json();
+      if (res.ok && d.bracket) {
+        setBracketData(d.bracket);
+        setBracketMsg("Составы успешно импортированы из драфта!");
+      } else {
+        setBracketMsg(`Ошибка: ${d.error || "Не удалось импортировать"}`);
+      }
+    } catch (e: any) {
+      setBracketMsg(`Ошибка сети: ${e.message}`);
+    } finally {
+      setIsSavingBracket(false);
+    }
+  };
+
+  const handleUpdateBracketMatch = async (matchId: string, updates: any) => {
+    setIsSavingBracket(true);
+    setBracketMsg("Сохранение счёта матча...");
+    try {
+      const res = await fetch("/api/tournament/bracket", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "update_match",
+          matchId,
+          updates,
+          passcode: passcode || localStorage.getItem("sigma_admin_pass") || "demon323161"
+        })
+      });
+      const d = await res.json();
+      if (res.ok && d.bracket) {
+        setBracketData(d.bracket);
+        setBracketMsg("Матч успешно обновлен!");
+      } else {
+        setBracketMsg(`Ошибка: ${d.error || "Не удалось обновить матч"}`);
+      }
+    } catch (e: any) {
+      setBracketMsg(`Ошибка сети: ${e.message}`);
+    } finally {
+      setIsSavingBracket(false);
+    }
+  };
+
+  const handleUpdateBracketTeam = async (teamId: string, updates: any) => {
+    setIsSavingBracket(true);
+    setBracketMsg("Обновление команды...");
+    try {
+      const res = await fetch("/api/tournament/bracket", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "update_team",
+          teamId,
+          updates,
+          passcode: passcode || localStorage.getItem("sigma_admin_pass") || "demon323161"
+        })
+      });
+      const d = await res.json();
+      if (res.ok && d.bracket) {
+        setBracketData(d.bracket);
+        setBracketMsg("Команда успешно обновлена!");
+      } else {
+        setBracketMsg(`Ошибка: ${d.error || "Не удалось обновить команду"}`);
+      }
+    } catch (e: any) {
+      setBracketMsg(`Ошибка сети: ${e.message}`);
+    } finally {
+      setIsSavingBracket(false);
+    }
   };
 
   const handleSavePlayerTraits = async () => {
@@ -185,6 +287,7 @@ export default function AdminLoginPage() {
           fetchAnalytics();
           fetchFantasyPicks();
           fetchPlayerTraits();
+          fetchBracket();
         }
       }
     } catch (e) {}
@@ -217,6 +320,7 @@ export default function AdminLoginPage() {
       fetchAnalytics(p);
       fetchFantasyPicks();
       fetchPlayerTraits();
+      fetchBracket();
     } else if (p === "chillout" || p === "mrchillout") {
       localStorage.setItem("sigma_user_role", "EVENT_MAKER");
       localStorage.setItem("sigma_user_name", "Mr.Chillout");
@@ -660,6 +764,305 @@ export default function AdminLoginPage() {
                         </button>
                       </div>
                     ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* TOURNAMENT BRACKET & MATCHES MANAGEMENT SECTION */}
+            {currentRole === "ADMIN" && (
+              <div style={{
+                marginTop: "1.5rem",
+                background: "rgba(245, 158, 11, 0.05)",
+                border: "1px solid rgba(245, 158, 11, 0.35)",
+                borderRadius: "18px",
+                padding: "1.5rem",
+                textAlign: "left"
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem", flexWrap: "wrap", gap: "0.75rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <span style={{ fontSize: "1.35rem" }}>🏆</span>
+                    <div>
+                      <h3 style={{ margin: 0, fontSize: "1.1rem", color: "#fbbf24" }}>
+                        Сетка и Матчи Турнира (Round-Robin)
+                      </h3>
+                      <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-muted)" }}>
+                        Управление счетом матчей, картами, статусами и составами команд
+                      </p>
+                    </div>
+                  </div>
+
+                  <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                    <button
+                      type="button"
+                      onClick={() => fetchBracket()}
+                      disabled={isLoadingBracket}
+                      style={{
+                        padding: "0.4rem 0.8rem",
+                        borderRadius: "8px",
+                        background: "rgba(255, 255, 255, 0.08)",
+                        border: "1px solid rgba(255, 255, 255, 0.15)",
+                        color: "#fff",
+                        fontSize: "0.75rem",
+                        fontWeight: "700",
+                        cursor: "pointer"
+                      }}
+                    >
+                      {isLoadingBracket ? "Загрузка..." : "🔄 Обновить"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleImportDraftToBracket}
+                      disabled={isSavingBracket}
+                      style={{
+                        padding: "0.4rem 0.9rem",
+                        borderRadius: "8px",
+                        background: "rgba(245, 158, 11, 0.2)",
+                        border: "1px solid rgba(245, 158, 11, 0.5)",
+                        color: "#fbbf24",
+                        fontSize: "0.75rem",
+                        fontWeight: "800",
+                        cursor: isSavingBracket ? "not-allowed" : "pointer"
+                      }}
+                    >
+                      ⚡ Импорт из Драфта
+                    </button>
+                  </div>
+                </div>
+
+                {bracketMsg && (
+                  <div style={{
+                    padding: "0.6rem 0.9rem",
+                    borderRadius: "8px",
+                    background: bracketMsg.startsWith("Ошибка") ? "rgba(255, 73, 73, 0.15)" : "rgba(245, 158, 11, 0.15)",
+                    border: `1px solid ${bracketMsg.startsWith("Ошибка") ? "#ff4949" : "#fbbf24"}`,
+                    color: bracketMsg.startsWith("Ошибка") ? "#ff7b7b" : "#fbbf24",
+                    fontSize: "0.82rem",
+                    marginBottom: "1rem"
+                  }}>
+                    {bracketMsg}
+                  </div>
+                )}
+
+                {/* TEAMS SUMMARY */}
+                {bracketData?.teams && (
+                  <div style={{ marginBottom: "1.5rem" }}>
+                    <div style={{ fontSize: "0.8rem", fontWeight: "700", color: "#fbbf24", textTransform: "uppercase", marginBottom: "0.5rem" }}>
+                      Команды ({bracketData.teams.length})
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "0.75rem" }}>
+                      {bracketData.teams.map((t: any) => (
+                        <div key={t.id} style={{ background: "rgba(0,0,0,0.35)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "10px", padding: "0.75rem" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.4rem" }}>
+                            <span style={{ fontSize: "1.2rem" }}>{t.logo?.icon || "🛡️"}</span>
+                            <input
+                              type="text"
+                              value={t.name}
+                              onChange={e => {
+                                const newName = e.target.value;
+                                setBracketData((prev: any) => ({
+                                  ...prev,
+                                  teams: prev.teams.map((item: any) => item.id === t.id ? { ...item, name: newName } : item)
+                                }));
+                              }}
+                              onBlur={e => handleUpdateBracketTeam(t.id, { name: e.target.value })}
+                              style={{
+                                background: "transparent",
+                                border: "none",
+                                borderBottom: "1px dashed rgba(255,255,255,0.3)",
+                                color: "#fff",
+                                fontWeight: "800",
+                                fontSize: "0.85rem",
+                                width: "100%"
+                              }}
+                            />
+                          </div>
+                          <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
+                            Капитан: <strong style={{ color: "#fbbf24" }}>{t.captain || "—"}</strong>
+                          </div>
+                          <div style={{ fontSize: "0.7rem", color: "var(--text-secondary)", marginTop: "0.25rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                            Состав: {t.members?.join(", ") || "—"}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* MATCHES LIST */}
+                {bracketData?.matches && (
+                  <div>
+                    <div style={{ fontSize: "0.8rem", fontWeight: "700", color: "#fbbf24", textTransform: "uppercase", marginBottom: "0.75rem" }}>
+                      Расписание матчей и счёт (3 тура)
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                      {bracketData.matches.map((m: any) => {
+                        const t1 = bracketData.teams?.find((t: any) => t.id === m.team1Id);
+                        const t2 = bracketData.teams?.find((t: any) => t.id === m.team2Id);
+
+                        return (
+                          <div 
+                            key={m.id} 
+                            style={{ 
+                              background: "rgba(0,0,0,0.45)", 
+                              border: m.status === 'LIVE' ? "1px solid rgba(239, 68, 68, 0.6)" : "1px solid rgba(255,255,255,0.1)", 
+                              borderRadius: "12px", 
+                              padding: "0.85rem 1rem",
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: "0.6rem"
+                            }}
+                          >
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.75rem" }}>
+                              <span style={{ fontWeight: "700", color: "#fbbf24" }}>ТУР {m.round} • {m.id}</span>
+                              <div style={{ display: "flex", gap: "0.4rem", alignItems: "center" }}>
+                                <label style={{ color: "var(--text-muted)", fontSize: "0.7rem" }}>Карта:</label>
+                                <input
+                                  type="text"
+                                  placeholder="de_mirage"
+                                  value={m.map || ""}
+                                  onChange={e => {
+                                    const val = e.target.value;
+                                    setBracketData((prev: any) => ({
+                                      ...prev,
+                                      matches: prev.matches.map((item: any) => item.id === m.id ? { ...item, map: val } : item)
+                                    }));
+                                  }}
+                                  onBlur={e => handleUpdateBracketMatch(m.id, { map: e.target.value })}
+                                  style={{
+                                    width: "90px",
+                                    padding: "0.2rem 0.4rem",
+                                    borderRadius: "6px",
+                                    background: "#06050c",
+                                    border: "1px solid rgba(255,255,255,0.15)",
+                                    color: "#fff",
+                                    fontSize: "0.72rem"
+                                  }}
+                                />
+
+                                <select
+                                  value={m.status}
+                                  onChange={e => {
+                                    const val = e.target.value;
+                                    setBracketData((prev: any) => ({
+                                      ...prev,
+                                      matches: prev.matches.map((item: any) => item.id === m.id ? { ...item, status: val } : item)
+                                    }));
+                                    handleUpdateBracketMatch(m.id, { status: val });
+                                  }}
+                                  style={{
+                                    padding: "0.2rem 0.4rem",
+                                    borderRadius: "6px",
+                                    background: m.status === 'LIVE' ? 'rgba(239, 68, 68, 0.2)' : '#06050c',
+                                    border: m.status === 'LIVE' ? '1px solid #ef4444' : '1px solid rgba(255,255,255,0.15)',
+                                    color: m.status === 'LIVE' ? '#f87171' : m.status === 'FINISHED' ? '#4ade80' : '#60a5fa',
+                                    fontSize: "0.72rem",
+                                    fontWeight: "700"
+                                  }}
+                                >
+                                  <option value="UPCOMING">Ожидается</option>
+                                  <option value="LIVE">LIVE 🔴</option>
+                                  <option value="FINISHED">Завершён 🏁</option>
+                                </select>
+                              </div>
+                            </div>
+
+                            {/* Score Row */}
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
+                              {/* Team 1 */}
+                              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flex: 1, minWidth: "120px" }}>
+                                <span>{t1?.logo?.icon || "🛡️"}</span>
+                                <span style={{ fontWeight: "700", fontSize: "0.85rem", color: "#fff" }}>{t1?.name || "Команда 1"}</span>
+                              </div>
+
+                              {/* Scores inputs */}
+                              <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                                <input
+                                  type="number"
+                                  min={0}
+                                  max={30}
+                                  placeholder="0"
+                                  value={m.score1 ?? ""}
+                                  onChange={e => {
+                                    const val = e.target.value === "" ? null : Number(e.target.value);
+                                    setBracketData((prev: any) => ({
+                                      ...prev,
+                                      matches: prev.matches.map((item: any) => item.id === m.id ? { ...item, score1: val } : item)
+                                    }));
+                                  }}
+                                  style={{
+                                    width: "48px",
+                                    textAlign: "center",
+                                    padding: "0.3rem",
+                                    borderRadius: "6px",
+                                    background: "#06050c",
+                                    border: "1px solid rgba(245, 158, 11, 0.4)",
+                                    color: "#fbbf24",
+                                    fontWeight: "800",
+                                    fontSize: "0.95rem"
+                                  }}
+                                />
+                                <span style={{ color: "var(--text-muted)", fontWeight: "800" }}>:</span>
+                                <input
+                                  type="number"
+                                  min={0}
+                                  max={30}
+                                  placeholder="0"
+                                  value={m.score2 ?? ""}
+                                  onChange={e => {
+                                    const val = e.target.value === "" ? null : Number(e.target.value);
+                                    setBracketData((prev: any) => ({
+                                      ...prev,
+                                      matches: prev.matches.map((item: any) => item.id === m.id ? { ...item, score2: val } : item)
+                                    }));
+                                  }}
+                                  style={{
+                                    width: "48px",
+                                    textAlign: "center",
+                                    padding: "0.3rem",
+                                    borderRadius: "6px",
+                                    background: "#06050c",
+                                    border: "1px solid rgba(245, 158, 11, 0.4)",
+                                    color: "#fbbf24",
+                                    fontWeight: "800",
+                                    fontSize: "0.95rem"
+                                  }}
+                                />
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleUpdateBracketMatch(m.id, {
+                                    score1: m.score1,
+                                    score2: m.score2,
+                                    status: (m.score1 !== null && m.score2 !== null) ? 'FINISHED' : m.status
+                                  })}
+                                  disabled={isSavingBracket}
+                                  style={{
+                                    marginLeft: "0.4rem",
+                                    padding: "0.3rem 0.6rem",
+                                    borderRadius: "6px",
+                                    background: "rgba(245, 158, 11, 0.2)",
+                                    border: "1px solid rgba(245, 158, 11, 0.4)",
+                                    color: "#fbbf24",
+                                    fontSize: "0.72rem",
+                                    fontWeight: "700",
+                                    cursor: "pointer"
+                                  }}
+                                >
+                                  💾 Сохранить
+                                </button>
+                              </div>
+
+                              {/* Team 2 */}
+                              <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "0.5rem", flex: 1, minWidth: "120px" }}>
+                                <span style={{ fontWeight: "700", fontSize: "0.85rem", color: "#fff" }}>{t2?.name || "Команда 2"}</span>
+                                <span>{t2?.logo?.icon || "🛡️"}</span>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 )}
               </div>

@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { computeAdaptiveSkillScore } from "@/lib/skill";
 import PlayerRadarChart, { PlayerAttributes, computeAutoShooting } from "@/components/PlayerRadarChart";
+import { TournamentBracketView, BracketState } from "@/components/TournamentBracket";
 
 class ErrorBoundary extends Component<
   { children: ReactNode },
@@ -199,12 +200,16 @@ const POPULAR_HUBS = [
 export default function Home() {
   const [hubIdInput, setHubIdInput] = useState("0dd077bc-b401-4f5c-8a40-47578601ccb7");
   const [hubId, setHubId] = useState<string | null>("0dd077bc-b401-4f5c-8a40-47578601ccb7");
-  const [activeTab, setActiveTab] = useState<"leaderboard" | "matches" | "members" | "tournaments" | "compare" | "fantasy">("leaderboard");
+  const [activeTab, setActiveTab] = useState<"leaderboard" | "matches" | "members" | "tournaments" | "compare" | "fantasy" | "bracket">("leaderboard");
   const [comparePlayer1Id, setComparePlayer1Id] = useState<string>("");
   const [comparePlayer2Id, setComparePlayer2Id] = useState<string>("");
   const [compareSearchQuery1, setCompareSearchQuery1] = useState("");
   const [compareSearchQuery2, setCompareSearchQuery2] = useState("");
   
+  // Bracket states
+  const [bracketState, setBracketState] = useState<BracketState | null>(null);
+  const [isLoadingBracket, setIsLoadingBracket] = useState(false);
+
   // Tournaments states
   const [tournaments, setTournaments] = useState<any[]>([]);
   const [selectedTournamentId, setSelectedTournamentId] = useState<string>("");
@@ -499,6 +504,12 @@ export default function Home() {
     fetch("/api/fantasy/leaderboard")
       .then(r => r.json())
       .then(d => { if (d?.leaderboard) setFantasyLeaderboard(d.leaderboard); })
+      .catch(() => {});
+
+    // Fetch Bracket
+    fetch("/api/tournament/bracket")
+      .then(r => r.json())
+      .then(d => { if (d?.bracket) setBracketState(d.bracket); })
       .catch(() => {});
   }, []);
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -3021,6 +3032,22 @@ export default function Home() {
                   }}
                 >
                   Fantasy League
+                </button>
+                <button 
+                  className={`tab-btn ${activeTab === 'bracket' ? 'active' : ''}`}
+                  onClick={() => {
+                    setActiveTab('bracket');
+                    fetch("/api/tournament/bracket")
+                      .then(r => r.json())
+                      .then(d => { if (d?.bracket) setBracketState(d.bracket); })
+                      .catch(() => {});
+                  }}
+                  style={{
+                    borderColor: activeTab === 'bracket' ? '#f59e0b' : undefined,
+                    color: activeTab === 'bracket' ? '#f59e0b' : undefined
+                  }}
+                >
+                  🏆 Сетка турнира
                 </button>
               </div>
 
@@ -6362,6 +6389,20 @@ export default function Home() {
                   </div>
                 );
               })()}
+
+              {/* BRACKET TAB */}
+              {activeTab === 'bracket' && (
+                <div>
+                  {bracketState ? (
+                    <TournamentBracketView bracket={bracketState} />
+                  ) : (
+                    <div style={{ textAlign: "center", padding: "4rem 2rem", color: "var(--text-muted)" }}>
+                      <div className="spinner" style={{ margin: "0 auto 1.5rem" }}></div>
+                      <p>Загрузка сетки турнира...</p>
+                    </div>
+                  )}
+                </div>
+              )}
 
             </div>
 
