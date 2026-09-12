@@ -4414,6 +4414,82 @@ export default function Home() {
                 // Active squad picks helper for FUT cards (combines draft or saved pick)
                 const activePick = userFantasyPick;
 
+                const renderBuffSvgIcon = (buffId?: string, size = 18, color = "currentColor") => {
+                  switch (buffId) {
+                    case "headshot":
+                      return (
+                        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="12" r="9" />
+                          <line x1="12" y1="3" x2="12" y2="7" />
+                          <line x1="12" y1="17" x2="12" y2="21" />
+                          <line x1="3" y1="12" x2="7" y2="12" />
+                          <line x1="17" y1="12" x2="21" y2="12" />
+                          <circle cx="12" cy="12" r="2.5" fill={color} />
+                        </svg>
+                      );
+                    case "flow":
+                    case "in_the_zone":
+                      return (
+                        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M2 12c2.5-3 5.5-3 8 0s5.5 3 8 0 3-1.5 4-2" />
+                          <path d="M2 6c2.5-3 5.5-3 8 0s5.5 3 8 0 3-1.5 4-2" opacity="0.6" />
+                          <path d="M2 18c2.5-3 5.5-3 8 0s5.5 3 8 0 3-1.5 4-2" opacity="0.6" />
+                        </svg>
+                      );
+                    case "clutcher":
+                    case "clutch_king":
+                      return (
+                        <svg width={size} height={size} viewBox="0 0 24 24" fill={color} fillOpacity="0.2" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                        </svg>
+                      );
+                    case "tactician":
+                      return (
+                        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="11" cy="13" r="7.5" />
+                          <path d="M14.5 5.5 17.5 2.5" />
+                          <path d="M16 2.5 19 5.5" />
+                          <circle cx="11" cy="13" r="2.5" fill={color} fillOpacity="0.4" />
+                        </svg>
+                      );
+                    case "joker":
+                      return (
+                        <svg width={size} height={size} viewBox="0 0 24 24" fill={color} fillOpacity="0.25" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                        </svg>
+                      );
+                    case "vampire":
+                      return (
+                        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M4 9c3.5 3 6.5 2 8 0 1.5 2 4.5 3 8 0" />
+                          <path d="M5 11c3 6 11 6 14 0" />
+                          <polygon points="7.5 9.5 6 15 9.5 11" fill={color} stroke={color} strokeWidth="1.2" strokeLinejoin="round" />
+                          <polygon points="16.5 9.5 18 15 14.5 11" fill={color} stroke={color} strokeWidth="1.2" strokeLinejoin="round" />
+                          <path d="M12 14c-1.2 1.6-1.5 2.5-1.5 3.3a1.5 1.5 0 0 0 3 0c0-.8-.3-1.7-1.5-3.3z" fill={color} stroke="none" />
+                        </svg>
+                      );
+                    case "lucky_loser":
+                      return (
+                        <svg width={size} height={size} viewBox="0 0 24 24" fill={color} fillOpacity="0.22" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="8" cy="8" r="4.2" />
+                          <circle cx="16" cy="8" r="4.2" />
+                          <circle cx="8" cy="15" r="4.2" />
+                          <circle cx="16" cy="15" r="4.2" />
+                          <path d="M12 12c0 3.5-2 6.5-5.5 7.5" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" />
+                        </svg>
+                      );
+                    default:
+                      return (
+                        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="3" y="3" width="18" height="18" rx="4" />
+                          <circle cx="8.5" cy="8.5" r="1.5" fill={color} />
+                          <circle cx="15.5" cy="15.5" r="1.5" fill={color} />
+                          <circle cx="12" cy="12" r="1.5" fill={color} />
+                        </svg>
+                      );
+                  }
+                };
+
                 return (
                   <div style={{ display: "flex", flexDirection: "column", gap: "2rem", width: "100%" }}>
                     
@@ -5879,27 +5955,59 @@ export default function Home() {
                                     </td>
                                     <td style={{ padding: "1rem" }}>
                                       <div style={{ fontSize: "0.85rem", fontWeight: "700", color: "#ff8a80" }}>{item.sniper?.nickname || "—"}</div>
-                                      <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                                      <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "0.35rem", flexWrap: "wrap" }}>
                                         <span>{item.sniper?.points} pts</span>
                                         {item.sniper?.buff && (
-                                          <span style={{ background: "rgba(255,82,82,0.15)", color: "#ff8a80", padding: "0.05rem 0.3rem", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "800" }}>
-                                            {item.sniper.buff.icon} +{item.sniper.buff.percent}%
+                                          <span 
+                                            title={`${item.sniper.buff.name || "Усиление"}: ${item.sniper.buff.desc || ""}`}
+                                            style={{ 
+                                              background: "rgba(255,82,82,0.15)", 
+                                              color: "#ff8a80", 
+                                              padding: "0.15rem 0.4rem", 
+                                              borderRadius: "6px", 
+                                              fontSize: "0.68rem", 
+                                              fontWeight: "800",
+                                              display: "inline-flex",
+                                              alignItems: "center",
+                                              gap: "0.25rem",
+                                              cursor: "help",
+                                              border: "1px solid rgba(255,82,82,0.3)"
+                                            }}
+                                          >
+                                            {renderBuffSvgIcon(item.sniper.buff.id, 12, "#ff8a80")}
+                                            <span>{item.sniper.buff.id === "vampire" ? "Вампир" : item.sniper.buff.id === "lucky_loser" ? "Удача" : `+${item.sniper.buff.percent}%`}</span>
                                           </span>
                                         )}
                                       </div>
                                     </td>
                                     <td style={{ padding: "1rem" }}>
                                       <div style={{ fontSize: "0.85rem", fontWeight: "700", color: "var(--accent-cyan)" }}>{item.support?.nickname || "—"}</div>
-                                      <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "0.3rem", flexWrap: "wrap" }}>
+                                      <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "0.35rem", flexWrap: "wrap" }}>
                                         <span>{item.support?.points} pts</span>
                                         {item.support?.penaltyApplied && (
-                                          <span style={{ background: "rgba(255,73,73,0.15)", color: "#ff5252", padding: "0.05rem 0.3rem", borderRadius: "4px", fontSize: "0.65rem", fontWeight: "800" }}>
+                                          <span title="Штраф -50% за скилл саппорта выше 65" style={{ background: "rgba(255,73,73,0.15)", color: "#ff5252", padding: "0.15rem 0.35rem", borderRadius: "4px", fontSize: "0.65rem", fontWeight: "800", cursor: "help" }}>
                                             -50%
                                           </span>
                                         )}
                                         {item.support?.buff && (
-                                          <span style={{ background: "rgba(0,229,255,0.15)", color: "var(--accent-cyan)", padding: "0.05rem 0.3rem", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "800" }}>
-                                            {item.support.buff.icon} +{item.support.buff.percent}%
+                                          <span 
+                                            title={`${item.support.buff.name || "Усиление"}: ${item.support.buff.desc || ""}`}
+                                            style={{ 
+                                              background: "rgba(0,229,255,0.15)", 
+                                              color: "var(--accent-cyan)", 
+                                              padding: "0.15rem 0.4rem", 
+                                              borderRadius: "6px", 
+                                              fontSize: "0.68rem", 
+                                              fontWeight: "800",
+                                              display: "inline-flex",
+                                              alignItems: "center",
+                                              gap: "0.25rem",
+                                              cursor: "help",
+                                              border: "1px solid rgba(0,229,255,0.3)"
+                                            }}
+                                          >
+                                            {renderBuffSvgIcon(item.support.buff.id, 12, "var(--accent-cyan)")}
+                                            <span>{item.support.buff.id === "vampire" ? "Вампир" : item.support.buff.id === "lucky_loser" ? "Удача" : `+${item.support.buff.percent}%`}</span>
                                           </span>
                                         )}
                                       </div>
@@ -5911,11 +6019,27 @@ export default function Home() {
                                           x{item.darkHorse?.multiplier}
                                         </span>
                                       </div>
-                                      <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                                      <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "0.35rem", flexWrap: "wrap" }}>
                                         <span>{item.darkHorse?.points} pts</span>
                                         {item.darkHorse?.buff && (
-                                          <span style={{ background: "rgba(255,215,0,0.15)", color: "#ffd700", padding: "0.05rem 0.3rem", borderRadius: "4px", fontSize: "0.68rem", fontWeight: "800" }}>
-                                            {item.darkHorse.buff.icon} +{item.darkHorse.buff.percent}%
+                                          <span 
+                                            title={`${item.darkHorse.buff.name || "Усиление"}: ${item.darkHorse.buff.desc || ""}`}
+                                            style={{ 
+                                              background: "rgba(255,215,0,0.15)", 
+                                              color: "#ffd700", 
+                                              padding: "0.15rem 0.4rem", 
+                                              borderRadius: "6px", 
+                                              fontSize: "0.68rem", 
+                                              fontWeight: "800",
+                                              display: "inline-flex",
+                                              alignItems: "center",
+                                              gap: "0.25rem",
+                                              cursor: "help",
+                                              border: "1px solid rgba(255,215,0,0.3)"
+                                            }}
+                                          >
+                                            {renderBuffSvgIcon(item.darkHorse.buff.id, 12, "#ffd700")}
+                                            <span>{item.darkHorse.buff.id === "vampire" ? "Вампир" : item.darkHorse.buff.id === "lucky_loser" ? "Удача" : `+${item.darkHorse.buff.percent}%`}</span>
                                           </span>
                                         )}
                                       </div>
