@@ -3079,7 +3079,7 @@ export default function Home() {
                     color: activeTab === 'bracket' ? '#ffc619' : undefined
                   }}
                 >
-                  Сетка турнира
+                  SIGMABET
                 </button>
               </div>
 
