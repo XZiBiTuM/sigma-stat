@@ -218,9 +218,9 @@ export function getBO2MatchOdds(skill1: number, skill2: number): MatchOdds {
   const mapK2 = Number(Math.max(1.28, Math.min(3.40, 1 / (pMap2 * margin))).toFixed(2));
 
   const exactScore = {
-    "2:0": Number(Math.max(1.70, Math.min(3.95, k1 * 0.98 + 0.05)).toFixed(2)),
-    "1:1": Number(Math.max(1.85, Math.min(2.65, kX)).toFixed(2)),
-    "0:2": Number(Math.max(1.70, Math.min(3.95, k2 * 0.98 + 0.05)).toFixed(2))
+    "2:0": k1,
+    "1:1": kX,
+    "0:2": k2
   };
 
   const skillGap = Math.abs(delta);
@@ -254,8 +254,8 @@ export function getBO2MatchOdds(skill1: number, skill2: number): MatchOdds {
     },
     {
       line: "-0.5",
-      team1Odds: Number(Math.max(1.70, Math.min(3.80, exactScore["2:0"])).toFixed(2)),
-      team2Odds: Number(Math.max(1.70, Math.min(3.80, exactScore["0:2"])).toFixed(2)),
+      team1Odds: k1,
+      team2Odds: k2,
       description1: "Фора 1 (-0.5 по картам)",
       description2: "Фора 2 (-0.5 по картам)"
     }
