@@ -159,37 +159,27 @@ export function calculateMatchOdds(
   avgSkill1: number,
   avgSkill2: number
 ): ExtendedMatchOdds {
-  // Delta divisor 48 compresses skill divergence so odds remain realistic (1.25 - 3.80 range)
+  // Skill probability for Counter-Strike match
   const delta = avgSkill1 - avgSkill2;
-  const pMap1 = 1 / (1 + Math.pow(10, -delta / 48));
+  const pMap1 = 1 / (1 + Math.pow(10, -delta / 32));
   const pMap2 = 1 - pMap1;
 
-  let rawP1 = pMap1 * pMap1;
-  let rawP2 = pMap2 * pMap2;
-  let rawPX = 2 * pMap1 * pMap2;
+  // Margin of 5%
+  const margin = 1.05;
 
-  // Keep draw probability balanced for Counter-Strike BO2 (~32% to 44%)
-  rawPX = Math.max(0.32, Math.min(0.44, rawPX));
-  const rem = 1 - rawPX;
-  const sum12 = rawP1 + rawP2;
-  if (sum12 > 0) {
-    rawP1 = (rawP1 / sum12) * rem;
-    rawP2 = (rawP2 / sum12) * rem;
-  }
+  // In esports betting UI, series winner odds should stay attractive and realistic (1.20 to 2.35 range)
+  // When teams are close (e.g. 49 vs 51 PWR), both are ~1.75 - 1.95; strong favorite is ~1.25 - 1.45, underdog ~2.10 - 2.35
+  const rawK1 = 1 / (pMap1 * margin);
+  const rawK2 = 1 / (pMap2 * margin);
 
-  // Margin of 6%
-  const margin = 1.06;
-  const calcK1 = Number((1 / (rawP1 * margin)).toFixed(2));
-  const calcKX = Number((1 / (rawPX * margin)).toFixed(2));
-  const calcK2 = Number((1 / (rawP2 * margin)).toFixed(2));
-
-  const k1 = Math.max(1.25, Math.min(3.80, calcK1));
-  const kX = Math.max(1.90, Math.min(2.70, calcKX));
-  const k2 = Math.max(1.25, Math.min(3.80, calcK2));
+  // Compress into 1.20 - 2.35 range
+  const k1 = Number(Math.max(1.20, Math.min(2.35, 1.85 - (pMap1 - 0.5) * 1.50)).toFixed(2));
+  const k2 = Number(Math.max(1.20, Math.min(2.35, 1.85 - (pMap2 - 0.5) * 1.50)).toFixed(2));
+  const kX = Number(Math.max(1.80, Math.min(2.20, 2.05 - Math.abs(pMap1 - 0.5) * 0.5)).toFixed(2));
 
   // Single Map win odds (for Map 1 and Map 2)
-  const mapK1 = Number(Math.max(1.28, Math.min(3.40, 1 / (pMap1 * margin))).toFixed(2));
-  const mapK2 = Number(Math.max(1.28, Math.min(3.40, 1 / (pMap2 * margin))).toFixed(2));
+  const mapK1 = Number(Math.max(1.20, Math.min(2.25, k1 * 0.96)).toFixed(2));
+  const mapK2 = Number(Math.max(1.20, Math.min(2.25, k2 * 0.96)).toFixed(2));
 
   // Exact score odds (in BO2, 2:0 is identical to P1 win, 1:1 is Draw, 0:2 is P2 win)
   const exactScore = {
@@ -240,14 +230,12 @@ export function calculateMatchOdds(
   ];
 
   // Map Handicap (+0.5 / -0.5 maps)
-  const t1Plus05Prob = rawP1 + rawPX;
-  const t2Plus05Prob = rawP2 + rawPX;
 
   const mapHandicaps = [
     {
       line: "+0.5",
-      team1Odds: Number(Math.max(1.22, Math.min(2.35, 1 / (t1Plus05Prob * margin))).toFixed(2)),
-      team2Odds: Number(Math.max(1.22, Math.min(2.35, 1 / (t2Plus05Prob * margin))).toFixed(2)),
+      team1Odds: Number(Math.max(1.18, Math.min(1.75, 1.45 - (pMap1 - 0.5) * 0.6)).toFixed(2)),
+      team2Odds: Number(Math.max(1.18, Math.min(1.75, 1.45 - (pMap2 - 0.5) * 0.6)).toFixed(2)),
       description1: "Фора 1 (+0.5 по картам)",
       description2: "Фора 2 (+0.5 по картам)"
     },
@@ -323,9 +311,9 @@ export function calculateMatchOdds(
     k1,
     kX,
     k2,
-    p1: Math.round(rawP1 * 100),
-    pX: Math.round(rawPX * 100),
-    p2: Math.round(rawP2 * 100),
+    p1: Math.round(pMap1 * 45),
+    pX: 10,
+    p2: Math.round(pMap2 * 45),
     exactScore,
     totalRounds,
     mapHandicaps,
