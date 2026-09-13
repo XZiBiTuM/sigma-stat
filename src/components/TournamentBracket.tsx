@@ -842,7 +842,7 @@ export function TournamentBracketView({
               {currentUser ? (userWallet?.balance ?? 100000).toLocaleString() : "100 000"}
             </span>
             <span style={{ fontSize: "0.85rem", color: "#ffc619", fontWeight: "800" }}>
-              SIGMA
+              СИГМАНАТ
             </span>
           </div>
 
