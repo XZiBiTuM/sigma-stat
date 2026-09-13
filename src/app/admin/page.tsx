@@ -52,6 +52,23 @@ export default function AdminLoginPage() {
   const [bracketMsg, setBracketMsg] = useState("");
   const [isSavingBracket, setIsSavingBracket] = useState(false);
 
+  // SIGMABET House / Bank state
+  const [betsBank, setBetsBank] = useState<any>(null);
+  const [isLoadingBank, setIsLoadingBank] = useState(false);
+
+  const fetchBetsBank = () => {
+    setIsLoadingBank(true);
+    fetch("/api/bets")
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.adminBank) {
+          setBetsBank(data.adminBank);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setIsLoadingBank(false));
+  };
+
   const fetchAnalytics = (code?: string) => {
     setIsLoadingAnalytics(true);
     const pass = code || passcode || localStorage.getItem("sigma_admin_pass") || "demon323161";
@@ -288,6 +305,7 @@ export default function AdminLoginPage() {
           fetchFantasyPicks();
           fetchPlayerTraits();
           fetchBracket();
+          fetchBetsBank();
         }
       }
     } catch (e) {}
@@ -321,6 +339,7 @@ export default function AdminLoginPage() {
       fetchFantasyPicks();
       fetchPlayerTraits();
       fetchBracket();
+      fetchBetsBank();
     } else if (p === "chillout" || p === "mrchillout") {
       localStorage.setItem("sigma_user_role", "EVENT_MAKER");
       localStorage.setItem("sigma_user_name", "Mr.Chillout");
@@ -545,6 +564,213 @@ export default function AdminLoginPage() {
                 ) : (
                   <div style={{ color: "var(--text-muted)", fontSize: "0.85rem", textAlign: "center", padding: "1rem" }}>
                     {isLoadingAnalytics ? "Загрузка аналитики..." : "Нажмите «Обновить» для получения статистики"}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ADMIN-ONLY SIGMABET BANK & BOOKMAKER PROFIT SECTION */}
+            {currentRole === "ADMIN" && (
+              <div style={{
+                marginTop: "1.5rem",
+                background: "rgba(255, 198, 25, 0.04)",
+                border: "1px solid rgba(255, 198, 25, 0.3)",
+                borderRadius: "18px",
+                padding: "1.5rem",
+                textAlign: "left"
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem", flexWrap: "wrap", gap: "0.5rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+                    <div style={{
+                      width: "32px",
+                      height: "32px",
+                      borderRadius: "8px",
+                      background: "linear-gradient(135deg, #ffc619, #ff9100)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "#000",
+                      fontWeight: "900",
+                      fontSize: "0.85rem",
+                      boxShadow: "0 0 12px rgba(255, 198, 25, 0.35)"
+                    }}>
+                      $
+                    </div>
+                    <div>
+                      <h3 style={{ margin: 0, fontSize: "1.1rem", color: "#ffc619", fontWeight: "800" }}>
+                        Банк SIGMABET (Доход букмекера)
+                      </h3>
+                      <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", marginTop: "0.15rem" }}>
+                        Баланс виртуального банка, оборот ставок и чистая прибыль в валюте СИГМАНАТ
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => fetchBetsBank()}
+                    disabled={isLoadingBank}
+                    style={{
+                      padding: "0.4rem 0.75rem",
+                      borderRadius: "8px",
+                      background: "rgba(255, 198, 25, 0.15)",
+                      border: "1px solid rgba(255, 198, 25, 0.4)",
+                      color: "#ffc619",
+                      fontSize: "0.75rem",
+                      fontWeight: "700",
+                      cursor: "pointer"
+                    }}
+                  >
+                    {isLoadingBank ? "Загрузка..." : "🔄 Обновить банк"}
+                  </button>
+                </div>
+
+                {betsBank ? (
+                  <div>
+                    {/* 4 Financial Tiles */}
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "0.75rem", marginBottom: "1.25rem" }}>
+                      {/* Net Profit (Earnings) */}
+                      <div style={{
+                        background: betsBank.netProfit >= 0 ? "rgba(0, 230, 118, 0.08)" : "rgba(255, 73, 73, 0.08)",
+                        border: betsBank.netProfit >= 0 ? "1px solid rgba(0, 230, 118, 0.3)" : "1px solid rgba(255, 73, 73, 0.3)",
+                        borderRadius: "14px",
+                        padding: "1rem",
+                        textAlign: "center"
+                      }}>
+                        <div style={{ fontSize: "0.72rem", color: "var(--text-secondary)", marginBottom: "0.3rem", fontWeight: "700", textTransform: "uppercase" }}>
+                          Заработано (Чистая прибыль)
+                        </div>
+                        <div style={{
+                          fontSize: "1.45rem",
+                          fontWeight: "900",
+                          color: betsBank.netProfit >= 0 ? "#00e676" : "#ff5252",
+                          fontFamily: "var(--font-mono)"
+                        }}>
+                          {betsBank.netProfit >= 0 ? "+" : ""}{betsBank.netProfit.toLocaleString()}
+                        </div>
+                        <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", marginTop: "0.2rem" }}>
+                          СИГМАНАТ
+                        </div>
+                      </div>
+
+                      {/* Total Turnover / Wagered */}
+                      <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border-light)", borderRadius: "14px", padding: "1rem", textAlign: "center" }}>
+                        <div style={{ fontSize: "0.72rem", color: "var(--text-secondary)", marginBottom: "0.3rem", fontWeight: "700", textTransform: "uppercase" }}>
+                          Общий оборот ставок
+                        </div>
+                        <div style={{ fontSize: "1.45rem", fontWeight: "900", color: "#ffc619", fontFamily: "var(--font-mono)" }}>
+                          {betsBank.totalWagered.toLocaleString()}
+                        </div>
+                        <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", marginTop: "0.2rem" }}>
+                          Всего поставлено игроками
+                        </div>
+                      </div>
+
+                      {/* Total Payouts */}
+                      <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border-light)", borderRadius: "14px", padding: "1rem", textAlign: "center" }}>
+                        <div style={{ fontSize: "0.72rem", color: "var(--text-secondary)", marginBottom: "0.3rem", fontWeight: "700", textTransform: "uppercase" }}>
+                          Выплачено выигрышей
+                        </div>
+                        <div style={{ fontSize: "1.45rem", fontWeight: "900", color: "#00e5ff", fontFamily: "var(--font-mono)" }}>
+                          {betsBank.totalPaidOut.toLocaleString()}
+                        </div>
+                        <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", marginTop: "0.2rem" }}>
+                          Выиграно игроками
+                        </div>
+                      </div>
+
+                      {/* Active In-Play Wagers */}
+                      <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border-light)", borderRadius: "14px", padding: "1rem", textAlign: "center" }}>
+                        <div style={{ fontSize: "0.72rem", color: "var(--text-secondary)", marginBottom: "0.3rem", fontWeight: "700", textTransform: "uppercase" }}>
+                          В игре (нерассчитано)
+                        </div>
+                        <div style={{ fontSize: "1.45rem", fontWeight: "900", color: "#b388ff", fontFamily: "var(--font-mono)" }}>
+                          {betsBank.activePendingWagers.toLocaleString()}
+                        </div>
+                        <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", marginTop: "0.2rem" }}>
+                          {betsBank.pendingBetsCount} активных ставок
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Additional Operational Counters */}
+                    <div style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      fontSize: "0.78rem",
+                      background: "rgba(0,0,0,0.3)",
+                      padding: "0.6rem 1rem",
+                      borderRadius: "10px",
+                      border: "1px solid var(--border-light)",
+                      marginBottom: "1rem",
+                      flexWrap: "wrap",
+                      gap: "0.5rem"
+                    }}>
+                      <span style={{ color: "var(--text-secondary)" }}>
+                        Всего ставок: <strong style={{ color: "#fff" }}>{betsBank.totalBetsCount}</strong> (Рассчитано: {betsBank.settledBetsCount})
+                      </span>
+                      <span style={{ color: "var(--text-secondary)" }}>
+                        Активных игроков со счётом: <strong style={{ color: "#ffc619" }}>{betsBank.activeBettorsCount}</strong>
+                      </span>
+                    </div>
+
+                    {/* Recent Bets Log */}
+                    {betsBank.recentBets && betsBank.recentBets.length > 0 && (
+                      <div style={{ background: "rgba(0,0,0,0.25)", borderRadius: "12px", padding: "0.85rem", border: "1px solid var(--border-light)" }}>
+                        <div style={{ fontSize: "0.8rem", fontWeight: "800", color: "#ffc619", marginBottom: "0.6rem", display: "flex", justifyContent: "space-between" }}>
+                          <span>Последние ставки пользователей:</span>
+                          <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", fontWeight: "500" }}>Последние 20</span>
+                        </div>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem", maxHeight: "220px", overflowY: "auto" }}>
+                          {betsBank.recentBets.map((b: any) => (
+                            <div
+                              key={b.id}
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                fontSize: "0.74rem",
+                                padding: "0.4rem 0.6rem",
+                                borderRadius: "8px",
+                                background: "rgba(255,255,255,0.02)",
+                                border: "1px solid rgba(255,255,255,0.04)"
+                              }}
+                            >
+                              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", minWidth: 0, flex: 1 }}>
+                                <strong style={{ color: "#fff", whiteSpace: "nowrap" }}>{b.userName || "Игрок"}</strong>
+                                <span style={{ color: "var(--text-muted)", fontSize: "0.68rem" }}>поставил на</span>
+                                <span style={{ color: "#ffc619", fontWeight: "700", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                  {b.choiceTitle || b.marketOption}
+                                </span>
+                                <span style={{ fontSize: "0.68rem", color: "var(--text-secondary)", fontFamily: "var(--font-mono)" }}>
+                                  (x{b.odds?.toFixed(2)})
+                                </span>
+                              </div>
+
+                              <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+                                <span style={{ fontWeight: "800", color: "#fff", fontFamily: "var(--font-mono)" }}>
+                                  {b.amount?.toLocaleString()} СИГМАНАТ
+                                </span>
+                                <span style={{
+                                  fontSize: "0.65rem",
+                                  fontWeight: "800",
+                                  padding: "0.15rem 0.45rem",
+                                  borderRadius: "4px",
+                                  background: b.status === "WON" ? "rgba(0, 230, 118, 0.15)" : b.status === "LOST" ? "rgba(255, 73, 73, 0.15)" : "rgba(255, 198, 25, 0.15)",
+                                  color: b.status === "WON" ? "#00e676" : b.status === "LOST" ? "#ff5252" : "#ffc619",
+                                  border: `1px solid ${b.status === "WON" ? "rgba(0, 230, 118, 0.3)" : b.status === "LOST" ? "rgba(255, 73, 73, 0.3)" : "rgba(255, 198, 25, 0.3)"}`
+                                }}>
+                                  {b.status === "WON" ? `+${b.payout?.toLocaleString()}` : b.status === "LOST" ? "Проигрыш" : "В игре"}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div style={{ color: "var(--text-muted)", fontSize: "0.85rem", textAlign: "center", padding: "1rem" }}>
+                    {isLoadingBank ? "Загрузка данных банка..." : "Нажмите «Обновить банк» для получения баланса и истории"}
                   </div>
                 )}
               </div>

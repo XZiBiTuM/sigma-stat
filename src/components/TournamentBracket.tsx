@@ -226,19 +226,39 @@ export function getBO2MatchOdds(skill1: number, skill2: number): MatchOdds {
   const skillGap = Math.abs(delta);
   const totalRounds = [
     {
+      line: 38.5,
+      over: Number(Math.max(1.22, Math.min(1.55, 1.35 + skillGap * 0.01)).toFixed(2)),
+      under: Number(Math.max(2.40, Math.min(4.10, 3.20 - skillGap * 0.02)).toFixed(2))
+    },
+    {
+      line: 40.5,
+      over: Number(Math.max(1.38, Math.min(1.75, 1.50 + skillGap * 0.012)).toFixed(2)),
+      under: Number(Math.max(2.05, Math.min(3.10, 2.55 - skillGap * 0.015)).toFixed(2))
+    },
+    {
       line: 42.5,
       over: Number(Math.max(1.55, Math.min(2.15, 1.70 + skillGap * 0.015)).toFixed(2)),
       under: Number(Math.max(1.65, Math.min(2.25, 2.05 - skillGap * 0.015)).toFixed(2))
     },
     {
-      line: 45.5,
-      over: Number(Math.max(1.80, Math.min(2.45, 1.95 + skillGap * 0.02)).toFixed(2)),
-      under: Number(Math.max(1.50, Math.min(1.95, 1.80 - skillGap * 0.01)).toFixed(2))
+      line: 44.5,
+      over: Number(Math.max(1.70, Math.min(2.35, 1.85 + skillGap * 0.018)).toFixed(2)),
+      under: Number(Math.max(1.55, Math.min(2.10, 1.90 - skillGap * 0.012)).toFixed(2))
+    },
+    {
+      line: 46.5,
+      over: Number(Math.max(1.90, Math.min(2.65, 2.05 + skillGap * 0.022)).toFixed(2)),
+      under: Number(Math.max(1.42, Math.min(1.85, 1.72 - skillGap * 0.01)).toFixed(2))
     },
     {
       line: 48.5,
       over: Number(Math.max(2.15, Math.min(3.10, 2.40 + skillGap * 0.025)).toFixed(2)),
       under: Number(Math.max(1.30, Math.min(1.65, 1.50 - skillGap * 0.01)).toFixed(2))
+    },
+    {
+      line: 50.5,
+      over: Number(Math.max(2.70, Math.min(4.30, 3.10 + skillGap * 0.03)).toFixed(2)),
+      under: Number(Math.max(1.18, Math.min(1.42, 1.32 - skillGap * 0.008)).toFixed(2))
     }
   ];
 
@@ -293,9 +313,12 @@ export function getBO2MatchOdds(skill1: number, skill2: number): MatchOdds {
   ];
 
   const mapTotals = [
+    { line: 18.5, over: 1.32, under: 3.10 },
+    { line: 19.5, over: 1.48, under: 2.50 },
     { line: 20.5, over: 1.68, under: 2.10 },
     { line: 21.5, over: 1.90, under: 1.85 },
-    { line: 22.5, over: 2.25, under: 1.60 }
+    { line: 22.5, over: 2.25, under: 1.60 },
+    { line: 23.5, over: 2.75, under: 1.40 }
   ];
 
   const mapOdds = {
