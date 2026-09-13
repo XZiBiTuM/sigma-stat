@@ -161,13 +161,43 @@ async function handleSync() {
           const scoreForT1 = (teamForF1 === 1) ? f1Score : f2Score;
           const scoreForT2 = (teamForF1 === 1) ? f2Score : f1Score;
 
-          if (match.status !== "FINISHED" || match.score1 !== scoreForT1 || match.score2 !== scoreForT2) {
+          if (match.status !== "FINISHED" || match.score1 !== scoreForT1 || match.score2 !== scoreForT2 || !match.map1Score1) {
             match.status = "FINISHED";
             match.score1 = scoreForT1;
             match.score2 = scoreForT2;
             match.faceitMatchId = fm.match_id;
+
+            // Fetch detailed map round stats from FACEIT for round handicap & total rounds settlement
+            try {
+              const statsData = await faceitFetch(`/matches/${fm.match_id}/stats`);
+              if (statsData && Array.isArray(statsData.rounds) && statsData.rounds.length > 0) {
+                const r1 = statsData.rounds[0];
+                const r2 = statsData.rounds[1];
+                if (r1) {
+                  match.map1 = r1.round_stats?.Map || "de_mirage";
+                  const scoreStr = r1.round_stats?.Score || "";
+                  const parts = scoreStr.split("/").map((s: string) => parseInt(s.trim(), 10));
+                  if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+                    match.map1Score1 = teamForF1 === 1 ? parts[0] : parts[1];
+                    match.map1Score2 = teamForF1 === 1 ? parts[1] : parts[0];
+                  }
+                }
+                if (r2) {
+                  match.map2 = r2.round_stats?.Map || "de_dust2";
+                  const scoreStr = r2.round_stats?.Score || "";
+                  const parts = scoreStr.split("/").map((s: string) => parseInt(s.trim(), 10));
+                  if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+                    match.map2Score1 = teamForF1 === 1 ? parts[0] : parts[1];
+                    match.map2Score2 = teamForF1 === 1 ? parts[1] : parts[0];
+                  }
+                }
+              }
+            } catch (err) {
+              console.warn("Failed to fetch match stats for map rounds:", err);
+            }
+
             changed = true;
-            logDetails.push(`Match ${match.id} (${team1.name} vs ${team2.name}) FINISHED: ${scoreForT1}:${scoreForT2}`);
+            logDetails.push(`Match ${match.id} (${team1.name} vs ${team2.name}) FINISHED: ${scoreForT1}:${scoreForT2} (M1: ${match.map1Score1 ?? '-'}:${match.map1Score2 ?? '-'}, M2: ${match.map2Score1 ?? '-'}:${match.map2Score2 ?? '-'})`);
           }
         }
 

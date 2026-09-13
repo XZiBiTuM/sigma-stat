@@ -48,7 +48,18 @@ export interface BracketState {
   };
 }
 
-export type BetMarketType = "OUTCOME" | "EXACT_SCORE" | "TOTAL_ROUNDS" | "HANDICAP";
+export type BetScope = "MATCH" | "MAP1" | "MAP2";
+
+export type BetMarketType = 
+  | "OUTCOME" 
+  | "EXACT_SCORE" 
+  | "TOTAL_ROUNDS" 
+  | "MAP_HANDICAP" 
+  | "ROUND_HANDICAP"
+  | "MAP_WINNER"
+  | "MAP_TOTAL_ROUNDS"
+  | "MAP_ROUND_HANDICAP"
+  | "HANDICAP";
 
 export interface UserBet {
   id: string;
@@ -59,6 +70,7 @@ export interface UserBet {
   round: number;
   team1Name: string;
   team2Name: string;
+  betScope?: BetScope;
   marketType?: BetMarketType;
   marketOption?: string;
   choiceTitle?: string;
@@ -101,6 +113,34 @@ export interface MatchOdds {
     over: number;
     under: number;
   }>;
+  mapHandicaps?: Array<{
+    line: string;
+    team1Odds: number;
+    team2Odds: number;
+    description1: string;
+    description2: string;
+  }>;
+  matchRoundHandicaps?: Array<{
+    line: number;
+    team1Odds: number;
+    team2Odds: number;
+    label1: string;
+    label2: string;
+  }>;
+  mapOdds?: {
+    map1: {
+      k1: number;
+      k2: number;
+      totals: Array<{ line: number; over: number; under: number }>;
+      handicaps: Array<{ line: number; team1Odds: number; team2Odds: number; label1: string; label2: string }>;
+    };
+    map2: {
+      k1: number;
+      k2: number;
+      totals: Array<{ line: number; over: number; under: number }>;
+      handicaps: Array<{ line: number; team1Odds: number; team2Odds: number; label1: string; label2: string }>;
+    };
+  };
   handicaps?: Array<{
     line: string;
     team1Odds: number;
@@ -152,7 +192,6 @@ export function calculateTeamSkill(team: BracketTeam | undefined, overridesMap: 
 }
 
 export function getBO2MatchOdds(skill1: number, skill2: number): MatchOdds {
-  // Delta divisor 48 compresses skill divergence so odds remain realistic (1.25 - 3.80 range)
   const delta = skill1 - skill2;
   const pMap1 = 1 / (1 + Math.pow(10, -delta / 48));
   const pMap2 = 1 - pMap1;
@@ -174,6 +213,9 @@ export function getBO2MatchOdds(skill1: number, skill2: number): MatchOdds {
   const k1 = Math.max(1.25, Math.min(3.80, calcK1));
   const kX = Math.max(1.90, Math.min(2.70, calcKX));
   const k2 = Math.max(1.25, Math.min(3.80, calcK2));
+
+  const mapK1 = Number(Math.max(1.28, Math.min(3.40, 1 / (pMap1 * margin))).toFixed(2));
+  const mapK2 = Number(Math.max(1.28, Math.min(3.40, 1 / (pMap2 * margin))).toFixed(2));
 
   const exactScore = {
     "2:0": Number(Math.max(1.70, Math.min(3.95, k1 * 0.98 + 0.05)).toFixed(2)),
@@ -202,22 +244,74 @@ export function getBO2MatchOdds(skill1: number, skill2: number): MatchOdds {
 
   const t1Plus05Prob = rawP1 + rawPX;
   const t2Plus05Prob = rawP2 + rawPX;
-  const handicaps = [
+  const mapHandicaps = [
     {
-      line: "0.5",
+      line: "+0.5",
       team1Odds: Number(Math.max(1.22, Math.min(2.35, 1 / (t1Plus05Prob * margin))).toFixed(2)),
       team2Odds: Number(Math.max(1.22, Math.min(2.35, 1 / (t2Plus05Prob * margin))).toFixed(2)),
-      description1: "Фора 1 (+0.5)",
-      description2: "Фора 2 (+0.5)"
+      description1: "Фора 1 (+0.5 по картам)",
+      description2: "Фора 2 (+0.5 по картам)"
     },
     {
       line: "-0.5",
       team1Odds: Number(Math.max(1.70, Math.min(3.80, exactScore["2:0"])).toFixed(2)),
       team2Odds: Number(Math.max(1.70, Math.min(3.80, exactScore["0:2"])).toFixed(2)),
-      description1: "Фора 1 (-0.5)",
-      description2: "Фора 2 (-0.5)"
+      description1: "Фора 1 (-0.5 по картам)",
+      description2: "Фора 2 (-0.5 по картам)"
     }
   ];
+
+  const favoredIsT1 = delta >= 0;
+  const roundSpread = Math.min(7.5, Math.max(1.5, Math.round((skillGap / 10) * 2.5 * 2) / 2 + 0.5));
+
+  const matchRoundHandicaps = [
+    {
+      line: favoredIsT1 ? -roundSpread : roundSpread,
+      team1Odds: favoredIsT1 ? 1.90 : 1.85,
+      team2Odds: favoredIsT1 ? 1.85 : 1.90,
+      label1: favoredIsT1 ? `Фора 1 (-${roundSpread} раундов)` : `Фора 1 (+${roundSpread} раундов)`,
+      label2: favoredIsT1 ? `Фора 2 (+${roundSpread} раундов)` : `Фора 2 (-${roundSpread} раундов)`
+    },
+    {
+      line: favoredIsT1 ? -(roundSpread + 2) : (roundSpread + 2),
+      team1Odds: favoredIsT1 ? 2.25 : 1.62,
+      team2Odds: favoredIsT1 ? 1.62 : 2.25,
+      label1: favoredIsT1 ? `Фора 1 (-${roundSpread + 2} раундов)` : `Фора 1 (+${roundSpread + 2} раундов)`,
+      label2: favoredIsT1 ? `Фора 2 (+${roundSpread + 2} раундов)` : `Фора 2 (-${roundSpread + 2} раундов)`
+    }
+  ];
+
+  const mapSpread = 2.5;
+  const mapRoundHandicaps = [
+    {
+      line: favoredIsT1 ? -mapSpread : mapSpread,
+      team1Odds: favoredIsT1 ? 1.90 : 1.85,
+      team2Odds: favoredIsT1 ? 1.85 : 1.90,
+      label1: favoredIsT1 ? `Фора 1 (-${mapSpread})` : `Фора 1 (+${mapSpread})`,
+      label2: favoredIsT1 ? `Фора 2 (+${mapSpread})` : `Фора 2 (-${mapSpread})`
+    }
+  ];
+
+  const mapTotals = [
+    { line: 20.5, over: 1.68, under: 2.10 },
+    { line: 21.5, over: 1.90, under: 1.85 },
+    { line: 22.5, over: 2.25, under: 1.60 }
+  ];
+
+  const mapOdds = {
+    map1: {
+      k1: mapK1,
+      k2: mapK2,
+      totals: mapTotals,
+      handicaps: mapRoundHandicaps
+    },
+    map2: {
+      k1: mapK1,
+      k2: mapK2,
+      totals: mapTotals,
+      handicaps: mapRoundHandicaps
+    }
+  };
 
   return {
     matchId: "",
@@ -229,7 +323,10 @@ export function getBO2MatchOdds(skill1: number, skill2: number): MatchOdds {
     p2: Math.round(rawP2 * 100),
     exactScore,
     totalRounds,
-    handicaps
+    mapHandicaps,
+    matchRoundHandicaps,
+    mapOdds,
+    handicaps: mapHandicaps
   };
 }
 
@@ -503,7 +600,8 @@ export function TournamentBracketView({
   // Bet Modal & Detailed Match Hub State
   const [betModalOpen, setBetModalOpen] = useState(false);
   const [activeMatchForBet, setActiveMatchForBet] = useState<BracketMatch | null>(null);
-  const [modalActiveMarketTab, setModalActiveMarketTab] = useState<"all" | "outcome" | "exact" | "totals" | "handicap">("all");
+  const [activeBetScope, setActiveBetScope] = useState<BetScope>("MATCH"); // "MATCH" | "MAP1" | "MAP2"
+  const [modalActiveMarketTab, setModalActiveMarketTab] = useState<"all" | "outcome" | "exact" | "totals" | "handicap" | "round_handicap">("all");
   const [activeBetMarketType, setActiveBetMarketType] = useState<BetMarketType>("OUTCOME");
   const [activeBetMarketOption, setActiveBetMarketOption] = useState<string>("team1");
   const [activeBetChoiceTitle, setActiveBetChoiceTitle] = useState<string>("");
@@ -541,7 +639,8 @@ export function TournamentBracketView({
     option: string = "team1", 
     odds: number = 2.0, 
     title?: string,
-    initialTab: "all" | "outcome" | "exact" | "totals" | "handicap" = "all"
+    initialTab: "all" | "outcome" | "exact" | "totals" | "handicap" | "round_handicap" = "all",
+    scope: BetScope = "MATCH"
   ) => {
     if (!currentUser) {
       alert("Для размещения ставок на турнир необходимо войти через Steam!");
@@ -557,6 +656,7 @@ export function TournamentBracketView({
       : `Победа ${t2?.name || "Команда 2"}`;
 
     setActiveMatchForBet(match);
+    setActiveBetScope(scope);
     setModalActiveMarketTab(initialTab);
     setActiveBetMarketType(marketType);
     setActiveBetMarketOption(option);
@@ -568,7 +668,8 @@ export function TournamentBracketView({
     setBetModalOpen(true);
   };
 
-  const selectMarketOption = (marketType: BetMarketType, option: string, odds: number, title: string) => {
+  const selectMarketOption = (scope: BetScope, marketType: BetMarketType, option: string, odds: number, title: string) => {
+    setActiveBetScope(scope);
     setActiveBetMarketType(marketType);
     setActiveBetMarketOption(option);
     setActiveBetChoice(option);
@@ -600,10 +701,12 @@ export function TournamentBracketView({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           matchId: activeMatchForBet.id,
+          betScope: activeBetScope,
           marketType: activeBetMarketType,
           marketOption: activeBetMarketOption,
           choice: activeBetChoice,
           choiceTitle: activeBetChoiceTitle,
+          customOdds: activeBetOdds,
           amount: amt
         })
       });
@@ -1508,10 +1611,17 @@ export function TournamentBracketView({
                     </div>
 
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "0.2rem" }}>
-                      <span style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff" }}>
-                        {bet.choice === "team1" ? `Победа ${bet.team1Name}` : bet.choice === "draw" ? "Ничья (1:1)" : `Победа ${bet.team2Name}`}
-                      </span>
-                      <span style={{ fontFamily: "var(--font-mono)", fontWeight: "900", color: "#ffc619", fontSize: "0.95rem" }}>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.15rem" }}>
+                        {bet.betScope && bet.betScope !== "MATCH" && (
+                          <span style={{ fontSize: "0.66rem", color: "#00e5ff", fontWeight: "800", textTransform: "uppercase" }}>
+                            {bet.betScope === "MAP1" ? "Карта 1" : "Карта 2"}
+                          </span>
+                        )}
+                        <span style={{ fontSize: "0.88rem", fontWeight: "800", color: "#fff" }}>
+                          {bet.choiceTitle || (bet.choice === "team1" ? `Победа ${bet.team1Name}` : bet.choice === "draw" ? "Ничья (1:1)" : `Победа ${bet.team2Name}`)}
+                        </span>
+                      </div>
+                      <span style={{ fontFamily: "var(--font-mono)", fontWeight: "900", color: "#ffc619", fontSize: "1.05rem" }}>
                         x{bet.odds.toFixed(2)}
                       </span>
                     </div>
@@ -1584,6 +1694,24 @@ export function TournamentBracketView({
         const odds = betOddsMap[activeMatchForBet.id] || getBO2MatchOdds(skill1, skill2);
         const isUpcoming = activeMatchForBet.status === "UPCOMING";
 
+        // Current map data if available
+        const map1Name = activeMatchForBet.map1 || "Карта 1";
+        const map2Name = activeMatchForBet.map2 || "Карта 2";
+
+        const map1Odds = odds.mapOdds?.map1 || {
+          k1: odds.k1,
+          k2: odds.k2,
+          totals: [{ line: 20.5, over: 1.68, under: 2.10 }, { line: 21.5, over: 1.90, under: 1.85 }],
+          handicaps: [{ line: -2.5, team1Odds: 1.90, team2Odds: 1.85, label1: "Фора 1 (-2.5)", label2: "Фора 2 (+2.5)" }]
+        };
+
+        const map2Odds = odds.mapOdds?.map2 || {
+          k1: odds.k1,
+          k2: odds.k2,
+          totals: [{ line: 20.5, over: 1.68, under: 2.10 }, { line: 21.5, over: 1.90, under: 1.85 }],
+          handicaps: [{ line: -2.5, team1Odds: 1.90, team2Odds: 1.85, label1: "Фора 1 (-2.5)", label2: "Фора 2 (+2.5)" }]
+        };
+
         return (
           <div style={{
             position: "fixed",
@@ -1603,14 +1731,14 @@ export function TournamentBracketView({
               background: "#120e20",
               border: "1.5px solid rgba(255, 198, 25, 0.4)",
               borderRadius: "24px",
-              maxWidth: "680px",
+              maxWidth: "720px",
               width: "100%",
-              maxHeight: "90vh",
+              maxHeight: "92vh",
               overflowY: "auto",
               boxShadow: "0 0 60px rgba(0,0,0,0.9)",
               display: "flex",
               flexDirection: "column",
-              gap: "1.25rem",
+              gap: "1.1rem",
               padding: "1.75rem"
             }}>
               {/* Header */}
@@ -1629,7 +1757,7 @@ export function TournamentBracketView({
                     ТУР {activeMatchForBet.round} • BO2
                   </span>
                   <span style={{ fontSize: "1.1rem", fontWeight: "900", color: "#fff" }}>
-                    Роспись ставок на матч
+                    Роспись ставок на матч и карты
                   </span>
                 </div>
                 <button
@@ -1706,334 +1834,713 @@ export function TournamentBracketView({
                 </div>
               </div>
 
-              {/* Navigation Market Tabs */}
-              <div style={{
-                display: "flex",
-                gap: "0.35rem",
-                background: "rgba(0,0,0,0.5)",
-                padding: "0.3rem",
-                borderRadius: "12px",
-                border: "1px solid var(--border-light)",
-                overflowX: "auto"
-              }}>
-                {[
-                  { id: "all", label: "Все рынки" },
-                  { id: "outcome", label: "Исход матча (1X2)" },
-                  { id: "exact", label: "Точный счёт BO2" },
-                  { id: "totals", label: "Тотал раундов" },
-                  { id: "handicap", label: "Фора по картам" }
-                ].map(tab => (
+              {/* SCOPE SELECTOR: МАТЧ ЦЕЛИКОМ vs КАРТА 1 vs КАРТА 2 */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                <div style={{ fontSize: "0.72rem", fontWeight: "800", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                  Выберите раздел ставок:
+                </div>
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr 1fr",
+                  gap: "0.5rem",
+                  background: "rgba(0,0,0,0.5)",
+                  padding: "0.35rem",
+                  borderRadius: "14px",
+                  border: "1px solid var(--border-light)"
+                }}>
                   <button
-                    key={tab.id}
-                    onClick={() => setModalActiveMarketTab(tab.id as any)}
+                    type="button"
+                    onClick={() => {
+                      setActiveBetScope("MATCH");
+                      setModalActiveMarketTab("all");
+                    }}
                     style={{
-                      padding: "0.4rem 0.85rem",
-                      fontSize: "0.76rem",
-                      fontWeight: "800",
-                      borderRadius: "8px",
-                      background: modalActiveMarketTab === tab.id ? "#ffc619" : "transparent",
-                      color: modalActiveMarketTab === tab.id ? "#000" : "var(--text-secondary)",
+                      padding: "0.65rem 0.5rem",
+                      borderRadius: "10px",
+                      background: activeBetScope === "MATCH" ? "#ffc619" : "transparent",
+                      color: activeBetScope === "MATCH" ? "#000" : "#fff",
+                      fontWeight: "900",
+                      fontSize: "0.82rem",
                       border: "none",
                       cursor: "pointer",
-                      whiteSpace: "nowrap"
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "0.15rem",
+                      boxShadow: activeBetScope === "MATCH" ? "0 0 15px rgba(255, 198, 25, 0.4)" : "none",
+                      transition: "all 0.15s ease"
                     }}
                   >
-                    {tab.label}
+                    <span>МАТЧ (СЕРИЯ BO2)</span>
+                    <span style={{ fontSize: "0.64rem", opacity: activeBetScope === "MATCH" ? 0.8 : 0.5 }}>
+                      Исходы, Фора раундов, Тоталы
+                    </span>
                   </button>
-                ))}
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveBetScope("MAP1");
+                      setModalActiveMarketTab("all");
+                    }}
+                    style={{
+                      padding: "0.65rem 0.5rem",
+                      borderRadius: "10px",
+                      background: activeBetScope === "MAP1" ? "#00e5ff" : "transparent",
+                      color: activeBetScope === "MAP1" ? "#000" : "#fff",
+                      fontWeight: "900",
+                      fontSize: "0.82rem",
+                      border: "none",
+                      cursor: "pointer",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "0.15rem",
+                      boxShadow: activeBetScope === "MAP1" ? "0 0 15px rgba(0, 229, 255, 0.4)" : "none",
+                      transition: "all 0.15s ease"
+                    }}
+                  >
+                    <span>КАРТА 1 ({map1Name})</span>
+                    <span style={{ fontSize: "0.64rem", opacity: activeBetScope === "MAP1" ? 0.8 : 0.5 }}>
+                      Победитель, Фора раундов, ТБ/ТМ
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveBetScope("MAP2");
+                      setModalActiveMarketTab("all");
+                    }}
+                    style={{
+                      padding: "0.65rem 0.5rem",
+                      borderRadius: "10px",
+                      background: activeBetScope === "MAP2" ? "#b388ff" : "transparent",
+                      color: activeBetScope === "MAP2" ? "#000" : "#fff",
+                      fontWeight: "900",
+                      fontSize: "0.82rem",
+                      border: "none",
+                      cursor: "pointer",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "0.15rem",
+                      boxShadow: activeBetScope === "MAP2" ? "0 0 15px rgba(179, 136, 255, 0.4)" : "none",
+                      transition: "all 0.15s ease"
+                    }}
+                  >
+                    <span>КАРТА 2 ({map2Name})</span>
+                    <span style={{ fontSize: "0.64rem", opacity: activeBetScope === "MAP2" ? 0.8 : 0.5 }}>
+                      Победитель, Фора раундов, ТБ/ТМ
+                    </span>
+                  </button>
+                </div>
               </div>
 
-              {/* Markets Grid Area */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                {/* 1. MATCH OUTCOME (1X2) */}
-                {(modalActiveMarketTab === "all" || modalActiveMarketTab === "outcome") && (
-                  <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "14px", padding: "1rem" }}>
-                    <div style={{ fontSize: "0.76rem", fontWeight: "800", color: "#ffc619", textTransform: "uppercase", marginBottom: "0.6rem" }}>
-                      Основной исход (BO2)
-                    </div>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.5rem" }}>
+              {/* ======================================================== */}
+              {/* SCOPE A: МАТЧ ЦЕЛИКОМ (SERIES MARKETS) */}
+              {/* ======================================================== */}
+              {activeBetScope === "MATCH" && (
+                <>
+                  {/* Category Filter Tabs */}
+                  <div style={{
+                    display: "flex",
+                    gap: "0.35rem",
+                    background: "rgba(0,0,0,0.4)",
+                    padding: "0.3rem",
+                    borderRadius: "12px",
+                    border: "1px solid var(--border-light)",
+                    overflowX: "auto"
+                  }}>
+                    {[
+                      { id: "all", label: "Все рынки матча" },
+                      { id: "outcome", label: "Исход матча (1X2)" },
+                      { id: "round_handicap", label: "Фора по раундам" },
+                      { id: "handicap", label: "Фора по картам" },
+                      { id: "exact", label: "Точный счёт BO2" },
+                      { id: "totals", label: "Тотал раундов" }
+                    ].map(tab => (
                       <button
+                        key={tab.id}
                         type="button"
-                        disabled={!isUpcoming}
-                        onClick={() => selectMarketOption("OUTCOME", "team1", odds.k1, `Победа ${t1?.name || "Команда 1"}`)}
+                        onClick={() => setModalActiveMarketTab(tab.id as any)}
                         style={{
-                          padding: "0.7rem 0.5rem",
-                          borderRadius: "10px",
-                          background: activeBetMarketOption === "team1" ? "rgba(255, 198, 25, 0.25)" : "rgba(255, 198, 25, 0.07)",
-                          border: activeBetMarketOption === "team1" ? "2px solid #ffc619" : "1px solid rgba(255, 198, 25, 0.25)",
-                          color: "#fff",
-                          cursor: isUpcoming ? "pointer" : "not-allowed",
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          gap: "0.2rem"
+                          padding: "0.35rem 0.75rem",
+                          fontSize: "0.74rem",
+                          fontWeight: "800",
+                          borderRadius: "8px",
+                          background: modalActiveMarketTab === tab.id ? "#ffc619" : "transparent",
+                          color: modalActiveMarketTab === tab.id ? "#000" : "var(--text-secondary)",
+                          border: "none",
+                          cursor: "pointer",
+                          whiteSpace: "nowrap"
                         }}
                       >
-                        <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", fontWeight: "700" }}>
-                          П1 ({t1?.name?.replace(/^team\s+/i, "").slice(0, 6)})
-                        </span>
-                        <span style={{ fontSize: "1.15rem", fontWeight: "900", color: "#ffc619", fontFamily: "var(--font-mono)" }}>
-                          {odds.k1.toFixed(2)}
-                        </span>
+                        {tab.label}
                       </button>
-
-                      <button
-                        type="button"
-                        disabled={!isUpcoming}
-                        onClick={() => selectMarketOption("OUTCOME", "draw", odds.kX, "Ничья (1:1)")}
-                        style={{
-                          padding: "0.7rem 0.5rem",
-                          borderRadius: "10px",
-                          background: activeBetMarketOption === "draw" ? "rgba(157, 59, 245, 0.3)" : "rgba(157, 59, 245, 0.08)",
-                          border: activeBetMarketOption === "draw" ? "2px solid #b388ff" : "1px solid rgba(157, 59, 245, 0.25)",
-                          color: "#fff",
-                          cursor: isUpcoming ? "pointer" : "not-allowed",
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          gap: "0.2rem"
-                        }}
-                      >
-                        <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", fontWeight: "700" }}>
-                          НИЧЬЯ (1:1)
-                        </span>
-                        <span style={{ fontSize: "1.15rem", fontWeight: "900", color: "#b388ff", fontFamily: "var(--font-mono)" }}>
-                          {odds.kX.toFixed(2)}
-                        </span>
-                      </button>
-
-                      <button
-                        type="button"
-                        disabled={!isUpcoming}
-                        onClick={() => selectMarketOption("OUTCOME", "team2", odds.k2, `Победа ${t2?.name || "Команда 2"}`)}
-                        style={{
-                          padding: "0.7rem 0.5rem",
-                          borderRadius: "10px",
-                          background: activeBetMarketOption === "team2" ? "rgba(0, 229, 255, 0.25)" : "rgba(0, 229, 255, 0.07)",
-                          border: activeBetMarketOption === "team2" ? "2px solid #00e5ff" : "1px solid rgba(0, 229, 255, 0.25)",
-                          color: "#fff",
-                          cursor: isUpcoming ? "pointer" : "not-allowed",
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          gap: "0.2rem"
-                        }}
-                      >
-                        <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", fontWeight: "700" }}>
-                          П2 ({t2?.name?.replace(/^team\s+/i, "").slice(0, 6)})
-                        </span>
-                        <span style={{ fontSize: "1.15rem", fontWeight: "900", color: "#00e5ff", fontFamily: "var(--font-mono)" }}>
-                          {odds.k2.toFixed(2)}
-                        </span>
-                      </button>
-                    </div>
+                    ))}
                   </div>
-                )}
 
-                {/* 2. EXACT SCORE (2:0, 1:1, 0:2) */}
-                {(modalActiveMarketTab === "all" || modalActiveMarketTab === "exact") && odds.exactScore && (
-                  <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "14px", padding: "1rem" }}>
-                    <div style={{ fontSize: "0.76rem", fontWeight: "800", color: "#ffc619", textTransform: "uppercase", marginBottom: "0.6rem" }}>
-                      Точный счёт по картам
-                    </div>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.5rem" }}>
-                      {[
-                        { score: "2:0", title: `Точный счёт 2:0 в пользу ${t1?.name}`, k: odds.exactScore["2:0"], color: "#ffc619" },
-                        { score: "1:1", title: "Точный счёт 1:1 (Ничья)", k: odds.exactScore["1:1"], color: "#b388ff" },
-                        { score: "0:2", title: `Точный счёт 0:2 в пользу ${t2?.name}`, k: odds.exactScore["0:2"], color: "#00e5ff" }
-                      ].map(item => (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.9rem" }}>
+                    {/* 1. OUTCOME (1X2) */}
+                    {(modalActiveMarketTab === "all" || modalActiveMarketTab === "outcome") && (
+                      <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "14px", padding: "1rem" }}>
+                        <div style={{ fontSize: "0.76rem", fontWeight: "800", color: "#ffc619", textTransform: "uppercase", marginBottom: "0.6rem" }}>
+                          Основной исход матча (BO2)
+                        </div>
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.5rem" }}>
+                          <button
+                            type="button"
+                            disabled={!isUpcoming}
+                            onClick={() => selectMarketOption("MATCH", "OUTCOME", "team1", odds.k1, `Победа ${t1?.name || "Команда 1"}`)}
+                            style={{
+                              padding: "0.7rem 0.5rem",
+                              borderRadius: "10px",
+                              background: (activeBetScope === "MATCH" && activeBetMarketOption === "team1") ? "rgba(255, 198, 25, 0.25)" : "rgba(255, 198, 25, 0.07)",
+                              border: (activeBetScope === "MATCH" && activeBetMarketOption === "team1") ? "2px solid #ffc619" : "1px solid rgba(255, 198, 25, 0.25)",
+                              color: "#fff",
+                              cursor: isUpcoming ? "pointer" : "not-allowed",
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                              gap: "0.2rem"
+                            }}
+                          >
+                            <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", fontWeight: "700" }}>
+                              П1 ({t1?.name?.replace(/^team\s+/i, "").slice(0, 6)})
+                            </span>
+                            <span style={{ fontSize: "1.15rem", fontWeight: "900", color: "#ffc619", fontFamily: "var(--font-mono)" }}>
+                              {odds.k1.toFixed(2)}
+                            </span>
+                          </button>
+
+                          <button
+                            type="button"
+                            disabled={!isUpcoming}
+                            onClick={() => selectMarketOption("MATCH", "OUTCOME", "draw", odds.kX, "Ничья (1:1)")}
+                            style={{
+                              padding: "0.7rem 0.5rem",
+                              borderRadius: "10px",
+                              background: (activeBetScope === "MATCH" && activeBetMarketOption === "draw") ? "rgba(157, 59, 245, 0.3)" : "rgba(157, 59, 245, 0.08)",
+                              border: (activeBetScope === "MATCH" && activeBetMarketOption === "draw") ? "2px solid #b388ff" : "1px solid rgba(157, 59, 245, 0.25)",
+                              color: "#fff",
+                              cursor: isUpcoming ? "pointer" : "not-allowed",
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                              gap: "0.2rem"
+                            }}
+                          >
+                            <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", fontWeight: "700" }}>
+                              НИЧЬЯ (1:1)
+                            </span>
+                            <span style={{ fontSize: "1.15rem", fontWeight: "900", color: "#b388ff", fontFamily: "var(--font-mono)" }}>
+                              {odds.kX.toFixed(2)}
+                            </span>
+                          </button>
+
+                          <button
+                            type="button"
+                            disabled={!isUpcoming}
+                            onClick={() => selectMarketOption("MATCH", "OUTCOME", "team2", odds.k2, `Победа ${t2?.name || "Команда 2"}`)}
+                            style={{
+                              padding: "0.7rem 0.5rem",
+                              borderRadius: "10px",
+                              background: (activeBetScope === "MATCH" && activeBetMarketOption === "team2") ? "rgba(0, 229, 255, 0.25)" : "rgba(0, 229, 255, 0.07)",
+                              border: (activeBetScope === "MATCH" && activeBetMarketOption === "team2") ? "2px solid #00e5ff" : "1px solid rgba(0, 229, 255, 0.25)",
+                              color: "#fff",
+                              cursor: isUpcoming ? "pointer" : "not-allowed",
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                              gap: "0.2rem"
+                            }}
+                          >
+                            <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", fontWeight: "700" }}>
+                              П2 ({t2?.name?.replace(/^team\s+/i, "").slice(0, 6)})
+                            </span>
+                            <span style={{ fontSize: "1.15rem", fontWeight: "900", color: "#00e5ff", fontFamily: "var(--font-mono)" }}>
+                              {odds.k2.toFixed(2)}
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 2. ROUND HANDICAP IN MATCH (ФОРА ПО РАУНДАМ НА МАТЧ) */}
+                    {(modalActiveMarketTab === "all" || modalActiveMarketTab === "round_handicap") && odds.matchRoundHandicaps && (
+                      <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "14px", padding: "1rem" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.6rem" }}>
+                          <span style={{ fontSize: "0.76rem", fontWeight: "800", color: "#ffc619", textTransform: "uppercase" }}>
+                            Фора по раундам на весь матч (сумма 2 карт)
+                          </span>
+                          <span style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>
+                            С учётом суммарных раундов команды
+                          </span>
+                        </div>
+
+                        <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                          {odds.matchRoundHandicaps.map((rh, idx) => {
+                            const optT1 = `T1_ROUND_HANDICAP_${rh.line}`;
+                            const optT2 = `T2_ROUND_HANDICAP_${-rh.line}`;
+                            const isT1Selected = activeBetScope === "MATCH" && activeBetMarketOption === optT1;
+                            const isT2Selected = activeBetScope === "MATCH" && activeBetMarketOption === optT2;
+
+                            return (
+                              <div key={idx} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
+                                <button
+                                  type="button"
+                                  disabled={!isUpcoming}
+                                  onClick={() => selectMarketOption("MATCH", "ROUND_HANDICAP", optT1, rh.team1Odds, `${t1?.name || "Команда 1"} (${rh.label1})`)}
+                                  style={{
+                                    padding: "0.6rem 0.8rem",
+                                    borderRadius: "8px",
+                                    background: isT1Selected ? "rgba(255, 198, 25, 0.25)" : "rgba(255,255,255,0.03)",
+                                    border: isT1Selected ? "2px solid #ffc619" : "1px solid var(--border-light)",
+                                    color: "#fff",
+                                    cursor: isUpcoming ? "pointer" : "not-allowed",
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center"
+                                  }}
+                                >
+                                  <span style={{ fontSize: "0.76rem", fontWeight: "700" }}>{rh.label1}</span>
+                                  <span style={{ fontSize: "0.95rem", fontWeight: "900", color: "#ffc619", fontFamily: "var(--font-mono)" }}>
+                                    {rh.team1Odds.toFixed(2)}
+                                  </span>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  disabled={!isUpcoming}
+                                  onClick={() => selectMarketOption("MATCH", "ROUND_HANDICAP", optT2, rh.team2Odds, `${t2?.name || "Команда 2"} (${rh.label2})`)}
+                                  style={{
+                                    padding: "0.6rem 0.8rem",
+                                    borderRadius: "8px",
+                                    background: isT2Selected ? "rgba(0, 229, 255, 0.25)" : "rgba(255,255,255,0.03)",
+                                    border: isT2Selected ? "2px solid #00e5ff" : "1px solid var(--border-light)",
+                                    color: "#fff",
+                                    cursor: isUpcoming ? "pointer" : "not-allowed",
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center"
+                                  }}
+                                >
+                                  <span style={{ fontSize: "0.76rem", fontWeight: "700" }}>{rh.label2}</span>
+                                  <span style={{ fontSize: "0.95rem", fontWeight: "900", color: "#00e5ff", fontFamily: "var(--font-mono)" }}>
+                                    {rh.team2Odds.toFixed(2)}
+                                  </span>
+                                </button>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 3. MAP HANDICAP (ФОРА ПО КАРТАМ) */}
+                    {(modalActiveMarketTab === "all" || modalActiveMarketTab === "handicap") && (odds.mapHandicaps || odds.handicaps) && (
+                      <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "14px", padding: "1rem" }}>
+                        <div style={{ fontSize: "0.76rem", fontWeight: "800", color: "#ffc619", textTransform: "uppercase", marginBottom: "0.6rem" }}>
+                          Фора по картам (BO2)
+                        </div>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "0.45rem" }}>
+                          {/* +0.5 */}
+                          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
+                            <button
+                              type="button"
+                              disabled={!isUpcoming}
+                              onClick={() => selectMarketOption("MATCH", "MAP_HANDICAP", "T1_PLUS_0.5", (odds.mapHandicaps || odds.handicaps)![0].team1Odds, `${t1?.name || "Команда 1"} (+0.5 по картам)`)}
+                              style={{
+                                padding: "0.55rem 0.8rem",
+                                borderRadius: "8px",
+                                background: (activeBetScope === "MATCH" && activeBetMarketOption === "T1_PLUS_0.5") ? "rgba(255, 198, 25, 0.25)" : "rgba(255,255,255,0.03)",
+                                border: (activeBetScope === "MATCH" && activeBetMarketOption === "T1_PLUS_0.5") ? "2px solid #ffc619" : "1px solid var(--border-light)",
+                                color: "#fff",
+                                cursor: isUpcoming ? "pointer" : "not-allowed",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center"
+                              }}
+                            >
+                              <span style={{ fontSize: "0.74rem", fontWeight: "700" }}>{t1?.name} (+0.5 по картам)</span>
+                              <span style={{ fontSize: "0.95rem", fontWeight: "900", color: "#ffc619", fontFamily: "var(--font-mono)" }}>
+                                {(odds.mapHandicaps || odds.handicaps)![0].team1Odds.toFixed(2)}
+                              </span>
+                            </button>
+
+                            <button
+                              type="button"
+                              disabled={!isUpcoming}
+                              onClick={() => selectMarketOption("MATCH", "MAP_HANDICAP", "T2_PLUS_0.5", (odds.mapHandicaps || odds.handicaps)![0].team2Odds, `${t2?.name || "Команда 2"} (+0.5 по картам)`)}
+                              style={{
+                                padding: "0.55rem 0.8rem",
+                                borderRadius: "8px",
+                                background: (activeBetScope === "MATCH" && activeBetMarketOption === "T2_PLUS_0.5") ? "rgba(255, 198, 25, 0.25)" : "rgba(255,255,255,0.03)",
+                                border: (activeBetScope === "MATCH" && activeBetMarketOption === "T2_PLUS_0.5") ? "2px solid #ffc619" : "1px solid var(--border-light)",
+                                color: "#fff",
+                                cursor: isUpcoming ? "pointer" : "not-allowed",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center"
+                              }}
+                            >
+                              <span style={{ fontSize: "0.74rem", fontWeight: "700" }}>{t2?.name} (+0.5 по картам)</span>
+                              <span style={{ fontSize: "0.95rem", fontWeight: "900", color: "#00e5ff", fontFamily: "var(--font-mono)" }}>
+                                {(odds.mapHandicaps || odds.handicaps)![0].team2Odds.toFixed(2)}
+                              </span>
+                            </button>
+                          </div>
+
+                          {/* -0.5 */}
+                          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
+                            <button
+                              type="button"
+                              disabled={!isUpcoming}
+                              onClick={() => selectMarketOption("MATCH", "MAP_HANDICAP", "T1_MINUS_0.5", (odds.mapHandicaps || odds.handicaps)![1].team1Odds, `${t1?.name || "Команда 1"} (-0.5 по картам)`)}
+                              style={{
+                                padding: "0.55rem 0.8rem",
+                                borderRadius: "8px",
+                                background: (activeBetScope === "MATCH" && activeBetMarketOption === "T1_MINUS_0.5") ? "rgba(255, 198, 25, 0.25)" : "rgba(255,255,255,0.03)",
+                                border: (activeBetScope === "MATCH" && activeBetMarketOption === "T1_MINUS_0.5") ? "2px solid #ffc619" : "1px solid var(--border-light)",
+                                color: "#fff",
+                                cursor: isUpcoming ? "pointer" : "not-allowed",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center"
+                              }}
+                            >
+                              <span style={{ fontSize: "0.74rem", fontWeight: "700" }}>{t1?.name} (-0.5 по картам)</span>
+                              <span style={{ fontSize: "0.95rem", fontWeight: "900", color: "#ffc619", fontFamily: "var(--font-mono)" }}>
+                                {(odds.mapHandicaps || odds.handicaps)![1].team1Odds.toFixed(2)}
+                              </span>
+                            </button>
+
+                            <button
+                              type="button"
+                              disabled={!isUpcoming}
+                              onClick={() => selectMarketOption("MATCH", "MAP_HANDICAP", "T2_MINUS_0.5", (odds.mapHandicaps || odds.handicaps)![1].team2Odds, `${t2?.name || "Команда 2"} (-0.5 по картам)`)}
+                              style={{
+                                padding: "0.55rem 0.8rem",
+                                borderRadius: "8px",
+                                background: (activeBetScope === "MATCH" && activeBetMarketOption === "T2_MINUS_0.5") ? "rgba(255, 198, 25, 0.25)" : "rgba(255,255,255,0.03)",
+                                border: (activeBetScope === "MATCH" && activeBetMarketOption === "T2_MINUS_0.5") ? "2px solid #ffc619" : "1px solid var(--border-light)",
+                                color: "#fff",
+                                cursor: isUpcoming ? "pointer" : "not-allowed",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center"
+                              }}
+                            >
+                              <span style={{ fontSize: "0.74rem", fontWeight: "700" }}>{t2?.name} (-0.5 по картам)</span>
+                              <span style={{ fontSize: "0.95rem", fontWeight: "900", color: "#00e5ff", fontFamily: "var(--font-mono)" }}>
+                                {(odds.mapHandicaps || odds.handicaps)![1].team2Odds.toFixed(2)}
+                              </span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 4. EXACT SCORE */}
+                    {(modalActiveMarketTab === "all" || modalActiveMarketTab === "exact") && odds.exactScore && (
+                      <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "14px", padding: "1rem" }}>
+                        <div style={{ fontSize: "0.76rem", fontWeight: "800", color: "#ffc619", textTransform: "uppercase", marginBottom: "0.6rem" }}>
+                          Точный счёт по картам
+                        </div>
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.5rem" }}>
+                          {[
+                            { score: "2:0", title: `Точный счёт 2:0 в пользу ${t1?.name}`, k: odds.exactScore["2:0"], color: "#ffc619" },
+                            { score: "1:1", title: "Точный счёт 1:1 (Ничья)", k: odds.exactScore["1:1"], color: "#b388ff" },
+                            { score: "0:2", title: `Точный счёт 0:2 в пользу ${t2?.name}`, k: odds.exactScore["0:2"], color: "#00e5ff" }
+                          ].map(item => (
+                            <button
+                              key={item.score}
+                              type="button"
+                              disabled={!isUpcoming}
+                              onClick={() => selectMarketOption("MATCH", "EXACT_SCORE", item.score, item.k, item.title)}
+                              style={{
+                                padding: "0.65rem 0.4rem",
+                                borderRadius: "10px",
+                                background: (activeBetScope === "MATCH" && activeBetMarketOption === item.score) ? "rgba(255, 198, 25, 0.25)" : "rgba(255,255,255,0.03)",
+                                border: (activeBetScope === "MATCH" && activeBetMarketOption === item.score) ? "2px solid #ffc619" : "1px solid var(--border-light)",
+                                color: "#fff",
+                                cursor: isUpcoming ? "pointer" : "not-allowed",
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                gap: "0.15rem"
+                              }}
+                            >
+                              <span style={{ fontSize: "0.78rem", fontWeight: "800", color: "#fff" }}>
+                                Счёт {item.score}
+                              </span>
+                              <span style={{ fontSize: "1.05rem", fontWeight: "900", color: item.color, fontFamily: "var(--font-mono)" }}>
+                                {item.k.toFixed(2)}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 5. TOTAL ROUNDS (MATCH) */}
+                    {(modalActiveMarketTab === "all" || modalActiveMarketTab === "totals") && odds.totalRounds && (
+                      <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "14px", padding: "1rem" }}>
+                        <div style={{ fontSize: "0.76rem", fontWeight: "800", color: "#ffc619", textTransform: "uppercase", marginBottom: "0.6rem" }}>
+                          Тотал раундов в матче (за 2 карты)
+                        </div>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "0.45rem" }}>
+                          {odds.totalRounds.map(tr => (
+                            <div key={tr.line} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
+                              <button
+                                type="button"
+                                disabled={!isUpcoming}
+                                onClick={() => selectMarketOption("MATCH", "TOTAL_ROUNDS", `OVER_${tr.line}`, tr.over, `Тотал больше ${tr.line} раундов (Матч)`)}
+                                style={{
+                                  padding: "0.55rem 0.8rem",
+                                  borderRadius: "8px",
+                                  background: (activeBetScope === "MATCH" && activeBetMarketOption === `OVER_${tr.line}`) ? "rgba(255, 198, 25, 0.25)" : "rgba(255,255,255,0.03)",
+                                  border: (activeBetScope === "MATCH" && activeBetMarketOption === `OVER_${tr.line}`) ? "2px solid #ffc619" : "1px solid var(--border-light)",
+                                  color: "#fff",
+                                  cursor: isUpcoming ? "pointer" : "not-allowed",
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center"
+                                }}
+                              >
+                                <span style={{ fontSize: "0.75rem", fontWeight: "700" }}>Больше {tr.line}</span>
+                                <span style={{ fontSize: "0.95rem", fontWeight: "900", color: "#ffc619", fontFamily: "var(--font-mono)" }}>
+                                  {tr.over.toFixed(2)}
+                                </span>
+                              </button>
+
+                              <button
+                                type="button"
+                                disabled={!isUpcoming}
+                                onClick={() => selectMarketOption("MATCH", "TOTAL_ROUNDS", `UNDER_${tr.line}`, tr.under, `Тотал меньше ${tr.line} раундов (Матч)`)}
+                                style={{
+                                  padding: "0.55rem 0.8rem",
+                                  borderRadius: "8px",
+                                  background: (activeBetScope === "MATCH" && activeBetMarketOption === `UNDER_${tr.line}`) ? "rgba(255, 198, 25, 0.25)" : "rgba(255,255,255,0.03)",
+                                  border: (activeBetScope === "MATCH" && activeBetMarketOption === `UNDER_${tr.line}`) ? "2px solid #ffc619" : "1px solid var(--border-light)",
+                                  color: "#fff",
+                                  cursor: isUpcoming ? "pointer" : "not-allowed",
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center"
+                                }}
+                              >
+                                <span style={{ fontSize: "0.75rem", fontWeight: "700" }}>Меньше {tr.line}</span>
+                                <span style={{ fontSize: "0.95rem", fontWeight: "900", color: "#ffc619", fontFamily: "var(--font-mono)" }}>
+                                  {tr.under.toFixed(2)}
+                                </span>
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {/* ======================================================== */}
+              {/* SCOPE B: КАРТА 1 ИЛИ КАРТА 2 (INDIVIDUAL MAP MARKETS) */}
+              {/* ======================================================== */}
+              {(activeBetScope === "MAP1" || activeBetScope === "MAP2") && (() => {
+                const currentMapKey = activeBetScope === "MAP1" ? "map1" : "map2";
+                const currentMapTitle = activeBetScope === "MAP1" ? `Карта 1 (${map1Name})` : `Карта 2 (${map2Name})`;
+                const mapData = activeBetScope === "MAP1" ? map1Odds : map2Odds;
+
+                return (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.9rem" }}>
+                    {/* 1. MAP WINNER */}
+                    <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "14px", padding: "1rem" }}>
+                      <div style={{ fontSize: "0.76rem", fontWeight: "800", color: activeBetScope === "MAP1" ? "#00e5ff" : "#b388ff", textTransform: "uppercase", marginBottom: "0.6rem" }}>
+                        Победитель — {currentMapTitle}
+                      </div>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
                         <button
-                          key={item.score}
                           type="button"
                           disabled={!isUpcoming}
-                          onClick={() => selectMarketOption("EXACT_SCORE", item.score, item.k, item.title)}
+                          onClick={() => selectMarketOption(activeBetScope, "MAP_WINNER", "team1", mapData.k1, `${currentMapTitle}: Победа ${t1?.name || "Команда 1"}`)}
                           style={{
-                            padding: "0.65rem 0.4rem",
+                            padding: "0.7rem 0.5rem",
                             borderRadius: "10px",
-                            background: activeBetMarketOption === item.score ? "rgba(255, 198, 25, 0.25)" : "rgba(255,255,255,0.03)",
-                            border: activeBetMarketOption === item.score ? "2px solid #ffc619" : "1px solid var(--border-light)",
+                            background: (activeBetScope === currentMapKey.toUpperCase() && activeBetMarketOption === "team1") ? "rgba(0, 229, 255, 0.25)" : "rgba(255,255,255,0.03)",
+                            border: (activeBetScope === currentMapKey.toUpperCase() && activeBetMarketOption === "team1") ? "2px solid #00e5ff" : "1px solid var(--border-light)",
                             color: "#fff",
                             cursor: isUpcoming ? "pointer" : "not-allowed",
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
-                            gap: "0.15rem"
+                            gap: "0.2rem"
                           }}
                         >
-                          <span style={{ fontSize: "0.78rem", fontWeight: "800", color: "#fff" }}>
-                            Счёт {item.score}
+                          <span style={{ fontSize: "0.74rem", color: "var(--text-muted)", fontWeight: "700" }}>
+                            Победа {t1?.name}
                           </span>
-                          <span style={{ fontSize: "1.05rem", fontWeight: "900", color: item.color, fontFamily: "var(--font-mono)" }}>
-                            {item.k.toFixed(2)}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* 3. TOTAL ROUNDS */}
-                {(modalActiveMarketTab === "all" || modalActiveMarketTab === "totals") && odds.totalRounds && (
-                  <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "14px", padding: "1rem" }}>
-                    <div style={{ fontSize: "0.76rem", fontWeight: "800", color: "#ffc619", textTransform: "uppercase", marginBottom: "0.6rem" }}>
-                      Тотал раундов в матче (за 2 карты)
-                    </div>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "0.45rem" }}>
-                      {odds.totalRounds.map(tr => (
-                        <div key={tr.line} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
-                          <button
-                            type="button"
-                            disabled={!isUpcoming}
-                            onClick={() => selectMarketOption("TOTAL_ROUNDS", `OVER_${tr.line}`, tr.over, `Тотал больше ${tr.line} раундов`)}
-                            style={{
-                              padding: "0.55rem 0.8rem",
-                              borderRadius: "8px",
-                              background: activeBetMarketOption === `OVER_${tr.line}` ? "rgba(255, 198, 25, 0.25)" : "rgba(255,255,255,0.03)",
-                              border: activeBetMarketOption === `OVER_${tr.line}` ? "2px solid #ffc619" : "1px solid var(--border-light)",
-                              color: "#fff",
-                              cursor: isUpcoming ? "pointer" : "not-allowed",
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center"
-                            }}
-                          >
-                            <span style={{ fontSize: "0.75rem", fontWeight: "700" }}>Больше {tr.line}</span>
-                            <span style={{ fontSize: "0.95rem", fontWeight: "900", color: "#ffc619", fontFamily: "var(--font-mono)" }}>
-                              {tr.over.toFixed(2)}
-                            </span>
-                          </button>
-
-                          <button
-                            type="button"
-                            disabled={!isUpcoming}
-                            onClick={() => selectMarketOption("TOTAL_ROUNDS", `UNDER_${tr.line}`, tr.under, `Тотал меньше ${tr.line} раундов`)}
-                            style={{
-                              padding: "0.55rem 0.8rem",
-                              borderRadius: "8px",
-                              background: activeBetMarketOption === `UNDER_${tr.line}` ? "rgba(255, 198, 25, 0.25)" : "rgba(255,255,255,0.03)",
-                              border: activeBetMarketOption === `UNDER_${tr.line}` ? "2px solid #ffc619" : "1px solid var(--border-light)",
-                              color: "#fff",
-                              cursor: isUpcoming ? "pointer" : "not-allowed",
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center"
-                            }}
-                          >
-                            <span style={{ fontSize: "0.75rem", fontWeight: "700" }}>Меньше {tr.line}</span>
-                            <span style={{ fontSize: "0.95rem", fontWeight: "900", color: "#ffc619", fontFamily: "var(--font-mono)" }}>
-                              {tr.under.toFixed(2)}
-                            </span>
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* 4. HANDICAP (ФОРА) */}
-                {(modalActiveMarketTab === "all" || modalActiveMarketTab === "handicap") && odds.handicaps && (
-                  <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "14px", padding: "1rem" }}>
-                    <div style={{ fontSize: "0.76rem", fontWeight: "800", color: "#ffc619", textTransform: "uppercase", marginBottom: "0.6rem" }}>
-                      Фора по картам (BO2)
-                    </div>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "0.45rem" }}>
-                      {/* +0.5 Handicap */}
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
-                        <button
-                          type="button"
-                          disabled={!isUpcoming}
-                          onClick={() => selectMarketOption("HANDICAP", "T1_PLUS_0.5", odds.handicaps![0].team1Odds, `${t1?.name || "Команда 1"} (+0.5)`)}
-                          style={{
-                            padding: "0.55rem 0.8rem",
-                            borderRadius: "8px",
-                            background: activeBetMarketOption === "T1_PLUS_0.5" ? "rgba(255, 198, 25, 0.25)" : "rgba(255,255,255,0.03)",
-                            border: activeBetMarketOption === "T1_PLUS_0.5" ? "2px solid #ffc619" : "1px solid var(--border-light)",
-                            color: "#fff",
-                            cursor: isUpcoming ? "pointer" : "not-allowed",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center"
-                          }}
-                        >
-                          <span style={{ fontSize: "0.74rem", fontWeight: "700" }}>{t1?.name} (+0.5)</span>
-                          <span style={{ fontSize: "0.95rem", fontWeight: "900", color: "#ffc619", fontFamily: "var(--font-mono)" }}>
-                            {odds.handicaps[0].team1Odds.toFixed(2)}
+                          <span style={{ fontSize: "1.2rem", fontWeight: "900", color: "#ffc619", fontFamily: "var(--font-mono)" }}>
+                            {mapData.k1.toFixed(2)}
                           </span>
                         </button>
 
                         <button
                           type="button"
                           disabled={!isUpcoming}
-                          onClick={() => selectMarketOption("HANDICAP", "T2_PLUS_0.5", odds.handicaps![0].team2Odds, `${t2?.name || "Команда 2"} (+0.5)`)}
+                          onClick={() => selectMarketOption(activeBetScope, "MAP_WINNER", "team2", mapData.k2, `${currentMapTitle}: Победа ${t2?.name || "Команда 2"}`)}
                           style={{
-                            padding: "0.55rem 0.8rem",
-                            borderRadius: "8px",
-                            background: activeBetMarketOption === "T2_PLUS_0.5" ? "rgba(255, 198, 25, 0.25)" : "rgba(255,255,255,0.03)",
-                            border: activeBetMarketOption === "T2_PLUS_0.5" ? "2px solid #ffc619" : "1px solid var(--border-light)",
+                            padding: "0.7rem 0.5rem",
+                            borderRadius: "10px",
+                            background: (activeBetScope === currentMapKey.toUpperCase() && activeBetMarketOption === "team2") ? "rgba(0, 229, 255, 0.25)" : "rgba(255,255,255,0.03)",
+                            border: (activeBetScope === currentMapKey.toUpperCase() && activeBetMarketOption === "team2") ? "2px solid #00e5ff" : "1px solid var(--border-light)",
                             color: "#fff",
                             cursor: isUpcoming ? "pointer" : "not-allowed",
                             display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center"
+                            flexDirection: "column",
+                            alignItems: "center",
+                            gap: "0.2rem"
                           }}
                         >
-                          <span style={{ fontSize: "0.74rem", fontWeight: "700" }}>{t2?.name} (+0.5)</span>
-                          <span style={{ fontSize: "0.95rem", fontWeight: "900", color: "#00e5ff", fontFamily: "var(--font-mono)" }}>
-                            {odds.handicaps[0].team2Odds.toFixed(2)}
+                          <span style={{ fontSize: "0.74rem", color: "var(--text-muted)", fontWeight: "700" }}>
+                            Победа {t2?.name}
                           </span>
-                        </button>
-                      </div>
-
-                      {/* -0.5 Handicap */}
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
-                        <button
-                          type="button"
-                          disabled={!isUpcoming}
-                          onClick={() => selectMarketOption("HANDICAP", "T1_MINUS_0.5", odds.handicaps![1].team1Odds, `${t1?.name || "Команда 1"} (-0.5)`)}
-                          style={{
-                            padding: "0.55rem 0.8rem",
-                            borderRadius: "8px",
-                            background: activeBetMarketOption === "T1_MINUS_0.5" ? "rgba(255, 198, 25, 0.25)" : "rgba(255,255,255,0.03)",
-                            border: activeBetMarketOption === "T1_MINUS_0.5" ? "2px solid #ffc619" : "1px solid var(--border-light)",
-                            color: "#fff",
-                            cursor: isUpcoming ? "pointer" : "not-allowed",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center"
-                          }}
-                        >
-                          <span style={{ fontSize: "0.74rem", fontWeight: "700" }}>{t1?.name} (-0.5)</span>
-                          <span style={{ fontSize: "0.95rem", fontWeight: "900", color: "#ffc619", fontFamily: "var(--font-mono)" }}>
-                            {odds.handicaps[1].team1Odds.toFixed(2)}
-                          </span>
-                        </button>
-
-                        <button
-                          type="button"
-                          disabled={!isUpcoming}
-                          onClick={() => selectMarketOption("HANDICAP", "T2_MINUS_0.5", odds.handicaps![1].team2Odds, `${t2?.name || "Команда 2"} (-0.5)`)}
-                          style={{
-                            padding: "0.55rem 0.8rem",
-                            borderRadius: "8px",
-                            background: activeBetMarketOption === "T2_MINUS_0.5" ? "rgba(255, 198, 25, 0.25)" : "rgba(255,255,255,0.03)",
-                            border: activeBetMarketOption === "T2_MINUS_0.5" ? "2px solid #ffc619" : "1px solid var(--border-light)",
-                            color: "#fff",
-                            cursor: isUpcoming ? "pointer" : "not-allowed",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center"
-                          }}
-                        >
-                          <span style={{ fontSize: "0.74rem", fontWeight: "700" }}>{t2?.name} (-0.5)</span>
-                          <span style={{ fontSize: "0.95rem", fontWeight: "900", color: "#00e5ff", fontFamily: "var(--font-mono)" }}>
-                            {odds.handicaps[1].team2Odds.toFixed(2)}
+                          <span style={{ fontSize: "1.2rem", fontWeight: "900", color: "#00e5ff", fontFamily: "var(--font-mono)" }}>
+                            {mapData.k2.toFixed(2)}
                           </span>
                         </button>
                       </div>
                     </div>
+
+                    {/* 2. MAP ROUND HANDICAP (ФОРА ПО РАУНДАМ НА КАРТЕ) */}
+                    <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "14px", padding: "1rem" }}>
+                      <div style={{ fontSize: "0.76rem", fontWeight: "800", color: activeBetScope === "MAP1" ? "#00e5ff" : "#b388ff", textTransform: "uppercase", marginBottom: "0.6rem" }}>
+                        Фора по раундам — {currentMapTitle}
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                        {mapData.handicaps.map((mh, idx) => {
+                          const optT1 = `${activeBetScope}_T1_HANDICAP_${mh.line}`;
+                          const optT2 = `${activeBetScope}_T2_HANDICAP_${-mh.line}`;
+                          const isT1Selected = activeBetMarketOption === optT1;
+                          const isT2Selected = activeBetMarketOption === optT2;
+
+                          return (
+                            <div key={idx} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
+                              <button
+                                type="button"
+                                disabled={!isUpcoming}
+                                onClick={() => selectMarketOption(activeBetScope, "MAP_ROUND_HANDICAP", optT1, mh.team1Odds, `${currentMapTitle}: ${t1?.name} (${mh.label1})`)}
+                                style={{
+                                  padding: "0.6rem 0.8rem",
+                                  borderRadius: "8px",
+                                  background: isT1Selected ? "rgba(255, 198, 25, 0.25)" : "rgba(255,255,255,0.03)",
+                                  border: isT1Selected ? "2px solid #ffc619" : "1px solid var(--border-light)",
+                                  color: "#fff",
+                                  cursor: isUpcoming ? "pointer" : "not-allowed",
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center"
+                                }}
+                              >
+                                <span style={{ fontSize: "0.75rem", fontWeight: "700" }}>{t1?.name} ({mh.label1})</span>
+                                <span style={{ fontSize: "0.95rem", fontWeight: "900", color: "#ffc619", fontFamily: "var(--font-mono)" }}>
+                                  {mh.team1Odds.toFixed(2)}
+                                </span>
+                              </button>
+
+                              <button
+                                type="button"
+                                disabled={!isUpcoming}
+                                onClick={() => selectMarketOption(activeBetScope, "MAP_ROUND_HANDICAP", optT2, mh.team2Odds, `${currentMapTitle}: ${t2?.name} (${mh.label2})`)}
+                                style={{
+                                  padding: "0.6rem 0.8rem",
+                                  borderRadius: "8px",
+                                  background: isT2Selected ? "rgba(0, 229, 255, 0.25)" : "rgba(255,255,255,0.03)",
+                                  border: isT2Selected ? "2px solid #00e5ff" : "1px solid var(--border-light)",
+                                  color: "#fff",
+                                  cursor: isUpcoming ? "pointer" : "not-allowed",
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center"
+                                }}
+                              >
+                                <span style={{ fontSize: "0.75rem", fontWeight: "700" }}>{t2?.name} ({mh.label2})</span>
+                                <span style={{ fontSize: "0.95rem", fontWeight: "900", color: "#00e5ff", fontFamily: "var(--font-mono)" }}>
+                                  {mh.team2Odds.toFixed(2)}
+                                </span>
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* 3. MAP TOTAL ROUNDS */}
+                    <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "14px", padding: "1rem" }}>
+                      <div style={{ fontSize: "0.76rem", fontWeight: "800", color: activeBetScope === "MAP1" ? "#00e5ff" : "#b388ff", textTransform: "uppercase", marginBottom: "0.6rem" }}>
+                        Тотал раундов — {currentMapTitle}
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.45rem" }}>
+                        {mapData.totals.map(mt => {
+                          const optOver = `${activeBetScope}_OVER_${mt.line}`;
+                          const optUnder = `${activeBetScope}_UNDER_${mt.line}`;
+                          const isOverSelected = activeBetMarketOption === optOver;
+                          const isUnderSelected = activeBetMarketOption === optUnder;
+
+                          return (
+                            <div key={mt.line} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
+                              <button
+                                type="button"
+                                disabled={!isUpcoming}
+                                onClick={() => selectMarketOption(activeBetScope, "MAP_TOTAL_ROUNDS", optOver, mt.over, `${currentMapTitle}: Тотал больше ${mt.line} раундов`)}
+                                style={{
+                                  padding: "0.55rem 0.8rem",
+                                  borderRadius: "8px",
+                                  background: isOverSelected ? "rgba(255, 198, 25, 0.25)" : "rgba(255,255,255,0.03)",
+                                  border: isOverSelected ? "2px solid #ffc619" : "1px solid var(--border-light)",
+                                  color: "#fff",
+                                  cursor: isUpcoming ? "pointer" : "not-allowed",
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center"
+                                }}
+                              >
+                                <span style={{ fontSize: "0.75rem", fontWeight: "700" }}>Больше {mt.line}</span>
+                                <span style={{ fontSize: "0.95rem", fontWeight: "900", color: "#ffc619", fontFamily: "var(--font-mono)" }}>
+                                  {mt.over.toFixed(2)}
+                                </span>
+                              </button>
+
+                              <button
+                                type="button"
+                                disabled={!isUpcoming}
+                                onClick={() => selectMarketOption(activeBetScope, "MAP_TOTAL_ROUNDS", optUnder, mt.under, `${currentMapTitle}: Тотал меньше ${mt.line} раундов`)}
+                                style={{
+                                  padding: "0.55rem 0.8rem",
+                                  borderRadius: "8px",
+                                  background: isUnderSelected ? "rgba(255, 198, 25, 0.25)" : "rgba(255,255,255,0.03)",
+                                  border: isUnderSelected ? "2px solid #ffc619" : "1px solid var(--border-light)",
+                                  color: "#fff",
+                                  cursor: isUpcoming ? "pointer" : "not-allowed",
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center"
+                                }}
+                              >
+                                <span style={{ fontSize: "0.75rem", fontWeight: "700" }}>Меньше {mt.line}</span>
+                                <span style={{ fontSize: "0.95rem", fontWeight: "900", color: "#ffc619", fontFamily: "var(--font-mono)" }}>
+                                  {mt.under.toFixed(2)}
+                                </span>
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
                   </div>
-                )}
-              </div>
+                );
+              })()}
 
               {/* Bet Slip Action Footer */}
               <div style={{
@@ -2048,10 +2555,15 @@ export function TournamentBracketView({
                 {/* Selected Choice Summary */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px dashed rgba(255,255,255,0.08)", paddingBottom: "0.6rem" }}>
                   <div>
-                    <div style={{ fontSize: "0.68rem", color: "var(--text-muted)", textTransform: "uppercase" }}>
-                      Выбранный исход
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                      <span style={{ fontSize: "0.65rem", padding: "0.1rem 0.4rem", borderRadius: "4px", background: "rgba(255,255,255,0.08)", color: "var(--text-muted)", textTransform: "uppercase" }}>
+                        {activeBetScope === "MATCH" ? "МАТЧ" : activeBetScope === "MAP1" ? "КАРТА 1" : "КАРТА 2"}
+                      </span>
+                      <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", textTransform: "uppercase" }}>
+                        Выбранный исход
+                      </span>
                     </div>
-                    <div style={{ fontSize: "0.92rem", fontWeight: "800", color: "#fff", marginTop: "0.15rem" }}>
+                    <div style={{ fontSize: "0.94rem", fontWeight: "800", color: "#fff", marginTop: "0.2rem" }}>
                       {activeBetChoiceTitle || "Победа команды"}
                     </div>
                   </div>
