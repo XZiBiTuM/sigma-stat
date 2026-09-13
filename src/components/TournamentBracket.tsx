@@ -687,7 +687,7 @@ export function TournamentBracketView({
       return;
     }
     if (userWallet && userWallet.balance < amt) {
-      setBetErrorMsg("Недостаточно СИГМАНАТ на балансе!");
+      setBetErrorMsg("Недостаточно средств на балансе!");
       return;
     }
 
@@ -1346,7 +1346,7 @@ export function TournamentBracketView({
                               <circle cx="12" cy="12" r="9"/>
                               <path d="M12 6v12M15 9.5a2.5 2.5 0 0 0-5 0c0 4 5 1.5 5 5a2.5 2.5 0 0 1-5 0"/>
                             </svg>
-                            <span>Линия ставок на матч (СИГМАНАТ)</span>
+                            <span>Линия ставок на матч</span>
                           </span>
                         </span>
                         {!isUpcoming && (
@@ -1513,7 +1513,7 @@ export function TournamentBracketView({
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem", flexWrap: "wrap", gap: "1rem" }}>
           <div>
             <h3 style={{ fontSize: "1.15rem", fontWeight: "800", color: "#fff", margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              Рейтинг и Ставки СИГМАНАТ
+              Рейтинг игроков и ставки
             </h3>
             <span style={{ fontSize: "0.76rem", color: "var(--text-muted)" }}>
               Стартовый капитал 100 000 СИГМАНАТ • Автоматический расчёт побед
@@ -1579,7 +1579,7 @@ export function TournamentBracketView({
               </div>
             ) : userBets.length === 0 ? (
               <div style={{ textAlign: "center", padding: "2.5rem 1.5rem", color: "var(--text-muted)", fontSize: "0.85rem" }}>
-                Вы ещё не сделали ни одной ставки. Нажмите на коэффициент матча выше, чтобы зарядить СИГМАНАТ!
+                Вы ещё не сделали ни одной ставки. Нажмите на коэффициент матча выше, чтобы сделать ставку.
               </div>
             ) : (
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "0.75rem" }}>
@@ -1647,7 +1647,7 @@ export function TournamentBracketView({
                     <th style={{ textAlign: "left", padding: "0.75rem 1rem" }}>Игрок</th>
                     <th style={{ textAlign: "center", padding: "0.75rem 0.6rem" }}>Ставок</th>
                     <th style={{ textAlign: "center", padding: "0.75rem 0.6rem", color: "var(--success)" }}>Выиграно</th>
-                    <th style={{ textAlign: "right", padding: "0.75rem 1.2rem", color: "#ffc619", fontWeight: "900" }}>Баланс СИГМАНАТ</th>
+                    <th style={{ textAlign: "right", padding: "0.75rem 1.2rem", color: "#ffc619", fontWeight: "900" }}>Баланс</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -2701,7 +2701,7 @@ export function TournamentBracketView({
                       boxShadow: isUpcoming ? "0 0 20px rgba(255, 198, 25, 0.4)" : "none"
                     }}
                   >
-                    {isPlacingBet ? "Размещение ставки..." : isUpcoming ? "Поставить СИГМАНАТ" : "Ставки закрыты"}
+                    {isPlacingBet ? "Размещение ставки..." : isUpcoming ? "Сделать ставку" : "Ставки закрыты"}
                   </button>
                 </div>
               </div>

@@ -611,7 +611,7 @@ export async function POST(request: NextRequest) {
 
     const betAmount = parseInt(amount, 10);
     if (isNaN(betAmount) || betAmount <= 0) {
-      return NextResponse.json({ success: false, error: "Укажите корректную сумму ставки в СИГМАНАТ!" }, { status: 400 });
+      return NextResponse.json({ success: false, error: "Укажите корректную сумму ставки!" }, { status: 400 });
     }
 
     const optionSelected = marketOption || choice;
