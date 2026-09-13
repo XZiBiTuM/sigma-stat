@@ -833,7 +833,7 @@ export function TournamentBracketView({
               ВАШ БАЛАНС
             </span>
             <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", background: "rgba(255,255,255,0.06)", padding: "0.1rem 0.4rem", borderRadius: "4px" }}>
-              СИГМАНАТ
+              SIGMABET
             </span>
           </div>
 
