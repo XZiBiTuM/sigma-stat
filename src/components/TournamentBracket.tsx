@@ -48,6 +48,8 @@ export interface BracketState {
   };
 }
 
+export type BetMarketType = "OUTCOME" | "EXACT_SCORE" | "TOTAL_ROUNDS" | "HANDICAP";
+
 export interface UserBet {
   id: string;
   userId: string;
@@ -57,7 +59,10 @@ export interface UserBet {
   round: number;
   team1Name: string;
   team2Name: string;
-  choice: "team1" | "draw" | "team2";
+  marketType?: BetMarketType;
+  marketOption?: string;
+  choiceTitle?: string;
+  choice: "team1" | "draw" | "team2" | string;
   odds: number;
   amount: number;
   potentialWin: number;
@@ -86,6 +91,23 @@ export interface MatchOdds {
   p1: number;
   pX: number;
   p2: number;
+  exactScore?: {
+    "2:0": number;
+    "1:1": number;
+    "0:2": number;
+  };
+  totalRounds?: Array<{
+    line: number;
+    over: number;
+    under: number;
+  }>;
+  handicaps?: Array<{
+    line: string;
+    team1Odds: number;
+    team2Odds: number;
+    description1: string;
+    description2: string;
+  }>;
 }
 
 export interface PlayerOverrideItem {
@@ -129,31 +151,85 @@ export function calculateTeamSkill(team: BracketTeam | undefined, overridesMap: 
   return { avgSkill: avg, membersCount: count };
 }
 
-export function getBO2MatchOdds(skill1: number, skill2: number): { k1: number; kX: number; k2: number; p1: number; pX: number; p2: number } {
+export function getBO2MatchOdds(skill1: number, skill2: number): MatchOdds {
+  // Delta divisor 48 compresses skill divergence so odds remain realistic (1.25 - 3.80 range)
   const delta = skill1 - skill2;
-  const pMap1 = 1 / (1 + Math.pow(10, -delta / 32));
+  const pMap1 = 1 / (1 + Math.pow(10, -delta / 48));
   const pMap2 = 1 - pMap1;
   let rawP1 = pMap1 * pMap1;
   let rawP2 = pMap2 * pMap2;
   let rawPX = 2 * pMap1 * pMap2;
-  rawPX = Math.max(0.25, Math.min(0.42, rawPX));
+  rawPX = Math.max(0.32, Math.min(0.44, rawPX));
   const rem = 1 - rawPX;
   const sum12 = rawP1 + rawP2;
   if (sum12 > 0) {
     rawP1 = (rawP1 / sum12) * rem;
     rawP2 = (rawP2 / sum12) * rem;
   }
-  const margin = 1.05;
-  const k1 = Number((1 / (rawP1 * margin)).toFixed(2));
-  const kX = Number((1 / (rawPX * margin)).toFixed(2));
-  const k2 = Number((1 / (rawP2 * margin)).toFixed(2));
+  const margin = 1.06;
+  const calcK1 = Number((1 / (rawP1 * margin)).toFixed(2));
+  const calcKX = Number((1 / (rawPX * margin)).toFixed(2));
+  const calcK2 = Number((1 / (rawP2 * margin)).toFixed(2));
+
+  const k1 = Math.max(1.25, Math.min(3.80, calcK1));
+  const kX = Math.max(1.90, Math.min(2.70, calcKX));
+  const k2 = Math.max(1.25, Math.min(3.80, calcK2));
+
+  const exactScore = {
+    "2:0": Number(Math.max(1.70, Math.min(3.95, k1 * 0.98 + 0.05)).toFixed(2)),
+    "1:1": Number(Math.max(1.85, Math.min(2.65, kX)).toFixed(2)),
+    "0:2": Number(Math.max(1.70, Math.min(3.95, k2 * 0.98 + 0.05)).toFixed(2))
+  };
+
+  const skillGap = Math.abs(delta);
+  const totalRounds = [
+    {
+      line: 42.5,
+      over: Number(Math.max(1.55, Math.min(2.15, 1.70 + skillGap * 0.015)).toFixed(2)),
+      under: Number(Math.max(1.65, Math.min(2.25, 2.05 - skillGap * 0.015)).toFixed(2))
+    },
+    {
+      line: 45.5,
+      over: Number(Math.max(1.80, Math.min(2.45, 1.95 + skillGap * 0.02)).toFixed(2)),
+      under: Number(Math.max(1.50, Math.min(1.95, 1.80 - skillGap * 0.01)).toFixed(2))
+    },
+    {
+      line: 48.5,
+      over: Number(Math.max(2.15, Math.min(3.10, 2.40 + skillGap * 0.025)).toFixed(2)),
+      under: Number(Math.max(1.30, Math.min(1.65, 1.50 - skillGap * 0.01)).toFixed(2))
+    }
+  ];
+
+  const t1Plus05Prob = rawP1 + rawPX;
+  const t2Plus05Prob = rawP2 + rawPX;
+  const handicaps = [
+    {
+      line: "0.5",
+      team1Odds: Number(Math.max(1.22, Math.min(2.35, 1 / (t1Plus05Prob * margin))).toFixed(2)),
+      team2Odds: Number(Math.max(1.22, Math.min(2.35, 1 / (t2Plus05Prob * margin))).toFixed(2)),
+      description1: "Фора 1 (+0.5)",
+      description2: "Фора 2 (+0.5)"
+    },
+    {
+      line: "-0.5",
+      team1Odds: Number(Math.max(1.70, Math.min(3.80, exactScore["2:0"])).toFixed(2)),
+      team2Odds: Number(Math.max(1.70, Math.min(3.80, exactScore["0:2"])).toFixed(2)),
+      description1: "Фора 1 (-0.5)",
+      description2: "Фора 2 (-0.5)"
+    }
+  ];
+
   return {
-    k1: Math.max(1.15, Math.min(9.5, k1)),
-    kX: Math.max(1.85, Math.min(6.0, kX)),
-    k2: Math.max(1.15, Math.min(9.5, k2)),
+    matchId: "",
+    k1,
+    kX,
+    k2,
     p1: Math.round(rawP1 * 100),
     pX: Math.round(rawPX * 100),
-    p2: Math.round(rawP2 * 100)
+    p2: Math.round(rawP2 * 100),
+    exactScore,
+    totalRounds,
+    handicaps
   };
 }
 
@@ -424,10 +500,14 @@ export function TournamentBracketView({
   const [betOddsMap, setBetOddsMap] = useState<Record<string, MatchOdds>>({});
   const [activeBetTab, setActiveBetTab] = useState<"matches" | "my_bets" | "leaderboard">("matches");
 
-  // Bet Modal State
+  // Bet Modal & Detailed Match Hub State
   const [betModalOpen, setBetModalOpen] = useState(false);
   const [activeMatchForBet, setActiveMatchForBet] = useState<BracketMatch | null>(null);
-  const [activeBetChoice, setActiveBetChoice] = useState<"team1" | "draw" | "team2">("team1");
+  const [modalActiveMarketTab, setModalActiveMarketTab] = useState<"all" | "outcome" | "exact" | "totals" | "handicap">("all");
+  const [activeBetMarketType, setActiveBetMarketType] = useState<BetMarketType>("OUTCOME");
+  const [activeBetMarketOption, setActiveBetMarketOption] = useState<string>("team1");
+  const [activeBetChoiceTitle, setActiveBetChoiceTitle] = useState<string>("");
+  const [activeBetChoice, setActiveBetChoice] = useState<"team1" | "draw" | "team2" | string>("team1");
   const [activeBetOdds, setActiveBetOdds] = useState<number>(2.0);
   const [betAmountInput, setBetAmountInput] = useState<string>("10000");
   const [isPlacingBet, setIsPlacingBet] = useState(false);
@@ -455,18 +535,47 @@ export function TournamentBracketView({
     return () => clearInterval(interval);
   }, [currentUser]);
 
-  const handleOpenBetModal = (match: BracketMatch, choice: "team1" | "draw" | "team2", odds: number) => {
+  const handleOpenMatchBetHub = (
+    match: BracketMatch, 
+    marketType: BetMarketType = "OUTCOME", 
+    option: string = "team1", 
+    odds: number = 2.0, 
+    title?: string,
+    initialTab: "all" | "outcome" | "exact" | "totals" | "handicap" = "all"
+  ) => {
     if (!currentUser) {
       alert("Для размещения ставок на турнир необходимо войти через Steam!");
       window.location.href = "/api/auth/steam/login";
       return;
     }
+    const t1 = teamMap.get(match.team1Id);
+    const t2 = teamMap.get(match.team2Id);
+    const defaultTitle = option === "team1" 
+      ? `Победа ${t1?.name || "Команда 1"}` 
+      : option === "draw" 
+      ? "Ничья (1:1)" 
+      : `Победа ${t2?.name || "Команда 2"}`;
+
     setActiveMatchForBet(match);
-    setActiveBetChoice(choice);
+    setModalActiveMarketTab(initialTab);
+    setActiveBetMarketType(marketType);
+    setActiveBetMarketOption(option);
+    setActiveBetChoice(option);
     setActiveBetOdds(odds);
+    setActiveBetChoiceTitle(title || defaultTitle);
     setBetErrorMsg("");
     setBetSuccessMsg("");
     setBetModalOpen(true);
+  };
+
+  const selectMarketOption = (marketType: BetMarketType, option: string, odds: number, title: string) => {
+    setActiveBetMarketType(marketType);
+    setActiveBetMarketOption(option);
+    setActiveBetChoice(option);
+    setActiveBetOdds(odds);
+    setActiveBetChoiceTitle(title);
+    setBetErrorMsg("");
+    setBetSuccessMsg("");
   };
 
   const handlePlaceBetSubmit = async () => {
@@ -491,7 +600,10 @@ export function TournamentBracketView({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           matchId: activeMatchForBet.id,
+          marketType: activeBetMarketType,
+          marketOption: activeBetMarketOption,
           choice: activeBetChoice,
+          choiceTitle: activeBetChoiceTitle,
           amount: amt
         })
       });
@@ -501,9 +613,8 @@ export function TournamentBracketView({
         if (data.userWallet) setUserWallet(data.userWallet);
         if (data.userBets) setUserBets(data.userBets);
         setTimeout(() => {
-          setBetModalOpen(false);
           setBetSuccessMsg("");
-        }, 1200);
+        }, 3000);
       } else {
         setBetErrorMsg(data.error || "Не удалось сделать ставку");
       }
@@ -882,6 +993,14 @@ export function TournamentBracketView({
             return (
               <div
                 key={match.id}
+                onClick={(e) => {
+                  // If user didn't click inside an inner button, open the match betting hub
+                  const target = e.target as HTMLElement;
+                  if (!target.closest("button") && !target.closest("a")) {
+                    const odds = betOddsMap[match.id] || getBO2MatchOdds(skill1, skill2);
+                    handleOpenMatchBetHub(match, "OUTCOME", "team1", odds.k1, `Победа ${team1?.name || "Команда 1"}`, "all");
+                  }
+                }}
                 style={{
                   background: isLive
                     ? "rgba(255, 23, 68, 0.08)"
@@ -899,6 +1018,8 @@ export function TournamentBracketView({
                   flexDirection: "column",
                   gap: "0.9rem",
                   position: "relative",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
                   boxShadow: isLive ? "0 0 25px rgba(255, 23, 68, 0.15)" : undefined
                 }}
               >
@@ -1117,8 +1238,13 @@ export function TournamentBracketView({
                     }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.72rem" }}>
                         <span style={{ color: "#ffc619", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.05em", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                          <span>💰</span>
-                          <span>Ставки на матч (СИГМАНАТ)</span>
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem" }}>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline-block", color: "#ffc619" }}>
+                              <circle cx="12" cy="12" r="9"/>
+                              <path d="M12 6v12M15 9.5a2.5 2.5 0 0 0-5 0c0 4 5 1.5 5 5a2.5 2.5 0 0 1-5 0"/>
+                            </svg>
+                            <span>Линия ставок на матч (СИГМАНАТ)</span>
+                          </span>
                         </span>
                         {!isUpcoming && (
                           <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", fontStyle: "italic" }}>
@@ -1133,7 +1259,7 @@ export function TournamentBracketView({
                         <button
                           type="button"
                           disabled={!isUpcoming}
-                          onClick={() => handleOpenBetModal(match, "team1", odds.k1)}
+                          onClick={(e) => { e.stopPropagation(); handleOpenMatchBetHub(match, "OUTCOME", "team1", odds.k1, `Победа ${team1?.name || "Команда 1"}`, "outcome"); }}
                           style={{
                             padding: "0.45rem 0.3rem",
                             borderRadius: "8px",
@@ -1161,7 +1287,7 @@ export function TournamentBracketView({
                         <button
                           type="button"
                           disabled={!isUpcoming}
-                          onClick={() => handleOpenBetModal(match, "draw", odds.kX)}
+                          onClick={(e) => { e.stopPropagation(); handleOpenMatchBetHub(match, "OUTCOME", "draw", odds.kX, "Ничья (1:1)", "outcome"); }}
                           style={{
                             padding: "0.45rem 0.3rem",
                             borderRadius: "8px",
@@ -1189,7 +1315,7 @@ export function TournamentBracketView({
                         <button
                           type="button"
                           disabled={!isUpcoming}
-                          onClick={() => handleOpenBetModal(match, "team2", odds.k2)}
+                          onClick={(e) => { e.stopPropagation(); handleOpenMatchBetHub(match, "OUTCOME", "team2", odds.k2, `Победа ${team2?.name || "Команда 2"}`, "outcome"); }}
                           style={{
                             padding: "0.45rem 0.3rem",
                             borderRadius: "8px",
@@ -1213,6 +1339,34 @@ export function TournamentBracketView({
                           </span>
                         </button>
                       </div>
+
+                      {/* More Markets Button */}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenMatchBetHub(match, "OUTCOME", "team1", odds.k1, `Победа ${team1?.name || "Команда 1"}`, "all");
+                        }}
+                        style={{
+                          width: "100%",
+                          padding: "0.4rem",
+                          borderRadius: "8px",
+                          background: "rgba(255, 255, 255, 0.04)",
+                          border: "1px dashed rgba(255, 198, 25, 0.35)",
+                          color: "#ffc619",
+                          fontSize: "0.72rem",
+                          fontWeight: "800",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: "0.4rem",
+                          transition: "all 0.15s ease"
+                        }}
+                      >
+                        <span>Полная роспись: Точный счёт, Тоталы, Форы</span>
+                        <span style={{ fontSize: "0.8rem" }}>→</span>
+                      </button>
 
                       {/* My Active Bets on this match */}
                       {myMatchBets.length > 0 && (
@@ -1256,7 +1410,7 @@ export function TournamentBracketView({
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem", flexWrap: "wrap", gap: "1rem" }}>
           <div>
             <h3 style={{ fontSize: "1.15rem", fontWeight: "800", color: "#fff", margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              💰 Ставки и Топ по СИГМАНАТ
+              Рейтинг и Ставки СИГМАНАТ
             </h3>
             <span style={{ fontSize: "0.76rem", color: "var(--text-muted)" }}>
               Стартовый капитал 100 000 СИГМАНАТ • Автоматический расчёт побед
@@ -1422,205 +1576,627 @@ export function TournamentBracketView({
         )}
       </div>
 
-      {/* BET PLACEMENT MODAL */}
-      {betModalOpen && activeMatchForBet && (
-        <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: "rgba(0, 0, 0, 0.75)",
-          backdropFilter: "blur(8px)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 9999,
-          padding: "1rem"
-        }}>
+      {/* ADVANCED MATCH BETTING HUB MODAL */}
+      {betModalOpen && activeMatchForBet && (() => {
+        const t1 = teamMap.get(activeMatchForBet.team1Id);
+        const t2 = teamMap.get(activeMatchForBet.team2Id);
+        const { skill1, skill2 } = calculateMatchWinProbability(t1, t2, playerOverrides);
+        const odds = betOddsMap[activeMatchForBet.id] || getBO2MatchOdds(skill1, skill2);
+        const isUpcoming = activeMatchForBet.status === "UPCOMING";
+
+        return (
           <div style={{
-            background: "#120e20",
-            border: "1.5px solid rgba(255, 198, 25, 0.4)",
-            borderRadius: "20px",
-            padding: "1.75rem",
-            maxWidth: "420px",
-            width: "100%",
-            boxShadow: "0 0 50px rgba(0,0,0,0.8)",
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(4, 3, 8, 0.85)",
+            backdropFilter: "blur(12px)",
             display: "flex",
-            flexDirection: "column",
-            gap: "1.1rem"
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 9999,
+            padding: "1rem"
           }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div style={{ fontSize: "1.05rem", fontWeight: "900", color: "#fff", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                <span>💰 Сделать ставку</span>
+            <div style={{
+              background: "#120e20",
+              border: "1.5px solid rgba(255, 198, 25, 0.4)",
+              borderRadius: "24px",
+              maxWidth: "680px",
+              width: "100%",
+              maxHeight: "90vh",
+              overflowY: "auto",
+              boxShadow: "0 0 60px rgba(0,0,0,0.9)",
+              display: "flex",
+              flexDirection: "column",
+              gap: "1.25rem",
+              padding: "1.75rem"
+            }}>
+              {/* Header */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+                  <span style={{
+                    padding: "0.2rem 0.6rem",
+                    borderRadius: "6px",
+                    background: "rgba(255, 198, 25, 0.15)",
+                    border: "1px solid rgba(255, 198, 25, 0.4)",
+                    color: "#ffc619",
+                    fontSize: "0.72rem",
+                    fontWeight: "800",
+                    textTransform: "uppercase"
+                  }}>
+                    ТУР {activeMatchForBet.round} • BO2
+                  </span>
+                  <span style={{ fontSize: "1.1rem", fontWeight: "900", color: "#fff" }}>
+                    Роспись ставок на матч
+                  </span>
+                </div>
+                <button
+                  onClick={() => setBetModalOpen(false)}
+                  style={{
+                    background: "rgba(255,255,255,0.06)",
+                    border: "1px solid var(--border-light)",
+                    borderRadius: "50%",
+                    width: "32px",
+                    height: "32px",
+                    color: "var(--text-muted)",
+                    fontSize: "1rem",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                  }}
+                >
+                  ✕
+                </button>
               </div>
-              <button
-                onClick={() => setBetModalOpen(false)}
-                style={{ background: "transparent", border: "none", color: "var(--text-muted)", fontSize: "1.1rem", cursor: "pointer" }}
-              >
-                ✕
-              </button>
-            </div>
 
-            {/* Match info & Selected Choice */}
-            <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "12px", padding: "0.85rem" }}>
-              <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", marginBottom: "0.25rem" }}>
-                Тур {activeMatchForBet.round} • Формат BO2
+              {/* Match Versus Banner */}
+              <div style={{
+                background: "linear-gradient(135deg, rgba(22, 17, 38, 0.8) 0%, rgba(10, 8, 18, 0.95) 100%)",
+                border: "1px solid rgba(255, 198, 25, 0.25)",
+                borderRadius: "16px",
+                padding: "1rem 1.4rem",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center"
+              }}>
+                {/* Team 1 */}
+                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flex: 1 }}>
+                  <TeamBadgeLogo logo={t1?.logo} name={t1?.name || "T1"} size="md" />
+                  <div>
+                    <div style={{ fontWeight: "900", color: "#fff", fontSize: "1.05rem" }}>
+                      {t1?.name || "Команда 1"}
+                    </div>
+                    <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
+                      Капитан: {t1?.captain || "—"} • {skill1} PWR
+                    </div>
+                  </div>
+                </div>
+
+                {/* Score or VS */}
+                <div style={{ textAlign: "center", padding: "0 1.2rem" }}>
+                  <div style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "1.4rem",
+                    fontWeight: "900",
+                    color: activeMatchForBet.status === "FINISHED" ? "#ffc619" : "#fff"
+                  }}>
+                    {activeMatchForBet.status === "FINISHED" || activeMatchForBet.status === "LIVE"
+                      ? `${activeMatchForBet.score1 ?? 0} : ${activeMatchForBet.score2 ?? 0}`
+                      : "VS"}
+                  </div>
+                  <div style={{ fontSize: "0.68rem", color: isUpcoming ? "#00e676" : "var(--text-muted)", fontWeight: "700" }}>
+                    {isUpcoming ? "Приём ставок открыт" : "Матч завершён"}
+                  </div>
+                </div>
+
+                {/* Team 2 */}
+                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flex: 1, justifyContent: "flex-end", textAlign: "right" }}>
+                  <div>
+                    <div style={{ fontWeight: "900", color: "#fff", fontSize: "1.05rem" }}>
+                      {t2?.name || "Команда 2"}
+                    </div>
+                    <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
+                      {skill2} PWR • Капитан: {t2?.captain || "—"}
+                    </div>
+                  </div>
+                  <TeamBadgeLogo logo={t2?.logo} name={t2?.name || "T2"} size="md" />
+                </div>
               </div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "0.4rem" }}>
-                <span style={{ fontWeight: "800", color: "#fff", fontSize: "0.92rem" }}>
-                  {activeBetChoice === "team1"
-                    ? `Победа ${teamMap.get(activeMatchForBet.team1Id)?.name || "Команда 1"}`
-                    : activeBetChoice === "draw"
-                    ? "Ничья (1:1)"
-                    : `Победа ${teamMap.get(activeMatchForBet.team2Id)?.name || "Команда 2"}`}
-                </span>
-                <span style={{ fontSize: "1.1rem", fontWeight: "900", color: "#ffc619", fontFamily: "var(--font-mono)" }}>
-                  x{activeBetOdds.toFixed(2)}
-                </span>
-              </div>
-            </div>
 
-            {/* User current balance */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.75rem", padding: "0 0.2rem" }}>
-              <span style={{ color: "var(--text-secondary)" }}>Ваш баланс:</span>
-              <strong style={{ color: "#ffc619", fontFamily: "var(--font-mono)" }}>
-                {(userWallet?.balance ?? 100000).toLocaleString()} СИГМАНАТ
-              </strong>
-            </div>
-
-            {/* Amount input */}
-            <div>
-              <label style={{ fontSize: "0.72rem", color: "var(--text-muted)", fontWeight: "700", display: "block", marginBottom: "0.4rem" }}>
-                Сумма ставки (СИГМАНАТ):
-              </label>
-              <input
-                type="number"
-                min="100"
-                step="1000"
-                value={betAmountInput}
-                onChange={e => setBetAmountInput(e.target.value)}
-                style={{
-                  width: "100%",
-                  padding: "0.7rem 1rem",
-                  borderRadius: "10px",
-                  background: "#080611",
-                  border: "1px solid rgba(255, 198, 25, 0.4)",
-                  color: "#fff",
-                  fontSize: "1.1rem",
-                  fontWeight: "800",
-                  fontFamily: "var(--font-mono)"
-                }}
-              />
-
-              {/* Quick amount buttons */}
-              <div style={{ display: "flex", gap: "0.35rem", marginTop: "0.5rem" }}>
-                {[5000, 10000, 25000, 50000].map(val => (
+              {/* Navigation Market Tabs */}
+              <div style={{
+                display: "flex",
+                gap: "0.35rem",
+                background: "rgba(0,0,0,0.5)",
+                padding: "0.3rem",
+                borderRadius: "12px",
+                border: "1px solid var(--border-light)",
+                overflowX: "auto"
+              }}>
+                {[
+                  { id: "all", label: "Все рынки" },
+                  { id: "outcome", label: "Исход матча (1X2)" },
+                  { id: "exact", label: "Точный счёт BO2" },
+                  { id: "totals", label: "Тотал раундов" },
+                  { id: "handicap", label: "Фора по картам" }
+                ].map(tab => (
                   <button
-                    key={val}
-                    type="button"
-                    onClick={() => setBetAmountInput(val.toString())}
+                    key={tab.id}
+                    onClick={() => setModalActiveMarketTab(tab.id as any)}
+                    style={{
+                      padding: "0.4rem 0.85rem",
+                      fontSize: "0.76rem",
+                      fontWeight: "800",
+                      borderRadius: "8px",
+                      background: modalActiveMarketTab === tab.id ? "#ffc619" : "transparent",
+                      color: modalActiveMarketTab === tab.id ? "#000" : "var(--text-secondary)",
+                      border: "none",
+                      cursor: "pointer",
+                      whiteSpace: "nowrap"
+                    }}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Markets Grid Area */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                {/* 1. MATCH OUTCOME (1X2) */}
+                {(modalActiveMarketTab === "all" || modalActiveMarketTab === "outcome") && (
+                  <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "14px", padding: "1rem" }}>
+                    <div style={{ fontSize: "0.76rem", fontWeight: "800", color: "#ffc619", textTransform: "uppercase", marginBottom: "0.6rem" }}>
+                      Основной исход (BO2)
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.5rem" }}>
+                      <button
+                        type="button"
+                        disabled={!isUpcoming}
+                        onClick={() => selectMarketOption("OUTCOME", "team1", odds.k1, `Победа ${t1?.name || "Команда 1"}`)}
+                        style={{
+                          padding: "0.7rem 0.5rem",
+                          borderRadius: "10px",
+                          background: activeBetMarketOption === "team1" ? "rgba(255, 198, 25, 0.25)" : "rgba(255, 198, 25, 0.07)",
+                          border: activeBetMarketOption === "team1" ? "2px solid #ffc619" : "1px solid rgba(255, 198, 25, 0.25)",
+                          color: "#fff",
+                          cursor: isUpcoming ? "pointer" : "not-allowed",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          gap: "0.2rem"
+                        }}
+                      >
+                        <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", fontWeight: "700" }}>
+                          П1 ({t1?.name?.replace(/^team\s+/i, "").slice(0, 6)})
+                        </span>
+                        <span style={{ fontSize: "1.15rem", fontWeight: "900", color: "#ffc619", fontFamily: "var(--font-mono)" }}>
+                          {odds.k1.toFixed(2)}
+                        </span>
+                      </button>
+
+                      <button
+                        type="button"
+                        disabled={!isUpcoming}
+                        onClick={() => selectMarketOption("OUTCOME", "draw", odds.kX, "Ничья (1:1)")}
+                        style={{
+                          padding: "0.7rem 0.5rem",
+                          borderRadius: "10px",
+                          background: activeBetMarketOption === "draw" ? "rgba(157, 59, 245, 0.3)" : "rgba(157, 59, 245, 0.08)",
+                          border: activeBetMarketOption === "draw" ? "2px solid #b388ff" : "1px solid rgba(157, 59, 245, 0.25)",
+                          color: "#fff",
+                          cursor: isUpcoming ? "pointer" : "not-allowed",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          gap: "0.2rem"
+                        }}
+                      >
+                        <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", fontWeight: "700" }}>
+                          НИЧЬЯ (1:1)
+                        </span>
+                        <span style={{ fontSize: "1.15rem", fontWeight: "900", color: "#b388ff", fontFamily: "var(--font-mono)" }}>
+                          {odds.kX.toFixed(2)}
+                        </span>
+                      </button>
+
+                      <button
+                        type="button"
+                        disabled={!isUpcoming}
+                        onClick={() => selectMarketOption("OUTCOME", "team2", odds.k2, `Победа ${t2?.name || "Команда 2"}`)}
+                        style={{
+                          padding: "0.7rem 0.5rem",
+                          borderRadius: "10px",
+                          background: activeBetMarketOption === "team2" ? "rgba(0, 229, 255, 0.25)" : "rgba(0, 229, 255, 0.07)",
+                          border: activeBetMarketOption === "team2" ? "2px solid #00e5ff" : "1px solid rgba(0, 229, 255, 0.25)",
+                          color: "#fff",
+                          cursor: isUpcoming ? "pointer" : "not-allowed",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          gap: "0.2rem"
+                        }}
+                      >
+                        <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", fontWeight: "700" }}>
+                          П2 ({t2?.name?.replace(/^team\s+/i, "").slice(0, 6)})
+                        </span>
+                        <span style={{ fontSize: "1.15rem", fontWeight: "900", color: "#00e5ff", fontFamily: "var(--font-mono)" }}>
+                          {odds.k2.toFixed(2)}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* 2. EXACT SCORE (2:0, 1:1, 0:2) */}
+                {(modalActiveMarketTab === "all" || modalActiveMarketTab === "exact") && odds.exactScore && (
+                  <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "14px", padding: "1rem" }}>
+                    <div style={{ fontSize: "0.76rem", fontWeight: "800", color: "#ffc619", textTransform: "uppercase", marginBottom: "0.6rem" }}>
+                      Точный счёт по картам
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.5rem" }}>
+                      {[
+                        { score: "2:0", title: `Точный счёт 2:0 в пользу ${t1?.name}`, k: odds.exactScore["2:0"], color: "#ffc619" },
+                        { score: "1:1", title: "Точный счёт 1:1 (Ничья)", k: odds.exactScore["1:1"], color: "#b388ff" },
+                        { score: "0:2", title: `Точный счёт 0:2 в пользу ${t2?.name}`, k: odds.exactScore["0:2"], color: "#00e5ff" }
+                      ].map(item => (
+                        <button
+                          key={item.score}
+                          type="button"
+                          disabled={!isUpcoming}
+                          onClick={() => selectMarketOption("EXACT_SCORE", item.score, item.k, item.title)}
+                          style={{
+                            padding: "0.65rem 0.4rem",
+                            borderRadius: "10px",
+                            background: activeBetMarketOption === item.score ? "rgba(255, 198, 25, 0.25)" : "rgba(255,255,255,0.03)",
+                            border: activeBetMarketOption === item.score ? "2px solid #ffc619" : "1px solid var(--border-light)",
+                            color: "#fff",
+                            cursor: isUpcoming ? "pointer" : "not-allowed",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            gap: "0.15rem"
+                          }}
+                        >
+                          <span style={{ fontSize: "0.78rem", fontWeight: "800", color: "#fff" }}>
+                            Счёт {item.score}
+                          </span>
+                          <span style={{ fontSize: "1.05rem", fontWeight: "900", color: item.color, fontFamily: "var(--font-mono)" }}>
+                            {item.k.toFixed(2)}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* 3. TOTAL ROUNDS */}
+                {(modalActiveMarketTab === "all" || modalActiveMarketTab === "totals") && odds.totalRounds && (
+                  <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "14px", padding: "1rem" }}>
+                    <div style={{ fontSize: "0.76rem", fontWeight: "800", color: "#ffc619", textTransform: "uppercase", marginBottom: "0.6rem" }}>
+                      Тотал раундов в матче (за 2 карты)
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.45rem" }}>
+                      {odds.totalRounds.map(tr => (
+                        <div key={tr.line} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
+                          <button
+                            type="button"
+                            disabled={!isUpcoming}
+                            onClick={() => selectMarketOption("TOTAL_ROUNDS", `OVER_${tr.line}`, tr.over, `Тотал больше ${tr.line} раундов`)}
+                            style={{
+                              padding: "0.55rem 0.8rem",
+                              borderRadius: "8px",
+                              background: activeBetMarketOption === `OVER_${tr.line}` ? "rgba(255, 198, 25, 0.25)" : "rgba(255,255,255,0.03)",
+                              border: activeBetMarketOption === `OVER_${tr.line}` ? "2px solid #ffc619" : "1px solid var(--border-light)",
+                              color: "#fff",
+                              cursor: isUpcoming ? "pointer" : "not-allowed",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center"
+                            }}
+                          >
+                            <span style={{ fontSize: "0.75rem", fontWeight: "700" }}>Больше {tr.line}</span>
+                            <span style={{ fontSize: "0.95rem", fontWeight: "900", color: "#ffc619", fontFamily: "var(--font-mono)" }}>
+                              {tr.over.toFixed(2)}
+                            </span>
+                          </button>
+
+                          <button
+                            type="button"
+                            disabled={!isUpcoming}
+                            onClick={() => selectMarketOption("TOTAL_ROUNDS", `UNDER_${tr.line}`, tr.under, `Тотал меньше ${tr.line} раундов`)}
+                            style={{
+                              padding: "0.55rem 0.8rem",
+                              borderRadius: "8px",
+                              background: activeBetMarketOption === `UNDER_${tr.line}` ? "rgba(255, 198, 25, 0.25)" : "rgba(255,255,255,0.03)",
+                              border: activeBetMarketOption === `UNDER_${tr.line}` ? "2px solid #ffc619" : "1px solid var(--border-light)",
+                              color: "#fff",
+                              cursor: isUpcoming ? "pointer" : "not-allowed",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center"
+                            }}
+                          >
+                            <span style={{ fontSize: "0.75rem", fontWeight: "700" }}>Меньше {tr.line}</span>
+                            <span style={{ fontSize: "0.95rem", fontWeight: "900", color: "#ffc619", fontFamily: "var(--font-mono)" }}>
+                              {tr.under.toFixed(2)}
+                            </span>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* 4. HANDICAP (ФОРА) */}
+                {(modalActiveMarketTab === "all" || modalActiveMarketTab === "handicap") && odds.handicaps && (
+                  <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "14px", padding: "1rem" }}>
+                    <div style={{ fontSize: "0.76rem", fontWeight: "800", color: "#ffc619", textTransform: "uppercase", marginBottom: "0.6rem" }}>
+                      Фора по картам (BO2)
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.45rem" }}>
+                      {/* +0.5 Handicap */}
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
+                        <button
+                          type="button"
+                          disabled={!isUpcoming}
+                          onClick={() => selectMarketOption("HANDICAP", "T1_PLUS_0.5", odds.handicaps![0].team1Odds, `${t1?.name || "Команда 1"} (+0.5)`)}
+                          style={{
+                            padding: "0.55rem 0.8rem",
+                            borderRadius: "8px",
+                            background: activeBetMarketOption === "T1_PLUS_0.5" ? "rgba(255, 198, 25, 0.25)" : "rgba(255,255,255,0.03)",
+                            border: activeBetMarketOption === "T1_PLUS_0.5" ? "2px solid #ffc619" : "1px solid var(--border-light)",
+                            color: "#fff",
+                            cursor: isUpcoming ? "pointer" : "not-allowed",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center"
+                          }}
+                        >
+                          <span style={{ fontSize: "0.74rem", fontWeight: "700" }}>{t1?.name} (+0.5)</span>
+                          <span style={{ fontSize: "0.95rem", fontWeight: "900", color: "#ffc619", fontFamily: "var(--font-mono)" }}>
+                            {odds.handicaps[0].team1Odds.toFixed(2)}
+                          </span>
+                        </button>
+
+                        <button
+                          type="button"
+                          disabled={!isUpcoming}
+                          onClick={() => selectMarketOption("HANDICAP", "T2_PLUS_0.5", odds.handicaps![0].team2Odds, `${t2?.name || "Команда 2"} (+0.5)`)}
+                          style={{
+                            padding: "0.55rem 0.8rem",
+                            borderRadius: "8px",
+                            background: activeBetMarketOption === "T2_PLUS_0.5" ? "rgba(255, 198, 25, 0.25)" : "rgba(255,255,255,0.03)",
+                            border: activeBetMarketOption === "T2_PLUS_0.5" ? "2px solid #ffc619" : "1px solid var(--border-light)",
+                            color: "#fff",
+                            cursor: isUpcoming ? "pointer" : "not-allowed",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center"
+                          }}
+                        >
+                          <span style={{ fontSize: "0.74rem", fontWeight: "700" }}>{t2?.name} (+0.5)</span>
+                          <span style={{ fontSize: "0.95rem", fontWeight: "900", color: "#00e5ff", fontFamily: "var(--font-mono)" }}>
+                            {odds.handicaps[0].team2Odds.toFixed(2)}
+                          </span>
+                        </button>
+                      </div>
+
+                      {/* -0.5 Handicap */}
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
+                        <button
+                          type="button"
+                          disabled={!isUpcoming}
+                          onClick={() => selectMarketOption("HANDICAP", "T1_MINUS_0.5", odds.handicaps![1].team1Odds, `${t1?.name || "Команда 1"} (-0.5)`)}
+                          style={{
+                            padding: "0.55rem 0.8rem",
+                            borderRadius: "8px",
+                            background: activeBetMarketOption === "T1_MINUS_0.5" ? "rgba(255, 198, 25, 0.25)" : "rgba(255,255,255,0.03)",
+                            border: activeBetMarketOption === "T1_MINUS_0.5" ? "2px solid #ffc619" : "1px solid var(--border-light)",
+                            color: "#fff",
+                            cursor: isUpcoming ? "pointer" : "not-allowed",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center"
+                          }}
+                        >
+                          <span style={{ fontSize: "0.74rem", fontWeight: "700" }}>{t1?.name} (-0.5)</span>
+                          <span style={{ fontSize: "0.95rem", fontWeight: "900", color: "#ffc619", fontFamily: "var(--font-mono)" }}>
+                            {odds.handicaps[1].team1Odds.toFixed(2)}
+                          </span>
+                        </button>
+
+                        <button
+                          type="button"
+                          disabled={!isUpcoming}
+                          onClick={() => selectMarketOption("HANDICAP", "T2_MINUS_0.5", odds.handicaps![1].team2Odds, `${t2?.name || "Команда 2"} (-0.5)`)}
+                          style={{
+                            padding: "0.55rem 0.8rem",
+                            borderRadius: "8px",
+                            background: activeBetMarketOption === "T2_MINUS_0.5" ? "rgba(255, 198, 25, 0.25)" : "rgba(255,255,255,0.03)",
+                            border: activeBetMarketOption === "T2_MINUS_0.5" ? "2px solid #ffc619" : "1px solid var(--border-light)",
+                            color: "#fff",
+                            cursor: isUpcoming ? "pointer" : "not-allowed",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center"
+                          }}
+                        >
+                          <span style={{ fontSize: "0.74rem", fontWeight: "700" }}>{t2?.name} (-0.5)</span>
+                          <span style={{ fontSize: "0.95rem", fontWeight: "900", color: "#00e5ff", fontFamily: "var(--font-mono)" }}>
+                            {odds.handicaps[1].team2Odds.toFixed(2)}
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Bet Slip Action Footer */}
+              <div style={{
+                background: "#0a0714",
+                border: "1px solid rgba(255, 198, 25, 0.35)",
+                borderRadius: "16px",
+                padding: "1.2rem",
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.85rem"
+              }}>
+                {/* Selected Choice Summary */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px dashed rgba(255,255,255,0.08)", paddingBottom: "0.6rem" }}>
+                  <div>
+                    <div style={{ fontSize: "0.68rem", color: "var(--text-muted)", textTransform: "uppercase" }}>
+                      Выбранный исход
+                    </div>
+                    <div style={{ fontSize: "0.92rem", fontWeight: "800", color: "#fff", marginTop: "0.15rem" }}>
+                      {activeBetChoiceTitle || "Победа команды"}
+                    </div>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>Коэффициент</div>
+                    <div style={{ fontSize: "1.3rem", fontWeight: "900", color: "#ffc619", fontFamily: "var(--font-mono)" }}>
+                      x{activeBetOdds.toFixed(2)}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Amount input & Quick Buttons */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.75rem" }}>
+                  <span style={{ color: "var(--text-secondary)" }}>Ваш баланс:</span>
+                  <strong style={{ color: "#ffc619", fontFamily: "var(--font-mono)" }}>
+                    {(userWallet?.balance ?? 100000).toLocaleString()} СИГМАНАТ
+                  </strong>
+                </div>
+
+                <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                  <input
+                    type="number"
+                    min="100"
+                    step="1000"
+                    value={betAmountInput}
+                    onChange={e => setBetAmountInput(e.target.value)}
                     style={{
                       flex: 1,
-                      padding: "0.3rem 0",
-                      fontSize: "0.68rem",
-                      fontWeight: "700",
-                      borderRadius: "6px",
-                      background: "rgba(255,255,255,0.05)",
-                      border: "1px solid rgba(255,255,255,0.1)",
-                      color: "var(--text-secondary)",
+                      padding: "0.65rem 0.85rem",
+                      borderRadius: "10px",
+                      background: "#080611",
+                      border: "1px solid rgba(255, 198, 25, 0.4)",
+                      color: "#fff",
+                      fontSize: "1.05rem",
+                      fontWeight: "800",
+                      fontFamily: "var(--font-mono)"
+                    }}
+                  />
+
+                  {[5000, 10000, 25000].map(val => (
+                    <button
+                      key={val}
+                      type="button"
+                      onClick={() => setBetAmountInput(val.toString())}
+                      style={{
+                        padding: "0.65rem 0.6rem",
+                        fontSize: "0.72rem",
+                        fontWeight: "800",
+                        borderRadius: "8px",
+                        background: "rgba(255,255,255,0.05)",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        color: "var(--text-secondary)",
+                        cursor: "pointer"
+                      }}
+                    >
+                      +{val >= 1000 ? `${val / 1000}k` : val}
+                    </button>
+                  ))}
+
+                  <button
+                    type="button"
+                    onClick={() => setBetAmountInput((userWallet?.balance || 100000).toString())}
+                    style={{
+                      padding: "0.65rem 0.6rem",
+                      fontSize: "0.72rem",
+                      fontWeight: "900",
+                      borderRadius: "8px",
+                      background: "rgba(255, 23, 68, 0.15)",
+                      border: "1px solid rgba(255, 23, 68, 0.3)",
+                      color: "#ff1744",
                       cursor: "pointer"
                     }}
                   >
-                    +{val >= 1000 ? `${val / 1000}k` : val}
+                    ALL-IN
                   </button>
-                ))}
-                <button
-                  type="button"
-                  onClick={() => setBetAmountInput((userWallet?.balance || 100000).toString())}
-                  style={{
-                    flex: 1,
-                    padding: "0.3rem 0",
-                    fontSize: "0.68rem",
-                    fontWeight: "800",
-                    borderRadius: "6px",
-                    background: "rgba(255, 23, 68, 0.15)",
-                    border: "1px solid rgba(255, 23, 68, 0.3)",
-                    color: "#ff1744",
-                    cursor: "pointer"
-                  }}
-                >
-                  ALL-IN
-                </button>
-              </div>
-            </div>
+                </div>
 
-            {/* Potential payout */}
-            <div style={{ background: "rgba(255, 198, 25, 0.08)", border: "1px solid rgba(255, 198, 25, 0.25)", borderRadius: "10px", padding: "0.75rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span style={{ fontSize: "0.76rem", color: "#fff", fontWeight: "700" }}>Возможный выигрыш:</span>
-              <span style={{ fontSize: "1.05rem", fontWeight: "900", color: "#ffc619", fontFamily: "var(--font-mono)" }}>
-                {(() => {
-                  const amt = parseInt(betAmountInput, 10);
-                  if (isNaN(amt) || amt <= 0) return "0";
-                  return Math.round(amt * activeBetOdds).toLocaleString();
-                })()} СИГМАНАТ
-              </span>
-            </div>
+                {/* Potential payout */}
+                <div style={{ background: "rgba(255, 198, 25, 0.08)", border: "1px solid rgba(255, 198, 25, 0.2)", borderRadius: "10px", padding: "0.6rem 0.85rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: "0.76rem", color: "#fff", fontWeight: "700" }}>Возможный выигрыш:</span>
+                  <span style={{ fontSize: "1.1rem", fontWeight: "900", color: "#ffc619", fontFamily: "var(--font-mono)" }}>
+                    {(() => {
+                      const amt = parseInt(betAmountInput, 10);
+                      if (isNaN(amt) || amt <= 0) return "0";
+                      return Math.round(amt * activeBetOdds).toLocaleString();
+                    })()} СИГМАНАТ
+                  </span>
+                </div>
 
-            {/* Error / Success messages */}
-            {betErrorMsg && (
-              <div style={{ fontSize: "0.75rem", color: "#ff4949", background: "rgba(255, 73, 73, 0.1)", border: "1px solid rgba(255, 73, 73, 0.3)", borderRadius: "8px", padding: "0.5rem" }}>
-                {betErrorMsg}
-              </div>
-            )}
-            {betSuccessMsg && (
-              <div style={{ fontSize: "0.75rem", color: "var(--success)", background: "rgba(0, 230, 118, 0.1)", border: "1px solid rgba(0, 230, 118, 0.3)", borderRadius: "8px", padding: "0.5rem" }}>
-                {betSuccessMsg}
-              </div>
-            )}
+                {/* Status Messages */}
+                {betErrorMsg && (
+                  <div style={{ fontSize: "0.75rem", color: "#ff4949", background: "rgba(255, 73, 73, 0.1)", border: "1px solid rgba(255, 73, 73, 0.3)", borderRadius: "8px", padding: "0.5rem" }}>
+                    {betErrorMsg}
+                  </div>
+                )}
+                {betSuccessMsg && (
+                  <div style={{ fontSize: "0.75rem", color: "var(--success)", background: "rgba(0, 230, 118, 0.1)", border: "1px solid rgba(0, 230, 118, 0.3)", borderRadius: "8px", padding: "0.5rem" }}>
+                    {betSuccessMsg}
+                  </div>
+                )}
 
-            {/* Action buttons */}
-            <div style={{ display: "flex", gap: "0.6rem", marginTop: "0.2rem" }}>
-              <button
-                type="button"
-                onClick={() => setBetModalOpen(false)}
-                style={{
-                  flex: 1,
-                  padding: "0.65rem",
-                  borderRadius: "10px",
-                  background: "rgba(255,255,255,0.06)",
-                  border: "1px solid var(--border-light)",
-                  color: "#fff",
-                  fontWeight: "700",
-                  fontSize: "0.82rem",
-                  cursor: "pointer"
-                }}
-              >
-                Отмена
-              </button>
-              <button
-                type="button"
-                onClick={handlePlaceBetSubmit}
-                disabled={isPlacingBet}
-                style={{
-                  flex: 2,
-                  padding: "0.65rem",
-                  borderRadius: "10px",
-                  background: "linear-gradient(135deg, #ffc619, #ff9100)",
-                  border: "none",
-                  color: "#000",
-                  fontWeight: "900",
-                  fontSize: "0.88rem",
-                  cursor: isPlacingBet ? "not-allowed" : "pointer",
-                  boxShadow: "0 0 20px rgba(255, 198, 25, 0.4)"
-                }}
-              >
-                {isPlacingBet ? "Размещение..." : "Поставить СИГМАНАТ"}
-              </button>
+                {/* Submit button */}
+                <div style={{ display: "flex", gap: "0.6rem" }}>
+                  <button
+                    type="button"
+                    onClick={() => setBetModalOpen(false)}
+                    style={{
+                      flex: 1,
+                      padding: "0.7rem",
+                      borderRadius: "10px",
+                      background: "rgba(255,255,255,0.06)",
+                      border: "1px solid var(--border-light)",
+                      color: "#fff",
+                      fontWeight: "700",
+                      fontSize: "0.82rem",
+                      cursor: "pointer"
+                    }}
+                  >
+                    Закрыть
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handlePlaceBetSubmit}
+                    disabled={isPlacingBet || !isUpcoming}
+                    style={{
+                      flex: 2,
+                      padding: "0.7rem",
+                      borderRadius: "10px",
+                      background: isUpcoming ? "linear-gradient(135deg, #ffc619, #ff9100)" : "rgba(255,255,255,0.05)",
+                      border: "none",
+                      color: isUpcoming ? "#000" : "var(--text-muted)",
+                      fontWeight: "900",
+                      fontSize: "0.9rem",
+                      cursor: isPlacingBet || !isUpcoming ? "not-allowed" : "pointer",
+                      boxShadow: isUpcoming ? "0 0 20px rgba(255, 198, 25, 0.4)" : "none"
+                    }}
+                  >
+                    {isPlacingBet ? "Размещение ставки..." : isUpcoming ? "Поставить СИГМАНАТ" : "Ставки закрыты"}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* 4. TEAMS ROSTER OVERVIEW */}
       <div

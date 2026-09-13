@@ -2608,7 +2608,10 @@ export default function Home() {
                   boxShadow: "0 0 10px rgba(255, 198, 25, 0.15)"
                 }}
               >
-                <span>💰</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline-block" }}>
+                  <circle cx="12" cy="12" r="9"/>
+                  <path d="M12 6v12M15 9.5a2.5 2.5 0 0 0-5 0c0 4 5 1.5 5 5a2.5 2.5 0 0 1-5 0"/>
+                </svg>
                 <span>СИГМАНАТ</span>
               </a>
 
