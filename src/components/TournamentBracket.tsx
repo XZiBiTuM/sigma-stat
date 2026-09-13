@@ -1467,7 +1467,7 @@ export function TournamentBracketView({
                           transition: "all 0.15s ease"
                         }}
                       >
-                        <span>Полная роспись: Точный счёт, Тоталы, Форы</span>
+                        <span>Все ставки: Карты, Точный счёт, Тоталы, Форы</span>
                         <span style={{ fontSize: "0.8rem" }}>→</span>
                       </button>
 
@@ -1757,7 +1757,7 @@ export function TournamentBracketView({
                     ТУР {activeMatchForBet.round} • BO2
                   </span>
                   <span style={{ fontSize: "1.1rem", fontWeight: "900", color: "#fff" }}>
-                    Роспись ставок на матч и карты
+                    Ставки на матч и карты
                   </span>
                 </div>
                 <button
