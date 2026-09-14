@@ -8,6 +8,7 @@ import path from "path";
 import { faceitFetch, getPlayerProfile } from "@/lib/faceit";
 import { getStoragePath, getPersistentPath, isMatchExcluded } from "@/lib/storage";
 import { getHubPlayersFormMap } from "@/lib/player_form";
+import { fetchHubTournamentsData } from "@/app/api/faceit/hubs/[hubId]/tournaments/route";
 
 const cacheFilePath = getStoragePath("match_stats_cache.json");
 
@@ -641,12 +642,26 @@ export async function GET(
       recentMatches: playerMatchesList,
       commentedPlayersCount: commentedCount,
       isFantasyWinner,
-      form: (() => {
+      form: await (async () => {
         try {
-          const formMap = getHubPlayersFormMap(HUB_ID);
-          return (uuid && formMap[uuid]) || (playerProfile?.nickname && formMap[playerProfile.nickname]) || null;
+          const tourneysRes = await fetchHubTournamentsData(HUB_ID);
+          const formMap = getHubPlayersFormMap(HUB_ID, tourneysRes.tournaments);
+          return (uuid && formMap[uuid.toLowerCase()]) || 
+                 (playerProfile?.nickname && formMap[playerProfile.nickname.toLowerCase()]) || 
+                 (uuid && formMap[uuid]) || 
+                 (playerProfile?.nickname && formMap[playerProfile.nickname]) || 
+                 null;
         } catch {
-          return null;
+          try {
+            const formMap = getHubPlayersFormMap(HUB_ID);
+            return (uuid && formMap[uuid.toLowerCase()]) || 
+                   (playerProfile?.nickname && formMap[playerProfile.nickname.toLowerCase()]) || 
+                   (uuid && formMap[uuid]) || 
+                   (playerProfile?.nickname && formMap[playerProfile.nickname]) || 
+                   null;
+          } catch {
+            return null;
+          }
         }
       })()
     });

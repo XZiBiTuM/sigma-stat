@@ -28,21 +28,17 @@ async function writeStatsCache(cache: Record<string, any>) {
   }
 }
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ hubId: string }> }
-) {
+export async function fetchHubTournamentsData(hubId: string) {
   try {
-    let { hubId } = await params;
     if (hubId === "0dd077bc-b401-4f5c-8a40-47578601ccb7") {
       hubId = "d0701937-8eba-4df9-8830-22137001c0bd";
     }
 
     // 1. Fetch finished matches from FACEIT API (limit=100)
     const matchesData = await faceitFetch(`/hubs/${hubId}/matches`, {
-      limit: "100",
-      type: "past",
-    });
+    limit: "100",
+    type: "past",
+  });
 
     const finishedMatches = (matchesData.items || []).filter(
       (m: any) => m.status === "FINISHED" && !isMatchExcluded(m.match_id)
@@ -265,11 +261,25 @@ export async function GET(
       await writeStatsCache(statsCache);
     }
 
-    return NextResponse.json({ tournaments });
+    return { tournaments };
   } catch (error: any) {
-    if (error.message === "API_KEY_MISSING") {
+    console.error("Error in fetchHubTournamentsData:", error);
+    return { tournaments: [], error: error.message };
+  }
+}
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ hubId: string }> }
+) {
+  try {
+    const { hubId } = await params;
+    const result = await fetchHubTournamentsData(hubId);
+    if (result.error === "API_KEY_MISSING") {
       return NextResponse.json({ error: "API_KEY_MISSING" }, { status: 401 });
     }
+    return NextResponse.json({ tournaments: result.tournaments });
+  } catch (error: any) {
     return NextResponse.json(
       { error: error.message || "Не удалось загрузить турниры" },
       { status: error.status || 500 }

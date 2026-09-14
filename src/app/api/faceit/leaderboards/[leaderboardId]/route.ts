@@ -6,6 +6,7 @@ import { faceitFetch } from "@/lib/faceit";
 import { getStoragePath } from "@/lib/storage";
 import { promises as fs } from "fs";
 import { getHubPlayersFormMap } from "@/lib/player_form";
+import { fetchHubTournamentsData } from "@/app/api/faceit/hubs/[hubId]/tournaments/route";
 
 export async function GET(
   request: NextRequest,
@@ -119,7 +120,13 @@ export async function GET(
     }
 
     const HUB_ID = "d0701937-8eba-4df9-8830-22137001c0bd";
-    const formMap = getHubPlayersFormMap(HUB_ID);
+    let formMap: Record<string, any> = {};
+    try {
+      const tourneysRes = await fetchHubTournamentsData(HUB_ID);
+      formMap = getHubPlayersFormMap(HUB_ID, tourneysRes.tournaments);
+    } catch {
+      formMap = getHubPlayersFormMap(HUB_ID);
+    }
 
     // Attach computed stats to leaderboard items
     if (data && Array.isArray(data.items)) {
