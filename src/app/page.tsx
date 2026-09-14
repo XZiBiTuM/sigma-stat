@@ -5583,7 +5583,7 @@ export default function Home() {
                                 { id: "tactician", name: "Тактик Раскидок", range: "+8% ... +20%", desc: "Прибавляет от +8% до +20% к очкам за ассисты, флешки и урон от гранат." },
                                 { id: "joker", name: "Джокер (Крит)", range: "+15% ... +30%", desc: "Джекпот-усиление: дает самый высокий бонус в игре (до +30% к очкам), если повезет с выпадением." },
                                 { id: "vampire", name: "Вампир", range: "Кража очков ×1.2", desc: "Забирает 15% очков у соседней карты (или по 10% с обеих, если по центру) и отдает этой карточке с бонусом +20%." },
-                                { id: "lucky_loser", name: "Неудачник?", range: "Без штрафов", desc: "Полностью отменяет штрафы за высокий скилл: Саппорт получает 100% очков, а Лошадка не штрафуется." }
+                                { id: "lucky_loser", name: "Неудачник?", range: "Без штрафов (0% бонус)", desc: "Не дает бонусов к очкам (поэтому и называется «Неудачник?»), но полностью отменяет штрафы за высокий скилл: Саппорт получает 100% очков, а Лошадка не штрафуется." }
                               ].map(b => {
                                 const renderModalSvg = (buffId: string) => {
                                   switch (buffId) {
@@ -6021,7 +6021,7 @@ export default function Home() {
                                             }}
                                           >
                                             {renderBuffSvgIcon(item.sniper.buff.id, 12, "#ff8a80")}
-                                            <span>{item.sniper.buff.id === "vampire" ? "Вампир" : item.sniper.buff.id === "lucky_loser" ? "Удача" : `+${item.sniper.buff.percent}%`}</span>
+                                            <span>{item.sniper.buff.id === "vampire" ? "Вампир" : item.sniper.buff.id === "lucky_loser" ? "Неудачник?" : `+${item.sniper.buff.percent}%`}</span>
                                           </span>
                                         )}
                                       </div>
@@ -6053,7 +6053,7 @@ export default function Home() {
                                             }}
                                           >
                                             {renderBuffSvgIcon(item.support.buff.id, 12, "var(--accent-cyan)")}
-                                            <span>{item.support.buff.id === "vampire" ? "Вампир" : item.support.buff.id === "lucky_loser" ? "Удача" : `+${item.support.buff.percent}%`}</span>
+                                            <span>{item.support.buff.id === "vampire" ? "Вампир" : item.support.buff.id === "lucky_loser" ? "Неудачник?" : `+${item.support.buff.percent}%`}</span>
                                           </span>
                                         )}
                                       </div>
@@ -6085,7 +6085,7 @@ export default function Home() {
                                             }}
                                           >
                                             {renderBuffSvgIcon(item.darkHorse.buff.id, 12, "#ffd700")}
-                                            <span>{item.darkHorse.buff.id === "vampire" ? "Вампир" : item.darkHorse.buff.id === "lucky_loser" ? "Удача" : `+${item.darkHorse.buff.percent}%`}</span>
+                                            <span>{item.darkHorse.buff.id === "vampire" ? "Вампир" : item.darkHorse.buff.id === "lucky_loser" ? "Неудачник?" : `+${item.darkHorse.buff.percent}%`}</span>
                                           </span>
                                         )}
                                       </div>
