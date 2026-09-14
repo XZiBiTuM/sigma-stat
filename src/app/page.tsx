@@ -3461,14 +3461,21 @@ export default function Home() {
                                     if (!form) {
                                       return <span style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>—</span>;
                                     }
-                                    const tierStyles: Record<string, { bg: string; border: string; color: string; count: number; dir: "up" | "down" | "none" }> = {
-                                      fire: { bg: "rgba(0, 230, 118, 0.16)", border: "rgba(0, 230, 118, 0.45)", color: "#00e676", count: 2, dir: "up" },
-                                      great: { bg: "rgba(0, 230, 118, 0.10)", border: "rgba(0, 230, 118, 0.3)", color: "#00e676", count: 1, dir: "up" },
-                                      stable: { bg: "rgba(255, 255, 255, 0.05)", border: "rgba(255, 255, 255, 0.12)", color: "var(--text-secondary)", count: 0, dir: "none" },
-                                      slump: { bg: "rgba(255, 23, 68, 0.10)", border: "rgba(255, 23, 68, 0.3)", color: "#ff5252", count: 1, dir: "down" },
-                                      crisis: { bg: "rgba(255, 23, 68, 0.18)", border: "rgba(255, 23, 68, 0.45)", color: "#ff1744", count: 2, dir: "down" },
+                                    const getFormStyle = (score: number) => {
+                                      const arrow = score >= 65 ? "▲" : score < 50 ? "▼" : "";
+                                      if (score >= 85) {
+                                        return { color: "#c084fc", bg: "rgba(168, 85, 247, 0.22)", border: "rgba(168, 85, 247, 0.7)", arrow };
+                                      } else if (score >= 70) {
+                                        return { color: "#00e5ff", bg: "rgba(0, 229, 255, 0.15)", border: "rgba(0, 229, 255, 0.5)", arrow };
+                                      } else if (score >= 56) {
+                                        return { color: "#00e676", bg: "rgba(0, 230, 118, 0.15)", border: "rgba(0, 230, 118, 0.4)", arrow };
+                                      } else if (score >= 40) {
+                                        return { color: "#ffd700", bg: "rgba(255, 215, 0, 0.15)", border: "rgba(255, 215, 0, 0.4)", arrow };
+                                      } else {
+                                        return { color: "#ff4d4d", bg: "rgba(239, 68, 68, 0.15)", border: "rgba(239, 68, 68, 0.4)", arrow };
+                                      }
                                     };
-                                    const styleCfg = tierStyles[form.tier] || tierStyles.stable;
+                                    const styleCfg = getFormStyle(form.score);
                                     const tooltipText = `Форма: ${form.score}/100 (${form.tierLabel})\nТурнир: ${form.tournamentName} (${form.tournamentDate})\nМатчей: ${form.matchesPlayed}, K/D: ${form.kd} (ожид. ${form.expectedKd})\nPerf. Ratio: ${form.performanceRatio}x, WR: ${form.winrate}%\n(Расчёт относительно личного скилла игрока)`;
 
                                     return (
@@ -3485,42 +3492,20 @@ export default function Home() {
                                             cursor: "help",
                                             display: "inline-flex",
                                             alignItems: "center",
-                                            gap: styleCfg.count > 0 ? "0.35rem" : "0",
+                                            gap: styleCfg.arrow ? "0.3rem" : "0",
                                             whiteSpace: "nowrap"
                                           }}
                                           title={tooltipText}
                                         >
-                                          {styleCfg.count > 0 && (
+                                          {styleCfg.arrow && (
                                             <span 
                                               style={{ 
-                                                display: "inline-flex", 
-                                                flexDirection: "column", 
-                                                alignItems: "center", 
-                                                justifyContent: "center",
-                                                lineHeight: 0.7,
-                                                fontSize: "0.72rem",
-                                                fontWeight: "900"
+                                                fontSize: "0.68rem",
+                                                fontWeight: "900",
+                                                lineHeight: 1
                                               }}
                                             >
-                                              {styleCfg.dir === "up" ? (
-                                                styleCfg.count === 2 ? (
-                                                  <>
-                                                    <span style={{ transform: "scaleX(1.3)" }}>^</span>
-                                                    <span style={{ transform: "scaleX(1.3)", marginTop: "-0.2rem" }}>^</span>
-                                                  </>
-                                                ) : (
-                                                  <span style={{ transform: "scaleX(1.3)" }}>^</span>
-                                                )
-                                              ) : (
-                                                styleCfg.count === 2 ? (
-                                                  <>
-                                                    <span style={{ transform: "scaleX(1.3)" }}>v</span>
-                                                    <span style={{ transform: "scaleX(1.3)", marginTop: "-0.2rem" }}>v</span>
-                                                  </>
-                                                ) : (
-                                                  <span style={{ transform: "scaleX(1.3)" }}>v</span>
-                                                )
-                                              )}
+                                              {styleCfg.arrow}
                                             </span>
                                           )}
                                           <span>{form.score}</span>
