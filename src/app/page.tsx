@@ -4273,7 +4273,12 @@ export default function Home() {
                 const allPlayersList = [...(rankings || [])].map((item: any) => {
                   const p = item.player || item.user || item;
                   const pId = p.player_id || p.user_id || p.id || p.nickname || item.player_id || item.user_id || item.nickname || "";
-                  const nick = p.nickname || item.nickname || "Player";
+                  const rawNick = p.nickname || item.nickname || "Player";
+                  const lowerRawNick = (rawNick || "").toLowerCase();
+                  const ov = (pId && playerOverridesMap[pId]) || 
+                             (lowerRawNick && playerOverridesMap[lowerRawNick]) || 
+                             (rawNick && playerOverridesMap[rawNick]) || {};
+                  const nick = ov.nickname || rawNick;
                   const elo = (p as any)?.faceit_elo || (p as any)?.games?.cs2?.faceit_elo || (p as any)?.elo || item.elo;
                   const skInfo = getPlayerSkillInfo(pId, nick, elo, undefined, item.hubStats);
                   const skill = skInfo.score;
@@ -4281,7 +4286,7 @@ export default function Home() {
                   const kd = item.hubStats?.kd !== undefined ? String(item.hubStats.kd) : item.kd || p.kd || (item.stats && item.stats["K/D Ratio"]) || "1.10";
                   const winRate = item.hubStats?.winrate !== undefined ? `${item.hubStats.winrate}%` : item.winRate || p.winRate || (item.stats && item.stats["Win Rate %"]) || "50%";
                   const hsRate = item.hubStats?.hsPct !== undefined ? `${item.hubStats.hsPct}%` : item.hsRate || p.hsRate || (item.stats && item.stats["Headshots %"]) || "45%";
-                  return { playerId: pId, nickname: nick, skillScore: skill, avatar, kd, winRate, hsRate };
+                  return { playerId: pId, nickname: nick, rawNickname: rawNick, skillScore: skill, avatar, kd, winRate, hsRate };
                 }).filter(p => p.playerId && p.nickname !== "Player").sort((a, b) => a.nickname.localeCompare(b.nickname));
 
                 // Extract tournament participants from Captain's draft if present
@@ -4295,13 +4300,22 @@ export default function Home() {
                 const availableFantasyPlayers = tournamentParticipantNames.length > 0
                   ? allPlayersList.filter(p => {
                       const pNick = p.nickname.toLowerCase();
+                      const pRawNick = (p.rawNickname || "").toLowerCase();
                       const pId = (p.playerId || "").toLowerCase();
-                      return tournamentParticipantNames.some(tName => 
-                        tName === pNick || 
-                        tName === pId ||
-                        pNick.includes(tName) || 
-                        tName.includes(pNick)
-                      );
+                      return tournamentParticipantNames.some(tName => {
+                        if (tName === pNick || tName === pRawNick || tName === pId) return true;
+                        if (pNick.includes(tName) || tName.includes(pNick)) return true;
+                        if (pRawNick && (pRawNick.includes(tName) || tName.includes(pRawNick))) return true;
+                        // Check if tName matches via playerOverridesMap
+                        const ovForTName = playerOverridesMap[tName];
+                        if (ovForTName && ovForTName.playerId && ovForTName.playerId.toLowerCase() === pId) return true;
+                        if (ovForTName && ovForTName.nickname && ovForTName.nickname.toLowerCase() === pNick) return true;
+                        // Check prefix without trailing digits (e.g. anakonda1966 vs anakonda330)
+                        const tAlpha = tName.replace(/[0-9_]/g, "");
+                        const pAlpha = pNick.replace(/[0-9_]/g, "");
+                        if (tAlpha && tAlpha.length >= 4 && tAlpha === pAlpha) return true;
+                        return false;
+                      });
                     })
                   : allPlayersList;
 
