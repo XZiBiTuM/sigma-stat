@@ -4898,13 +4898,13 @@ export default function Home() {
                                   {displaySniper.avatar ? (
                                     <img src={displaySniper.avatar} alt="" style={{ width: "32px", height: "32px", borderRadius: "50%" }} />
                                   ) : (
-                                    <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "rgba(255, 82, 82, 0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.8rem", fontWeight: "700", color: "#ff8a80" }}>
+                                    <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "rgba(157, 59, 245, 0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.8rem", fontWeight: "700", color: "#c084fc" }}>
                                       {displaySniper.nickname?.slice(0, 2).toUpperCase()}
                                     </div>
                                   )}
                                   <div>
                                     <div style={{ fontSize: "0.9rem", fontWeight: "800", color: "#fff" }}>{displaySniper.nickname}</div>
-                                    <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Скилл: <strong style={{ color: "#ff7b7b" }}>{sniperSkill}</strong></div>
+                                    <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Скилл: <strong style={{ color: "#c084fc" }}>{sniperSkill}</strong></div>
                                   </div>
                                 </div>
                               )}
@@ -6100,15 +6100,15 @@ export default function Home() {
                                       </div>
                                     </td>
                                     <td style={{ padding: "1rem" }}>
-                                      <div style={{ fontSize: "0.85rem", fontWeight: "700", color: "#ff8a80" }}>{item.sniper?.nickname || "—"}</div>
+                                      <div style={{ fontSize: "0.85rem", fontWeight: "700", color: "#c084fc" }}>{item.sniper?.nickname || "—"}</div>
                                       <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "0.35rem", flexWrap: "wrap" }}>
                                         <span>{item.sniper?.points} pts</span>
                                         {item.sniper?.buff && (
                                           <span 
                                             title={`${item.sniper.buff.name || "Усиление"}: ${item.sniper.buff.desc || ""}`}
                                             style={{ 
-                                              background: "rgba(255,82,82,0.15)", 
-                                              color: "#ff8a80", 
+                                              background: "rgba(157, 59, 245, 0.15)", 
+                                              color: "#c084fc", 
                                               padding: "0.15rem 0.4rem", 
                                               borderRadius: "6px", 
                                               fontSize: "0.68rem", 
@@ -6117,10 +6117,10 @@ export default function Home() {
                                               alignItems: "center",
                                               gap: "0.25rem",
                                               cursor: "help",
-                                              border: "1px solid rgba(255,82,82,0.3)"
+                                              border: "1px solid rgba(157, 59, 245, 0.35)"
                                             }}
                                           >
-                                            {renderBuffSvgIcon(item.sniper.buff.id, 12, "#ff8a80")}
+                                            {renderBuffSvgIcon(item.sniper.buff.id, 12, "#c084fc")}
                                             <span>{item.sniper.buff.id === "vampire" ? "Вампир" : item.sniper.buff.id === "lucky_loser" ? "Неудачник?" : `+${item.sniper.buff.percent}%`}</span>
                                           </span>
                                         )}
