@@ -19,10 +19,10 @@ export interface PlayerFormStats {
 }
 
 export function getFormTier(score: number): { tier: PlayerFormStats['tier']; tierLabel: string } {
-  if (score >= 80) return { tier: 'fire', tierLabel: 'Огненная' };
-  if (score >= 65) return { tier: 'great', tierLabel: 'Отличная' };
-  if (score >= 50) return { tier: 'stable', tierLabel: 'Стабильная' };
-  if (score >= 35) return { tier: 'slump', tierLabel: 'На спаде' };
+  if (score >= 80) return { tier: 'fire', tierLabel: 'Пиковая' };
+  if (score >= 65) return { tier: 'great', tierLabel: 'Хорошая' };
+  if (score >= 50) return { tier: 'stable', tierLabel: 'Норма' };
+  if (score >= 35) return { tier: 'slump', tierLabel: 'Спад' };
   return { tier: 'crisis', tierLabel: 'Кризис' };
 }
 

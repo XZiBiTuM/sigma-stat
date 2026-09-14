@@ -3461,14 +3461,14 @@ export default function Home() {
                                     if (!form) {
                                       return <span style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>—</span>;
                                     }
-                                    const tierColors: Record<string, { bg: string; border: string; color: string; icon: string }> = {
-                                      fire: { bg: "rgba(255, 61, 0, 0.16)", border: "rgba(255, 61, 0, 0.4)", color: "#ff6d00", icon: "🔥" },
-                                      great: { bg: "rgba(0, 230, 118, 0.16)", border: "rgba(0, 230, 118, 0.4)", color: "#00e676", icon: "⚡" },
-                                      stable: { bg: "rgba(0, 229, 255, 0.14)", border: "rgba(0, 229, 255, 0.35)", color: "#00e5ff", icon: "⚖️" },
-                                      slump: { bg: "rgba(255, 171, 0, 0.14)", border: "rgba(255, 171, 0, 0.35)", color: "#ffab00", icon: "📉" },
-                                      crisis: { bg: "rgba(255, 23, 68, 0.16)", border: "rgba(255, 23, 68, 0.4)", color: "#ff1744", icon: "❄️" },
+                                    const tierStyles: Record<string, { bg: string; border: string; color: string; arrows: string }> = {
+                                      fire: { bg: "rgba(0, 230, 118, 0.18)", border: "rgba(0, 230, 118, 0.45)", color: "#00e676", arrows: "▲▲" },
+                                      great: { bg: "rgba(0, 230, 118, 0.12)", border: "rgba(0, 230, 118, 0.3)", color: "#00e676", arrows: "▲" },
+                                      stable: { bg: "rgba(255, 255, 255, 0.05)", border: "rgba(255, 255, 255, 0.12)", color: "var(--text-secondary)", arrows: "" },
+                                      slump: { bg: "rgba(255, 23, 68, 0.12)", border: "rgba(255, 23, 68, 0.3)", color: "#ff5252", arrows: "▼" },
+                                      crisis: { bg: "rgba(255, 23, 68, 0.2)", border: "rgba(255, 23, 68, 0.5)", color: "#ff1744", arrows: "▼▼" },
                                     };
-                                    const styleCfg = tierColors[form.tier] || tierColors.stable;
+                                    const styleCfg = tierStyles[form.tier] || tierStyles.stable;
                                     const tooltipText = `Форма: ${form.score}/100 (${form.tierLabel})\nТурнир: ${form.tournamentName} (${form.tournamentDate})\nМатчей: ${form.matchesPlayed}, K/D: ${form.kd} (ожид. ${form.expectedKd})\nPerf. Ratio: ${form.performanceRatio}x, WR: ${form.winrate}%\n(Расчёт относительно личного скилла игрока)`;
 
                                     return (
@@ -3485,12 +3485,16 @@ export default function Home() {
                                             cursor: "help",
                                             display: "inline-flex",
                                             alignItems: "center",
-                                            gap: "0.25rem",
+                                            gap: styleCfg.arrows ? "0.3rem" : "0",
                                             whiteSpace: "nowrap"
                                           }}
                                           title={tooltipText}
                                         >
-                                          <span>{styleCfg.icon}</span>
+                                          {styleCfg.arrows && (
+                                            <span style={{ fontSize: "0.7rem", fontWeight: "900", letterSpacing: "-0.05em" }}>
+                                              {styleCfg.arrows}
+                                            </span>
+                                          )}
                                           <span>{form.score}</span>
                                         </span>
                                       </div>

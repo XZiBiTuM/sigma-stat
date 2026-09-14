@@ -1083,14 +1083,14 @@ export default function PlayerProfilePage() {
                 <div style={{ display: "flex", alignItems: "center", gap: "0.85rem", flexWrap: "wrap" }}>
                   {hubStats?.form && (() => {
                     const form = hubStats.form;
-                    const tierColors: Record<string, { bg: string; border: string; color: string; icon: string }> = {
-                      fire: { bg: "rgba(255, 61, 0, 0.16)", border: "rgba(255, 61, 0, 0.4)", color: "#ff6d00", icon: "🔥" },
-                      great: { bg: "rgba(0, 230, 118, 0.16)", border: "rgba(0, 230, 118, 0.4)", color: "#00e676", icon: "⚡" },
-                      stable: { bg: "rgba(0, 229, 255, 0.14)", border: "rgba(0, 229, 255, 0.35)", color: "#00e5ff", icon: "⚖️" },
-                      slump: { bg: "rgba(255, 171, 0, 0.14)", border: "rgba(255, 171, 0, 0.35)", color: "#ffab00", icon: "📉" },
-                      crisis: { bg: "rgba(255, 23, 68, 0.16)", border: "rgba(255, 23, 68, 0.4)", color: "#ff1744", icon: "❄️" },
+                    const tierStyles: Record<string, { bg: string; border: string; color: string; arrows: string }> = {
+                      fire: { bg: "rgba(0, 230, 118, 0.18)", border: "rgba(0, 230, 118, 0.45)", color: "#00e676", arrows: "▲▲" },
+                      great: { bg: "rgba(0, 230, 118, 0.12)", border: "rgba(0, 230, 118, 0.3)", color: "#00e676", arrows: "▲" },
+                      stable: { bg: "rgba(255, 255, 255, 0.05)", border: "rgba(255, 255, 255, 0.12)", color: "var(--text-secondary)", arrows: "" },
+                      slump: { bg: "rgba(255, 23, 68, 0.12)", border: "rgba(255, 23, 68, 0.3)", color: "#ff5252", arrows: "▼" },
+                      crisis: { bg: "rgba(255, 23, 68, 0.2)", border: "rgba(255, 23, 68, 0.5)", color: "#ff1744", arrows: "▼▼" },
                     };
-                    const styleCfg = tierColors[form.tier] || tierColors.stable;
+                    const styleCfg = tierStyles[form.tier] || tierStyles.stable;
                     const tooltipText = `Форма: ${form.score}/100 (${form.tierLabel})\nТурнир: ${form.tournamentName} (${form.tournamentDate})\nМатчей: ${form.matchesPlayed}, K/D: ${form.kd} (ожид. ${form.expectedKd})\nPerf. Ratio: ${form.performanceRatio}x, WR: ${form.winrate}%\n(Относительно личного скилла)`;
 
                     return (
@@ -1107,7 +1107,11 @@ export default function PlayerProfilePage() {
                         }}
                         title={tooltipText}
                       >
-                        <span style={{ fontSize: "1.2rem" }}>{styleCfg.icon}</span>
+                        {styleCfg.arrows ? (
+                          <span style={{ fontSize: "1.1rem", fontWeight: "900", color: styleCfg.color, letterSpacing: "-0.05em" }}>
+                            {styleCfg.arrows}
+                          </span>
+                        ) : null}
                         <div>
                           <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
                             <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "700" }}>
