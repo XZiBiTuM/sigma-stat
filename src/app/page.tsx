@@ -3461,12 +3461,12 @@ export default function Home() {
                                     if (!form) {
                                       return <span style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>—</span>;
                                     }
-                                    const tierStyles: Record<string, { bg: string; border: string; color: string; arrows: string }> = {
-                                      fire: { bg: "rgba(0, 230, 118, 0.18)", border: "rgba(0, 230, 118, 0.45)", color: "#00e676", arrows: "▲▲" },
-                                      great: { bg: "rgba(0, 230, 118, 0.12)", border: "rgba(0, 230, 118, 0.3)", color: "#00e676", arrows: "▲" },
-                                      stable: { bg: "rgba(255, 255, 255, 0.05)", border: "rgba(255, 255, 255, 0.12)", color: "var(--text-secondary)", arrows: "" },
-                                      slump: { bg: "rgba(255, 23, 68, 0.12)", border: "rgba(255, 23, 68, 0.3)", color: "#ff5252", arrows: "▼" },
-                                      crisis: { bg: "rgba(255, 23, 68, 0.2)", border: "rgba(255, 23, 68, 0.5)", color: "#ff1744", arrows: "▼▼" },
+                                    const tierStyles: Record<string, { bg: string; border: string; color: string; count: number; dir: "up" | "down" | "none" }> = {
+                                      fire: { bg: "rgba(0, 230, 118, 0.16)", border: "rgba(0, 230, 118, 0.45)", color: "#00e676", count: 2, dir: "up" },
+                                      great: { bg: "rgba(0, 230, 118, 0.10)", border: "rgba(0, 230, 118, 0.3)", color: "#00e676", count: 1, dir: "up" },
+                                      stable: { bg: "rgba(255, 255, 255, 0.05)", border: "rgba(255, 255, 255, 0.12)", color: "var(--text-secondary)", count: 0, dir: "none" },
+                                      slump: { bg: "rgba(255, 23, 68, 0.10)", border: "rgba(255, 23, 68, 0.3)", color: "#ff5252", count: 1, dir: "down" },
+                                      crisis: { bg: "rgba(255, 23, 68, 0.18)", border: "rgba(255, 23, 68, 0.45)", color: "#ff1744", count: 2, dir: "down" },
                                     };
                                     const styleCfg = tierStyles[form.tier] || tierStyles.stable;
                                     const tooltipText = `Форма: ${form.score}/100 (${form.tierLabel})\nТурнир: ${form.tournamentName} (${form.tournamentDate})\nМатчей: ${form.matchesPlayed}, K/D: ${form.kd} (ожид. ${form.expectedKd})\nPerf. Ratio: ${form.performanceRatio}x, WR: ${form.winrate}%\n(Расчёт относительно личного скилла игрока)`;
@@ -3485,14 +3485,42 @@ export default function Home() {
                                             cursor: "help",
                                             display: "inline-flex",
                                             alignItems: "center",
-                                            gap: styleCfg.arrows ? "0.3rem" : "0",
+                                            gap: styleCfg.count > 0 ? "0.35rem" : "0",
                                             whiteSpace: "nowrap"
                                           }}
                                           title={tooltipText}
                                         >
-                                          {styleCfg.arrows && (
-                                            <span style={{ fontSize: "0.7rem", fontWeight: "900", letterSpacing: "-0.05em" }}>
-                                              {styleCfg.arrows}
+                                          {styleCfg.count > 0 && (
+                                            <span 
+                                              style={{ 
+                                                display: "inline-flex", 
+                                                flexDirection: "column", 
+                                                alignItems: "center", 
+                                                justifyContent: "center",
+                                                lineHeight: 0.7,
+                                                fontSize: "0.72rem",
+                                                fontWeight: "900"
+                                              }}
+                                            >
+                                              {styleCfg.dir === "up" ? (
+                                                styleCfg.count === 2 ? (
+                                                  <>
+                                                    <span style={{ transform: "scaleX(1.3)" }}>^</span>
+                                                    <span style={{ transform: "scaleX(1.3)", marginTop: "-0.2rem" }}>^</span>
+                                                  </>
+                                                ) : (
+                                                  <span style={{ transform: "scaleX(1.3)" }}>^</span>
+                                                )
+                                              ) : (
+                                                styleCfg.count === 2 ? (
+                                                  <>
+                                                    <span style={{ transform: "scaleX(1.3)" }}>v</span>
+                                                    <span style={{ transform: "scaleX(1.3)", marginTop: "-0.2rem" }}>v</span>
+                                                  </>
+                                                ) : (
+                                                  <span style={{ transform: "scaleX(1.3)" }}>v</span>
+                                                )
+                                              )}
                                             </span>
                                           )}
                                           <span>{form.score}</span>

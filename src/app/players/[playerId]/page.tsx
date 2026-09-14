@@ -1083,12 +1083,12 @@ export default function PlayerProfilePage() {
                 <div style={{ display: "flex", alignItems: "center", gap: "0.85rem", flexWrap: "wrap" }}>
                   {hubStats?.form && (() => {
                     const form = hubStats.form;
-                    const tierStyles: Record<string, { bg: string; border: string; color: string; arrows: string }> = {
-                      fire: { bg: "rgba(0, 230, 118, 0.18)", border: "rgba(0, 230, 118, 0.45)", color: "#00e676", arrows: "▲▲" },
-                      great: { bg: "rgba(0, 230, 118, 0.12)", border: "rgba(0, 230, 118, 0.3)", color: "#00e676", arrows: "▲" },
-                      stable: { bg: "rgba(255, 255, 255, 0.05)", border: "rgba(255, 255, 255, 0.12)", color: "var(--text-secondary)", arrows: "" },
-                      slump: { bg: "rgba(255, 23, 68, 0.12)", border: "rgba(255, 23, 68, 0.3)", color: "#ff5252", arrows: "▼" },
-                      crisis: { bg: "rgba(255, 23, 68, 0.2)", border: "rgba(255, 23, 68, 0.5)", color: "#ff1744", arrows: "▼▼" },
+                    const tierStyles: Record<string, { bg: string; border: string; color: string; count: number; dir: "up" | "down" | "none" }> = {
+                      fire: { bg: "rgba(0, 230, 118, 0.16)", border: "rgba(0, 230, 118, 0.45)", color: "#00e676", count: 2, dir: "up" },
+                      great: { bg: "rgba(0, 230, 118, 0.10)", border: "rgba(0, 230, 118, 0.3)", color: "#00e676", count: 1, dir: "up" },
+                      stable: { bg: "rgba(255, 255, 255, 0.05)", border: "rgba(255, 255, 255, 0.12)", color: "var(--text-secondary)", count: 0, dir: "none" },
+                      slump: { bg: "rgba(255, 23, 68, 0.10)", border: "rgba(255, 23, 68, 0.3)", color: "#ff5252", count: 1, dir: "down" },
+                      crisis: { bg: "rgba(255, 23, 68, 0.18)", border: "rgba(255, 23, 68, 0.45)", color: "#ff1744", count: 2, dir: "down" },
                     };
                     const styleCfg = tierStyles[form.tier] || tierStyles.stable;
                     const tooltipText = `Форма: ${form.score}/100 (${form.tierLabel})\nТурнир: ${form.tournamentName} (${form.tournamentDate})\nМатчей: ${form.matchesPlayed}, K/D: ${form.kd} (ожид. ${form.expectedKd})\nPerf. Ratio: ${form.performanceRatio}x, WR: ${form.winrate}%\n(Относительно личного скилла)`;
@@ -1107,11 +1107,40 @@ export default function PlayerProfilePage() {
                         }}
                         title={tooltipText}
                       >
-                        {styleCfg.arrows ? (
-                          <span style={{ fontSize: "1.1rem", fontWeight: "900", color: styleCfg.color, letterSpacing: "-0.05em" }}>
-                            {styleCfg.arrows}
+                        {styleCfg.count > 0 && (
+                          <span 
+                            style={{ 
+                              display: "inline-flex", 
+                              flexDirection: "column", 
+                              alignItems: "center", 
+                              justifyContent: "center",
+                              lineHeight: 0.65,
+                              fontSize: "1.1rem",
+                              fontWeight: "900",
+                              color: styleCfg.color
+                            }}
+                          >
+                            {styleCfg.dir === "up" ? (
+                              styleCfg.count === 2 ? (
+                                <>
+                                  <span style={{ transform: "scaleX(1.4)" }}>^</span>
+                                  <span style={{ transform: "scaleX(1.4)", marginTop: "-0.3rem" }}>^</span>
+                                </>
+                              ) : (
+                                <span style={{ transform: "scaleX(1.4)" }}>^</span>
+                              )
+                            ) : (
+                              styleCfg.count === 2 ? (
+                                <>
+                                  <span style={{ transform: "scaleX(1.4)" }}>v</span>
+                                  <span style={{ transform: "scaleX(1.4)", marginTop: "-0.3rem" }}>v</span>
+                                </>
+                              ) : (
+                                <span style={{ transform: "scaleX(1.4)" }}>v</span>
+                              )
+                            )}
                           </span>
-                        ) : null}
+                        )}
                         <div>
                           <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
                             <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "700" }}>
