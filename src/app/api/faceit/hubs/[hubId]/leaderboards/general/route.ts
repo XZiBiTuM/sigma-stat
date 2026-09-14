@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { faceitFetch } from "@/lib/faceit";
 import { getStoragePath } from "@/lib/storage";
 import { promises as fs } from "fs";
+import { getHubPlayersFormMap } from "@/lib/player_form";
 
 export async function GET(
   request: NextRequest,
@@ -134,6 +135,8 @@ export async function GET(
       console.warn("Failed to fetch active hub members for filtering:", e);
     }
 
+    const formMap = getHubPlayersFormMap(hubId);
+
     // Attach computed stats to leaderboard items
     if (data && Array.isArray(data.items)) {
       if (activeMemberIds.size > 0 || activeMemberNicks.size > 0) {
@@ -184,6 +187,8 @@ export async function GET(
             item.lost = Math.max(0, st.matches - st.wins);
           }
 
+          const form = (pid && formMap[pid]) || (nick && formMap[nick]) || (pInfo.player_id && formMap[pInfo.player_id]) || null;
+
           item.hubStats = {
             kd,
             avgKills,
@@ -193,10 +198,12 @@ export async function GET(
             winrate,
             matches: matchesCount,
             wins: winsCount,
-            rounds: st.rounds
+            rounds: st.rounds,
+            form
           };
         } else {
-          item.hubStats = null;
+          const form = (pid && formMap[pid]) || (nick && formMap[nick]) || (pInfo.player_id && formMap[pInfo.player_id]) || null;
+          item.hubStats = form ? { form } : null;
         }
       });
     }

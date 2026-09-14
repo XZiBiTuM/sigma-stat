@@ -1079,30 +1079,79 @@ export default function PlayerProfilePage() {
                   </div>
                 </div>
 
-                {/* Weekly Skill Calibration Badge */}
-                <div className="full-player-weekly-badge">
-                  <div className="full-player-weekly-content">
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", flexWrap: "wrap" }}>
-                      <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "700" }}>
-                        Еженедельный пересчет
-                      </span>
-                      {delta !== undefined && delta !== 0 && (
-                        <span style={{
-                          fontSize: "0.75rem",
-                          fontWeight: "800",
-                          color: delta > 0 ? "var(--success)" : "var(--danger)",
-                          background: delta > 0 ? "rgba(0,230,118,0.15)" : "rgba(255,77,77,0.15)",
-                          padding: "0.1rem 0.4rem",
-                          borderRadius: "4px",
-                          border: `1px solid ${delta > 0 ? "rgba(0,230,118,0.3)" : "rgba(255,77,77,0.3)"}`
-                        }}>
-                          {delta > 0 ? `▲ +${delta}` : `▼ ${delta}`}
+                {/* Weekly Skill Calibration Badge & Form Badge */}
+                <div style={{ display: "flex", alignItems: "center", gap: "0.85rem", flexWrap: "wrap" }}>
+                  {hubStats?.form && (() => {
+                    const form = hubStats.form;
+                    const tierColors: Record<string, { bg: string; border: string; color: string; icon: string }> = {
+                      fire: { bg: "rgba(255, 61, 0, 0.16)", border: "rgba(255, 61, 0, 0.4)", color: "#ff6d00", icon: "🔥" },
+                      great: { bg: "rgba(0, 230, 118, 0.16)", border: "rgba(0, 230, 118, 0.4)", color: "#00e676", icon: "⚡" },
+                      stable: { bg: "rgba(0, 229, 255, 0.14)", border: "rgba(0, 229, 255, 0.35)", color: "#00e5ff", icon: "⚖️" },
+                      slump: { bg: "rgba(255, 171, 0, 0.14)", border: "rgba(255, 171, 0, 0.35)", color: "#ffab00", icon: "📉" },
+                      crisis: { bg: "rgba(255, 23, 68, 0.16)", border: "rgba(255, 23, 68, 0.4)", color: "#ff1744", icon: "❄️" },
+                    };
+                    const styleCfg = tierColors[form.tier] || tierColors.stable;
+                    const tooltipText = `Форма: ${form.score}/100 (${form.tierLabel})\nТурнир: ${form.tournamentName} (${form.tournamentDate})\nМатчей: ${form.matchesPlayed}, K/D: ${form.kd} (ожид. ${form.expectedKd})\nPerf. Ratio: ${form.performanceRatio}x, WR: ${form.winrate}%\n(Относительно личного скилла)`;
+
+                    return (
+                      <div 
+                        style={{
+                          background: styleCfg.bg,
+                          border: `1px solid ${styleCfg.border}`,
+                          borderRadius: "12px",
+                          padding: "0.55rem 0.85rem",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "0.6rem",
+                          cursor: "help"
+                        }}
+                        title={tooltipText}
+                      >
+                        <span style={{ fontSize: "1.2rem" }}>{styleCfg.icon}</span>
+                        <div>
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
+                            <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "700" }}>
+                              Форма
+                            </span>
+                            <span style={{ fontSize: "0.72rem", fontWeight: "800", color: styleCfg.color }}>
+                              {form.tierLabel}
+                            </span>
+                          </div>
+                          <span style={{ fontSize: "0.95rem", fontWeight: "900", color: styleCfg.color, display: "block" }}>
+                            {form.score} <span style={{ fontSize: "0.75rem", fontWeight: "700", color: "var(--text-secondary)" }}>/ 100</span>
+                          </span>
+                          <span style={{ fontSize: "0.68rem", color: "var(--text-secondary)", display: "block", marginTop: "0.1rem" }}>
+                            {form.tournamentName}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  <div className="full-player-weekly-badge">
+                    <div className="full-player-weekly-content">
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", flexWrap: "wrap" }}>
+                        <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "700" }}>
+                          Еженедельный пересчет
                         </span>
-                      )}
+                        {delta !== undefined && delta !== 0 && (
+                          <span style={{
+                            fontSize: "0.75rem",
+                            fontWeight: "800",
+                            color: delta > 0 ? "var(--success)" : "var(--danger)",
+                            background: delta > 0 ? "rgba(0,230,118,0.15)" : "rgba(255,77,77,0.15)",
+                            padding: "0.1rem 0.4rem",
+                            borderRadius: "4px",
+                            border: `1px solid ${delta > 0 ? "rgba(0,230,118,0.3)" : "rgba(255,77,77,0.3)"}`
+                          }}>
+                            {delta > 0 ? `▲ +${delta}` : `▼ ${delta}`}
+                          </span>
+                        )}
+                      </div>
+                      <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)", display: "block", marginTop: "0.15rem" }}>
+                        {prevScore !== undefined ? `Прошлая неделя: ${prevScore} баллов` : "Обновление: каждый понедельник"}
+                      </span>
                     </div>
-                    <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)", display: "block", marginTop: "0.15rem" }}>
-                      {prevScore !== undefined ? `Прошлая неделя: ${prevScore} баллов` : "Обновление: каждый понедельник"}
-                    </span>
                   </div>
                 </div>
               </div>

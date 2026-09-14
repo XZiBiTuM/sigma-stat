@@ -264,11 +264,11 @@ export default function Home() {
   const [tourStep, setTourStep] = useState(0);
 
   // Sorting & Min Matches filter state
-  const [sortField, setSortField] = useState<"default" | "skill" | "points" | "matches" | "kd" | "avg" | "adr" | "hs" | "hltv" | "winrate">("default");
+  const [sortField, setSortField] = useState<"default" | "skill" | "form" | "points" | "matches" | "kd" | "avg" | "adr" | "hs" | "hltv" | "winrate">("default");
   const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
   const [minMatchesFilter, setMinMatchesFilter] = useState<number>(10);
 
-  const handleSort = (field: "skill" | "points" | "matches" | "kd" | "avg" | "adr" | "hs" | "hltv" | "winrate") => {
+  const handleSort = (field: "skill" | "form" | "points" | "matches" | "kd" | "avg" | "adr" | "hs" | "hltv" | "winrate") => {
     if (sortField === field) {
       if (sortOrder === "desc") {
         setSortOrder("asc");
@@ -2137,6 +2137,9 @@ export default function Home() {
         const skB = getPlayerSkillInfo(itemB.id, itemB.nick, itemB.elo, undefined, itemB.hubStats);
         valA = skA.score;
         valB = skB.score;
+      } else if (sortField === "form") {
+        valA = (a as any).hubStats?.form?.score ?? 0;
+        valB = (b as any).hubStats?.form?.score ?? 0;
       } else if (sortField === "points") {
         valA = a.points ?? (a as any).score ?? 0;
         valB = b.points ?? (b as any).score ?? 0;
@@ -3255,6 +3258,13 @@ export default function Home() {
                               Скилл {sortField === "skill" ? (sortOrder === "desc" ? "▼" : "▲") : "⇅"}
                             </th>
                             <th
+                              onClick={() => handleSort("form")}
+                              style={{ textAlign: "center", cursor: "pointer", userSelect: "none", color: sortField === "form" ? "#ff9100" : undefined, whiteSpace: "nowrap" }}
+                              title="Форма игрока по последнему турниру (0–100, относительно личного скилла)"
+                            >
+                              Форма {sortField === "form" ? (sortOrder === "desc" ? "▼" : "▲") : "⇅"}
+                            </th>
+                            <th
                               onClick={() => handleSort("points")}
                               style={{ textAlign: "center", cursor: "pointer", userSelect: "none", color: sortField === "points" ? "var(--accent-cyan)" : undefined, whiteSpace: "nowrap" }}
                               title="Нажмите для сортировки по очкам"
@@ -3441,6 +3451,48 @@ export default function Home() {
                                             {delta > 0 ? `▲+${delta}` : `▼${delta}`}
                                           </span>
                                         )}
+                                      </div>
+                                    );
+                                  })()}
+                                </td>
+                                <td style={{ textAlign: "center" }}>
+                                  {(() => {
+                                    const form = (item as any).hubStats?.form;
+                                    if (!form) {
+                                      return <span style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>—</span>;
+                                    }
+                                    const tierColors: Record<string, { bg: string; border: string; color: string; icon: string }> = {
+                                      fire: { bg: "rgba(255, 61, 0, 0.16)", border: "rgba(255, 61, 0, 0.4)", color: "#ff6d00", icon: "🔥" },
+                                      great: { bg: "rgba(0, 230, 118, 0.16)", border: "rgba(0, 230, 118, 0.4)", color: "#00e676", icon: "⚡" },
+                                      stable: { bg: "rgba(0, 229, 255, 0.14)", border: "rgba(0, 229, 255, 0.35)", color: "#00e5ff", icon: "⚖️" },
+                                      slump: { bg: "rgba(255, 171, 0, 0.14)", border: "rgba(255, 171, 0, 0.35)", color: "#ffab00", icon: "📉" },
+                                      crisis: { bg: "rgba(255, 23, 68, 0.16)", border: "rgba(255, 23, 68, 0.4)", color: "#ff1744", icon: "❄️" },
+                                    };
+                                    const styleCfg = tierColors[form.tier] || tierColors.stable;
+                                    const tooltipText = `Форма: ${form.score}/100 (${form.tierLabel})\nТурнир: ${form.tournamentName} (${form.tournamentDate})\nМатчей: ${form.matchesPlayed}, K/D: ${form.kd} (ожид. ${form.expectedKd})\nPerf. Ratio: ${form.performanceRatio}x, WR: ${form.winrate}%\n(Расчёт относительно личного скилла игрока)`;
+
+                                    return (
+                                      <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+                                        <span
+                                          style={{
+                                            fontSize: "0.76rem",
+                                            fontWeight: "800",
+                                            background: styleCfg.bg,
+                                            border: `1px solid ${styleCfg.border}`,
+                                            color: styleCfg.color,
+                                            padding: "0.22rem 0.55rem",
+                                            borderRadius: "6px",
+                                            cursor: "help",
+                                            display: "inline-flex",
+                                            alignItems: "center",
+                                            gap: "0.25rem",
+                                            whiteSpace: "nowrap"
+                                          }}
+                                          title={tooltipText}
+                                        >
+                                          <span>{styleCfg.icon}</span>
+                                          <span>{form.score}</span>
+                                        </span>
                                       </div>
                                     );
                                   })()}

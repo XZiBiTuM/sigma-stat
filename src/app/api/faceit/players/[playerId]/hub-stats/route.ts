@@ -7,6 +7,7 @@ import fsSync from "fs";
 import path from "path";
 import { faceitFetch, getPlayerProfile } from "@/lib/faceit";
 import { getStoragePath, getPersistentPath, isMatchExcluded } from "@/lib/storage";
+import { getHubPlayersFormMap } from "@/lib/player_form";
 
 const cacheFilePath = getStoragePath("match_stats_cache.json");
 
@@ -639,7 +640,15 @@ export async function GET(
       maps: mapStatsList,
       recentMatches: playerMatchesList,
       commentedPlayersCount: commentedCount,
-      isFantasyWinner
+      isFantasyWinner,
+      form: (() => {
+        try {
+          const formMap = getHubPlayersFormMap(HUB_ID);
+          return (uuid && formMap[uuid]) || (playerProfile?.nickname && formMap[playerProfile.nickname]) || null;
+        } catch {
+          return null;
+        }
+      })()
     });
 
   } catch (error: any) {

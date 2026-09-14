@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { faceitFetch } from "@/lib/faceit";
 import { getStoragePath } from "@/lib/storage";
 import { promises as fs } from "fs";
+import { getHubPlayersFormMap } from "@/lib/player_form";
 
 export async function GET(
   request: NextRequest,
@@ -117,6 +118,9 @@ export async function GET(
       console.warn("Failed to fetch active hub members for filtering:", e);
     }
 
+    const HUB_ID = "d0701937-8eba-4df9-8830-22137001c0bd";
+    const formMap = getHubPlayersFormMap(HUB_ID);
+
     // Attach computed stats to leaderboard items
     if (data && Array.isArray(data.items)) {
       if (activeMemberIds.size > 0 || activeMemberNicks.size > 0) {
@@ -158,6 +162,8 @@ export async function GET(
           const matchesCount = typeof item.played === "number" ? item.played : st.matches;
           const winsCount = typeof item.won === "number" ? item.won : st.wins;
 
+          const form = (pid && formMap[pid]) || (nick && formMap[nick]) || (pInfo.player_id && formMap[pInfo.player_id]) || null;
+
           item.hubStats = {
             kd,
             avgKills,
@@ -167,10 +173,12 @@ export async function GET(
             winrate,
             matches: matchesCount,
             wins: winsCount,
-            rounds: st.rounds
+            rounds: st.rounds,
+            form
           };
         } else {
-          item.hubStats = null;
+          const form = (pid && formMap[pid]) || (nick && formMap[nick]) || (pInfo.player_id && formMap[pInfo.player_id]) || null;
+          item.hubStats = form ? { form } : null;
         }
       });
     }

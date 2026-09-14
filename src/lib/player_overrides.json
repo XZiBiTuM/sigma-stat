@@ -104,10 +104,10 @@
     "playerId": "7ea3bd3d-582e-4cd2-872a-703bf7af557c"
   },
   "af52ceb5-cde0-47dd-bf48-7e640d7372ac": {
-    "nickname": "ANAKONDA1966",
+    "nickname": "ANAKONDA330",
     "csRating": 8859,
     "customElo": 1197,
-    "updatedAt": "2026-09-10T16:44:54.313Z",
+    "updatedAt": "2026-09-14T07:35:02.302Z",
     "customSkillScore": 62,
     "shooting": 64,
     "calls": 70,
@@ -221,10 +221,10 @@
     "playerId": "a9c1517b-06b2-41c6-b748-a5528340e319"
   },
   "anakonda1966": {
-    "nickname": "ANAKONDA1966",
+    "nickname": "ANAKONDA330",
     "csRating": 8859,
     "customElo": 1197,
-    "updatedAt": "2026-09-10T16:44:54.313Z",
+    "updatedAt": "2026-09-14T07:35:02.302Z",
     "customSkillScore": 62,
     "shooting": 64,
     "calls": 70,
@@ -871,10 +871,10 @@
     "playerId": "2c9dafb1-43d5-4883-b61d-30b7f7824d3c"
   },
   "ANAKONDA1966": {
-    "nickname": "ANAKONDA1966",
+    "nickname": "ANAKONDA330",
     "csRating": 8859,
     "customElo": 1197,
-    "updatedAt": "2026-09-10T16:44:54.313Z",
+    "updatedAt": "2026-09-14T07:35:02.302Z",
     "customSkillScore": 62,
     "shooting": 64,
     "calls": 70,
@@ -1180,5 +1180,31 @@
     "mental": 40,
     "gamesense": 64,
     "aura": 62
+  },
+  "ANAKONDA330": {
+    "nickname": "ANAKONDA330",
+    "csRating": 8859,
+    "customElo": 1197,
+    "updatedAt": "2026-09-14T07:35:02.302Z",
+    "customSkillScore": 62,
+    "shooting": 64,
+    "calls": 70,
+    "mental": 55,
+    "gamesense": 68,
+    "aura": 92,
+    "playerId": "af52ceb5-cde0-47dd-bf48-7e640d7372ac"
+  },
+  "anakonda330": {
+    "nickname": "ANAKONDA330",
+    "csRating": 8859,
+    "customElo": 1197,
+    "updatedAt": "2026-09-14T07:35:02.302Z",
+    "customSkillScore": 62,
+    "shooting": 64,
+    "calls": 70,
+    "mental": 55,
+    "gamesense": 68,
+    "aura": 92,
+    "playerId": "af52ceb5-cde0-47dd-bf48-7e640d7372ac"
   }
 }
