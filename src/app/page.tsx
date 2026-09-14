@@ -295,6 +295,7 @@ export default function Home() {
   const [draftRoomAssignment, setDraftRoomAssignment] = useState<{ vip: number[]; main: number[] } | null>(null);
   const [isRollingRooms, setIsRollingRooms] = useState(false);
   const [draftErrorMsg, setDraftErrorMsg] = useState("");
+  const [draftFormMap, setDraftFormMap] = useState<Record<string, any>>({});
 
   // Player Overrides & Skill Rating States
   const [playerOverridesMap, setPlayerOverridesMap] = useState<Record<string, any>>({});
@@ -600,6 +601,7 @@ export default function Home() {
         if (data.turnSequence) setDraftTurnSequence(data.turnSequence);
         if (data.currentStepIndex !== undefined) setDraftCurrentStepIndex(data.currentStepIndex);
         if (data.roomAssignment !== undefined) setDraftRoomAssignment(data.roomAssignment);
+        if (data.formMap) setDraftFormMap(prev => ({ ...prev, ...data.formMap }));
       }
     } catch (err) {
       console.error("Failed to sync draft state", err);
@@ -911,6 +913,35 @@ export default function Home() {
     const elo = p.faceit_elo || p.elo || (p.games?.cs2?.faceit_elo);
     const info = getPlayerSkillInfo(pId, name, elo);
     return info?.score || 50;
+  };
+
+  const getPlayerFormData = (name: string) => {
+    if (!name) return null;
+    const lower = name.toLowerCase();
+    if (draftFormMap[lower]) return draftFormMap[lower];
+    if (draftFormMap[name]) return draftFormMap[name];
+    // Check rankings fallback
+    const rItem = (rankings || []).find((r: any) => {
+      const rNick = (r.nickname || r.player?.nickname || "").toLowerCase();
+      return rNick === lower;
+    });
+    if ((rItem as any)?.hubStats?.form) return (rItem as any).hubStats.form;
+    return null;
+  };
+
+  const getFormBadgeProps = (score: number) => {
+    const arrow = score >= 65 ? "▲" : score < 50 ? "▼" : "";
+    if (score >= 85) {
+      return { color: "#c084fc", bg: "rgba(168, 85, 247, 0.22)", border: "rgba(168, 85, 247, 0.7)", arrow };
+    } else if (score >= 70) {
+      return { color: "#00e5ff", bg: "rgba(0, 229, 255, 0.15)", border: "rgba(0, 229, 255, 0.5)", arrow };
+    } else if (score >= 56) {
+      return { color: "#00e676", bg: "rgba(0, 230, 118, 0.15)", border: "rgba(0, 230, 118, 0.4)", arrow };
+    } else if (score >= 40) {
+      return { color: "#ffd700", bg: "rgba(255, 215, 0, 0.15)", border: "rgba(255, 215, 0, 0.4)", arrow };
+    } else {
+      return { color: "#ff4d4d", bg: "rgba(239, 68, 68, 0.15)", border: "rgba(239, 68, 68, 0.4)", arrow };
+    }
   };
 
   const handleRollRooms = async () => {
@@ -10046,6 +10077,10 @@ export default function Home() {
                         <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", minHeight: "140px" }}>
                           {roster.map((player, pIdx) => {
                             const pSkill = getPlayerSkillNumber(player);
+                            const pForm = getPlayerFormData(player);
+                            const formBadge = pForm ? getFormBadgeProps(pForm.score) : null;
+                            const formTooltip = pForm ? `Форма: ${pForm.score}/100 (${pForm.tierLabel})\nТурнир: ${pForm.tournamentName} (${pForm.tournamentDate})\nK/D: ${pForm.kd}, WR: ${pForm.winrate}%` : "";
+
                             return (
                               <div 
                                 key={pIdx} 
@@ -10062,12 +10097,36 @@ export default function Home() {
                                   alignItems: "center"
                                 }}
                               >
-                                <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "130px" }}>
+                                <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "120px" }}>
                                   {pIdx + 1}. {player} {pIdx === 0 && <span style={{ fontSize: "0.6rem", opacity: 0.85 }}>[КЭП]</span>}
                                 </span>
-                                <span style={{ fontSize: "0.72rem", fontWeight: "800", padding: "0.1rem 0.35rem", borderRadius: "4px", background: "rgba(255,255,255,0.08)", color: pSkill >= 80 ? "#c084fc" : pSkill >= 60 ? "var(--accent-cyan)" : "#fff" }}>
-                                  {pSkill} очков
-                                </span>
+                                <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                                  {formBadge && (
+                                    <span
+                                      style={{
+                                        fontSize: "0.65rem",
+                                        fontWeight: "800",
+                                        background: formBadge.bg,
+                                        border: `1px solid ${formBadge.border}`,
+                                        color: formBadge.color,
+                                        padding: "0.08rem 0.3rem",
+                                        borderRadius: "4px",
+                                        cursor: "help",
+                                        display: "inline-flex",
+                                        alignItems: "center",
+                                        gap: "0.15rem",
+                                        lineHeight: 1
+                                      }}
+                                      title={formTooltip}
+                                    >
+                                      {formBadge.arrow && <span style={{ fontSize: "0.6rem" }}>{formBadge.arrow}</span>}
+                                      <span>{pForm.score}</span>
+                                    </span>
+                                  )}
+                                  <span style={{ fontSize: "0.72rem", fontWeight: "800", padding: "0.1rem 0.35rem", borderRadius: "4px", background: "rgba(255,255,255,0.08)", color: pSkill >= 80 ? "#c084fc" : pSkill >= 60 ? "var(--accent-cyan)" : "#fff" }}>
+                                    {pSkill}
+                                  </span>
+                                </div>
                               </div>
                             );
                           })}
@@ -10348,6 +10407,9 @@ export default function Home() {
                       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(195px, 1fr))", gap: "0.6rem", maxHeight: "280px", overflowY: "auto", padding: "0.25rem" }}>
                         {[...draftAvailablePlayers].sort((a, b) => getPlayerSkillNumber(b) - getPlayerSkillNumber(a)).map((pName) => {
                           const pSkill = getPlayerSkillNumber(pName);
+                          const pForm = getPlayerFormData(pName);
+                          const formBadge = pForm ? getFormBadgeProps(pForm.score) : null;
+                          const formTooltip = pForm ? `Форма: ${pForm.score}/100 (${pForm.tierLabel})\nТурнир: ${pForm.tournamentName} (${pForm.tournamentDate})\nK/D: ${pForm.kd}, WR: ${pForm.winrate}%` : "";
                           const activeCapIdx = draftTurnSequence[draftCurrentStepIndex];
                           const currentRoster = draftTeams[activeCapIdx] || [];
                           const currentTeamPts = currentRoster.reduce((sum, p) => sum + getPlayerSkillNumber(p), 0);
@@ -10380,7 +10442,7 @@ export default function Home() {
                                 opacity: !isCurrentCaptainTurn ? 0.75 : 1
                               }}
                             >
-                              <div style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "105px" }}>
+                              <div style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "120px" }}>
                                 <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
                                   <span style={{ fontSize: "0.82rem", fontWeight: "700", color: "#fff", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
                                     {pName}
@@ -10391,8 +10453,32 @@ export default function Home() {
                                     </span>
                                   )}
                                 </div>
-                                <div style={{ fontSize: "0.7rem", color: wouldExceedLimit ? "#ffb74d" : pSkill >= 80 ? "#c084fc" : pSkill >= 60 ? "var(--accent-cyan)" : "var(--text-muted)", fontWeight: "800" }}>
-                                  {pSkill} очков {wouldExceedLimit && <span style={{ color: "#ff9100", fontSize: "0.65rem" }}>(+{exceedPts} овер)</span>}
+                                <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", marginTop: "0.15rem" }}>
+                                  {formBadge && (
+                                    <span
+                                      style={{
+                                        fontSize: "0.65rem",
+                                        fontWeight: "800",
+                                        background: formBadge.bg,
+                                        border: `1px solid ${formBadge.border}`,
+                                        color: formBadge.color,
+                                        padding: "0.05rem 0.25rem",
+                                        borderRadius: "4px",
+                                        cursor: "help",
+                                        display: "inline-flex",
+                                        alignItems: "center",
+                                        gap: "0.15rem",
+                                        lineHeight: 1
+                                      }}
+                                      title={formTooltip}
+                                    >
+                                      {formBadge.arrow && <span style={{ fontSize: "0.58rem" }}>{formBadge.arrow}</span>}
+                                      <span>{pForm.score}</span>
+                                    </span>
+                                  )}
+                                  <span style={{ fontSize: "0.7rem", color: wouldExceedLimit ? "#ffb74d" : pSkill >= 80 ? "#c084fc" : pSkill >= 60 ? "var(--accent-cyan)" : "var(--text-muted)", fontWeight: "800" }}>
+                                    {pSkill} pts {wouldExceedLimit && <span style={{ color: "#ff9100", fontSize: "0.62rem" }}>(+{exceedPts})</span>}
+                                  </span>
                                 </div>
                               </div>
                               <button 

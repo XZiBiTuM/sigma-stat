@@ -60,9 +60,20 @@ function writeDraftState(data: DraftState) {
   }
 }
 
+import { getHubPlayersFormMap } from "@/lib/player_form";
+
 export async function GET() {
   const state = readDraftState();
-  return NextResponse.json(state);
+  let formMap: Record<string, any> = {};
+  try {
+    formMap = getHubPlayersFormMap("0dd077bc-b401-4f5c-8a40-47578601ccb7");
+  } catch (e) {
+    console.error("Failed to load player form in draft route:", e);
+  }
+  return NextResponse.json({
+    ...state,
+    formMap
+  });
 }
 
 export async function POST(request: NextRequest) {
