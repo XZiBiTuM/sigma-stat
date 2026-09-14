@@ -33,6 +33,7 @@ export function calculatePlayerForm(
     kills: number;
     deaths: number;
     wins: number;
+    winrate?: number;
   },
   tournamentMeta: {
     id: string;
@@ -42,7 +43,10 @@ export function calculatePlayerForm(
 ): PlayerFormStats {
   const { matchesPlayed, kills, deaths, wins } = tournamentStats;
   const kd = deaths > 0 ? kills / deaths : kills;
-  const winrate = matchesPlayed > 0 ? (wins / matchesPlayed) * 100 : 0;
+  const rawWinrate = typeof tournamentStats.winrate === 'number'
+    ? tournamentStats.winrate
+    : (matchesPlayed > 0 ? (wins / matchesPlayed) * 100 : 0);
+  const winrate = Math.min(100, Math.max(0, rawWinrate));
 
   // Expected K/D based on player's overall skill score (0-100)
   const expectedKd = 0.40 + (Math.max(1, Math.min(100, playerSkill)) / 100) * 1.00;
@@ -123,7 +127,12 @@ export function getHubPlayersFormMap(hubId: string, tournamentsData?: any[]): Re
               matchesPlayed: p.played || 1,
               kills: p.kills || 0,
               deaths: p.deaths || 0,
-              wins: p.wins || 0,
+              wins: typeof p.winRate === 'string' || typeof p.winRate === 'number'
+                ? Math.round(((parseFloat(p.winRate) || 0) / 100) * (p.played || 1))
+                : (p.wins || 0),
+              winrate: typeof p.winRate === 'string' || typeof p.winRate === 'number'
+                ? parseFloat(p.winRate)
+                : undefined,
             },
             {
               id: t.id,
@@ -212,6 +221,7 @@ export function getHubPlayersFormMap(hubId: string, tournamentsData?: any[]): Re
 
       for (const m of t.matches) {
         const seenInMatch = new Set<string>();
+        const wonInMatch = new Set<string>();
         for (const r of m.rounds) {
           const rWinner = r.round_stats?.Winner;
           for (const team of r.teams || []) {
@@ -233,10 +243,15 @@ export function getHubPlayersFormMap(hubId: string, tournamentsData?: any[]): Re
                 pTotals[key].matchesPlayed += 1;
               }
               const isWin = isTeamWin || pl.player_stats?.Result === '1';
-              if (isWin) pTotals[key].wins += 1;
+              if (isWin) wonInMatch.add(key);
               pTotals[key].kills += parseInt(pl.player_stats?.Kills || '0', 10);
               pTotals[key].deaths += parseInt(pl.player_stats?.Deaths || '0', 10);
             }
+          }
+        }
+        for (const wonKey of wonInMatch) {
+          if (pTotals[wonKey]) {
+            pTotals[wonKey].wins += 1;
           }
         }
       }
