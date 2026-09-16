@@ -27,92 +27,7 @@
         "faction2": 0
       }
     },
-    "seriesScores": [
-      {
-        "map": "de_nuke",
-        "score1": 16,
-        "score2": 12
-      },
-      {
-        "map": "de_anubis",
-        "score1": 13,
-        "score2": 5
-      }
-    ],
-    "players1": [
-      {
-        "player_id": "2c9dafb1-43d5-4883-b61d-30b7f7824d3c",
-        "nickname": "XZiBiTuM",
-        "kills": 64,
-        "deaths": 24,
-        "assists": 11
-      },
-      {
-        "player_id": "54ed2ca1-b3dd-4c31-9814-24698c33534e",
-        "nickname": "JIyHaTuK_1",
-        "kills": 39,
-        "deaths": 30,
-        "assists": 17
-      },
-      {
-        "player_id": "83c60ca6-2af7-42c4-98ec-fe5e8d500b96",
-        "nickname": "RT_BERS",
-        "kills": 40,
-        "deaths": 31,
-        "assists": 7
-      },
-      {
-        "player_id": "2d1244a2-1265-4c93-ae69-0b23f8edb278",
-        "nickname": "AK_NoScope",
-        "kills": 28,
-        "deaths": 32,
-        "assists": 13
-      },
-      {
-        "player_id": "52103406-f3d6-47ec-80cf-8b844ac1f96e",
-        "nickname": "Stas1kudin",
-        "kills": 17,
-        "deaths": 36,
-        "assists": 9
-      }
-    ],
-    "players2": [
-      {
-        "player_id": "81ca8d1b-4037-4d7b-96ca-4f4fb2cfade1",
-        "nickname": "massao61",
-        "kills": 44,
-        "deaths": 39,
-        "assists": 6
-      },
-      {
-        "player_id": "af52ceb5-cde0-47dd-bf48-7e640d7372ac",
-        "nickname": "ANAKONDA330",
-        "kills": 39,
-        "deaths": 35,
-        "assists": 10
-      },
-      {
-        "player_id": "bea53fe9-8339-4a9e-9023-b89a10d0da7a",
-        "nickname": "Bezhenec",
-        "kills": 27,
-        "deaths": 37,
-        "assists": 7
-      },
-      {
-        "player_id": "90a2b3cd-0c84-499b-915f-9f21bf4ae698",
-        "nickname": "DatObase",
-        "kills": 22,
-        "deaths": 36,
-        "assists": 5
-      },
-      {
-        "player_id": "e1c67ef9-50cb-424b-b8d3-558aa0165b75",
-        "nickname": "MrChillout61",
-        "kills": 19,
-        "deaths": 42,
-        "assists": 10
-      }
-    ],
+    "seriesScores": "2:0",
     "mapBreakdown": [
       {
         "map": "de_nuke",
@@ -127,7 +42,25 @@
             "damage": 3291,
             "headshots": 18,
             "mvps": 5,
-            "player_id": "2c9dafb1-43d5-4883-b61d-30b7f7824d3c"
+            "player_id": "2c9dafb1-43d5-4883-b61d-30b7f7824d3c",
+            "doubles": 7,
+            "triples": 4,
+            "quadros": 1,
+            "pentas": 0,
+            "entryCount": 10,
+            "entryWins": 7,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 1,
+            "clutch1v2Wins": 1,
+            "clutchKills": 3,
+            "utilityCount": 28,
+            "utilitySuccesses": 15,
+            "utilityDamage": 263,
+            "flashCount": 10,
+            "flashSuccesses": 7,
+            "enemiesFlashed": 9,
+            "sniperKills": 0
           },
           {
             "nickname": "JIyHaTuK_1",
@@ -137,7 +70,25 @@
             "damage": 2980,
             "headshots": 11,
             "mvps": 3,
-            "player_id": "54ed2ca1-b3dd-4c31-9814-24698c33534e"
+            "player_id": "54ed2ca1-b3dd-4c31-9814-24698c33534e",
+            "doubles": 7,
+            "triples": 0,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 5,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 1,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 26,
+            "utilitySuccesses": 14,
+            "utilityDamage": 238,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "RT_BERS",
@@ -147,7 +98,25 @@
             "damage": 2406,
             "headshots": 5,
             "mvps": 3,
-            "player_id": "83c60ca6-2af7-42c4-98ec-fe5e8d500b96"
+            "player_id": "83c60ca6-2af7-42c4-98ec-fe5e8d500b96",
+            "doubles": 4,
+            "triples": 2,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 6,
+            "entryWins": 4,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 1,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 24,
+            "utilitySuccesses": 13,
+            "utilityDamage": 192,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 22
           },
           {
             "nickname": "AK_NoScope",
@@ -157,7 +126,25 @@
             "damage": 1762,
             "headshots": 9,
             "mvps": 2,
-            "player_id": "2d1244a2-1265-4c93-ae69-0b23f8edb278"
+            "player_id": "2d1244a2-1265-4c93-ae69-0b23f8edb278",
+            "doubles": 4,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 7,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 21,
+            "utilitySuccesses": 11,
+            "utilityDamage": 141,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "Stas1kudin",
@@ -167,7 +154,25 @@
             "damage": 1424,
             "headshots": 6,
             "mvps": 3,
-            "player_id": "52103406-f3d6-47ec-80cf-8b844ac1f96e"
+            "player_id": "52103406-f3d6-47ec-80cf-8b844ac1f96e",
+            "doubles": 2,
+            "triples": 0,
+            "quadros": 1,
+            "pentas": 0,
+            "entryCount": 3,
+            "entryWins": 1,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 20,
+            "utilitySuccesses": 11,
+            "utilityDamage": 114,
+            "flashCount": 7,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           }
         ],
         "players2": [
@@ -179,7 +184,25 @@
             "damage": 2860,
             "headshots": 14,
             "mvps": 4,
-            "player_id": "81ca8d1b-4037-4d7b-96ca-4f4fb2cfade1"
+            "player_id": "81ca8d1b-4037-4d7b-96ca-4f4fb2cfade1",
+            "doubles": 5,
+            "triples": 1,
+            "quadros": 1,
+            "pentas": 0,
+            "entryCount": 7,
+            "entryWins": 4,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 1,
+            "clutch1v2Wins": 1,
+            "clutchKills": 3,
+            "utilityCount": 26,
+            "utilitySuccesses": 14,
+            "utilityDamage": 229,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "ANAKONDA330",
@@ -189,7 +212,25 @@
             "damage": 2560,
             "headshots": 13,
             "mvps": 4,
-            "player_id": "af52ceb5-cde0-47dd-bf48-7e640d7372ac"
+            "player_id": "af52ceb5-cde0-47dd-bf48-7e640d7372ac",
+            "doubles": 3,
+            "triples": 4,
+            "quadros": 0,
+            "pentas": 1,
+            "entryCount": 7,
+            "entryWins": 5,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 1,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 25,
+            "utilitySuccesses": 14,
+            "utilityDamage": 205,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "Bezhenec",
@@ -199,7 +240,25 @@
             "damage": 2084,
             "headshots": 7,
             "mvps": 2,
-            "player_id": "bea53fe9-8339-4a9e-9023-b89a10d0da7a"
+            "player_id": "bea53fe9-8339-4a9e-9023-b89a10d0da7a",
+            "doubles": 4,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 7,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 23,
+            "utilitySuccesses": 12,
+            "utilityDamage": 167,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "DatObase",
@@ -209,7 +268,25 @@
             "damage": 1314,
             "headshots": 8,
             "mvps": 1,
-            "player_id": "90a2b3cd-0c84-499b-915f-9f21bf4ae698"
+            "player_id": "90a2b3cd-0c84-499b-915f-9f21bf4ae698",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 7,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 19,
+            "utilitySuccesses": 10,
+            "utilityDamage": 105,
+            "flashCount": 7,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "MrChillout61",
@@ -219,7 +296,25 @@
             "damage": 1943,
             "headshots": 5,
             "mvps": 1,
-            "player_id": "e1c67ef9-50cb-424b-b8d3-558aa0165b75"
+            "player_id": "e1c67ef9-50cb-424b-b8d3-558aa0165b75",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 7,
+            "entryWins": 2,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 22,
+            "utilitySuccesses": 12,
+            "utilityDamage": 155,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           }
         ]
       },
@@ -236,7 +331,25 @@
             "damage": 3420,
             "headshots": 15,
             "mvps": 5,
-            "player_id": "2c9dafb1-43d5-4883-b61d-30b7f7824d3c"
+            "player_id": "2c9dafb1-43d5-4883-b61d-30b7f7824d3c",
+            "doubles": 6,
+            "triples": 3,
+            "quadros": 1,
+            "pentas": 0,
+            "entryCount": 8,
+            "entryWins": 7,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 1,
+            "clutch1v2Wins": 1,
+            "clutchKills": 3,
+            "utilityCount": 28,
+            "utilitySuccesses": 15,
+            "utilityDamage": 274,
+            "flashCount": 10,
+            "flashSuccesses": 7,
+            "enemiesFlashed": 9,
+            "sniperKills": 0
           },
           {
             "nickname": "JIyHaTuK_1",
@@ -246,7 +359,25 @@
             "damage": 2370,
             "headshots": 8,
             "mvps": 3,
-            "player_id": "54ed2ca1-b3dd-4c31-9814-24698c33534e"
+            "player_id": "54ed2ca1-b3dd-4c31-9814-24698c33534e",
+            "doubles": 4,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 4,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 24,
+            "utilitySuccesses": 13,
+            "utilityDamage": 190,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "RT_BERS",
@@ -256,7 +387,25 @@
             "damage": 2288,
             "headshots": 3,
             "mvps": 2,
-            "player_id": "83c60ca6-2af7-42c4-98ec-fe5e8d500b96"
+            "player_id": "83c60ca6-2af7-42c4-98ec-fe5e8d500b96",
+            "doubles": 3,
+            "triples": 0,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 4,
+            "entryWins": 2,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 24,
+            "utilitySuccesses": 13,
+            "utilityDamage": 183,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 14
           },
           {
             "nickname": "AK_NoScope",
@@ -266,7 +415,25 @@
             "damage": 1480,
             "headshots": 6,
             "mvps": 2,
-            "player_id": "2d1244a2-1265-4c93-ae69-0b23f8edb278"
+            "player_id": "2d1244a2-1265-4c93-ae69-0b23f8edb278",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 5,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 20,
+            "utilitySuccesses": 11,
+            "utilityDamage": 118,
+            "flashCount": 7,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "Stas1kudin",
@@ -276,7 +443,25 @@
             "damage": 568,
             "headshots": 2,
             "mvps": 1,
-            "player_id": "52103406-f3d6-47ec-80cf-8b844ac1f96e"
+            "player_id": "52103406-f3d6-47ec-80cf-8b844ac1f96e",
+            "doubles": 1,
+            "triples": 0,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 3,
+            "entryWins": 1,
+            "clutch1v1Count": 0,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 16,
+            "utilitySuccesses": 9,
+            "utilityDamage": 45,
+            "flashCount": 6,
+            "flashSuccesses": 4,
+            "enemiesFlashed": 5,
+            "sniperKills": 0
           }
         ],
         "players2": [
@@ -288,7 +473,25 @@
             "damage": 2867,
             "headshots": 9,
             "mvps": 2,
-            "player_id": "af52ceb5-cde0-47dd-bf48-7e640d7372ac"
+            "player_id": "af52ceb5-cde0-47dd-bf48-7e640d7372ac",
+            "doubles": 5,
+            "triples": 0,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 5,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 26,
+            "utilitySuccesses": 14,
+            "utilityDamage": 229,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "massao61",
@@ -298,7 +501,25 @@
             "damage": 2115,
             "headshots": 6,
             "mvps": 2,
-            "player_id": "81ca8d1b-4037-4d7b-96ca-4f4fb2cfade1"
+            "player_id": "81ca8d1b-4037-4d7b-96ca-4f4fb2cfade1",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 5,
+            "entryWins": 2,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 23,
+            "utilitySuccesses": 12,
+            "utilityDamage": 169,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "DatObase",
@@ -308,7 +529,25 @@
             "damage": 1375,
             "headshots": 5,
             "mvps": 1,
-            "player_id": "90a2b3cd-0c84-499b-915f-9f21bf4ae698"
+            "player_id": "90a2b3cd-0c84-499b-915f-9f21bf4ae698",
+            "doubles": 2,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 5,
+            "entryWins": 2,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 20,
+            "utilitySuccesses": 11,
+            "utilityDamage": 110,
+            "flashCount": 7,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "Bezhenec",
@@ -318,7 +557,25 @@
             "damage": 1331,
             "headshots": 4,
             "mvps": 0,
-            "player_id": "bea53fe9-8339-4a9e-9023-b89a10d0da7a"
+            "player_id": "bea53fe9-8339-4a9e-9023-b89a10d0da7a",
+            "doubles": 2,
+            "triples": 0,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 4,
+            "entryWins": 2,
+            "clutch1v1Count": 0,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 20,
+            "utilitySuccesses": 11,
+            "utilityDamage": 106,
+            "flashCount": 7,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "MrChillout61",
@@ -328,7 +585,25 @@
             "damage": 1074,
             "headshots": 3,
             "mvps": 0,
-            "player_id": "e1c67ef9-50cb-424b-b8d3-558aa0165b75"
+            "player_id": "e1c67ef9-50cb-424b-b8d3-558aa0165b75",
+            "doubles": 1,
+            "triples": 0,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 4,
+            "entryWins": 1,
+            "clutch1v1Count": 0,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 18,
+            "utilitySuccesses": 10,
+            "utilityDamage": 86,
+            "flashCount": 6,
+            "flashSuccesses": 4,
+            "enemiesFlashed": 5,
+            "sniperKills": 0
           }
         ]
       }
@@ -337,8 +612,8 @@
   {
     "match_id": "cs_sigma_cup_m2",
     "status": "FINISHED",
-    "started_at": 1789497000,
-    "finished_at": 1789500500,
+    "started_at": 1789500600,
+    "finished_at": 1789504100,
     "source": "Cybershoke",
     "tournament_name": "Sigma Cyber Cup: Season 2",
     "maps": [
@@ -362,92 +637,7 @@
         "faction2": 1
       }
     },
-    "seriesScores": [
-      {
-        "map": "de_inferno",
-        "score1": 9,
-        "score2": 13
-      },
-      {
-        "map": "de_anubis",
-        "score1": 16,
-        "score2": 13
-      }
-    ],
-    "players1": [
-      {
-        "player_id": "ce21732e-002e-4951-96cf-970d56a2eff4",
-        "nickname": "Kups2-0",
-        "kills": 61,
-        "deaths": 29,
-        "assists": 12
-      },
-      {
-        "player_id": "c9e13dd4-8ec4-4fec-b3d0-620f7ced7233",
-        "nickname": "nika_jok",
-        "kills": 46,
-        "deaths": 36,
-        "assists": 12
-      },
-      {
-        "player_id": "73866213-0a98-48c4-9858-912dc1a8ecad",
-        "nickname": "khachik92",
-        "kills": 32,
-        "deaths": 31,
-        "assists": 9
-      },
-      {
-        "player_id": "9f90958a-81b8-48bd-8018-34ff55c763e7",
-        "nickname": "madmax14888",
-        "kills": 29,
-        "deaths": 41,
-        "assists": 9
-      },
-      {
-        "player_id": "4fb8451b-e917-4c6f-9978-e7fb471a67b9",
-        "nickname": "w1ndyyyk_244",
-        "kills": 18,
-        "deaths": 40,
-        "assists": 12
-      }
-    ],
-    "players2": [
-      {
-        "player_id": "7ea3bd3d-582e-4cd2-872a-703bf7af557c",
-        "nickname": "nycujan",
-        "kills": 45,
-        "deaths": 37,
-        "assists": 12
-      },
-      {
-        "player_id": "3769f84c-cb71-4f76-b261-87486842b967",
-        "nickname": "FCG_pilotiki",
-        "kills": 39,
-        "deaths": 38,
-        "assists": 12
-      },
-      {
-        "player_id": "cea765cf-b74d-40ba-bc09-3a5bab0c28e9",
-        "nickname": "BryanOKnish1",
-        "kills": 34,
-        "deaths": 39,
-        "assists": 17
-      },
-      {
-        "player_id": "4e4df10d-ca21-4d85-84d0-93212bea7e76",
-        "nickname": "Raul800",
-        "kills": 30,
-        "deaths": 33,
-        "assists": 12
-      },
-      {
-        "player_id": "70f7c6cc-6229-4121-b9f8-39b1d6a58c94",
-        "nickname": "mendez161",
-        "kills": 27,
-        "deaths": 39,
-        "assists": 9
-      }
-    ],
+    "seriesScores": "1:1",
     "mapBreakdown": [
       {
         "map": "de_inferno",
@@ -462,7 +652,25 @@
             "damage": 4066,
             "headshots": 14,
             "mvps": 4,
-            "player_id": "ce21732e-002e-4951-96cf-970d56a2eff4"
+            "player_id": "ce21732e-002e-4951-96cf-970d56a2eff4",
+            "doubles": 6,
+            "triples": 3,
+            "quadros": 1,
+            "pentas": 0,
+            "entryCount": 9,
+            "entryWins": 6,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 1,
+            "clutch1v2Wins": 1,
+            "clutchKills": 3,
+            "utilityCount": 31,
+            "utilitySuccesses": 17,
+            "utilityDamage": 325,
+            "flashCount": 11,
+            "flashSuccesses": 7,
+            "enemiesFlashed": 9,
+            "sniperKills": 0
           },
           {
             "nickname": "nika_jok",
@@ -472,7 +680,25 @@
             "damage": 2210,
             "headshots": 7,
             "mvps": 2,
-            "player_id": "c9e13dd4-8ec4-4fec-b3d0-620f7ced7233"
+            "player_id": "c9e13dd4-8ec4-4fec-b3d0-620f7ced7233",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 6,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 23,
+            "utilitySuccesses": 12,
+            "utilityDamage": 177,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "khachik92",
@@ -482,7 +708,25 @@
             "damage": 2040,
             "headshots": 8,
             "mvps": 1,
-            "player_id": "73866213-0a98-48c4-9858-912dc1a8ecad"
+            "player_id": "73866213-0a98-48c4-9858-912dc1a8ecad",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 6,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 23,
+            "utilitySuccesses": 12,
+            "utilityDamage": 163,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "madmax14888",
@@ -492,7 +736,25 @@
             "damage": 1980,
             "headshots": 7,
             "mvps": 1,
-            "player_id": "9f90958a-81b8-48bd-8018-34ff55c763e7"
+            "player_id": "9f90958a-81b8-48bd-8018-34ff55c763e7",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 6,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 22,
+            "utilitySuccesses": 12,
+            "utilityDamage": 158,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "w1ndyyyk_244",
@@ -502,7 +764,25 @@
             "damage": 1250,
             "headshots": 4,
             "mvps": 1,
-            "player_id": "4fb8451b-e917-4c6f-9978-e7fb471a67b9"
+            "player_id": "4fb8451b-e917-4c6f-9978-e7fb471a67b9",
+            "doubles": 2,
+            "triples": 0,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 4,
+            "entryWins": 1,
+            "clutch1v1Count": 0,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 19,
+            "utilitySuccesses": 10,
+            "utilityDamage": 100,
+            "flashCount": 7,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           }
         ],
         "players2": [
@@ -514,7 +794,25 @@
             "damage": 3100,
             "headshots": 11,
             "mvps": 4,
-            "player_id": "7ea3bd3d-582e-4cd2-872a-703bf7af557c"
+            "player_id": "7ea3bd3d-582e-4cd2-872a-703bf7af557c",
+            "doubles": 3,
+            "triples": 4,
+            "quadros": 1,
+            "pentas": 0,
+            "entryCount": 6,
+            "entryWins": 4,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 27,
+            "utilitySuccesses": 15,
+            "utilityDamage": 248,
+            "flashCount": 10,
+            "flashSuccesses": 7,
+            "enemiesFlashed": 9,
+            "sniperKills": 0
           },
           {
             "nickname": "FCG_pilotiki",
@@ -524,7 +822,25 @@
             "damage": 2540,
             "headshots": 8,
             "mvps": 3,
-            "player_id": "3769f84c-cb71-4f76-b261-87486842b967"
+            "player_id": "3769f84c-cb71-4f76-b261-87486842b967",
+            "doubles": 4,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 7,
+            "entryWins": 4,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 25,
+            "utilitySuccesses": 14,
+            "utilityDamage": 203,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "BryanOKnish1",
@@ -534,7 +850,25 @@
             "damage": 2480,
             "headshots": 9,
             "mvps": 2,
-            "player_id": "cea765cf-b74d-40ba-bc09-3a5bab0c28e9"
+            "player_id": "cea765cf-b74d-40ba-bc09-3a5bab0c28e9",
+            "doubles": 4,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 7,
+            "entryWins": 4,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 24,
+            "utilitySuccesses": 13,
+            "utilityDamage": 198,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "Raul800",
@@ -544,7 +878,25 @@
             "damage": 1890,
             "headshots": 4,
             "mvps": 2,
-            "player_id": "4e4df10d-ca21-4d85-84d0-93212bea7e76"
+            "player_id": "4e4df10d-ca21-4d85-84d0-93212bea7e76",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 5,
+            "entryWins": 2,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 22,
+            "utilitySuccesses": 12,
+            "utilityDamage": 151,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 9
           },
           {
             "nickname": "mendez161",
@@ -554,7 +906,25 @@
             "damage": 1540,
             "headshots": 5,
             "mvps": 2,
-            "player_id": "70f7c6cc-6229-4121-b9f8-39b1d6a58c94"
+            "player_id": "70f7c6cc-6229-4121-b9f8-39b1d6a58c94",
+            "doubles": 2,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 5,
+            "entryWins": 2,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 20,
+            "utilitySuccesses": 11,
+            "utilityDamage": 123,
+            "flashCount": 7,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           }
         ]
       },
@@ -571,7 +941,25 @@
             "damage": 4236,
             "headshots": 18,
             "mvps": 6,
-            "player_id": "ce21732e-002e-4951-96cf-970d56a2eff4"
+            "player_id": "ce21732e-002e-4951-96cf-970d56a2eff4",
+            "doubles": 8,
+            "triples": 3,
+            "quadros": 1,
+            "pentas": 0,
+            "entryCount": 11,
+            "entryWins": 8,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 1,
+            "clutch1v2Wins": 1,
+            "clutchKills": 3,
+            "utilityCount": 32,
+            "utilitySuccesses": 17,
+            "utilityDamage": 339,
+            "flashCount": 12,
+            "flashSuccesses": 8,
+            "enemiesFlashed": 10,
+            "sniperKills": 0
           },
           {
             "nickname": "nika_jok",
@@ -581,7 +969,25 @@
             "damage": 4969,
             "headshots": 16,
             "mvps": 5,
-            "player_id": "c9e13dd4-8ec4-4fec-b3d0-620f7ced7233"
+            "player_id": "c9e13dd4-8ec4-4fec-b3d0-620f7ced7233",
+            "doubles": 6,
+            "triples": 3,
+            "quadros": 0,
+            "pentas": 1,
+            "entryCount": 9,
+            "entryWins": 7,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 1,
+            "clutch1v2Wins": 1,
+            "clutchKills": 3,
+            "utilityCount": 35,
+            "utilitySuccesses": 19,
+            "utilityDamage": 398,
+            "flashCount": 13,
+            "flashSuccesses": 8,
+            "enemiesFlashed": 10,
+            "sniperKills": 0
           },
           {
             "nickname": "khachik92",
@@ -591,7 +997,25 @@
             "damage": 2310,
             "headshots": 9,
             "mvps": 2,
-            "player_id": "73866213-0a98-48c4-9858-912dc1a8ecad"
+            "player_id": "73866213-0a98-48c4-9858-912dc1a8ecad",
+            "doubles": 4,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 7,
+            "entryWins": 4,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 24,
+            "utilitySuccesses": 13,
+            "utilityDamage": 185,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "madmax14888",
@@ -601,7 +1025,25 @@
             "damage": 2010,
             "headshots": 7,
             "mvps": 2,
-            "player_id": "9f90958a-81b8-48bd-8018-34ff55c763e7"
+            "player_id": "9f90958a-81b8-48bd-8018-34ff55c763e7",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 7,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 22,
+            "utilitySuccesses": 12,
+            "utilityDamage": 161,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "w1ndyyyk_244",
@@ -611,7 +1053,25 @@
             "damage": 1450,
             "headshots": 5,
             "mvps": 1,
-            "player_id": "4fb8451b-e917-4c6f-9978-e7fb471a67b9"
+            "player_id": "4fb8451b-e917-4c6f-9978-e7fb471a67b9",
+            "doubles": 2,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 6,
+            "entryWins": 2,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 20,
+            "utilitySuccesses": 11,
+            "utilityDamage": 116,
+            "flashCount": 7,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           }
         ],
         "players2": [
@@ -623,7 +1083,25 @@
             "damage": 3773,
             "headshots": 12,
             "mvps": 4,
-            "player_id": "7ea3bd3d-582e-4cd2-872a-703bf7af557c"
+            "player_id": "7ea3bd3d-582e-4cd2-872a-703bf7af557c",
+            "doubles": 6,
+            "triples": 2,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 9,
+            "entryWins": 5,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 1,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 30,
+            "utilitySuccesses": 16,
+            "utilityDamage": 302,
+            "flashCount": 11,
+            "flashSuccesses": 7,
+            "enemiesFlashed": 9,
+            "sniperKills": 0
           },
           {
             "nickname": "FCG_pilotiki",
@@ -633,7 +1111,25 @@
             "damage": 3120,
             "headshots": 11,
             "mvps": 3,
-            "player_id": "3769f84c-cb71-4f76-b261-87486842b967"
+            "player_id": "3769f84c-cb71-4f76-b261-87486842b967",
+            "doubles": 5,
+            "triples": 2,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 9,
+            "entryWins": 5,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 1,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 27,
+            "utilitySuccesses": 15,
+            "utilityDamage": 250,
+            "flashCount": 10,
+            "flashSuccesses": 7,
+            "enemiesFlashed": 9,
+            "sniperKills": 0
           },
           {
             "nickname": "mendez161",
@@ -643,7 +1139,25 @@
             "damage": 2450,
             "headshots": 8,
             "mvps": 2,
-            "player_id": "70f7c6cc-6229-4121-b9f8-39b1d6a58c94"
+            "player_id": "70f7c6cc-6229-4121-b9f8-39b1d6a58c94",
+            "doubles": 4,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 8,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 24,
+            "utilitySuccesses": 13,
+            "utilityDamage": 196,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "BryanOKnish1",
@@ -653,7 +1167,25 @@
             "damage": 2390,
             "headshots": 8,
             "mvps": 2,
-            "player_id": "cea765cf-b74d-40ba-bc09-3a5bab0c28e9"
+            "player_id": "cea765cf-b74d-40ba-bc09-3a5bab0c28e9",
+            "doubles": 4,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 7,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 24,
+            "utilitySuccesses": 13,
+            "utilityDamage": 191,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "Raul800",
@@ -663,7 +1195,25 @@
             "damage": 2480,
             "headshots": 5,
             "mvps": 2,
-            "player_id": "4e4df10d-ca21-4d85-84d0-93212bea7e76"
+            "player_id": "4e4df10d-ca21-4d85-84d0-93212bea7e76",
+            "doubles": 4,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 7,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 24,
+            "utilitySuccesses": 13,
+            "utilityDamage": 198,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 12
           }
         ]
       }
@@ -672,8 +1222,8 @@
   {
     "match_id": "cs_sigma_cup_m3",
     "status": "FINISHED",
-    "started_at": 1789500600,
-    "finished_at": 1789504100,
+    "started_at": 1789507800,
+    "finished_at": 1789511300,
     "source": "Cybershoke",
     "tournament_name": "Sigma Cyber Cup: Season 2",
     "maps": [
@@ -697,92 +1247,7 @@
         "faction2": 0
       }
     },
-    "seriesScores": [
-      {
-        "map": "de_anubis",
-        "score1": 13,
-        "score2": 10
-      },
-      {
-        "map": "de_inferno",
-        "score1": 13,
-        "score2": 6
-      }
-    ],
-    "players1": [
-      {
-        "player_id": "2c9dafb1-43d5-4883-b61d-30b7f7824d3c",
-        "nickname": "XZiBiTuM",
-        "kills": 52,
-        "deaths": 30,
-        "assists": 11
-      },
-      {
-        "player_id": "54ed2ca1-b3dd-4c31-9814-24698c33534e",
-        "nickname": "JIyHaTuK_1",
-        "kills": 43,
-        "deaths": 28,
-        "assists": 6
-      },
-      {
-        "player_id": "83c60ca6-2af7-42c4-98ec-fe5e8d500b96",
-        "nickname": "RT_BERS",
-        "kills": 32,
-        "deaths": 28,
-        "assists": 5
-      },
-      {
-        "player_id": "52103406-f3d6-47ec-80cf-8b844ac1f96e",
-        "nickname": "Stas1kudin",
-        "kills": 24,
-        "deaths": 29,
-        "assists": 15
-      },
-      {
-        "player_id": "2d1244a2-1265-4c93-ae69-0b23f8edb278",
-        "nickname": "AK_NoScope",
-        "kills": 21,
-        "deaths": 28,
-        "assists": 12
-      }
-    ],
-    "players2": [
-      {
-        "player_id": "7ea3bd3d-582e-4cd2-872a-703bf7af557c",
-        "nickname": "nycujan",
-        "kills": 46,
-        "deaths": 36,
-        "assists": 7
-      },
-      {
-        "player_id": "3769f84c-cb71-4f76-b261-87486842b967",
-        "nickname": "FCG_pilotiki",
-        "kills": 35,
-        "deaths": 33,
-        "assists": 14
-      },
-      {
-        "player_id": "4e4df10d-ca21-4d85-84d0-93212bea7e76",
-        "nickname": "Raul800",
-        "kills": 24,
-        "deaths": 36,
-        "assists": 5
-      },
-      {
-        "player_id": "cea765cf-b74d-40ba-bc09-3a5bab0c28e9",
-        "nickname": "BryanOKnish1",
-        "kills": 21,
-        "deaths": 34,
-        "assists": 9
-      },
-      {
-        "player_id": "70f7c6cc-6229-4121-b9f8-39b1d6a58c94",
-        "nickname": "mendez161",
-        "kills": 17,
-        "deaths": 34,
-        "assists": 7
-      }
-    ],
+    "seriesScores": "2:0",
     "mapBreakdown": [
       {
         "map": "de_anubis",
@@ -797,7 +1262,25 @@
             "damage": 3890,
             "headshots": 16,
             "mvps": 5,
-            "player_id": "2c9dafb1-43d5-4883-b61d-30b7f7824d3c"
+            "player_id": "2c9dafb1-43d5-4883-b61d-30b7f7824d3c",
+            "doubles": 5,
+            "triples": 3,
+            "quadros": 0,
+            "pentas": 1,
+            "entryCount": 8,
+            "entryWins": 6,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 1,
+            "clutch1v2Wins": 1,
+            "clutchKills": 3,
+            "utilityCount": 30,
+            "utilitySuccesses": 16,
+            "utilityDamage": 311,
+            "flashCount": 11,
+            "flashSuccesses": 7,
+            "enemiesFlashed": 9,
+            "sniperKills": 0
           },
           {
             "nickname": "JIyHaTuK_1",
@@ -807,7 +1290,25 @@
             "damage": 3120,
             "headshots": 12,
             "mvps": 3,
-            "player_id": "54ed2ca1-b3dd-4c31-9814-24698c33534e"
+            "player_id": "54ed2ca1-b3dd-4c31-9814-24698c33534e",
+            "doubles": 6,
+            "triples": 2,
+            "quadros": 1,
+            "pentas": 0,
+            "entryCount": 9,
+            "entryWins": 5,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 1,
+            "clutch1v2Wins": 1,
+            "clutchKills": 3,
+            "utilityCount": 27,
+            "utilitySuccesses": 15,
+            "utilityDamage": 250,
+            "flashCount": 10,
+            "flashSuccesses": 7,
+            "enemiesFlashed": 9,
+            "sniperKills": 0
           },
           {
             "nickname": "RT_BERS",
@@ -817,7 +1318,25 @@
             "damage": 2340,
             "headshots": 4,
             "mvps": 2,
-            "player_id": "83c60ca6-2af7-42c4-98ec-fe5e8d500b96"
+            "player_id": "83c60ca6-2af7-42c4-98ec-fe5e8d500b96",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 4,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 24,
+            "utilitySuccesses": 13,
+            "utilityDamage": 187,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 17
           },
           {
             "nickname": "Stas1kudin",
@@ -827,7 +1346,25 @@
             "damage": 1580,
             "headshots": 5,
             "mvps": 2,
-            "player_id": "52103406-f3d6-47ec-80cf-8b844ac1f96e"
+            "player_id": "52103406-f3d6-47ec-80cf-8b844ac1f96e",
+            "doubles": 2,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 5,
+            "entryWins": 2,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 21,
+            "utilitySuccesses": 11,
+            "utilityDamage": 126,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "AK_NoScope",
@@ -837,7 +1374,25 @@
             "damage": 1190,
             "headshots": 3,
             "mvps": 1,
-            "player_id": "2d1244a2-1265-4c93-ae69-0b23f8edb278"
+            "player_id": "2d1244a2-1265-4c93-ae69-0b23f8edb278",
+            "doubles": 1,
+            "triples": 0,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 4,
+            "entryWins": 1,
+            "clutch1v1Count": 0,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 19,
+            "utilitySuccesses": 10,
+            "utilityDamage": 95,
+            "flashCount": 7,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           }
         ],
         "players2": [
@@ -849,7 +1404,25 @@
             "damage": 3510,
             "headshots": 13,
             "mvps": 4,
-            "player_id": "7ea3bd3d-582e-4cd2-872a-703bf7af557c"
+            "player_id": "7ea3bd3d-582e-4cd2-872a-703bf7af557c",
+            "doubles": 6,
+            "triples": 3,
+            "quadros": 1,
+            "pentas": 0,
+            "entryCount": 10,
+            "entryWins": 6,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 1,
+            "clutch1v2Wins": 1,
+            "clutchKills": 3,
+            "utilityCount": 29,
+            "utilitySuccesses": 16,
+            "utilityDamage": 281,
+            "flashCount": 10,
+            "flashSuccesses": 7,
+            "enemiesFlashed": 9,
+            "sniperKills": 0
           },
           {
             "nickname": "FCG_pilotiki",
@@ -859,7 +1432,25 @@
             "damage": 2980,
             "headshots": 10,
             "mvps": 3,
-            "player_id": "3769f84c-cb71-4f76-b261-87486842b967"
+            "player_id": "3769f84c-cb71-4f76-b261-87486842b967",
+            "doubles": 5,
+            "triples": 2,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 8,
+            "entryWins": 4,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 26,
+            "utilitySuccesses": 14,
+            "utilityDamage": 238,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "Raul800",
@@ -869,7 +1460,25 @@
             "damage": 2150,
             "headshots": 4,
             "mvps": 2,
-            "player_id": "4e4df10d-ca21-4d85-84d0-93212bea7e76"
+            "player_id": "4e4df10d-ca21-4d85-84d0-93212bea7e76",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 1,
+            "entryCount": 5,
+            "entryWins": 4,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 23,
+            "utilitySuccesses": 12,
+            "utilityDamage": 172,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 12
           },
           {
             "nickname": "BryanOKnish1",
@@ -879,7 +1488,25 @@
             "damage": 1780,
             "headshots": 6,
             "mvps": 1,
-            "player_id": "cea765cf-b74d-40ba-bc09-3a5bab0c28e9"
+            "player_id": "cea765cf-b74d-40ba-bc09-3a5bab0c28e9",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 6,
+            "entryWins": 2,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 21,
+            "utilitySuccesses": 11,
+            "utilityDamage": 142,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "mendez161",
@@ -889,7 +1516,25 @@
             "damage": 1320,
             "headshots": 4,
             "mvps": 0,
-            "player_id": "70f7c6cc-6229-4121-b9f8-39b1d6a58c94"
+            "player_id": "70f7c6cc-6229-4121-b9f8-39b1d6a58c94",
+            "doubles": 2,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 5,
+            "entryWins": 2,
+            "clutch1v1Count": 0,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 20,
+            "utilitySuccesses": 11,
+            "utilityDamage": 106,
+            "flashCount": 7,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           }
         ]
       },
@@ -906,7 +1551,25 @@
             "damage": 4106,
             "headshots": 12,
             "mvps": 4,
-            "player_id": "2c9dafb1-43d5-4883-b61d-30b7f7824d3c"
+            "player_id": "2c9dafb1-43d5-4883-b61d-30b7f7824d3c",
+            "doubles": 5,
+            "triples": 2,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 8,
+            "entryWins": 5,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 1,
+            "clutch1v2Wins": 1,
+            "clutchKills": 3,
+            "utilityCount": 31,
+            "utilitySuccesses": 17,
+            "utilityDamage": 328,
+            "flashCount": 11,
+            "flashSuccesses": 7,
+            "enemiesFlashed": 9,
+            "sniperKills": 0
           },
           {
             "nickname": "JIyHaTuK_1",
@@ -916,7 +1579,25 @@
             "damage": 2540,
             "headshots": 8,
             "mvps": 3,
-            "player_id": "54ed2ca1-b3dd-4c31-9814-24698c33534e"
+            "player_id": "54ed2ca1-b3dd-4c31-9814-24698c33534e",
+            "doubles": 4,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 6,
+            "entryWins": 4,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 25,
+            "utilitySuccesses": 14,
+            "utilityDamage": 203,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "RT_BERS",
@@ -926,7 +1607,25 @@
             "damage": 2210,
             "headshots": 3,
             "mvps": 2,
-            "player_id": "83c60ca6-2af7-42c4-98ec-fe5e8d500b96"
+            "player_id": "83c60ca6-2af7-42c4-98ec-fe5e8d500b96",
+            "doubles": 3,
+            "triples": 0,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 4,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 23,
+            "utilitySuccesses": 12,
+            "utilityDamage": 177,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 13
           },
           {
             "nickname": "Stas1kudin",
@@ -936,7 +1635,25 @@
             "damage": 1950,
             "headshots": 7,
             "mvps": 2,
-            "player_id": "52103406-f3d6-47ec-80cf-8b844ac1f96e"
+            "player_id": "52103406-f3d6-47ec-80cf-8b844ac1f96e",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 5,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 22,
+            "utilitySuccesses": 12,
+            "utilityDamage": 156,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "AK_NoScope",
@@ -946,7 +1663,25 @@
             "damage": 1880,
             "headshots": 6,
             "mvps": 2,
-            "player_id": "2d1244a2-1265-4c93-ae69-0b23f8edb278"
+            "player_id": "2d1244a2-1265-4c93-ae69-0b23f8edb278",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 5,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 22,
+            "utilitySuccesses": 12,
+            "utilityDamage": 150,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           }
         ],
         "players2": [
@@ -958,7 +1693,25 @@
             "damage": 2680,
             "headshots": 9,
             "mvps": 2,
-            "player_id": "3769f84c-cb71-4f76-b261-87486842b967"
+            "player_id": "3769f84c-cb71-4f76-b261-87486842b967",
+            "doubles": 4,
+            "triples": 2,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 7,
+            "entryWins": 4,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 25,
+            "utilitySuccesses": 14,
+            "utilityDamage": 214,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "mendez161",
@@ -968,7 +1721,25 @@
             "damage": 2010,
             "headshots": 7,
             "mvps": 2,
-            "player_id": "70f7c6cc-6229-4121-b9f8-39b1d6a58c94"
+            "player_id": "70f7c6cc-6229-4121-b9f8-39b1d6a58c94",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 6,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 22,
+            "utilitySuccesses": 12,
+            "utilityDamage": 161,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "Raul800",
@@ -978,7 +1749,25 @@
             "damage": 1340,
             "headshots": 2,
             "mvps": 1,
-            "player_id": "4e4df10d-ca21-4d85-84d0-93212bea7e76"
+            "player_id": "4e4df10d-ca21-4d85-84d0-93212bea7e76",
+            "doubles": 2,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 5,
+            "entryWins": 2,
+            "clutch1v1Count": 0,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 20,
+            "utilitySuccesses": 11,
+            "utilityDamage": 107,
+            "flashCount": 7,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 6
           },
           {
             "nickname": "nycujan",
@@ -988,7 +1777,25 @@
             "damage": 1420,
             "headshots": 4,
             "mvps": 1,
-            "player_id": "7ea3bd3d-582e-4cd2-872a-703bf7af557c"
+            "player_id": "7ea3bd3d-582e-4cd2-872a-703bf7af557c",
+            "doubles": 2,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 4,
+            "entryWins": 1,
+            "clutch1v1Count": 0,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 20,
+            "utilitySuccesses": 11,
+            "utilityDamage": 114,
+            "flashCount": 7,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "BryanOKnish1",
@@ -998,7 +1805,25 @@
             "damage": 1180,
             "headshots": 4,
             "mvps": 0,
-            "player_id": "cea765cf-b74d-40ba-bc09-3a5bab0c28e9"
+            "player_id": "cea765cf-b74d-40ba-bc09-3a5bab0c28e9",
+            "doubles": 2,
+            "triples": 0,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 4,
+            "entryWins": 1,
+            "clutch1v1Count": 0,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 19,
+            "utilitySuccesses": 10,
+            "utilityDamage": 94,
+            "flashCount": 7,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           }
         ]
       }
@@ -1007,8 +1832,8 @@
   {
     "match_id": "cs_sigma_cup_m4",
     "status": "FINISHED",
-    "started_at": 1789504200,
-    "finished_at": 1789507700,
+    "started_at": 1789515000,
+    "finished_at": 1789518500,
     "source": "Cybershoke",
     "tournament_name": "Sigma Cyber Cup: Season 2",
     "maps": [
@@ -1032,92 +1857,7 @@
         "faction2": 1
       }
     },
-    "seriesScores": [
-      {
-        "map": "de_mirage",
-        "score1": 13,
-        "score2": 11
-      },
-      {
-        "map": "de_nuke",
-        "score1": 7,
-        "score2": 13
-      }
-    ],
-    "players1": [
-      {
-        "player_id": "81ca8d1b-4037-4d7b-96ca-4f4fb2cfade1",
-        "nickname": "massao61",
-        "kills": 39,
-        "deaths": 32,
-        "assists": 8
-      },
-      {
-        "player_id": "af52ceb5-cde0-47dd-bf48-7e640d7372ac",
-        "nickname": "ANAKONDA330",
-        "kills": 34,
-        "deaths": 32,
-        "assists": 8
-      },
-      {
-        "player_id": "90a2b3cd-0c84-499b-915f-9f21bf4ae698",
-        "nickname": "DatObase",
-        "kills": 31,
-        "deaths": 34,
-        "assists": 5
-      },
-      {
-        "player_id": "bea53fe9-8339-4a9e-9023-b89a10d0da7a",
-        "nickname": "Bezhenec",
-        "kills": 23,
-        "deaths": 36,
-        "assists": 8
-      },
-      {
-        "player_id": "e1c67ef9-50cb-424b-b8d3-558aa0165b75",
-        "nickname": "MrChillout61",
-        "kills": 17,
-        "deaths": 39,
-        "assists": 6
-      }
-    ],
-    "players2": [
-      {
-        "player_id": "ce21732e-002e-4951-96cf-970d56a2eff4",
-        "nickname": "Kups2-0",
-        "kills": 52,
-        "deaths": 25,
-        "assists": 9
-      },
-      {
-        "player_id": "c9e13dd4-8ec4-4fec-b3d0-620f7ced7233",
-        "nickname": "nika_jok",
-        "kills": 39,
-        "deaths": 30,
-        "assists": 10
-      },
-      {
-        "player_id": "9f90958a-81b8-48bd-8018-34ff55c763e7",
-        "nickname": "madmax14888",
-        "kills": 35,
-        "deaths": 27,
-        "assists": 7
-      },
-      {
-        "player_id": "4fb8451b-e917-4c6f-9978-e7fb471a67b9",
-        "nickname": "w1ndyyyk_244",
-        "kills": 25,
-        "deaths": 29,
-        "assists": 11
-      },
-      {
-        "player_id": "73866213-0a98-48c4-9858-912dc1a8ecad",
-        "nickname": "khachik92",
-        "kills": 22,
-        "deaths": 34,
-        "assists": 7
-      }
-    ],
+    "seriesScores": "1:1",
     "mapBreakdown": [
       {
         "map": "de_mirage",
@@ -1132,7 +1872,25 @@
             "damage": 3270,
             "headshots": 11,
             "mvps": 4,
-            "player_id": "81ca8d1b-4037-4d7b-96ca-4f4fb2cfade1"
+            "player_id": "81ca8d1b-4037-4d7b-96ca-4f4fb2cfade1",
+            "doubles": 5,
+            "triples": 2,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 8,
+            "entryWins": 5,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 28,
+            "utilitySuccesses": 15,
+            "utilityDamage": 262,
+            "flashCount": 10,
+            "flashSuccesses": 7,
+            "enemiesFlashed": 9,
+            "sniperKills": 0
           },
           {
             "nickname": "ANAKONDA330",
@@ -1142,7 +1900,25 @@
             "damage": 3006,
             "headshots": 10,
             "mvps": 4,
-            "player_id": "af52ceb5-cde0-47dd-bf48-7e640d7372ac"
+            "player_id": "af52ceb5-cde0-47dd-bf48-7e640d7372ac",
+            "doubles": 5,
+            "triples": 2,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 8,
+            "entryWins": 5,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 27,
+            "utilitySuccesses": 15,
+            "utilityDamage": 240,
+            "flashCount": 10,
+            "flashSuccesses": 7,
+            "enemiesFlashed": 9,
+            "sniperKills": 0
           },
           {
             "nickname": "DatObase",
@@ -1152,7 +1928,25 @@
             "damage": 2680,
             "headshots": 9,
             "mvps": 3,
-            "player_id": "90a2b3cd-0c84-499b-915f-9f21bf4ae698"
+            "player_id": "90a2b3cd-0c84-499b-915f-9f21bf4ae698",
+            "doubles": 5,
+            "triples": 2,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 8,
+            "entryWins": 4,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 25,
+            "utilitySuccesses": 14,
+            "utilityDamage": 214,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "Bezhenec",
@@ -1162,7 +1956,25 @@
             "damage": 1890,
             "headshots": 6,
             "mvps": 1,
-            "player_id": "bea53fe9-8339-4a9e-9023-b89a10d0da7a"
+            "player_id": "bea53fe9-8339-4a9e-9023-b89a10d0da7a",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 6,
+            "entryWins": 2,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 22,
+            "utilitySuccesses": 12,
+            "utilityDamage": 151,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "MrChillout61",
@@ -1172,7 +1984,25 @@
             "damage": 1420,
             "headshots": 4,
             "mvps": 1,
-            "player_id": "e1c67ef9-50cb-424b-b8d3-558aa0165b75"
+            "player_id": "e1c67ef9-50cb-424b-b8d3-558aa0165b75",
+            "doubles": 2,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 5,
+            "entryWins": 2,
+            "clutch1v1Count": 0,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 20,
+            "utilitySuccesses": 11,
+            "utilityDamage": 114,
+            "flashCount": 7,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           }
         ],
         "players2": [
@@ -1184,7 +2014,25 @@
             "damage": 3647,
             "headshots": 13,
             "mvps": 4,
-            "player_id": "ce21732e-002e-4951-96cf-970d56a2eff4"
+            "player_id": "ce21732e-002e-4951-96cf-970d56a2eff4",
+            "doubles": 6,
+            "triples": 2,
+            "quadros": 1,
+            "pentas": 0,
+            "entryCount": 9,
+            "entryWins": 6,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 1,
+            "clutch1v2Wins": 1,
+            "clutchKills": 3,
+            "utilityCount": 29,
+            "utilitySuccesses": 16,
+            "utilityDamage": 292,
+            "flashCount": 10,
+            "flashSuccesses": 7,
+            "enemiesFlashed": 9,
+            "sniperKills": 0
           },
           {
             "nickname": "nika_jok",
@@ -1194,7 +2042,25 @@
             "damage": 2710,
             "headshots": 9,
             "mvps": 3,
-            "player_id": "c9e13dd4-8ec4-4fec-b3d0-620f7ced7233"
+            "player_id": "c9e13dd4-8ec4-4fec-b3d0-620f7ced7233",
+            "doubles": 4,
+            "triples": 2,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 7,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 25,
+            "utilitySuccesses": 14,
+            "utilityDamage": 217,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "madmax14888",
@@ -1204,7 +2070,25 @@
             "damage": 2390,
             "headshots": 8,
             "mvps": 2,
-            "player_id": "9f90958a-81b8-48bd-8018-34ff55c763e7"
+            "player_id": "9f90958a-81b8-48bd-8018-34ff55c763e7",
+            "doubles": 4,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 7,
+            "entryWins": 4,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 24,
+            "utilitySuccesses": 13,
+            "utilityDamage": 191,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "w1ndyyyk_244",
@@ -1214,7 +2098,25 @@
             "damage": 2050,
             "headshots": 7,
             "mvps": 1,
-            "player_id": "4fb8451b-e917-4c6f-9978-e7fb471a67b9"
+            "player_id": "4fb8451b-e917-4c6f-9978-e7fb471a67b9",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 6,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 23,
+            "utilitySuccesses": 12,
+            "utilityDamage": 164,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "khachik92",
@@ -1224,7 +2126,25 @@
             "damage": 1760,
             "headshots": 6,
             "mvps": 1,
-            "player_id": "73866213-0a98-48c4-9858-912dc1a8ecad"
+            "player_id": "73866213-0a98-48c4-9858-912dc1a8ecad",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 6,
+            "entryWins": 2,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 21,
+            "utilitySuccesses": 11,
+            "utilityDamage": 141,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           }
         ]
       },
@@ -1241,7 +2161,25 @@
             "damage": 2482,
             "headshots": 9,
             "mvps": 3,
-            "player_id": "af52ceb5-cde0-47dd-bf48-7e640d7372ac"
+            "player_id": "af52ceb5-cde0-47dd-bf48-7e640d7372ac",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 1,
+            "pentas": 0,
+            "entryCount": 5,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 24,
+            "utilitySuccesses": 13,
+            "utilityDamage": 199,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "MrChillout61",
@@ -1251,7 +2189,25 @@
             "damage": 1960,
             "headshots": 6,
             "mvps": 2,
-            "player_id": "e1c67ef9-50cb-424b-b8d3-558aa0165b75"
+            "player_id": "e1c67ef9-50cb-424b-b8d3-558aa0165b75",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 6,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 22,
+            "utilitySuccesses": 12,
+            "utilityDamage": 157,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "Bezhenec",
@@ -1261,7 +2217,25 @@
             "damage": 1650,
             "headshots": 5,
             "mvps": 1,
-            "player_id": "bea53fe9-8339-4a9e-9023-b89a10d0da7a"
+            "player_id": "bea53fe9-8339-4a9e-9023-b89a10d0da7a",
+            "doubles": 2,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 5,
+            "entryWins": 2,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 21,
+            "utilitySuccesses": 11,
+            "utilityDamage": 132,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "massao61",
@@ -1271,7 +2245,25 @@
             "damage": 1540,
             "headshots": 5,
             "mvps": 1,
-            "player_id": "81ca8d1b-4037-4d7b-96ca-4f4fb2cfade1"
+            "player_id": "81ca8d1b-4037-4d7b-96ca-4f4fb2cfade1",
+            "doubles": 2,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 5,
+            "entryWins": 2,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 20,
+            "utilitySuccesses": 11,
+            "utilityDamage": 123,
+            "flashCount": 7,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "DatObase",
@@ -1281,7 +2273,25 @@
             "damage": 1210,
             "headshots": 4,
             "mvps": 0,
-            "player_id": "90a2b3cd-0c84-499b-915f-9f21bf4ae698"
+            "player_id": "90a2b3cd-0c84-499b-915f-9f21bf4ae698",
+            "doubles": 2,
+            "triples": 0,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 4,
+            "entryWins": 1,
+            "clutch1v1Count": 0,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 19,
+            "utilitySuccesses": 10,
+            "utilityDamage": 97,
+            "flashCount": 7,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           }
         ],
         "players2": [
@@ -1293,7 +2303,25 @@
             "damage": 3149,
             "headshots": 14,
             "mvps": 5,
-            "player_id": "c9e13dd4-8ec4-4fec-b3d0-620f7ced7233"
+            "player_id": "c9e13dd4-8ec4-4fec-b3d0-620f7ced7233",
+            "doubles": 6,
+            "triples": 2,
+            "quadros": 1,
+            "pentas": 0,
+            "entryCount": 9,
+            "entryWins": 6,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 1,
+            "clutch1v2Wins": 1,
+            "clutchKills": 3,
+            "utilityCount": 27,
+            "utilitySuccesses": 15,
+            "utilityDamage": 252,
+            "flashCount": 10,
+            "flashSuccesses": 7,
+            "enemiesFlashed": 9,
+            "sniperKills": 0
           },
           {
             "nickname": "Kups2-0",
@@ -1303,7 +2331,25 @@
             "damage": 2890,
             "headshots": 11,
             "mvps": 4,
-            "player_id": "ce21732e-002e-4951-96cf-970d56a2eff4"
+            "player_id": "ce21732e-002e-4951-96cf-970d56a2eff4",
+            "doubles": 5,
+            "triples": 2,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 7,
+            "entryWins": 5,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 26,
+            "utilitySuccesses": 14,
+            "utilityDamage": 231,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "khachik92",
@@ -1313,7 +2359,25 @@
             "damage": 2420,
             "headshots": 9,
             "mvps": 2,
-            "player_id": "73866213-0a98-48c4-9858-912dc1a8ecad"
+            "player_id": "73866213-0a98-48c4-9858-912dc1a8ecad",
+            "doubles": 4,
+            "triples": 2,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 6,
+            "entryWins": 4,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 24,
+            "utilitySuccesses": 13,
+            "utilityDamage": 194,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "w1ndyyyk_244",
@@ -1323,7 +2387,25 @@
             "damage": 1680,
             "headshots": 5,
             "mvps": 1,
-            "player_id": "4fb8451b-e917-4c6f-9978-e7fb471a67b9"
+            "player_id": "4fb8451b-e917-4c6f-9978-e7fb471a67b9",
+            "doubles": 2,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 5,
+            "entryWins": 2,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 21,
+            "utilitySuccesses": 11,
+            "utilityDamage": 134,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "madmax14888",
@@ -1333,7 +2415,25 @@
             "damage": 1510,
             "headshots": 5,
             "mvps": 1,
-            "player_id": "9f90958a-81b8-48bd-8018-34ff55c763e7"
+            "player_id": "9f90958a-81b8-48bd-8018-34ff55c763e7",
+            "doubles": 2,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 5,
+            "entryWins": 2,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 20,
+            "utilitySuccesses": 11,
+            "utilityDamage": 121,
+            "flashCount": 7,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           }
         ]
       }
@@ -1342,8 +2442,8 @@
   {
     "match_id": "cs_sigma_cup_m5",
     "status": "FINISHED",
-    "started_at": 1789507800,
-    "finished_at": 1789511300,
+    "started_at": 1789522200,
+    "finished_at": 1789525700,
     "source": "Cybershoke",
     "tournament_name": "Sigma Cyber Cup: Season 2",
     "maps": [
@@ -1367,92 +2467,7 @@
         "faction2": 2
       }
     },
-    "seriesScores": [
-      {
-        "map": "de_mirage",
-        "score1": 9,
-        "score2": 13
-      },
-      {
-        "map": "de_nuke",
-        "score1": 8,
-        "score2": 13
-      }
-    ],
-    "players1": [
-      {
-        "player_id": "2c9dafb1-43d5-4883-b61d-30b7f7824d3c",
-        "nickname": "XZiBiTuM",
-        "kills": 39,
-        "deaths": 33,
-        "assists": 11
-      },
-      {
-        "player_id": "83c60ca6-2af7-42c4-98ec-fe5e8d500b96",
-        "nickname": "RT_BERS",
-        "kills": 34,
-        "deaths": 34,
-        "assists": 7
-      },
-      {
-        "player_id": "54ed2ca1-b3dd-4c31-9814-24698c33534e",
-        "nickname": "JIyHaTuK_1",
-        "kills": 32,
-        "deaths": 34,
-        "assists": 15
-      },
-      {
-        "player_id": "52103406-f3d6-47ec-80cf-8b844ac1f96e",
-        "nickname": "Stas1kudin",
-        "kills": 23,
-        "deaths": 32,
-        "assists": 7
-      },
-      {
-        "player_id": "2d1244a2-1265-4c93-ae69-0b23f8edb278",
-        "nickname": "AK_NoScope",
-        "kills": 17,
-        "deaths": 34,
-        "assists": 7
-      }
-    ],
-    "players2": [
-      {
-        "player_id": "c9e13dd4-8ec4-4fec-b3d0-620f7ced7233",
-        "nickname": "nika_jok",
-        "kills": 61,
-        "deaths": 27,
-        "assists": 12
-      },
-      {
-        "player_id": "ce21732e-002e-4951-96cf-970d56a2eff4",
-        "nickname": "Kups2-0",
-        "kills": 34,
-        "deaths": 32,
-        "assists": 15
-      },
-      {
-        "player_id": "73866213-0a98-48c4-9858-912dc1a8ecad",
-        "nickname": "khachik92",
-        "kills": 30,
-        "deaths": 28,
-        "assists": 7
-      },
-      {
-        "player_id": "9f90958a-81b8-48bd-8018-34ff55c763e7",
-        "nickname": "madmax14888",
-        "kills": 28,
-        "deaths": 32,
-        "assists": 7
-      },
-      {
-        "player_id": "4fb8451b-e917-4c6f-9978-e7fb471a67b9",
-        "nickname": "w1ndyyyk_244",
-        "kills": 14,
-        "deaths": 28,
-        "assists": 9
-      }
-    ],
+    "seriesScores": "0:2",
     "mapBreakdown": [
       {
         "map": "de_mirage",
@@ -1467,7 +2482,25 @@
             "damage": 3096,
             "headshots": 11,
             "mvps": 3,
-            "player_id": "2c9dafb1-43d5-4883-b61d-30b7f7824d3c"
+            "player_id": "2c9dafb1-43d5-4883-b61d-30b7f7824d3c",
+            "doubles": 5,
+            "triples": 2,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 8,
+            "entryWins": 5,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 27,
+            "utilitySuccesses": 15,
+            "utilityDamage": 248,
+            "flashCount": 10,
+            "flashSuccesses": 7,
+            "enemiesFlashed": 9,
+            "sniperKills": 0
           },
           {
             "nickname": "RT_BERS",
@@ -1477,7 +2510,25 @@
             "damage": 2280,
             "headshots": 3,
             "mvps": 2,
-            "player_id": "83c60ca6-2af7-42c4-98ec-fe5e8d500b96"
+            "player_id": "83c60ca6-2af7-42c4-98ec-fe5e8d500b96",
+            "doubles": 3,
+            "triples": 0,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 4,
+            "entryWins": 2,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 24,
+            "utilitySuccesses": 13,
+            "utilityDamage": 182,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 15
           },
           {
             "nickname": "JIyHaTuK_1",
@@ -1487,7 +2538,25 @@
             "damage": 2390,
             "headshots": 7,
             "mvps": 2,
-            "player_id": "54ed2ca1-b3dd-4c31-9814-24698c33534e"
+            "player_id": "54ed2ca1-b3dd-4c31-9814-24698c33534e",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 6,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 24,
+            "utilitySuccesses": 13,
+            "utilityDamage": 191,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "Stas1kudin",
@@ -1497,7 +2566,25 @@
             "damage": 2140,
             "headshots": 7,
             "mvps": 1,
-            "player_id": "52103406-f3d6-47ec-80cf-8b844ac1f96e"
+            "player_id": "52103406-f3d6-47ec-80cf-8b844ac1f96e",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 6,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 23,
+            "utilitySuccesses": 12,
+            "utilityDamage": 171,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "AK_NoScope",
@@ -1507,7 +2594,25 @@
             "damage": 1560,
             "headshots": 5,
             "mvps": 1,
-            "player_id": "2d1244a2-1265-4c93-ae69-0b23f8edb278"
+            "player_id": "2d1244a2-1265-4c93-ae69-0b23f8edb278",
+            "doubles": 2,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 5,
+            "entryWins": 2,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 21,
+            "utilitySuccesses": 11,
+            "utilityDamage": 125,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           }
         ],
         "players2": [
@@ -1519,7 +2624,25 @@
             "damage": 3852,
             "headshots": 17,
             "mvps": 5,
-            "player_id": "c9e13dd4-8ec4-4fec-b3d0-620f7ced7233"
+            "player_id": "c9e13dd4-8ec4-4fec-b3d0-620f7ced7233",
+            "doubles": 5,
+            "triples": 2,
+            "quadros": 2,
+            "pentas": 0,
+            "entryCount": 8,
+            "entryWins": 6,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 1,
+            "clutch1v2Wins": 1,
+            "clutchKills": 3,
+            "utilityCount": 30,
+            "utilitySuccesses": 16,
+            "utilityDamage": 308,
+            "flashCount": 11,
+            "flashSuccesses": 7,
+            "enemiesFlashed": 9,
+            "sniperKills": 0
           },
           {
             "nickname": "Kups2-0",
@@ -1529,7 +2652,25 @@
             "damage": 2580,
             "headshots": 8,
             "mvps": 3,
-            "player_id": "ce21732e-002e-4951-96cf-970d56a2eff4"
+            "player_id": "ce21732e-002e-4951-96cf-970d56a2eff4",
+            "doubles": 4,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 7,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 25,
+            "utilitySuccesses": 14,
+            "utilityDamage": 206,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "khachik92",
@@ -1539,7 +2680,25 @@
             "damage": 1980,
             "headshots": 7,
             "mvps": 2,
-            "player_id": "73866213-0a98-48c4-9858-912dc1a8ecad"
+            "player_id": "73866213-0a98-48c4-9858-912dc1a8ecad",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 5,
+            "entryWins": 2,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 22,
+            "utilitySuccesses": 12,
+            "utilityDamage": 158,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "madmax14888",
@@ -1549,7 +2708,25 @@
             "damage": 1870,
             "headshots": 6,
             "mvps": 2,
-            "player_id": "9f90958a-81b8-48bd-8018-34ff55c763e7"
+            "player_id": "9f90958a-81b8-48bd-8018-34ff55c763e7",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 6,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 22,
+            "utilitySuccesses": 12,
+            "utilityDamage": 150,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "w1ndyyyk_244",
@@ -1559,7 +2736,25 @@
             "damage": 920,
             "headshots": 2,
             "mvps": 1,
-            "player_id": "4fb8451b-e917-4c6f-9978-e7fb471a67b9"
+            "player_id": "4fb8451b-e917-4c6f-9978-e7fb471a67b9",
+            "doubles": 1,
+            "triples": 0,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 3,
+            "entryWins": 1,
+            "clutch1v1Count": 0,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 18,
+            "utilitySuccesses": 10,
+            "utilityDamage": 74,
+            "flashCount": 6,
+            "flashSuccesses": 4,
+            "enemiesFlashed": 5,
+            "sniperKills": 0
           }
         ]
       },
@@ -1576,7 +2771,25 @@
             "damage": 2541,
             "headshots": 9,
             "mvps": 3,
-            "player_id": "54ed2ca1-b3dd-4c31-9814-24698c33534e"
+            "player_id": "54ed2ca1-b3dd-4c31-9814-24698c33534e",
+            "doubles": 4,
+            "triples": 2,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 7,
+            "entryWins": 4,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 25,
+            "utilitySuccesses": 14,
+            "utilityDamage": 203,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "XZiBiTuM",
@@ -1586,7 +2799,25 @@
             "damage": 2610,
             "headshots": 9,
             "mvps": 2,
-            "player_id": "2c9dafb1-43d5-4883-b61d-30b7f7824d3c"
+            "player_id": "2c9dafb1-43d5-4883-b61d-30b7f7824d3c",
+            "doubles": 4,
+            "triples": 2,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 7,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 25,
+            "utilitySuccesses": 14,
+            "utilityDamage": 209,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "AK_NoScope",
@@ -1596,7 +2827,25 @@
             "damage": 2280,
             "headshots": 8,
             "mvps": 2,
-            "player_id": "2d1244a2-1265-4c93-ae69-0b23f8edb278"
+            "player_id": "2d1244a2-1265-4c93-ae69-0b23f8edb278",
+            "doubles": 4,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 7,
+            "entryWins": 4,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 24,
+            "utilitySuccesses": 13,
+            "utilityDamage": 182,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "Stas1kudin",
@@ -1606,7 +2855,25 @@
             "damage": 1320,
             "headshots": 4,
             "mvps": 1,
-            "player_id": "52103406-f3d6-47ec-80cf-8b844ac1f96e"
+            "player_id": "52103406-f3d6-47ec-80cf-8b844ac1f96e",
+            "doubles": 2,
+            "triples": 0,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 4,
+            "entryWins": 1,
+            "clutch1v1Count": 0,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 20,
+            "utilitySuccesses": 11,
+            "utilityDamage": 106,
+            "flashCount": 7,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "RT_BERS",
@@ -1616,7 +2883,25 @@
             "damage": 1140,
             "headshots": 2,
             "mvps": 0,
-            "player_id": "83c60ca6-2af7-42c4-98ec-fe5e8d500b96"
+            "player_id": "83c60ca6-2af7-42c4-98ec-fe5e8d500b96",
+            "doubles": 1,
+            "triples": 0,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 4,
+            "entryWins": 1,
+            "clutch1v1Count": 0,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 19,
+            "utilitySuccesses": 10,
+            "utilityDamage": 91,
+            "flashCount": 7,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 5
           }
         ],
         "players2": [
@@ -1628,7 +2913,25 @@
             "damage": 3980,
             "headshots": 15,
             "mvps": 5,
-            "player_id": "c9e13dd4-8ec4-4fec-b3d0-620f7ced7233"
+            "player_id": "c9e13dd4-8ec4-4fec-b3d0-620f7ced7233",
+            "doubles": 5,
+            "triples": 3,
+            "quadros": 2,
+            "pentas": 0,
+            "entryCount": 8,
+            "entryWins": 5,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 1,
+            "clutch1v2Wins": 1,
+            "clutchKills": 3,
+            "utilityCount": 31,
+            "utilitySuccesses": 17,
+            "utilityDamage": 318,
+            "flashCount": 11,
+            "flashSuccesses": 7,
+            "enemiesFlashed": 9,
+            "sniperKills": 0
           },
           {
             "nickname": "Kups2-0",
@@ -1638,7 +2941,25 @@
             "damage": 2710,
             "headshots": 9,
             "mvps": 3,
-            "player_id": "ce21732e-002e-4951-96cf-970d56a2eff4"
+            "player_id": "ce21732e-002e-4951-96cf-970d56a2eff4",
+            "doubles": 4,
+            "triples": 2,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 7,
+            "entryWins": 4,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 25,
+            "utilitySuccesses": 14,
+            "utilityDamage": 217,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "madmax14888",
@@ -1648,7 +2969,25 @@
             "damage": 2390,
             "headshots": 8,
             "mvps": 2,
-            "player_id": "9f90958a-81b8-48bd-8018-34ff55c763e7"
+            "player_id": "9f90958a-81b8-48bd-8018-34ff55c763e7",
+            "doubles": 4,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 6,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 24,
+            "utilitySuccesses": 13,
+            "utilityDamage": 191,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "khachik92",
@@ -1658,7 +2997,25 @@
             "damage": 2150,
             "headshots": 7,
             "mvps": 2,
-            "player_id": "73866213-0a98-48c4-9858-912dc1a8ecad"
+            "player_id": "73866213-0a98-48c4-9858-912dc1a8ecad",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 6,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 23,
+            "utilitySuccesses": 12,
+            "utilityDamage": 172,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "w1ndyyyk_244",
@@ -1668,7 +3025,25 @@
             "damage": 1420,
             "headshots": 4,
             "mvps": 1,
-            "player_id": "4fb8451b-e917-4c6f-9978-e7fb471a67b9"
+            "player_id": "4fb8451b-e917-4c6f-9978-e7fb471a67b9",
+            "doubles": 2,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 4,
+            "entryWins": 2,
+            "clutch1v1Count": 0,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 20,
+            "utilitySuccesses": 11,
+            "utilityDamage": 114,
+            "flashCount": 7,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           }
         ]
       }
@@ -1677,8 +3052,8 @@
   {
     "match_id": "cs_sigma_cup_m6",
     "status": "FINISHED",
-    "started_at": 1789511400,
-    "finished_at": 1789514900,
+    "started_at": 1789529400,
+    "finished_at": 1789532900,
     "source": "Cybershoke",
     "tournament_name": "Sigma Cyber Cup: Season 2",
     "maps": [
@@ -1702,92 +3077,7 @@
         "faction2": 2
       }
     },
-    "seriesScores": [
-      {
-        "map": "de_dust2",
-        "score1": 9,
-        "score2": 13
-      },
-      {
-        "map": "de_ancient",
-        "score1": 4,
-        "score2": 13
-      }
-    ],
-    "players1": [
-      {
-        "player_id": "81ca8d1b-4037-4d7b-96ca-4f4fb2cfade1",
-        "nickname": "massao61",
-        "kills": 44,
-        "deaths": 28,
-        "assists": 7
-      },
-      {
-        "player_id": "af52ceb5-cde0-47dd-bf48-7e640d7372ac",
-        "nickname": "ANAKONDA330",
-        "kills": 31,
-        "deaths": 33,
-        "assists": 8
-      },
-      {
-        "player_id": "90a2b3cd-0c84-499b-915f-9f21bf4ae698",
-        "nickname": "DatObase",
-        "kills": 27,
-        "deaths": 34,
-        "assists": 5
-      },
-      {
-        "player_id": "bea53fe9-8339-4a9e-9023-b89a10d0da7a",
-        "nickname": "Bezhenec",
-        "kills": 18,
-        "deaths": 32,
-        "assists": 5
-      },
-      {
-        "player_id": "e1c67ef9-50cb-424b-b8d3-558aa0165b75",
-        "nickname": "MrChillout61",
-        "kills": 13,
-        "deaths": 34,
-        "assists": 4
-      }
-    ],
-    "players2": [
-      {
-        "player_id": "3769f84c-cb71-4f76-b261-87486842b967",
-        "nickname": "FCG_pilotiki",
-        "kills": 43,
-        "deaths": 26,
-        "assists": 13
-      },
-      {
-        "player_id": "7ea3bd3d-582e-4cd2-872a-703bf7af557c",
-        "nickname": "nycujan",
-        "kills": 35,
-        "deaths": 33,
-        "assists": 14
-      },
-      {
-        "player_id": "cea765cf-b74d-40ba-bc09-3a5bab0c28e9",
-        "nickname": "BryanOKnish1",
-        "kills": 32,
-        "deaths": 21,
-        "assists": 12
-      },
-      {
-        "player_id": "70f7c6cc-6229-4121-b9f8-39b1d6a58c94",
-        "nickname": "mendez161",
-        "kills": 27,
-        "deaths": 26,
-        "assists": 9
-      },
-      {
-        "player_id": "4e4df10d-ca21-4d85-84d0-93212bea7e76",
-        "nickname": "Raul800",
-        "kills": 23,
-        "deaths": 27,
-        "assists": 9
-      }
-    ],
+    "seriesScores": "0:2",
     "mapBreakdown": [
       {
         "map": "de_dust2",
@@ -1802,7 +3092,25 @@
             "damage": 2874,
             "headshots": 12,
             "mvps": 4,
-            "player_id": "81ca8d1b-4037-4d7b-96ca-4f4fb2cfade1"
+            "player_id": "81ca8d1b-4037-4d7b-96ca-4f4fb2cfade1",
+            "doubles": 5,
+            "triples": 2,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 8,
+            "entryWins": 5,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 1,
+            "clutch1v2Wins": 1,
+            "clutchKills": 3,
+            "utilityCount": 26,
+            "utilitySuccesses": 14,
+            "utilityDamage": 230,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "ANAKONDA330",
@@ -1812,7 +3120,25 @@
             "damage": 2841,
             "headshots": 10,
             "mvps": 3,
-            "player_id": "af52ceb5-cde0-47dd-bf48-7e640d7372ac"
+            "player_id": "af52ceb5-cde0-47dd-bf48-7e640d7372ac",
+            "doubles": 4,
+            "triples": 1,
+            "quadros": 1,
+            "pentas": 0,
+            "entryCount": 6,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 26,
+            "utilitySuccesses": 14,
+            "utilityDamage": 227,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "DatObase",
@@ -1822,7 +3148,25 @@
             "damage": 2210,
             "headshots": 8,
             "mvps": 1,
-            "player_id": "90a2b3cd-0c84-499b-915f-9f21bf4ae698"
+            "player_id": "90a2b3cd-0c84-499b-915f-9f21bf4ae698",
+            "doubles": 4,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 7,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 23,
+            "utilitySuccesses": 12,
+            "utilityDamage": 177,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "Bezhenec",
@@ -1832,7 +3176,25 @@
             "damage": 1760,
             "headshots": 5,
             "mvps": 1,
-            "player_id": "bea53fe9-8339-4a9e-9023-b89a10d0da7a"
+            "player_id": "bea53fe9-8339-4a9e-9023-b89a10d0da7a",
+            "doubles": 2,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 5,
+            "entryWins": 2,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 21,
+            "utilitySuccesses": 11,
+            "utilityDamage": 141,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "MrChillout61",
@@ -1842,7 +3204,25 @@
             "damage": 1380,
             "headshots": 4,
             "mvps": 0,
-            "player_id": "e1c67ef9-50cb-424b-b8d3-558aa0165b75"
+            "player_id": "e1c67ef9-50cb-424b-b8d3-558aa0165b75",
+            "doubles": 2,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 5,
+            "entryWins": 2,
+            "clutch1v1Count": 0,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 20,
+            "utilitySuccesses": 11,
+            "utilityDamage": 110,
+            "flashCount": 7,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           }
         ],
         "players2": [
@@ -1854,7 +3234,25 @@
             "damage": 2713,
             "headshots": 11,
             "mvps": 4,
-            "player_id": "3769f84c-cb71-4f76-b261-87486842b967"
+            "player_id": "3769f84c-cb71-4f76-b261-87486842b967",
+            "doubles": 5,
+            "triples": 2,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 8,
+            "entryWins": 5,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 25,
+            "utilitySuccesses": 14,
+            "utilityDamage": 217,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "nycujan",
@@ -1864,7 +3262,25 @@
             "damage": 2650,
             "headshots": 8,
             "mvps": 3,
-            "player_id": "7ea3bd3d-582e-4cd2-872a-703bf7af557c"
+            "player_id": "7ea3bd3d-582e-4cd2-872a-703bf7af557c",
+            "doubles": 4,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 7,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 25,
+            "utilitySuccesses": 14,
+            "utilityDamage": 212,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "BryanOKnish1",
@@ -1874,7 +3290,25 @@
             "damage": 2390,
             "headshots": 8,
             "mvps": 3,
-            "player_id": "cea765cf-b74d-40ba-bc09-3a5bab0c28e9"
+            "player_id": "cea765cf-b74d-40ba-bc09-3a5bab0c28e9",
+            "doubles": 4,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 6,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 24,
+            "utilitySuccesses": 13,
+            "utilityDamage": 191,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "mendez161",
@@ -1884,7 +3318,25 @@
             "damage": 2280,
             "headshots": 8,
             "mvps": 2,
-            "player_id": "70f7c6cc-6229-4121-b9f8-39b1d6a58c94"
+            "player_id": "70f7c6cc-6229-4121-b9f8-39b1d6a58c94",
+            "doubles": 4,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 6,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 24,
+            "utilitySuccesses": 13,
+            "utilityDamage": 182,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "Raul800",
@@ -1894,7 +3346,25 @@
             "damage": 2050,
             "headshots": 4,
             "mvps": 1,
-            "player_id": "4e4df10d-ca21-4d85-84d0-93212bea7e76"
+            "player_id": "4e4df10d-ca21-4d85-84d0-93212bea7e76",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 6,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 23,
+            "utilitySuccesses": 12,
+            "utilityDamage": 164,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 10
           }
         ]
       },
@@ -1911,7 +3381,25 @@
             "damage": 2534,
             "headshots": 11,
             "mvps": 2,
-            "player_id": "81ca8d1b-4037-4d7b-96ca-4f4fb2cfade1"
+            "player_id": "81ca8d1b-4037-4d7b-96ca-4f4fb2cfade1",
+            "doubles": 4,
+            "triples": 1,
+            "quadros": 2,
+            "pentas": 0,
+            "entryCount": 6,
+            "entryWins": 4,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 25,
+            "utilitySuccesses": 14,
+            "utilityDamage": 203,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "ANAKONDA330",
@@ -1921,7 +3409,25 @@
             "damage": 1890,
             "headshots": 6,
             "mvps": 1,
-            "player_id": "af52ceb5-cde0-47dd-bf48-7e640d7372ac"
+            "player_id": "af52ceb5-cde0-47dd-bf48-7e640d7372ac",
+            "doubles": 3,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 5,
+            "entryWins": 2,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 22,
+            "utilitySuccesses": 12,
+            "utilityDamage": 151,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "MrChillout61",
@@ -1931,7 +3437,25 @@
             "damage": 1590,
             "headshots": 5,
             "mvps": 1,
-            "player_id": "e1c67ef9-50cb-424b-b8d3-558aa0165b75"
+            "player_id": "e1c67ef9-50cb-424b-b8d3-558aa0165b75",
+            "doubles": 2,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 5,
+            "entryWins": 2,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 21,
+            "utilitySuccesses": 11,
+            "utilityDamage": 127,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "Bezhenec",
@@ -1941,7 +3465,25 @@
             "damage": 1140,
             "headshots": 3,
             "mvps": 0,
-            "player_id": "bea53fe9-8339-4a9e-9023-b89a10d0da7a"
+            "player_id": "bea53fe9-8339-4a9e-9023-b89a10d0da7a",
+            "doubles": 1,
+            "triples": 0,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 4,
+            "entryWins": 1,
+            "clutch1v1Count": 0,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 19,
+            "utilitySuccesses": 10,
+            "utilityDamage": 91,
+            "flashCount": 7,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "DatObase",
@@ -1951,7 +3493,25 @@
             "damage": 790,
             "headshots": 2,
             "mvps": 0,
-            "player_id": "90a2b3cd-0c84-499b-915f-9f21bf4ae698"
+            "player_id": "90a2b3cd-0c84-499b-915f-9f21bf4ae698",
+            "doubles": 1,
+            "triples": 0,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 3,
+            "entryWins": 1,
+            "clutch1v1Count": 0,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 17,
+            "utilitySuccesses": 9,
+            "utilityDamage": 63,
+            "flashCount": 6,
+            "flashSuccesses": 4,
+            "enemiesFlashed": 5,
+            "sniperKills": 0
           }
         ],
         "players2": [
@@ -1963,7 +3523,25 @@
             "damage": 3601,
             "headshots": 6,
             "mvps": 5,
-            "player_id": "4e4df10d-ca21-4d85-84d0-93212bea7e76"
+            "player_id": "4e4df10d-ca21-4d85-84d0-93212bea7e76",
+            "doubles": 4,
+            "triples": 2,
+            "quadros": 0,
+            "pentas": 1,
+            "entryCount": 6,
+            "entryWins": 5,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 1,
+            "clutch1v2Wins": 1,
+            "clutchKills": 3,
+            "utilityCount": 29,
+            "utilitySuccesses": 16,
+            "utilityDamage": 288,
+            "flashCount": 10,
+            "flashSuccesses": 7,
+            "enemiesFlashed": 9,
+            "sniperKills": 12
           },
           {
             "nickname": "nycujan",
@@ -1973,7 +3551,25 @@
             "damage": 2680,
             "headshots": 9,
             "mvps": 3,
-            "player_id": "7ea3bd3d-582e-4cd2-872a-703bf7af557c"
+            "player_id": "7ea3bd3d-582e-4cd2-872a-703bf7af557c",
+            "doubles": 4,
+            "triples": 2,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 7,
+            "entryWins": 4,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 25,
+            "utilitySuccesses": 14,
+            "utilityDamage": 214,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "FCG_pilotiki",
@@ -1983,7 +3579,25 @@
             "damage": 2410,
             "headshots": 8,
             "mvps": 3,
-            "player_id": "3769f84c-cb71-4f76-b261-87486842b967"
+            "player_id": "3769f84c-cb71-4f76-b261-87486842b967",
+            "doubles": 4,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 5,
+            "entryWins": 3,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 24,
+            "utilitySuccesses": 13,
+            "utilityDamage": 193,
+            "flashCount": 9,
+            "flashSuccesses": 6,
+            "enemiesFlashed": 8,
+            "sniperKills": 0
           },
           {
             "nickname": "mendez161",
@@ -1993,7 +3607,25 @@
             "damage": 1820,
             "headshots": 5,
             "mvps": 1,
-            "player_id": "70f7c6cc-6229-4121-b9f8-39b1d6a58c94"
+            "player_id": "70f7c6cc-6229-4121-b9f8-39b1d6a58c94",
+            "doubles": 2,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 4,
+            "entryWins": 2,
+            "clutch1v1Count": 1,
+            "clutch1v1Wins": 1,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 1,
+            "utilityCount": 22,
+            "utilitySuccesses": 12,
+            "utilityDamage": 146,
+            "flashCount": 8,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           },
           {
             "nickname": "BryanOKnish1",
@@ -2003,495 +3635,25 @@
             "damage": 1450,
             "headshots": 4,
             "mvps": 1,
-            "player_id": "cea765cf-b74d-40ba-bc09-3a5bab0c28e9"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "match_id": "cs_series_1_inferno_dust2",
-    "status": "FINISHED",
-    "started_at": 1785787200,
-    "finished_at": 1785790800,
-    "source": "Cybershoke",
-    "maps": [
-      "de_inferno",
-      "de_dust2"
-    ],
-    "teams": {
-      "faction1": {
-        "name": "team_SIGMAl",
-        "score": 2
-      },
-      "faction2": {
-        "name": "team_pilotiki161",
-        "score": 0
-      }
-    },
-    "results": {
-      "winner": "faction1",
-      "score": {
-        "faction1": 2,
-        "faction2": 0
-      }
-    },
-    "seriesScores": [
-      {
-        "map": "de_inferno",
-        "score1": 16,
-        "score2": 14
-      },
-      {
-        "map": "de_dust2",
-        "score1": 13,
-        "score2": 6
-      }
-    ],
-    "players1": [
-      {
-        "nickname": "uncle",
-        "kills": 51,
-        "deaths": 34,
-        "assists": 7
-      },
-      {
-        "nickname": "Porshen",
-        "kills": 46,
-        "deaths": 32,
-        "assists": 18
-      },
-      {
-        "nickname": "-R.T.-",
-        "kills": 47,
-        "deaths": 29,
-        "assists": 6
-      },
-      {
-        "nickname": "SIGMA | Луна",
-        "kills": 25,
-        "deaths": 37,
-        "assists": 18
-      },
-      {
-        "nickname": "w1ndyyyk 244",
-        "kills": 24,
-        "deaths": 33,
-        "assists": 14
-      }
-    ],
-    "players2": [
-      {
-        "nickname": "massao61",
-        "kills": 59,
-        "deaths": 28,
-        "assists": 9
-      },
-      {
-        "nickname": "ANAKONDA",
-        "kills": 41,
-        "deaths": 39,
-        "assists": 9
-      },
-      {
-        "nickname": "r.alekseevich",
-        "kills": 28,
-        "deaths": 36,
-        "assists": 13
-      },
-      {
-        "nickname": "pilotiki161",
-        "kills": 18,
-        "deaths": 44,
-        "assists": 16
-      },
-      {
-        "nickname": "Беженец",
-        "kills": 18,
-        "deaths": 40,
-        "assists": 9
-      }
-    ],
-    "mapBreakdown": [
-      {
-        "map": "de_inferno",
-        "score1": 16,
-        "score2": 14,
-        "players1": [
-          {
-            "nickname": "SIGMA | Луна",
-            "kills": 16,
-            "deaths": 23,
-            "assists": 12
-          },
-          {
-            "nickname": "-R.T.-",
-            "kills": 27,
-            "deaths": 19,
-            "assists": 5
-          },
-          {
-            "nickname": "Porshen",
-            "kills": 25,
-            "deaths": 21,
-            "assists": 11
-          },
-          {
-            "nickname": "uncle",
-            "kills": 32,
-            "deaths": 23,
-            "assists": 5
-          },
-          {
-            "nickname": "w1ndyyyk 244",
-            "kills": 13,
-            "deaths": 22,
-            "assists": 9
-          }
-        ],
-        "players2": [
-          {
-            "nickname": "pilotiki161",
-            "kills": 11,
-            "deaths": 26,
-            "assists": 11
-          },
-          {
-            "nickname": "ANAKONDA",
-            "kills": 27,
-            "deaths": 24,
-            "assists": 6
-          },
-          {
-            "nickname": "massao61",
-            "kills": 39,
-            "deaths": 15,
-            "assists": 5
-          },
-          {
-            "nickname": "r.alekseevich",
-            "kills": 16,
-            "deaths": 20,
-            "assists": 7
-          },
-          {
-            "nickname": "Беженец",
-            "kills": 14,
-            "deaths": 21,
-            "assists": 6
-          }
-        ]
-      },
-      {
-        "map": "de_dust2",
-        "score1": 13,
-        "score2": 6,
-        "players1": [
-          {
-            "nickname": "SIGMA | Луна",
-            "kills": 9,
-            "deaths": 14,
-            "assists": 6
-          },
-          {
-            "nickname": "uncle",
-            "kills": 19,
-            "deaths": 11,
-            "assists": 2
-          },
-          {
-            "nickname": "Porshen",
-            "kills": 21,
-            "deaths": 11,
-            "assists": 7
-          },
-          {
-            "nickname": "-R.T.-",
-            "kills": 20,
-            "deaths": 10,
-            "assists": 1
-          },
-          {
-            "nickname": "w1ndyyyk 244",
-            "kills": 11,
-            "deaths": 11,
-            "assists": 5
-          }
-        ],
-        "players2": [
-          {
-            "nickname": "pilotiki161",
-            "kills": 7,
-            "deaths": 18,
-            "assists": 5
-          },
-          {
-            "nickname": "r.alekseevich",
-            "kills": 12,
-            "deaths": 16,
-            "assists": 6
-          },
-          {
-            "nickname": "ANAKONDA",
-            "kills": 14,
-            "deaths": 15,
-            "assists": 3
-          },
-          {
-            "nickname": "Беженец",
-            "kills": 4,
-            "deaths": 19,
-            "assists": 3
-          },
-          {
-            "nickname": "massao61",
-            "kills": 20,
-            "deaths": 13,
-            "assists": 4
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "match_id": "cs_series_2_nuke_anubis",
-    "status": "FINISHED",
-    "started_at": 1785791200,
-    "finished_at": 1785794800,
-    "source": "Cybershoke",
-    "maps": [
-      "de_nuke",
-      "de_anubis"
-    ],
-    "teams": {
-      "faction1": {
-        "name": "team_nycuJaN",
-        "score": 2
-      },
-      "faction2": {
-        "name": "team_MrChillout",
-        "score": 0
-      }
-    },
-    "results": {
-      "winner": "faction1",
-      "score": {
-        "faction1": 2,
-        "faction2": 0
-      }
-    },
-    "seriesScores": [
-      {
-        "map": "de_nuke",
-        "score1": 13,
-        "score2": 8
-      },
-      {
-        "map": "de_anubis",
-        "score1": 13,
-        "score2": 11
-      }
-    ],
-    "players1": [
-      {
-        "nickname": "000 ВАРЯГ 0",
-        "kills": 49,
-        "deaths": 31,
-        "assists": 14
-      },
-      {
-        "nickname": "nycuJaN",
-        "kills": 44,
-        "deaths": 32,
-        "assists": 11
-      },
-      {
-        "nickname": "Nagibator",
-        "kills": 36,
-        "deaths": 28,
-        "assists": 10
-      },
-      {
-        "nickname": "Hakai",
-        "kills": 29,
-        "deaths": 28,
-        "assists": 6
-      },
-      {
-        "nickname": "MAD MAX",
-        "kills": 23,
-        "deaths": 33,
-        "assists": 8
-      }
-    ],
-    "players2": [
-      {
-        "nickname": "nika_jok",
-        "kills": 41,
-        "deaths": 32,
-        "assists": 14
-      },
-      {
-        "nickname": "xzibitum",
-        "kills": 31,
-        "deaths": 37,
-        "assists": 9
-      },
-      {
-        "nickname": "Mr Chillout",
-        "kills": 26,
-        "deaths": 37,
-        "assists": 6
-      },
-      {
-        "nickname": "mendez",
-        "kills": 23,
-        "deaths": 35,
-        "assists": 10
-      },
-      {
-        "nickname": "Stas1kudin",
-        "kills": 13,
-        "deaths": 39,
-        "assists": 12
-      }
-    ],
-    "mapBreakdown": [
-      {
-        "map": "de_nuke",
-        "score1": 13,
-        "score2": 8,
-        "players1": [
-          {
-            "nickname": "nycuJaN",
-            "kills": 22,
-            "deaths": 14,
-            "assists": 7
-          },
-          {
-            "nickname": "000 ВАРЯГ 0",
-            "kills": 23,
-            "deaths": 16,
-            "assists": 7
-          },
-          {
-            "nickname": "MAD MAX",
-            "kills": 11,
-            "deaths": 14,
-            "assists": 4
-          },
-          {
-            "nickname": "Hakai",
-            "kills": 12,
-            "deaths": 13,
-            "assists": 3
-          },
-          {
-            "nickname": "Nagibator",
-            "kills": 19,
-            "deaths": 12,
-            "assists": 6
-          }
-        ],
-        "players2": [
-          {
-            "nickname": "Mr Chillout",
-            "kills": 15,
-            "deaths": 16,
-            "assists": 4
-          },
-          {
-            "nickname": "mendez",
-            "kills": 13,
-            "deaths": 16,
-            "assists": 4
-          },
-          {
-            "nickname": "nika_jok",
-            "kills": 20,
-            "deaths": 14,
-            "assists": 4
-          },
-          {
-            "nickname": "xzibitum",
-            "kills": 1,
-            "deaths": 19,
-            "assists": 4
-          },
-          {
-            "nickname": "Stas1kudin",
-            "kills": 3,
-            "deaths": 20,
-            "assists": 6
-          }
-        ]
-      },
-      {
-        "map": "de_anubis",
-        "score1": 13,
-        "score2": 11,
-        "players1": [
-          {
-            "nickname": "nycuJaN",
-            "kills": 22,
-            "deaths": 18,
-            "assists": 4
-          },
-          {
-            "nickname": "Nagibator",
-            "kills": 17,
-            "deaths": 16,
-            "assists": 4
-          },
-          {
-            "nickname": "Hakai",
-            "kills": 17,
-            "deaths": 15,
-            "assists": 3
-          },
-          {
-            "nickname": "MAD MAX",
-            "kills": 12,
-            "deaths": 19,
-            "assists": 4
-          },
-          {
-            "nickname": "000 ВАРЯГ 0",
-            "kills": 26,
-            "deaths": 15,
-            "assists": 7
-          }
-        ],
-        "players2": [
-          {
-            "nickname": "Mr Chillout",
-            "kills": 11,
-            "deaths": 21,
-            "assists": 2
-          },
-          {
-            "nickname": "xzibitum",
-            "kills": 30,
-            "deaths": 18,
-            "assists": 5
-          },
-          {
-            "nickname": "mendez",
-            "kills": 10,
-            "deaths": 19,
-            "assists": 6
-          },
-          {
-            "nickname": "Stas1kudin",
-            "kills": 10,
-            "deaths": 19,
-            "assists": 6
-          },
-          {
-            "nickname": "nika_jok",
-            "kills": 21,
-            "deaths": 18,
-            "assists": 10
+            "player_id": "cea765cf-b74d-40ba-bc09-3a5bab0c28e9",
+            "doubles": 2,
+            "triples": 1,
+            "quadros": 0,
+            "pentas": 0,
+            "entryCount": 4,
+            "entryWins": 2,
+            "clutch1v1Count": 0,
+            "clutch1v1Wins": 0,
+            "clutch1v2Count": 0,
+            "clutch1v2Wins": 0,
+            "clutchKills": 0,
+            "utilityCount": 20,
+            "utilitySuccesses": 11,
+            "utilityDamage": 116,
+            "flashCount": 7,
+            "flashSuccesses": 5,
+            "enemiesFlashed": 6,
+            "sniperKills": 0
           }
         ]
       }
