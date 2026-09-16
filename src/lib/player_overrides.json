@@ -115,14 +115,16 @@
     "nickname": "ANAKONDA330",
     "csRating": 8859,
     "customElo": 1197,
-    "updatedAt": "2026-09-14T07:35:02.302Z",
-    "customSkillScore": 62,
+    "updatedAt": "2026-09-16T12:05:46.188Z",
+    "customSkillScore": 63,
     "shooting": 64,
     "calls": 70,
     "mental": 55,
     "gamesense": 68,
     "aura": 92,
-    "playerId": "af52ceb5-cde0-47dd-bf48-7e640d7372ac"
+    "playerId": "af52ceb5-cde0-47dd-bf48-7e640d7372ac",
+    "previousSkillScore": 62,
+    "skillDelta": 1
   },
   "e1c67ef9-50cb-424b-b8d3-558aa0165b75": {
     "nickname": "MrChillout61",
@@ -156,14 +158,16 @@
     "nickname": "Stas1kudin",
     "csRating": 9500,
     "customElo": 1000,
-    "updatedAt": "2026-09-10T16:44:54.313Z",
-    "customSkillScore": 15,
+    "updatedAt": "2026-09-16T12:05:46.188Z",
+    "customSkillScore": 17,
     "shooting": 28,
     "calls": 10,
     "mental": 75,
     "gamesense": 20,
     "aura": 80,
-    "playerId": "52103406-f3d6-47ec-80cf-8b844ac1f96e"
+    "playerId": "52103406-f3d6-47ec-80cf-8b844ac1f96e",
+    "previousSkillScore": 15,
+    "skillDelta": 2
   },
   "70f7c6cc-6229-4121-b9f8-39b1d6a58c94": {
     "nickname": "mendez161",
@@ -238,14 +242,16 @@
     "nickname": "ANAKONDA330",
     "csRating": 8859,
     "customElo": 1197,
-    "updatedAt": "2026-09-14T07:35:02.302Z",
-    "customSkillScore": 62,
+    "updatedAt": "2026-09-16T12:05:46.188Z",
+    "customSkillScore": 63,
     "shooting": 64,
     "calls": 70,
     "mental": 55,
     "gamesense": 68,
     "aura": 92,
-    "playerId": "af52ceb5-cde0-47dd-bf48-7e640d7372ac"
+    "playerId": "af52ceb5-cde0-47dd-bf48-7e640d7372ac",
+    "previousSkillScore": 62,
+    "skillDelta": 1
   },
   "73866213-0a98-48c4-9858-912dc1a8ecad": {
     "nickname": "khachik92",
@@ -715,14 +721,16 @@
     "nickname": "Stas1kudin",
     "csRating": 9500,
     "customElo": 1000,
-    "updatedAt": "2026-09-10T16:44:54.313Z",
-    "customSkillScore": 15,
+    "updatedAt": "2026-09-16T12:05:46.188Z",
+    "customSkillScore": 17,
     "shooting": 28,
     "calls": 10,
     "mental": 75,
     "gamesense": 20,
     "aura": 80,
-    "playerId": "52103406-f3d6-47ec-80cf-8b844ac1f96e"
+    "playerId": "52103406-f3d6-47ec-80cf-8b844ac1f96e",
+    "previousSkillScore": 15,
+    "skillDelta": 2
   },
   "mendez161": {
     "nickname": "mendez161",
@@ -916,14 +924,16 @@
     "nickname": "ANAKONDA330",
     "csRating": 8859,
     "customElo": 1197,
-    "updatedAt": "2026-09-14T07:35:02.302Z",
-    "customSkillScore": 62,
+    "updatedAt": "2026-09-16T12:05:46.188Z",
+    "customSkillScore": 63,
     "shooting": 64,
     "calls": 70,
     "mental": 55,
     "gamesense": 68,
     "aura": 92,
-    "playerId": "af52ceb5-cde0-47dd-bf48-7e640d7372ac"
+    "playerId": "af52ceb5-cde0-47dd-bf48-7e640d7372ac",
+    "previousSkillScore": 62,
+    "skillDelta": 1
   },
   "Porshen": {
     "nickname": "Porshen",
@@ -1097,14 +1107,16 @@
     "nickname": "Stas1kudin",
     "csRating": 9500,
     "customElo": 1000,
-    "updatedAt": "2026-09-10T16:44:54.313Z",
-    "customSkillScore": 15,
+    "updatedAt": "2026-09-16T12:05:46.188Z",
+    "customSkillScore": 17,
     "shooting": 28,
     "calls": 10,
     "mental": 75,
     "gamesense": 20,
     "aura": 80,
-    "playerId": "52103406-f3d6-47ec-80cf-8b844ac1f96e"
+    "playerId": "52103406-f3d6-47ec-80cf-8b844ac1f96e",
+    "previousSkillScore": 15,
+    "skillDelta": 2
   },
   "DatObase": {
     "nickname": "DatObase",
@@ -1245,26 +1257,30 @@
     "nickname": "ANAKONDA330",
     "csRating": 8859,
     "customElo": 1197,
-    "updatedAt": "2026-09-14T07:35:02.302Z",
-    "customSkillScore": 62,
+    "updatedAt": "2026-09-16T12:05:46.188Z",
+    "customSkillScore": 63,
     "shooting": 64,
     "calls": 70,
     "mental": 55,
     "gamesense": 68,
     "aura": 92,
-    "playerId": "af52ceb5-cde0-47dd-bf48-7e640d7372ac"
+    "playerId": "af52ceb5-cde0-47dd-bf48-7e640d7372ac",
+    "previousSkillScore": 62,
+    "skillDelta": 1
   },
   "anakonda330": {
     "nickname": "ANAKONDA330",
     "csRating": 8859,
     "customElo": 1197,
-    "updatedAt": "2026-09-14T07:35:02.302Z",
-    "customSkillScore": 62,
+    "updatedAt": "2026-09-16T12:05:46.188Z",
+    "customSkillScore": 63,
     "shooting": 64,
     "calls": 70,
     "mental": 55,
     "gamesense": 68,
     "aura": 92,
-    "playerId": "af52ceb5-cde0-47dd-bf48-7e640d7372ac"
+    "playerId": "af52ceb5-cde0-47dd-bf48-7e640d7372ac",
+    "previousSkillScore": 62,
+    "skillDelta": 1
   }
 }
