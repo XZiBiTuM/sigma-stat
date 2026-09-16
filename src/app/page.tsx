@@ -414,6 +414,50 @@ export default function Home() {
     };
   };
 
+  const getHltvBadgeStyle = (val: number) => {
+    if (val >= 1.30) {
+      // Tier S (Purple / Elite)
+      return {
+        color: "#c084fc",
+        bg: "rgba(168, 85, 247, 0.22)",
+        border: "1px solid rgba(168, 85, 247, 0.7)",
+        glow: "0 0 12px rgba(168, 85, 247, 0.5)"
+      };
+    } else if (val >= 1.15) {
+      // Tier A (Neon Cyan / High impact)
+      return {
+        color: "#00e5ff",
+        bg: "rgba(0, 229, 255, 0.15)",
+        border: "1px solid rgba(0, 229, 255, 0.5)",
+        glow: "0 0 10px rgba(0, 229, 255, 0.35)"
+      };
+    } else if (val >= 1.00) {
+      // Tier B (Bright Green / Positive)
+      return {
+        color: "#00e676",
+        bg: "rgba(0, 230, 118, 0.15)",
+        border: "1px solid rgba(0, 230, 118, 0.4)",
+        glow: "none"
+      };
+    } else if (val >= 0.85) {
+      // Tier C (Yellow/Gold / Average)
+      return {
+        color: "#ffd700",
+        bg: "rgba(255, 215, 0, 0.15)",
+        border: "1px solid rgba(255, 215, 0, 0.4)",
+        glow: "none"
+      };
+    } else {
+      // Tier D (Red / Underperforming)
+      return {
+        color: "#ff4d4d",
+        bg: "rgba(239, 68, 68, 0.15)",
+        border: "1px solid rgba(239, 68, 68, 0.4)",
+        glow: "none"
+      };
+    }
+  };
+
   // Auth & Event of Mr.Chillout States
   const [userRole, setUserRole] = useState<"GUEST" | "EVENT_MAKER" | "ADMIN">("GUEST");
   const [userName, setUserName] = useState<string>("");
@@ -3591,39 +3635,26 @@ export default function Home() {
 
                                 {/* HLTV 2.0 Rating */}
                                 <td style={{ textAlign: "center" }}>
-                                  {(item as any).hubStats?.hltv !== undefined ? (
-                                    <span 
-                                      style={{
-                                        fontSize: "0.82rem",
-                                        fontWeight: "800",
-                                        padding: "0.2rem 0.5rem",
-                                        borderRadius: "6px",
-                                        background: (item as any).hubStats.hltv >= 1.20 
-                                          ? "rgba(255, 215, 0, 0.15)" 
-                                          : (item as any).hubStats.hltv >= 1.05 
-                                          ? "rgba(76, 175, 80, 0.15)" 
-                                          : (item as any).hubStats.hltv >= 0.95 
-                                          ? "rgba(0, 229, 255, 0.15)" 
-                                          : "rgba(255, 255, 255, 0.05)",
-                                        border: (item as any).hubStats.hltv >= 1.20 
-                                          ? "1px solid rgba(255, 215, 0, 0.4)" 
-                                          : (item as any).hubStats.hltv >= 1.05 
-                                          ? "1px solid rgba(76, 175, 80, 0.4)" 
-                                          : (item as any).hubStats.hltv >= 0.95 
-                                          ? "1px solid rgba(0, 229, 255, 0.4)" 
-                                          : "1px solid var(--border-light)",
-                                        color: (item as any).hubStats.hltv >= 1.20 
-                                          ? "#ffd700" 
-                                          : (item as any).hubStats.hltv >= 1.05 
-                                          ? "#4caf50" 
-                                          : (item as any).hubStats.hltv >= 0.95 
-                                          ? "#00e5ff" 
-                                          : "var(--text-muted)"
-                                      }}
-                                    >
-                                      {(item as any).hubStats.hltv.toFixed(2)}
-                                    </span>
-                                  ) : (
+                                  {(item as any).hubStats?.hltv !== undefined ? (() => {
+                                    const hltvNum = Number((item as any).hubStats.hltv);
+                                    const st = getHltvBadgeStyle(hltvNum);
+                                    return (
+                                      <span 
+                                        style={{
+                                          fontSize: "0.82rem",
+                                          fontWeight: "800",
+                                          padding: "0.2rem 0.5rem",
+                                          borderRadius: "6px",
+                                          background: st.bg,
+                                          border: st.border,
+                                          color: st.color,
+                                          boxShadow: st.glow
+                                        }}
+                                      >
+                                        {hltvNum.toFixed(2)}
+                                      </span>
+                                    );
+                                  })() : (
                                     <span style={{ color: "var(--text-muted)" }}>—</span>
                                   )}
                                 </td>
@@ -4105,7 +4136,27 @@ export default function Home() {
                                       {currentTournament.mvp.nickname}
                                     </div>
                                     <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginTop: "0.35rem", display: "flex", flexWrap: "wrap", gap: "0.5rem", alignItems: "center" }}>
-                                      <span>HLTV 2.0: <strong style={{ color: "#ffd700", fontWeight: "900", fontSize: "0.95rem" }}>{currentTournament.mvp.hltv || "—"}</strong></span>
+                                      {(() => {
+                                        const hVal = parseFloat(currentTournament.mvp.hltv || "0");
+                                        const st = getHltvBadgeStyle(hVal);
+                                        return (
+                                          <span style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem" }}>
+                                            HLTV 2.0: 
+                                            <strong style={{
+                                              color: st.color,
+                                              background: st.bg,
+                                              border: st.border,
+                                              boxShadow: st.glow,
+                                              padding: "0.1rem 0.45rem",
+                                              borderRadius: "6px",
+                                              fontWeight: "900",
+                                              fontSize: "0.95rem"
+                                            }}>
+                                              {currentTournament.mvp.hltv || "—"}
+                                            </strong>
+                                          </span>
+                                        );
+                                      })()}
                                       <span style={{ color: "var(--border-light)" }}>|</span>
                                       <span>ADR: <strong style={{ color: "#00e5ff" }}>{currentTournament.mvp.adr || "—"}</strong></span>
                                       <span style={{ color: "var(--border-light)" }}>|</span>
@@ -4209,19 +4260,23 @@ export default function Home() {
                                         </span>
                                       </td>
                                       <td style={{ textAlign: "center" }}>
-                                        {p.hltv ? (
-                                          <span style={{
-                                            fontWeight: "900",
-                                            fontSize: "0.88rem",
-                                            padding: "0.15rem 0.45rem",
-                                            borderRadius: "6px",
-                                            background: hltvVal >= 1.20 ? "rgba(255, 215, 0, 0.15)" : hltvVal >= 1.05 ? "rgba(76, 175, 80, 0.15)" : hltvVal >= 0.95 ? "rgba(0, 229, 255, 0.15)" : "rgba(255, 255, 255, 0.05)",
-                                            color: hltvVal >= 1.20 ? "#ffd700" : hltvVal >= 1.05 ? "#4caf50" : hltvVal >= 0.95 ? "#00e5ff" : "var(--text-muted)",
-                                            border: hltvVal >= 1.20 ? "1px solid rgba(255, 215, 0, 0.4)" : hltvVal >= 1.05 ? "1px solid rgba(76, 175, 80, 0.4)" : "1px solid var(--border-light)"
-                                          }}>
-                                            {p.hltv}
-                                          </span>
-                                        ) : (
+                                        {p.hltv ? (() => {
+                                          const st = getHltvBadgeStyle(hltvVal);
+                                          return (
+                                            <span style={{
+                                              fontWeight: "900",
+                                              fontSize: "0.88rem",
+                                              padding: "0.18rem 0.5rem",
+                                              borderRadius: "6px",
+                                              background: st.bg,
+                                              color: st.color,
+                                              border: st.border,
+                                              boxShadow: st.glow
+                                            }}>
+                                              {p.hltv}
+                                            </span>
+                                          );
+                                        })() : (
                                           <span style={{ color: "var(--text-muted)" }}>—</span>
                                         )}
                                       </td>
