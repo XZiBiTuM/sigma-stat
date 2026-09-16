@@ -3491,43 +3491,53 @@ export default function Home() {
                                     const wRecord = (playerId && weeklySkillMap[playerId]) || 
                                                     (nickname && weeklySkillMap[nickname.toLowerCase()]) || 
                                                     (nickname && weeklySkillMap[nickname]);
-                                    const delta = wRecord?.weeklyDelta !== undefined && wRecord?.weeklyDelta !== 0 
+                                    const rawDelta = wRecord?.weeklyDelta !== undefined 
                                       ? wRecord.weeklyDelta 
-                                      : (sk.delta !== undefined && sk.delta !== 0 ? sk.delta : undefined);
+                                      : (sk.delta !== undefined ? sk.delta : 0);
+                                    const delta = rawDelta || 0;
+                                    const isPositive = delta > 0;
+                                    const isNegative = delta < 0;
+
                                     return (
                                       <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "0.35rem" }}>
                                         <span 
                                           className="badge" 
                                           style={{ 
+                                            width: "68px",
+                                            textAlign: "center",
                                             fontSize: "0.78rem", 
                                             fontWeight: "800", 
                                             background: sk.bg, 
                                             border: `1px solid ${sk.border}`, 
                                             color: sk.color,
-                                            padding: "0.25rem 0.6rem",
-                                            borderRadius: "6px"
+                                            padding: "0.25rem 0.4rem",
+                                            borderRadius: "6px",
+                                            display: "inline-block"
                                           }}
-                                          title={`Рейтинг скилла\nCS2 Premier: ${(sk?.csRating ?? 0).toLocaleString('ru-RU')}${delta !== undefined && delta !== 0 ? `\nПоследнее изменение: ${delta > 0 ? `+${delta}` : delta} очков` : ''}`}
+                                          title={`Рейтинг скилла\nCS2 Premier: ${(sk?.csRating ?? 0).toLocaleString('ru-RU')}\nПоследнее изменение: ${delta > 0 ? `+${delta}` : delta} очков`}
                                         >
                                           {sk.score} / 100
                                         </span>
-                                        {delta !== undefined && delta !== 0 && (
-                                          <span 
-                                            style={{
-                                              fontSize: "0.68rem",
-                                              fontWeight: "800",
-                                              color: delta > 0 ? "var(--success)" : "var(--danger)",
-                                              background: delta > 0 ? "rgba(0, 230, 118, 0.14)" : "rgba(255, 77, 77, 0.14)",
-                                              padding: "0.15rem 0.35rem",
-                                              borderRadius: "4px",
-                                              border: `1px solid ${delta > 0 ? "rgba(0, 230, 118, 0.35)" : "rgba(255, 77, 77, 0.35)"}`,
-                                              lineHeight: 1
-                                            }}
-                                            title={`Последнее изменение: ${delta > 0 ? `+${delta}` : delta} очков`}
-                                          >
-                                            {delta > 0 ? `▲+${delta}` : `▼${delta}`}
-                                          </span>
-                                        )}
+                                        <span 
+                                          style={{
+                                            width: "36px",
+                                            textAlign: "center",
+                                            fontSize: "0.68rem",
+                                            fontWeight: "800",
+                                            color: isPositive ? "var(--success)" : (isNegative ? "var(--danger)" : "var(--text-muted)"),
+                                            background: isPositive 
+                                              ? "rgba(0, 230, 118, 0.14)" 
+                                              : (isNegative ? "rgba(255, 77, 77, 0.14)" : "rgba(255, 255, 255, 0.05)"),
+                                            padding: "0.18rem 0.2rem",
+                                            borderRadius: "4px",
+                                            border: `1px solid ${isPositive ? "rgba(0, 230, 118, 0.35)" : (isNegative ? "rgba(255, 77, 77, 0.35)" : "rgba(255, 255, 255, 0.1)")}`,
+                                            lineHeight: 1,
+                                            display: "inline-block"
+                                          }}
+                                          title={`Последнее изменение: ${delta > 0 ? `+${delta}` : delta} очков`}
+                                        >
+                                          {isPositive ? `▲+${delta}` : (isNegative ? `▼${delta}` : "+0")}
+                                        </span>
                                       </div>
                                     );
                                   })()}
