@@ -4085,31 +4085,35 @@ export default function Home() {
                                   )}
                                 </div>
 
-                                <div>
-                                  <span style={{
-                                    background: "linear-gradient(90deg, #ffe082, #ffb300)",
-                                    WebkitBackgroundClip: "text",
-                                    WebkitTextFillColor: "transparent",
-                                    fontWeight: "900",
-                                    fontSize: "0.8rem",
-                                    letterSpacing: "0.05em",
-                                    textTransform: "uppercase"
-                                  }}>
-                                    ★ MVP ТУРНИРА
-                                  </span>
-                                  <div 
-                                    style={{ fontSize: "1.35rem", fontWeight: "800", color: "#fff", marginTop: "0.15rem", cursor: "pointer" }} 
-                                    className="hover-underline"
-                                    onClick={() => loadPlayerDetails(currentTournament.mvp.playerId)}
-                                  >
-                                    {currentTournament.mvp.nickname}
+                                  <div>
+                                    <span style={{
+                                      background: "linear-gradient(90deg, #ffe082, #ffb300)",
+                                      WebkitBackgroundClip: "text",
+                                      WebkitTextFillColor: "transparent",
+                                      fontWeight: "900",
+                                      fontSize: "0.8rem",
+                                      letterSpacing: "0.05em",
+                                      textTransform: "uppercase"
+                                    }}>
+                                      ★ MVP ТУРНИРА (ПО HLTV 2.0)
+                                    </span>
+                                    <div 
+                                      style={{ fontSize: "1.35rem", fontWeight: "800", color: "#fff", marginTop: "0.15rem", cursor: "pointer" }} 
+                                      className="hover-underline"
+                                      onClick={() => loadPlayerDetails(currentTournament.mvp.playerId)}
+                                    >
+                                      {currentTournament.mvp.nickname}
+                                    </div>
+                                    <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginTop: "0.35rem", display: "flex", flexWrap: "wrap", gap: "0.5rem", alignItems: "center" }}>
+                                      <span>HLTV 2.0: <strong style={{ color: "#ffd700", fontWeight: "900", fontSize: "0.95rem" }}>{currentTournament.mvp.hltv || "—"}</strong></span>
+                                      <span style={{ color: "var(--border-light)" }}>|</span>
+                                      <span>ADR: <strong style={{ color: "#00e5ff" }}>{currentTournament.mvp.adr || "—"}</strong></span>
+                                      <span style={{ color: "var(--border-light)" }}>|</span>
+                                      <span>K/D: <strong style={{ color: "var(--accent-cyan)" }}>{currentTournament.mvp.avgKd}</strong></span>
+                                      <span style={{ color: "var(--border-light)" }}>|</span>
+                                      <span>Winrate: <strong style={{ color: "var(--success)" }}>{currentTournament.mvp.winRate}%</strong></span>
+                                    </div>
                                   </div>
-                                  <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginTop: "0.35rem" }}>
-                                    K/D: <strong style={{ color: "var(--accent-cyan)" }}>{currentTournament.mvp.avgKd}</strong> &nbsp;|&nbsp;
-                                    Winrate: <strong style={{ color: "var(--success)" }}>{currentTournament.mvp.winRate}%</strong> &nbsp;|&nbsp;
-                                    Матчи: <strong>{currentTournament.mvp.played}</strong>
-                                  </div>
-                                </div>
                               </div>
                             );
                           })()}
@@ -4142,21 +4146,19 @@ export default function Home() {
 
                                 <div>
                                   <span style={{
-                                    background: "linear-gradient(90deg, #c084fc, #818cf8)",
-                                    WebkitBackgroundClip: "text",
-                                    WebkitTextFillColor: "transparent",
-                                    fontWeight: "900",
+                                    color: "var(--accent-cyan)",
+                                    fontWeight: "800",
                                     fontSize: "0.8rem",
                                     letterSpacing: "0.05em",
                                     textTransform: "uppercase"
                                   }}>
-                                     САМАЯ ПОПУЛЯРНАЯ КАРТА
+                                    Самая популярная карта
                                   </span>
                                   <div style={{ fontSize: "1.35rem", fontWeight: "800", color: "#fff", marginTop: "0.15rem" }}>
                                     {mapNameClean}
                                   </div>
                                   <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginTop: "0.35rem" }}>
-                                    Сыграна: <strong>{currentTournament.maxMapCount}</strong> раз(а) &nbsp;|&nbsp; Всего матчей: <strong>{currentTournament.matchesCount}</strong>
+                                    Сыграно раз: <strong style={{ color: "var(--accent-cyan)" }}>{currentTournament.maxMapCount}</strong>
                                   </div>
                                 </div>
                               </div>
@@ -4167,8 +4169,8 @@ export default function Home() {
 
                         {/* Tournament Leaderboard Table */}
                         <div>
-                          <h4 style={{ fontSize: "0.92rem", color: "#fff", marginBottom: "1rem" }}>
-                            Рейтинг участников турнира
+                          <h4 style={{ fontSize: "0.92rem", color: "#fff", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                            <span>Рейтинг участников турнира (Сортировка по HLTV 2.0)</span>
                           </h4>
                           <div className="custom-table-container">
                             <table className="custom-table">
@@ -4176,6 +4178,8 @@ export default function Home() {
                                 <tr>
                                   <th style={{ width: "60px", textAlign: "center" }}>Место</th>
                                   <th>Игрок</th>
+                                  <th style={{ textAlign: "center", color: "#ffd700" }}>HLTV 2.0</th>
+                                  <th style={{ textAlign: "center" }}>ADR</th>
                                   <th style={{ textAlign: "center" }}>K/D</th>
                                   <th style={{ textAlign: "center" }}>Winrate</th>
                                   <th style={{ textAlign: "center" }}>Игр</th>
@@ -4189,8 +4193,9 @@ export default function Home() {
                               <tbody>
                                 {currentTournament.players.map((p: any, index: number) => {
                                   const kdVal = parseFloat(p.avgKd);
+                                  const hltvVal = parseFloat(p.hltv || "0");
                                   return (
-                                    <tr key={p.playerId} style={{ background: index === 0 ? "rgba(255, 198, 25, 0.03)" : "none" }}>
+                                    <tr key={p.playerId} style={{ background: index === 0 ? "rgba(255, 198, 25, 0.04)" : "none" }}>
                                       <td style={{ textAlign: "center", fontWeight: "700" }}>
                                         {index === 0 ? <span className="rank-badge gold">1</span> : index === 1 ? <span className="rank-badge silver">2</span> : index === 2 ? <span className="rank-badge bronze">3</span> : index + 1}
                                       </td>
@@ -4202,6 +4207,26 @@ export default function Home() {
                                         >
                                           {p.nickname}
                                         </span>
+                                      </td>
+                                      <td style={{ textAlign: "center" }}>
+                                        {p.hltv ? (
+                                          <span style={{
+                                            fontWeight: "900",
+                                            fontSize: "0.88rem",
+                                            padding: "0.15rem 0.45rem",
+                                            borderRadius: "6px",
+                                            background: hltvVal >= 1.20 ? "rgba(255, 215, 0, 0.15)" : hltvVal >= 1.05 ? "rgba(76, 175, 80, 0.15)" : hltvVal >= 0.95 ? "rgba(0, 229, 255, 0.15)" : "rgba(255, 255, 255, 0.05)",
+                                            color: hltvVal >= 1.20 ? "#ffd700" : hltvVal >= 1.05 ? "#4caf50" : hltvVal >= 0.95 ? "#00e5ff" : "var(--text-muted)",
+                                            border: hltvVal >= 1.20 ? "1px solid rgba(255, 215, 0, 0.4)" : hltvVal >= 1.05 ? "1px solid rgba(76, 175, 80, 0.4)" : "1px solid var(--border-light)"
+                                          }}>
+                                            {p.hltv}
+                                          </span>
+                                        ) : (
+                                          <span style={{ color: "var(--text-muted)" }}>—</span>
+                                        )}
+                                      </td>
+                                      <td style={{ textAlign: "center", fontWeight: "700", color: "#e0e0e0", fontSize: "0.88rem" }}>
+                                        {p.adr || "—"}
                                       </td>
                                       <td style={{ textAlign: "center", fontWeight: "700" }}>
                                         <span style={{ color: kdVal >= 1.2 ? "var(--success)" : kdVal < 0.95 ? "var(--danger)" : "var(--text-primary)" }}>

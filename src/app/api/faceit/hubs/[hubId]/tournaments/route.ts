@@ -185,7 +185,12 @@ export async function fetchHubTournamentsData(hubId: string) {
               }
 
               const ps = playerStats[p.player_id];
+              const roundsInMatch = parseInt(round.round_stats?.Rounds || "22", 10);
+              const pDamage = parseFloat(p.player_stats?.Damage || "0") || (parseFloat(p.player_stats?.ADR || "0") * roundsInMatch) || (parseInt(p.player_stats?.Kills || "0", 10) * 85);
+
               ps.roundsPlayed += 1;
+              ps.totalRounds += roundsInMatch;
+              ps.totalDamage += pDamage;
               ps.kills += parseInt(p.player_stats?.Kills || "0", 10);
               ps.deaths += parseInt(p.player_stats?.Deaths || "0", 10);
               ps.assists += parseInt(p.player_stats?.Assists || "0", 10);
@@ -221,6 +226,12 @@ export async function fetchHubTournamentsData(hubId: string) {
         const avgKd = p.deaths > 0 ? p.kills / p.deaths : p.kills;
         const winRate = (p.wins / p.roundsPlayed) * 100;
         const avgHs = p.hsPctSum / p.roundsPlayed;
+        const adr = p.totalRounds > 0 ? p.totalDamage / p.totalRounds : (p.roundsPlayed > 0 ? (p.kills * 80) / (p.roundsPlayed * 22) : 0);
+
+        const kpr = p.totalRounds > 0 ? p.kills / p.totalRounds : (p.kills / (p.roundsPlayed * 22 || 1));
+        const dpr = p.totalRounds > 0 ? p.deaths / p.totalRounds : (p.deaths / (p.roundsPlayed * 22 || 1));
+        const apr = p.totalRounds > 0 ? p.assists / p.totalRounds : (p.assists / (p.roundsPlayed * 22 || 1));
+        const hltv = Math.max(0.1, (0.36 * kpr) - (0.53 * dpr) + (0.1 * apr) + (0.003 * adr) + 0.85);
 
         return {
           playerId,
@@ -236,17 +247,21 @@ export async function fetchHubTournamentsData(hubId: string) {
           mvps: p.mvps,
           avgKd: avgKd.toFixed(2),
           avgHs: avgHs.toFixed(1),
+          adr: adr.toFixed(1),
+          hltv: hltv.toFixed(2),
         };
       });
 
-      // Sort: KD desc, then winRate desc
+      // Sort by HLTV 2.0 desc, then avgKd desc, then winRate desc
       playersList.sort((a, b) => {
+        const hltvDiff = parseFloat(b.hltv) - parseFloat(a.hltv);
+        if (hltvDiff !== 0) return hltvDiff;
         const kdDiff = parseFloat(b.avgKd) - parseFloat(a.avgKd);
         if (kdDiff !== 0) return kdDiff;
         return parseFloat(b.winRate) - parseFloat(a.winRate);
       });
 
-      // Determine Tournament MVP
+      // Determine Tournament MVP by HLTV 2.0 Rating
       // Must have played at least 3 matches in the tournament (or at least 1 if short tournament)
       const mvpCandidates = playersList.filter(
         (p) => p.played >= Math.min(3, tMatches.length)
@@ -300,6 +315,7 @@ export async function fetchHubTournamentsData(hubId: string) {
         for (const mb of cm.mapBreakdown || []) {
           const isFaction1Win = (mb.score1 || 0) > (mb.score2 || 0);
           const isFaction2Win = (mb.score2 || 0) > (mb.score1 || 0);
+          const mapRounds = (mb.score1 || 13) + (mb.score2 || 9);
 
           for (const p of mb.players1 || []) {
             const pId = p.player_id || `cs_p_${p.nickname}`;
@@ -313,6 +329,8 @@ export async function fetchHubTournamentsData(hubId: string) {
                 played: 0,
                 wins: 0,
                 roundsPlayed: 0,
+                totalRounds: 0,
+                totalDamage: 0,
                 hsPctSum: 0,
               };
             }
@@ -322,6 +340,8 @@ export async function fetchHubTournamentsData(hubId: string) {
             cPlayerStats[pId].mvps += p.mvps || 0;
             cPlayerStats[pId].played += 1;
             cPlayerStats[pId].roundsPlayed += 1;
+            cPlayerStats[pId].totalRounds += mapRounds;
+            cPlayerStats[pId].totalDamage += (p.damage || (p.kills * 85));
             cPlayerStats[pId].hsPctSum += (p.kills > 0 && p.headshots ? (p.headshots / p.kills) * 100 : 40);
             if (isFaction1Win) cPlayerStats[pId].wins += 1;
           }
@@ -338,6 +358,8 @@ export async function fetchHubTournamentsData(hubId: string) {
                 played: 0,
                 wins: 0,
                 roundsPlayed: 0,
+                totalRounds: 0,
+                totalDamage: 0,
                 hsPctSum: 0,
               };
             }
@@ -347,6 +369,8 @@ export async function fetchHubTournamentsData(hubId: string) {
             cPlayerStats[pId].mvps += p.mvps || 0;
             cPlayerStats[pId].played += 1;
             cPlayerStats[pId].roundsPlayed += 1;
+            cPlayerStats[pId].totalRounds += mapRounds;
+            cPlayerStats[pId].totalDamage += (p.damage || (p.kills * 85));
             cPlayerStats[pId].hsPctSum += (p.kills > 0 && p.headshots ? (p.headshots / p.kills) * 100 : 40);
             if (isFaction2Win) cPlayerStats[pId].wins += 1;
           }
@@ -367,6 +391,12 @@ export async function fetchHubTournamentsData(hubId: string) {
         const avgKd = p.deaths > 0 ? p.kills / p.deaths : p.kills;
         const winRate = p.roundsPlayed > 0 ? (p.wins / p.roundsPlayed) * 100 : 0;
         const avgHs = p.roundsPlayed > 0 ? p.hsPctSum / p.roundsPlayed : 40;
+        const adr = p.totalRounds > 0 ? p.totalDamage / p.totalRounds : (p.kills * 80) / (p.roundsPlayed * 22 || 1);
+
+        const kpr = p.totalRounds > 0 ? p.kills / p.totalRounds : p.kills / (p.roundsPlayed * 22 || 1);
+        const dpr = p.totalRounds > 0 ? p.deaths / p.totalRounds : p.deaths / (p.roundsPlayed * 22 || 1);
+        const apr = p.totalRounds > 0 ? p.assists / p.totalRounds : p.assists / (p.roundsPlayed * 22 || 1);
+        const hltv = Math.max(0.1, (0.36 * kpr) - (0.53 * dpr) + (0.1 * apr) + (0.003 * adr) + 0.85);
 
         return {
           playerId,
@@ -382,10 +412,15 @@ export async function fetchHubTournamentsData(hubId: string) {
           mvps: p.mvps,
           avgKd: avgKd.toFixed(2),
           avgHs: avgHs.toFixed(1),
+          adr: adr.toFixed(1),
+          hltv: hltv.toFixed(2),
         };
       });
 
+      // Sort by HLTV 2.0 desc, then avgKd desc, then winRate desc
       cPlayersList.sort((a, b) => {
+        const hltvDiff = parseFloat(b.hltv) - parseFloat(a.hltv);
+        if (hltvDiff !== 0) return hltvDiff;
         const kdDiff = parseFloat(b.avgKd) - parseFloat(a.avgKd);
         if (kdDiff !== 0) return kdDiff;
         return parseFloat(b.winRate) - parseFloat(a.winRate);
