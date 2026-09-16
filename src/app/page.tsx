@@ -3491,7 +3491,9 @@ export default function Home() {
                                     const wRecord = (playerId && weeklySkillMap[playerId]) || 
                                                     (nickname && weeklySkillMap[nickname.toLowerCase()]) || 
                                                     (nickname && weeklySkillMap[nickname]);
-                                    const delta = wRecord?.weeklyDelta;
+                                    const delta = wRecord?.weeklyDelta !== undefined && wRecord?.weeklyDelta !== 0 
+                                      ? wRecord.weeklyDelta 
+                                      : (sk.delta !== undefined && sk.delta !== 0 ? sk.delta : undefined);
                                     return (
                                       <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "0.35rem" }}>
                                         <span 
@@ -3505,7 +3507,7 @@ export default function Home() {
                                             padding: "0.25rem 0.6rem",
                                             borderRadius: "6px"
                                           }}
-                                          title={`Рейтинг скилла (Пересчет каждую неделю)\nCS2 Premier: ${(sk?.csRating ?? 0).toLocaleString('ru-RU')}${delta !== undefined && delta !== 0 ? `\nДинамика за неделю: ${delta > 0 ? `+${delta}` : delta} очков` : ''}`}
+                                          title={`Рейтинг скилла\nCS2 Premier: ${(sk?.csRating ?? 0).toLocaleString('ru-RU')}${delta !== undefined && delta !== 0 ? `\nПоследнее изменение: ${delta > 0 ? `+${delta}` : delta} очков` : ''}`}
                                         >
                                           {sk.score} / 100
                                         </span>
@@ -3521,7 +3523,7 @@ export default function Home() {
                                               border: `1px solid ${delta > 0 ? "rgba(0, 230, 118, 0.35)" : "rgba(255, 77, 77, 0.35)"}`,
                                               lineHeight: 1
                                             }}
-                                            title={`Изменение за неделю: ${delta > 0 ? `+${delta}` : delta} очков`}
+                                            title={`Последнее изменение: ${delta > 0 ? `+${delta}` : delta} очков`}
                                           >
                                             {delta > 0 ? `▲+${delta}` : `▼${delta}`}
                                           </span>

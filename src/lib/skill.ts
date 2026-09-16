@@ -28,6 +28,8 @@ export interface SkillParams {
   } | null;
   overrides?: {
     customSkillScore?: number;
+    previousSkillScore?: number;
+    skillDelta?: number;
     customElo?: number;
     csRating?: number;
   } | null;
@@ -35,6 +37,8 @@ export interface SkillParams {
 
 export interface SkillResult {
   score: number;
+  delta?: number;
+  previousScore?: number;
   tier: string;
   color: string;
   bg: string;
@@ -71,7 +75,10 @@ export function computeAdaptiveSkillScore(params: SkillParams): SkillResult {
   if (overrides?.customSkillScore !== undefined && overrides?.customSkillScore !== null && String(overrides.customSkillScore).trim() !== "") {
     const manualScore = Number(overrides.customSkillScore);
     if (!isNaN(manualScore)) {
-      return getTierProps(manualScore, csRating, isRealPremier);
+      const explicitDelta = overrides.skillDelta !== undefined ? Number(overrides.skillDelta) : (
+        overrides.previousSkillScore !== undefined ? (manualScore - Number(overrides.previousSkillScore)) : undefined
+      );
+      return getTierProps(manualScore, csRating, isRealPremier, explicitDelta, overrides.previousSkillScore);
     }
   }
 
@@ -129,7 +136,13 @@ export function computeAdaptiveSkillScore(params: SkillParams): SkillResult {
   return getTierProps(finalScore, csRating, isRealPremier);
 }
 
-function getTierProps(score: number, csRating: number, isRealPremier: boolean): SkillResult {
+function getTierProps(
+  score: number, 
+  csRating: number, 
+  isRealPremier: boolean,
+  delta?: number,
+  previousScore?: number
+): SkillResult {
   let tier = "Tier D";
   let color = "#ff4d4d"; // Red
   let bg = "rgba(239, 68, 68, 0.15)";
@@ -167,6 +180,8 @@ function getTierProps(score: number, csRating: number, isRealPremier: boolean): 
 
   return {
     score,
+    delta,
+    previousScore,
     tier,
     color,
     bg,

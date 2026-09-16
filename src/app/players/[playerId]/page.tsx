@@ -1047,25 +1047,48 @@ export default function PlayerProfilePage() {
                             (profile?.nickname && weeklySkillMap[profile.nickname]);
             const delta = wRecord?.weeklyDelta;
             const prevScore = wRecord?.previousScore;
+            const effDelta = delta !== undefined && delta !== 0 
+              ? delta 
+              : (sk.delta !== undefined && sk.delta !== 0 ? sk.delta : undefined);
+            const effPrevScore = prevScore !== undefined ? prevScore : sk.previousScore;
 
             return (
               <div className="glass-card full-player-skill-card">
                 <div className="full-player-skill-left">
-                  <span 
-                    style={{
-                      fontSize: "1.4rem",
-                      fontWeight: "900",
-                      background: sk.bg,
-                      border: `1px solid ${sk.border}`,
-                      color: sk.color,
-                      padding: "0.45rem 1rem",
-                      borderRadius: "12px",
-                      boxShadow: sk.glow || "none",
-                      flexShrink: 0
-                    }}
-                  >
-                    {sk.score} / 100
-                  </span>
+                  <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
+                    <span 
+                      style={{
+                        fontSize: "1.4rem",
+                        fontWeight: "900",
+                        background: sk.bg,
+                        border: `1px solid ${sk.border}`,
+                        color: sk.color,
+                        padding: "0.45rem 1rem",
+                        borderRadius: "12px",
+                        boxShadow: sk.glow || "none",
+                        flexShrink: 0
+                      }}
+                    >
+                      {sk.score} / 100
+                    </span>
+                    {effDelta !== undefined && (
+                      <span 
+                        style={{
+                          fontSize: "0.85rem",
+                          fontWeight: "900",
+                          color: effDelta > 0 ? "var(--success)" : "var(--danger)",
+                          background: effDelta > 0 ? "rgba(0, 230, 118, 0.16)" : "rgba(255, 77, 77, 0.16)",
+                          padding: "0.3rem 0.6rem",
+                          borderRadius: "8px",
+                          border: `1px solid ${effDelta > 0 ? "rgba(0, 230, 118, 0.4)" : "rgba(255, 77, 77, 0.4)"}`,
+                          lineHeight: 1
+                        }}
+                        title={`Последнее изменение: ${effDelta > 0 ? `+${effDelta}` : effDelta} очков`}
+                      >
+                        {effDelta > 0 ? `▲ +${effDelta}` : `▼ ${effDelta}`}
+                      </span>
+                    )}
+                  </div>
                   <div>
                     <span style={{ fontSize: "1rem", fontWeight: "800", color: sk.color }}>
                       {sk.tier} — Оценка скилла
