@@ -47,6 +47,7 @@ export interface UserBet {
   payout: number;
   createdAt: number;
   settledAt?: number;
+  lastSettledKey?: string;
 }
 
 export interface UserWallet {
@@ -335,16 +336,32 @@ export async function settleBetsForBracket(bracketData: any, store: BetsStore): 
   let settledCount = 0;
 
   for (const bet of store.bets) {
-    if (bet.status !== "PENDING") continue;
-
     const m = matchMap.get(bet.matchId);
     if (!m) continue;
 
     // Check if match is finished with scores
     if (m.status === "FINISHED" && m.score1 !== null && m.score2 !== null) {
-      let isWon = false;
       const seriesScore1 = Number(m.score1);
       const seriesScore2 = Number(m.score2);
+      const currentWinningOutcome = (seriesScore1 > seriesScore2) ? "team1" : (seriesScore2 > seriesScore1 ? "team2" : "draw");
+      const currentScoreStr = seriesScore1 + ":" + seriesScore2;
+      const settlementKey = `${m.status}_${currentScoreStr}`;
+
+      // If already settled with the exact same match result, skip
+      if (bet.status !== "PENDING" && (bet as any).lastSettledKey === settlementKey) {
+        continue;
+      }
+
+      // If it was previously settled with different result/key, revert previous settlement on wallet
+      const wallet = store.wallets[bet.userId];
+      if (bet.status === "WON" && wallet) {
+        wallet.balance -= (bet.payout || 0);
+        wallet.totalWon -= (bet.payout || 0);
+      } else if (bet.status === "LOST" && wallet) {
+        wallet.totalLost -= (bet.amount || 0);
+      }
+
+      let isWon = false;
       const scope = bet.betScope || "MATCH";
       const mType = bet.marketType || "OUTCOME";
       const mOption = bet.marketOption || bet.choice;
@@ -365,15 +382,9 @@ export async function settleBetsForBracket(bracketData: any, store: BetsStore): 
       // SETTLEMENT LOGIC BASED ON SCOPE AND MARKET TYPE
       if (scope === "MATCH") {
         if (mType === "OUTCOME") {
-          let winningOutcome: "team1" | "draw" | "team2" = "draw";
-          if (seriesScore1 > seriesScore2) winningOutcome = "team1";
-          else if (seriesScore2 > seriesScore1) winningOutcome = "team2";
-          else winningOutcome = "draw";
-
-          isWon = (mOption === winningOutcome || bet.choice === winningOutcome);
+          isWon = (mOption === currentWinningOutcome || bet.choice === currentWinningOutcome);
         } else if (mType === "EXACT_SCORE") {
-          const actualScoreStr = seriesScore1 + ":" + seriesScore2;
-          isWon = (mOption === actualScoreStr);
+          isWon = (mOption === currentScoreStr);
         } else if (mType === "TOTAL_ROUNDS") {
           if (mOption.startsWith("OVER_")) {
             const threshold = parseFloat(mOption.replace("OVER_", ""));
@@ -446,7 +457,7 @@ export async function settleBetsForBracket(bracketData: any, store: BetsStore): 
         }
       }
 
-      const wallet = store.wallets[bet.userId];
+      (bet as any).lastSettledKey = settlementKey;
 
       if (isWon) {
         bet.status = "WON";
