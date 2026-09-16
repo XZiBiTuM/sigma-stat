@@ -1,5 +1,2015 @@
 [
   {
+    "match_id": "cs_sigma_cup_m1",
+    "status": "FINISHED",
+    "started_at": 1789493400,
+    "finished_at": 1789496900,
+    "source": "Cybershoke",
+    "tournament_name": "Sigma Cyber Cup: Season 2",
+    "maps": [
+      "de_nuke",
+      "de_anubis"
+    ],
+    "teams": {
+      "faction1": {
+        "name": "Team XZiBiTuM",
+        "score": 2
+      },
+      "faction2": {
+        "name": "Team massao61",
+        "score": 0
+      }
+    },
+    "results": {
+      "winner": "faction1",
+      "score": {
+        "faction1": 2,
+        "faction2": 0
+      }
+    },
+    "seriesScores": [
+      {
+        "map": "de_nuke",
+        "score1": 16,
+        "score2": 12
+      },
+      {
+        "map": "de_anubis",
+        "score1": 13,
+        "score2": 5
+      }
+    ],
+    "players1": [
+      {
+        "player_id": "2c9dafb1-43d5-4883-b61d-30b7f7824d3c",
+        "nickname": "XZiBiTuM",
+        "kills": 64,
+        "deaths": 24,
+        "assists": 11
+      },
+      {
+        "player_id": "54ed2ca1-b3dd-4c31-9814-24698c33534e",
+        "nickname": "JIyHaTuK_1",
+        "kills": 39,
+        "deaths": 30,
+        "assists": 17
+      },
+      {
+        "player_id": "83c60ca6-2af7-42c4-98ec-fe5e8d500b96",
+        "nickname": "RT_BERS",
+        "kills": 40,
+        "deaths": 31,
+        "assists": 7
+      },
+      {
+        "player_id": "2d1244a2-1265-4c93-ae69-0b23f8edb278",
+        "nickname": "AK_NoScope",
+        "kills": 28,
+        "deaths": 32,
+        "assists": 13
+      },
+      {
+        "player_id": "52103406-f3d6-47ec-80cf-8b844ac1f96e",
+        "nickname": "Stas1kudin",
+        "kills": 17,
+        "deaths": 36,
+        "assists": 9
+      }
+    ],
+    "players2": [
+      {
+        "player_id": "81ca8d1b-4037-4d7b-96ca-4f4fb2cfade1",
+        "nickname": "massao61",
+        "kills": 44,
+        "deaths": 39,
+        "assists": 6
+      },
+      {
+        "player_id": "af52ceb5-cde0-47dd-bf48-7e640d7372ac",
+        "nickname": "ANAKONDA330",
+        "kills": 39,
+        "deaths": 35,
+        "assists": 10
+      },
+      {
+        "player_id": "bea53fe9-8339-4a9e-9023-b89a10d0da7a",
+        "nickname": "Bezhenec",
+        "kills": 27,
+        "deaths": 37,
+        "assists": 7
+      },
+      {
+        "player_id": "90a2b3cd-0c84-499b-915f-9f21bf4ae698",
+        "nickname": "DatObase",
+        "kills": 22,
+        "deaths": 36,
+        "assists": 5
+      },
+      {
+        "player_id": "e1c67ef9-50cb-424b-b8d3-558aa0165b75",
+        "nickname": "MrChillout61",
+        "kills": 19,
+        "deaths": 42,
+        "assists": 10
+      }
+    ],
+    "mapBreakdown": [
+      {
+        "map": "de_nuke",
+        "score1": 16,
+        "score2": 12,
+        "players1": [
+          {
+            "nickname": "XZiBiTuM",
+            "kills": 35,
+            "deaths": 16,
+            "assists": 4,
+            "damage": 3291,
+            "headshots": 18,
+            "mvps": 5,
+            "player_id": "2c9dafb1-43d5-4883-b61d-30b7f7824d3c"
+          },
+          {
+            "nickname": "JIyHaTuK_1",
+            "kills": 23,
+            "deaths": 18,
+            "assists": 10,
+            "damage": 2980,
+            "headshots": 11,
+            "mvps": 3,
+            "player_id": "54ed2ca1-b3dd-4c31-9814-24698c33534e"
+          },
+          {
+            "nickname": "RT_BERS",
+            "kills": 25,
+            "deaths": 20,
+            "assists": 2,
+            "damage": 2406,
+            "headshots": 5,
+            "mvps": 3,
+            "player_id": "83c60ca6-2af7-42c4-98ec-fe5e8d500b96"
+          },
+          {
+            "nickname": "AK_NoScope",
+            "kills": 16,
+            "deaths": 21,
+            "assists": 9,
+            "damage": 1762,
+            "headshots": 9,
+            "mvps": 2,
+            "player_id": "2d1244a2-1265-4c93-ae69-0b23f8edb278"
+          },
+          {
+            "nickname": "Stas1kudin",
+            "kills": 12,
+            "deaths": 23,
+            "assists": 4,
+            "damage": 1424,
+            "headshots": 6,
+            "mvps": 3,
+            "player_id": "52103406-f3d6-47ec-80cf-8b844ac1f96e"
+          }
+        ],
+        "players2": [
+          {
+            "nickname": "massao61",
+            "kills": 27,
+            "deaths": 21,
+            "assists": 1,
+            "damage": 2860,
+            "headshots": 14,
+            "mvps": 4,
+            "player_id": "81ca8d1b-4037-4d7b-96ca-4f4fb2cfade1"
+          },
+          {
+            "nickname": "ANAKONDA330",
+            "kills": 26,
+            "deaths": 21,
+            "assists": 5,
+            "damage": 2560,
+            "headshots": 13,
+            "mvps": 4,
+            "player_id": "af52ceb5-cde0-47dd-bf48-7e640d7372ac"
+          },
+          {
+            "nickname": "Bezhenec",
+            "kills": 16,
+            "deaths": 21,
+            "assists": 6,
+            "damage": 2084,
+            "headshots": 7,
+            "mvps": 2,
+            "player_id": "bea53fe9-8339-4a9e-9023-b89a10d0da7a"
+          },
+          {
+            "nickname": "DatObase",
+            "kills": 14,
+            "deaths": 23,
+            "assists": 3,
+            "damage": 1314,
+            "headshots": 8,
+            "mvps": 1,
+            "player_id": "90a2b3cd-0c84-499b-915f-9f21bf4ae698"
+          },
+          {
+            "nickname": "MrChillout61",
+            "kills": 13,
+            "deaths": 26,
+            "assists": 5,
+            "damage": 1943,
+            "headshots": 5,
+            "mvps": 1,
+            "player_id": "e1c67ef9-50cb-424b-b8d3-558aa0165b75"
+          }
+        ]
+      },
+      {
+        "map": "de_anubis",
+        "score1": 13,
+        "score2": 5,
+        "players1": [
+          {
+            "nickname": "XZiBiTuM",
+            "kills": 29,
+            "deaths": 8,
+            "assists": 7,
+            "damage": 3420,
+            "headshots": 15,
+            "mvps": 5,
+            "player_id": "2c9dafb1-43d5-4883-b61d-30b7f7824d3c"
+          },
+          {
+            "nickname": "JIyHaTuK_1",
+            "kills": 16,
+            "deaths": 12,
+            "assists": 7,
+            "damage": 2370,
+            "headshots": 8,
+            "mvps": 3,
+            "player_id": "54ed2ca1-b3dd-4c31-9814-24698c33534e"
+          },
+          {
+            "nickname": "RT_BERS",
+            "kills": 15,
+            "deaths": 11,
+            "assists": 5,
+            "damage": 2288,
+            "headshots": 3,
+            "mvps": 2,
+            "player_id": "83c60ca6-2af7-42c4-98ec-fe5e8d500b96"
+          },
+          {
+            "nickname": "AK_NoScope",
+            "kills": 12,
+            "deaths": 11,
+            "assists": 4,
+            "damage": 1480,
+            "headshots": 6,
+            "mvps": 2,
+            "player_id": "2d1244a2-1265-4c93-ae69-0b23f8edb278"
+          },
+          {
+            "nickname": "Stas1kudin",
+            "kills": 5,
+            "deaths": 13,
+            "assists": 5,
+            "damage": 568,
+            "headshots": 2,
+            "mvps": 1,
+            "player_id": "52103406-f3d6-47ec-80cf-8b844ac1f96e"
+          }
+        ],
+        "players2": [
+          {
+            "nickname": "ANAKONDA330",
+            "kills": 17,
+            "deaths": 18,
+            "assists": 5,
+            "damage": 2867,
+            "headshots": 9,
+            "mvps": 2,
+            "player_id": "af52ceb5-cde0-47dd-bf48-7e640d7372ac"
+          },
+          {
+            "nickname": "massao61",
+            "kills": 13,
+            "deaths": 14,
+            "assists": 5,
+            "damage": 2115,
+            "headshots": 6,
+            "mvps": 2,
+            "player_id": "81ca8d1b-4037-4d7b-96ca-4f4fb2cfade1"
+          },
+          {
+            "nickname": "DatObase",
+            "kills": 11,
+            "deaths": 16,
+            "assists": 1,
+            "damage": 1375,
+            "headshots": 5,
+            "mvps": 1,
+            "player_id": "90a2b3cd-0c84-499b-915f-9f21bf4ae698"
+          },
+          {
+            "nickname": "Bezhenec",
+            "kills": 8,
+            "deaths": 13,
+            "assists": 2,
+            "damage": 1331,
+            "headshots": 4,
+            "mvps": 0,
+            "player_id": "bea53fe9-8339-4a9e-9023-b89a10d0da7a"
+          },
+          {
+            "nickname": "MrChillout61",
+            "kills": 6,
+            "deaths": 16,
+            "assists": 5,
+            "damage": 1074,
+            "headshots": 3,
+            "mvps": 0,
+            "player_id": "e1c67ef9-50cb-424b-b8d3-558aa0165b75"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "match_id": "cs_sigma_cup_m2",
+    "status": "FINISHED",
+    "started_at": 1789497000,
+    "finished_at": 1789500500,
+    "source": "Cybershoke",
+    "tournament_name": "Sigma Cyber Cup: Season 2",
+    "maps": [
+      "de_inferno",
+      "de_anubis"
+    ],
+    "teams": {
+      "faction1": {
+        "name": "Team nika_jok",
+        "score": 1
+      },
+      "faction2": {
+        "name": "Team nycujan",
+        "score": 1
+      }
+    },
+    "results": {
+      "winner": "draw",
+      "score": {
+        "faction1": 1,
+        "faction2": 1
+      }
+    },
+    "seriesScores": [
+      {
+        "map": "de_inferno",
+        "score1": 9,
+        "score2": 13
+      },
+      {
+        "map": "de_anubis",
+        "score1": 16,
+        "score2": 13
+      }
+    ],
+    "players1": [
+      {
+        "player_id": "ce21732e-002e-4951-96cf-970d56a2eff4",
+        "nickname": "Kups2-0",
+        "kills": 61,
+        "deaths": 29,
+        "assists": 12
+      },
+      {
+        "player_id": "c9e13dd4-8ec4-4fec-b3d0-620f7ced7233",
+        "nickname": "nika_jok",
+        "kills": 46,
+        "deaths": 36,
+        "assists": 12
+      },
+      {
+        "player_id": "73866213-0a98-48c4-9858-912dc1a8ecad",
+        "nickname": "khachik92",
+        "kills": 32,
+        "deaths": 31,
+        "assists": 9
+      },
+      {
+        "player_id": "9f90958a-81b8-48bd-8018-34ff55c763e7",
+        "nickname": "madmax14888",
+        "kills": 29,
+        "deaths": 41,
+        "assists": 9
+      },
+      {
+        "player_id": "4fb8451b-e917-4c6f-9978-e7fb471a67b9",
+        "nickname": "w1ndyyyk_244",
+        "kills": 18,
+        "deaths": 40,
+        "assists": 12
+      }
+    ],
+    "players2": [
+      {
+        "player_id": "7ea3bd3d-582e-4cd2-872a-703bf7af557c",
+        "nickname": "nycujan",
+        "kills": 45,
+        "deaths": 37,
+        "assists": 12
+      },
+      {
+        "player_id": "3769f84c-cb71-4f76-b261-87486842b967",
+        "nickname": "FCG_pilotiki",
+        "kills": 39,
+        "deaths": 38,
+        "assists": 12
+      },
+      {
+        "player_id": "cea765cf-b74d-40ba-bc09-3a5bab0c28e9",
+        "nickname": "BryanOKnish1",
+        "kills": 34,
+        "deaths": 39,
+        "assists": 17
+      },
+      {
+        "player_id": "4e4df10d-ca21-4d85-84d0-93212bea7e76",
+        "nickname": "Raul800",
+        "kills": 30,
+        "deaths": 33,
+        "assists": 12
+      },
+      {
+        "player_id": "70f7c6cc-6229-4121-b9f8-39b1d6a58c94",
+        "nickname": "mendez161",
+        "kills": 27,
+        "deaths": 39,
+        "assists": 9
+      }
+    ],
+    "mapBreakdown": [
+      {
+        "map": "de_inferno",
+        "score1": 9,
+        "score2": 13,
+        "players1": [
+          {
+            "nickname": "Kups2-0",
+            "kills": 27,
+            "deaths": 14,
+            "assists": 4,
+            "damage": 4066,
+            "headshots": 14,
+            "mvps": 4,
+            "player_id": "ce21732e-002e-4951-96cf-970d56a2eff4"
+          },
+          {
+            "nickname": "nika_jok",
+            "kills": 15,
+            "deaths": 15,
+            "assists": 5,
+            "damage": 2210,
+            "headshots": 7,
+            "mvps": 2,
+            "player_id": "c9e13dd4-8ec4-4fec-b3d0-620f7ced7233"
+          },
+          {
+            "nickname": "khachik92",
+            "kills": 15,
+            "deaths": 16,
+            "assists": 3,
+            "damage": 2040,
+            "headshots": 8,
+            "mvps": 1,
+            "player_id": "73866213-0a98-48c4-9858-912dc1a8ecad"
+          },
+          {
+            "nickname": "madmax14888",
+            "kills": 15,
+            "deaths": 18,
+            "assists": 4,
+            "damage": 1980,
+            "headshots": 7,
+            "mvps": 1,
+            "player_id": "9f90958a-81b8-48bd-8018-34ff55c763e7"
+          },
+          {
+            "nickname": "w1ndyyyk_244",
+            "kills": 8,
+            "deaths": 16,
+            "assists": 5,
+            "damage": 1250,
+            "headshots": 4,
+            "mvps": 1,
+            "player_id": "4fb8451b-e917-4c6f-9978-e7fb471a67b9"
+          }
+        ],
+        "players2": [
+          {
+            "nickname": "nycujan",
+            "kills": 21,
+            "deaths": 14,
+            "assists": 6,
+            "damage": 3100,
+            "headshots": 11,
+            "mvps": 4,
+            "player_id": "7ea3bd3d-582e-4cd2-872a-703bf7af557c"
+          },
+          {
+            "nickname": "FCG_pilotiki",
+            "kills": 17,
+            "deaths": 17,
+            "assists": 5,
+            "damage": 2540,
+            "headshots": 8,
+            "mvps": 3,
+            "player_id": "3769f84c-cb71-4f76-b261-87486842b967"
+          },
+          {
+            "nickname": "BryanOKnish1",
+            "kills": 17,
+            "deaths": 16,
+            "assists": 11,
+            "damage": 2480,
+            "headshots": 9,
+            "mvps": 2,
+            "player_id": "cea765cf-b74d-40ba-bc09-3a5bab0c28e9"
+          },
+          {
+            "nickname": "Raul800",
+            "kills": 13,
+            "deaths": 15,
+            "assists": 4,
+            "damage": 1890,
+            "headshots": 4,
+            "mvps": 2,
+            "player_id": "4e4df10d-ca21-4d85-84d0-93212bea7e76"
+          },
+          {
+            "nickname": "mendez161",
+            "kills": 10,
+            "deaths": 18,
+            "assists": 5,
+            "damage": 1540,
+            "headshots": 5,
+            "mvps": 2,
+            "player_id": "70f7c6cc-6229-4121-b9f8-39b1d6a58c94"
+          }
+        ]
+      },
+      {
+        "map": "de_anubis",
+        "score1": 16,
+        "score2": 13,
+        "players1": [
+          {
+            "nickname": "Kups2-0",
+            "kills": 34,
+            "deaths": 15,
+            "assists": 8,
+            "damage": 4236,
+            "headshots": 18,
+            "mvps": 6,
+            "player_id": "ce21732e-002e-4951-96cf-970d56a2eff4"
+          },
+          {
+            "nickname": "nika_jok",
+            "kills": 31,
+            "deaths": 21,
+            "assists": 7,
+            "damage": 4969,
+            "headshots": 16,
+            "mvps": 5,
+            "player_id": "c9e13dd4-8ec4-4fec-b3d0-620f7ced7233"
+          },
+          {
+            "nickname": "khachik92",
+            "kills": 17,
+            "deaths": 15,
+            "assists": 6,
+            "damage": 2310,
+            "headshots": 9,
+            "mvps": 2,
+            "player_id": "73866213-0a98-48c4-9858-912dc1a8ecad"
+          },
+          {
+            "nickname": "madmax14888",
+            "kills": 14,
+            "deaths": 23,
+            "assists": 5,
+            "damage": 2010,
+            "headshots": 7,
+            "mvps": 2,
+            "player_id": "9f90958a-81b8-48bd-8018-34ff55c763e7"
+          },
+          {
+            "nickname": "w1ndyyyk_244",
+            "kills": 10,
+            "deaths": 24,
+            "assists": 7,
+            "damage": 1450,
+            "headshots": 5,
+            "mvps": 1,
+            "player_id": "4fb8451b-e917-4c6f-9978-e7fb471a67b9"
+          }
+        ],
+        "players2": [
+          {
+            "nickname": "nycujan",
+            "kills": 24,
+            "deaths": 23,
+            "assists": 6,
+            "damage": 3773,
+            "headshots": 12,
+            "mvps": 4,
+            "player_id": "7ea3bd3d-582e-4cd2-872a-703bf7af557c"
+          },
+          {
+            "nickname": "FCG_pilotiki",
+            "kills": 22,
+            "deaths": 21,
+            "assists": 7,
+            "damage": 3120,
+            "headshots": 11,
+            "mvps": 3,
+            "player_id": "3769f84c-cb71-4f76-b261-87486842b967"
+          },
+          {
+            "nickname": "mendez161",
+            "kills": 17,
+            "deaths": 23,
+            "assists": 6,
+            "damage": 2450,
+            "headshots": 8,
+            "mvps": 2,
+            "player_id": "70f7c6cc-6229-4121-b9f8-39b1d6a58c94"
+          },
+          {
+            "nickname": "BryanOKnish1",
+            "kills": 17,
+            "deaths": 18,
+            "assists": 8,
+            "damage": 2390,
+            "headshots": 8,
+            "mvps": 2,
+            "player_id": "cea765cf-b74d-40ba-bc09-3a5bab0c28e9"
+          },
+          {
+            "nickname": "Raul800",
+            "kills": 17,
+            "deaths": 21,
+            "assists": 4,
+            "damage": 2480,
+            "headshots": 5,
+            "mvps": 2,
+            "player_id": "4e4df10d-ca21-4d85-84d0-93212bea7e76"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "match_id": "cs_sigma_cup_m3",
+    "status": "FINISHED",
+    "started_at": 1789500600,
+    "finished_at": 1789504100,
+    "source": "Cybershoke",
+    "tournament_name": "Sigma Cyber Cup: Season 2",
+    "maps": [
+      "de_anubis",
+      "de_inferno"
+    ],
+    "teams": {
+      "faction1": {
+        "name": "Team XZiBiTuM",
+        "score": 2
+      },
+      "faction2": {
+        "name": "Team nycujan",
+        "score": 0
+      }
+    },
+    "results": {
+      "winner": "faction1",
+      "score": {
+        "faction1": 2,
+        "faction2": 0
+      }
+    },
+    "seriesScores": [
+      {
+        "map": "de_anubis",
+        "score1": 13,
+        "score2": 10
+      },
+      {
+        "map": "de_inferno",
+        "score1": 13,
+        "score2": 6
+      }
+    ],
+    "players1": [
+      {
+        "player_id": "2c9dafb1-43d5-4883-b61d-30b7f7824d3c",
+        "nickname": "XZiBiTuM",
+        "kills": 52,
+        "deaths": 30,
+        "assists": 11
+      },
+      {
+        "player_id": "54ed2ca1-b3dd-4c31-9814-24698c33534e",
+        "nickname": "JIyHaTuK_1",
+        "kills": 43,
+        "deaths": 28,
+        "assists": 6
+      },
+      {
+        "player_id": "83c60ca6-2af7-42c4-98ec-fe5e8d500b96",
+        "nickname": "RT_BERS",
+        "kills": 32,
+        "deaths": 28,
+        "assists": 5
+      },
+      {
+        "player_id": "52103406-f3d6-47ec-80cf-8b844ac1f96e",
+        "nickname": "Stas1kudin",
+        "kills": 24,
+        "deaths": 29,
+        "assists": 15
+      },
+      {
+        "player_id": "2d1244a2-1265-4c93-ae69-0b23f8edb278",
+        "nickname": "AK_NoScope",
+        "kills": 21,
+        "deaths": 28,
+        "assists": 12
+      }
+    ],
+    "players2": [
+      {
+        "player_id": "7ea3bd3d-582e-4cd2-872a-703bf7af557c",
+        "nickname": "nycujan",
+        "kills": 46,
+        "deaths": 36,
+        "assists": 7
+      },
+      {
+        "player_id": "3769f84c-cb71-4f76-b261-87486842b967",
+        "nickname": "FCG_pilotiki",
+        "kills": 35,
+        "deaths": 33,
+        "assists": 14
+      },
+      {
+        "player_id": "4e4df10d-ca21-4d85-84d0-93212bea7e76",
+        "nickname": "Raul800",
+        "kills": 24,
+        "deaths": 36,
+        "assists": 5
+      },
+      {
+        "player_id": "cea765cf-b74d-40ba-bc09-3a5bab0c28e9",
+        "nickname": "BryanOKnish1",
+        "kills": 21,
+        "deaths": 34,
+        "assists": 9
+      },
+      {
+        "player_id": "70f7c6cc-6229-4121-b9f8-39b1d6a58c94",
+        "nickname": "mendez161",
+        "kills": 17,
+        "deaths": 34,
+        "assists": 7
+      }
+    ],
+    "mapBreakdown": [
+      {
+        "map": "de_anubis",
+        "score1": 13,
+        "score2": 10,
+        "players1": [
+          {
+            "nickname": "XZiBiTuM",
+            "kills": 30,
+            "deaths": 17,
+            "assists": 5,
+            "damage": 3890,
+            "headshots": 16,
+            "mvps": 5,
+            "player_id": "2c9dafb1-43d5-4883-b61d-30b7f7824d3c"
+          },
+          {
+            "nickname": "JIyHaTuK_1",
+            "kills": 26,
+            "deaths": 17,
+            "assists": 1,
+            "damage": 3120,
+            "headshots": 12,
+            "mvps": 3,
+            "player_id": "54ed2ca1-b3dd-4c31-9814-24698c33534e"
+          },
+          {
+            "nickname": "RT_BERS",
+            "kills": 17,
+            "deaths": 15,
+            "assists": 3,
+            "damage": 2340,
+            "headshots": 4,
+            "mvps": 2,
+            "player_id": "83c60ca6-2af7-42c4-98ec-fe5e8d500b96"
+          },
+          {
+            "nickname": "Stas1kudin",
+            "kills": 10,
+            "deaths": 19,
+            "assists": 11,
+            "damage": 1580,
+            "headshots": 5,
+            "mvps": 2,
+            "player_id": "52103406-f3d6-47ec-80cf-8b844ac1f96e"
+          },
+          {
+            "nickname": "AK_NoScope",
+            "kills": 7,
+            "deaths": 16,
+            "assists": 7,
+            "damage": 1190,
+            "headshots": 3,
+            "mvps": 1,
+            "player_id": "2d1244a2-1265-4c93-ae69-0b23f8edb278"
+          }
+        ],
+        "players2": [
+          {
+            "nickname": "nycujan",
+            "kills": 27,
+            "deaths": 19,
+            "assists": 4,
+            "damage": 3510,
+            "headshots": 13,
+            "mvps": 4,
+            "player_id": "7ea3bd3d-582e-4cd2-872a-703bf7af557c"
+          },
+          {
+            "nickname": "FCG_pilotiki",
+            "kills": 21,
+            "deaths": 17,
+            "assists": 10,
+            "damage": 2980,
+            "headshots": 10,
+            "mvps": 3,
+            "player_id": "3769f84c-cb71-4f76-b261-87486842b967"
+          },
+          {
+            "nickname": "Raul800",
+            "kills": 15,
+            "deaths": 19,
+            "assists": 3,
+            "damage": 2150,
+            "headshots": 4,
+            "mvps": 2,
+            "player_id": "4e4df10d-ca21-4d85-84d0-93212bea7e76"
+          },
+          {
+            "nickname": "BryanOKnish1",
+            "kills": 12,
+            "deaths": 18,
+            "assists": 5,
+            "damage": 1780,
+            "headshots": 6,
+            "mvps": 1,
+            "player_id": "cea765cf-b74d-40ba-bc09-3a5bab0c28e9"
+          },
+          {
+            "nickname": "mendez161",
+            "kills": 9,
+            "deaths": 17,
+            "assists": 4,
+            "damage": 1320,
+            "headshots": 4,
+            "mvps": 0,
+            "player_id": "70f7c6cc-6229-4121-b9f8-39b1d6a58c94"
+          }
+        ]
+      },
+      {
+        "map": "de_inferno",
+        "score1": 13,
+        "score2": 6,
+        "players1": [
+          {
+            "nickname": "XZiBiTuM",
+            "kills": 22,
+            "deaths": 13,
+            "assists": 6,
+            "damage": 4106,
+            "headshots": 12,
+            "mvps": 4,
+            "player_id": "2c9dafb1-43d5-4883-b61d-30b7f7824d3c"
+          },
+          {
+            "nickname": "JIyHaTuK_1",
+            "kills": 17,
+            "deaths": 11,
+            "assists": 5,
+            "damage": 2540,
+            "headshots": 8,
+            "mvps": 3,
+            "player_id": "54ed2ca1-b3dd-4c31-9814-24698c33534e"
+          },
+          {
+            "nickname": "RT_BERS",
+            "kills": 15,
+            "deaths": 13,
+            "assists": 2,
+            "damage": 2210,
+            "headshots": 3,
+            "mvps": 2,
+            "player_id": "83c60ca6-2af7-42c4-98ec-fe5e8d500b96"
+          },
+          {
+            "nickname": "Stas1kudin",
+            "kills": 14,
+            "deaths": 10,
+            "assists": 4,
+            "damage": 1950,
+            "headshots": 7,
+            "mvps": 2,
+            "player_id": "52103406-f3d6-47ec-80cf-8b844ac1f96e"
+          },
+          {
+            "nickname": "AK_NoScope",
+            "kills": 14,
+            "deaths": 12,
+            "assists": 5,
+            "damage": 1880,
+            "headshots": 6,
+            "mvps": 2,
+            "player_id": "2d1244a2-1265-4c93-ae69-0b23f8edb278"
+          }
+        ],
+        "players2": [
+          {
+            "nickname": "FCG_pilotiki",
+            "kills": 19,
+            "deaths": 17,
+            "assists": 3,
+            "damage": 2680,
+            "headshots": 9,
+            "mvps": 2,
+            "player_id": "3769f84c-cb71-4f76-b261-87486842b967"
+          },
+          {
+            "nickname": "mendez161",
+            "kills": 14,
+            "deaths": 16,
+            "assists": 4,
+            "damage": 2010,
+            "headshots": 7,
+            "mvps": 2,
+            "player_id": "70f7c6cc-6229-4121-b9f8-39b1d6a58c94"
+          },
+          {
+            "nickname": "Raul800",
+            "kills": 9,
+            "deaths": 17,
+            "assists": 2,
+            "damage": 1340,
+            "headshots": 2,
+            "mvps": 1,
+            "player_id": "4e4df10d-ca21-4d85-84d0-93212bea7e76"
+          },
+          {
+            "nickname": "nycujan",
+            "kills": 9,
+            "deaths": 16,
+            "assists": 4,
+            "damage": 1420,
+            "headshots": 4,
+            "mvps": 1,
+            "player_id": "7ea3bd3d-582e-4cd2-872a-703bf7af557c"
+          },
+          {
+            "nickname": "BryanOKnish1",
+            "kills": 8,
+            "deaths": 17,
+            "assists": 3,
+            "damage": 1180,
+            "headshots": 4,
+            "mvps": 0,
+            "player_id": "cea765cf-b74d-40ba-bc09-3a5bab0c28e9"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "match_id": "cs_sigma_cup_m4",
+    "status": "FINISHED",
+    "started_at": 1789504200,
+    "finished_at": 1789507700,
+    "source": "Cybershoke",
+    "tournament_name": "Sigma Cyber Cup: Season 2",
+    "maps": [
+      "de_mirage",
+      "de_nuke"
+    ],
+    "teams": {
+      "faction1": {
+        "name": "Team massao61",
+        "score": 1
+      },
+      "faction2": {
+        "name": "Team nika_jok",
+        "score": 1
+      }
+    },
+    "results": {
+      "winner": "draw",
+      "score": {
+        "faction1": 1,
+        "faction2": 1
+      }
+    },
+    "seriesScores": [
+      {
+        "map": "de_mirage",
+        "score1": 13,
+        "score2": 11
+      },
+      {
+        "map": "de_nuke",
+        "score1": 7,
+        "score2": 13
+      }
+    ],
+    "players1": [
+      {
+        "player_id": "81ca8d1b-4037-4d7b-96ca-4f4fb2cfade1",
+        "nickname": "massao61",
+        "kills": 39,
+        "deaths": 32,
+        "assists": 8
+      },
+      {
+        "player_id": "af52ceb5-cde0-47dd-bf48-7e640d7372ac",
+        "nickname": "ANAKONDA330",
+        "kills": 34,
+        "deaths": 32,
+        "assists": 8
+      },
+      {
+        "player_id": "90a2b3cd-0c84-499b-915f-9f21bf4ae698",
+        "nickname": "DatObase",
+        "kills": 31,
+        "deaths": 34,
+        "assists": 5
+      },
+      {
+        "player_id": "bea53fe9-8339-4a9e-9023-b89a10d0da7a",
+        "nickname": "Bezhenec",
+        "kills": 23,
+        "deaths": 36,
+        "assists": 8
+      },
+      {
+        "player_id": "e1c67ef9-50cb-424b-b8d3-558aa0165b75",
+        "nickname": "MrChillout61",
+        "kills": 17,
+        "deaths": 39,
+        "assists": 6
+      }
+    ],
+    "players2": [
+      {
+        "player_id": "ce21732e-002e-4951-96cf-970d56a2eff4",
+        "nickname": "Kups2-0",
+        "kills": 52,
+        "deaths": 25,
+        "assists": 9
+      },
+      {
+        "player_id": "c9e13dd4-8ec4-4fec-b3d0-620f7ced7233",
+        "nickname": "nika_jok",
+        "kills": 39,
+        "deaths": 30,
+        "assists": 10
+      },
+      {
+        "player_id": "9f90958a-81b8-48bd-8018-34ff55c763e7",
+        "nickname": "madmax14888",
+        "kills": 35,
+        "deaths": 27,
+        "assists": 7
+      },
+      {
+        "player_id": "4fb8451b-e917-4c6f-9978-e7fb471a67b9",
+        "nickname": "w1ndyyyk_244",
+        "kills": 25,
+        "deaths": 29,
+        "assists": 11
+      },
+      {
+        "player_id": "73866213-0a98-48c4-9858-912dc1a8ecad",
+        "nickname": "khachik92",
+        "kills": 22,
+        "deaths": 34,
+        "assists": 7
+      }
+    ],
+    "mapBreakdown": [
+      {
+        "map": "de_mirage",
+        "score1": 13,
+        "score2": 11,
+        "players1": [
+          {
+            "nickname": "massao61",
+            "kills": 21,
+            "deaths": 15,
+            "assists": 5,
+            "damage": 3270,
+            "headshots": 11,
+            "mvps": 4,
+            "player_id": "81ca8d1b-4037-4d7b-96ca-4f4fb2cfade1"
+          },
+          {
+            "nickname": "ANAKONDA330",
+            "kills": 21,
+            "deaths": 16,
+            "assists": 4,
+            "damage": 3006,
+            "headshots": 10,
+            "mvps": 4,
+            "player_id": "af52ceb5-cde0-47dd-bf48-7e640d7372ac"
+          },
+          {
+            "nickname": "DatObase",
+            "kills": 20,
+            "deaths": 16,
+            "assists": 3,
+            "damage": 2680,
+            "headshots": 9,
+            "mvps": 3,
+            "player_id": "90a2b3cd-0c84-499b-915f-9f21bf4ae698"
+          },
+          {
+            "nickname": "Bezhenec",
+            "kills": 13,
+            "deaths": 19,
+            "assists": 5,
+            "damage": 1890,
+            "headshots": 6,
+            "mvps": 1,
+            "player_id": "bea53fe9-8339-4a9e-9023-b89a10d0da7a"
+          },
+          {
+            "nickname": "MrChillout61",
+            "kills": 9,
+            "deaths": 21,
+            "assists": 4,
+            "damage": 1420,
+            "headshots": 4,
+            "mvps": 1,
+            "player_id": "e1c67ef9-50cb-424b-b8d3-558aa0165b75"
+          }
+        ],
+        "players2": [
+          {
+            "nickname": "Kups2-0",
+            "kills": 26,
+            "deaths": 14,
+            "assists": 4,
+            "damage": 3647,
+            "headshots": 13,
+            "mvps": 4,
+            "player_id": "ce21732e-002e-4951-96cf-970d56a2eff4"
+          },
+          {
+            "nickname": "nika_jok",
+            "kills": 18,
+            "deaths": 19,
+            "assists": 6,
+            "damage": 2710,
+            "headshots": 9,
+            "mvps": 3,
+            "player_id": "c9e13dd4-8ec4-4fec-b3d0-620f7ced7233"
+          },
+          {
+            "nickname": "madmax14888",
+            "kills": 17,
+            "deaths": 17,
+            "assists": 4,
+            "damage": 2390,
+            "headshots": 8,
+            "mvps": 2,
+            "player_id": "9f90958a-81b8-48bd-8018-34ff55c763e7"
+          },
+          {
+            "nickname": "w1ndyyyk_244",
+            "kills": 14,
+            "deaths": 17,
+            "assists": 5,
+            "damage": 2050,
+            "headshots": 7,
+            "mvps": 1,
+            "player_id": "4fb8451b-e917-4c6f-9978-e7fb471a67b9"
+          },
+          {
+            "nickname": "khachik92",
+            "kills": 12,
+            "deaths": 18,
+            "assists": 3,
+            "damage": 1760,
+            "headshots": 6,
+            "mvps": 1,
+            "player_id": "73866213-0a98-48c4-9858-912dc1a8ecad"
+          }
+        ]
+      },
+      {
+        "map": "de_nuke",
+        "score1": 7,
+        "score2": 13,
+        "players1": [
+          {
+            "nickname": "ANAKONDA330",
+            "kills": 18,
+            "deaths": 17,
+            "assists": 3,
+            "damage": 2482,
+            "headshots": 9,
+            "mvps": 3,
+            "player_id": "af52ceb5-cde0-47dd-bf48-7e640d7372ac"
+          },
+          {
+            "nickname": "MrChillout61",
+            "kills": 13,
+            "deaths": 16,
+            "assists": 4,
+            "damage": 1960,
+            "headshots": 6,
+            "mvps": 2,
+            "player_id": "e1c67ef9-50cb-424b-b8d3-558aa0165b75"
+          },
+          {
+            "nickname": "Bezhenec",
+            "kills": 11,
+            "deaths": 18,
+            "assists": 2,
+            "damage": 1650,
+            "headshots": 5,
+            "mvps": 1,
+            "player_id": "bea53fe9-8339-4a9e-9023-b89a10d0da7a"
+          },
+          {
+            "nickname": "massao61",
+            "kills": 10,
+            "deaths": 17,
+            "assists": 3,
+            "damage": 1540,
+            "headshots": 5,
+            "mvps": 1,
+            "player_id": "81ca8d1b-4037-4d7b-96ca-4f4fb2cfade1"
+          },
+          {
+            "nickname": "DatObase",
+            "kills": 8,
+            "deaths": 18,
+            "assists": 2,
+            "damage": 1210,
+            "headshots": 4,
+            "mvps": 0,
+            "player_id": "90a2b3cd-0c84-499b-915f-9f21bf4ae698"
+          }
+        ],
+        "players2": [
+          {
+            "nickname": "nika_jok",
+            "kills": 26,
+            "deaths": 11,
+            "assists": 5,
+            "damage": 3149,
+            "headshots": 14,
+            "mvps": 5,
+            "player_id": "c9e13dd4-8ec4-4fec-b3d0-620f7ced7233"
+          },
+          {
+            "nickname": "Kups2-0",
+            "kills": 21,
+            "deaths": 11,
+            "assists": 4,
+            "damage": 2890,
+            "headshots": 11,
+            "mvps": 4,
+            "player_id": "ce21732e-002e-4951-96cf-970d56a2eff4"
+          },
+          {
+            "nickname": "khachik92",
+            "kills": 18,
+            "deaths": 10,
+            "assists": 3,
+            "damage": 2420,
+            "headshots": 9,
+            "mvps": 2,
+            "player_id": "73866213-0a98-48c4-9858-912dc1a8ecad"
+          },
+          {
+            "nickname": "w1ndyyyk_244",
+            "kills": 11,
+            "deaths": 12,
+            "assists": 6,
+            "damage": 1680,
+            "headshots": 5,
+            "mvps": 1,
+            "player_id": "4fb8451b-e917-4c6f-9978-e7fb471a67b9"
+          },
+          {
+            "nickname": "madmax14888",
+            "kills": 10,
+            "deaths": 16,
+            "assists": 4,
+            "damage": 1510,
+            "headshots": 5,
+            "mvps": 1,
+            "player_id": "9f90958a-81b8-48bd-8018-34ff55c763e7"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "match_id": "cs_sigma_cup_m5",
+    "status": "FINISHED",
+    "started_at": 1789507800,
+    "finished_at": 1789511300,
+    "source": "Cybershoke",
+    "tournament_name": "Sigma Cyber Cup: Season 2",
+    "maps": [
+      "de_mirage",
+      "de_nuke"
+    ],
+    "teams": {
+      "faction1": {
+        "name": "Team XZiBiTuM",
+        "score": 0
+      },
+      "faction2": {
+        "name": "Team nika_jok",
+        "score": 2
+      }
+    },
+    "results": {
+      "winner": "faction2",
+      "score": {
+        "faction1": 0,
+        "faction2": 2
+      }
+    },
+    "seriesScores": [
+      {
+        "map": "de_mirage",
+        "score1": 9,
+        "score2": 13
+      },
+      {
+        "map": "de_nuke",
+        "score1": 8,
+        "score2": 13
+      }
+    ],
+    "players1": [
+      {
+        "player_id": "2c9dafb1-43d5-4883-b61d-30b7f7824d3c",
+        "nickname": "XZiBiTuM",
+        "kills": 39,
+        "deaths": 33,
+        "assists": 11
+      },
+      {
+        "player_id": "83c60ca6-2af7-42c4-98ec-fe5e8d500b96",
+        "nickname": "RT_BERS",
+        "kills": 34,
+        "deaths": 34,
+        "assists": 7
+      },
+      {
+        "player_id": "54ed2ca1-b3dd-4c31-9814-24698c33534e",
+        "nickname": "JIyHaTuK_1",
+        "kills": 32,
+        "deaths": 34,
+        "assists": 15
+      },
+      {
+        "player_id": "52103406-f3d6-47ec-80cf-8b844ac1f96e",
+        "nickname": "Stas1kudin",
+        "kills": 23,
+        "deaths": 32,
+        "assists": 7
+      },
+      {
+        "player_id": "2d1244a2-1265-4c93-ae69-0b23f8edb278",
+        "nickname": "AK_NoScope",
+        "kills": 17,
+        "deaths": 34,
+        "assists": 7
+      }
+    ],
+    "players2": [
+      {
+        "player_id": "c9e13dd4-8ec4-4fec-b3d0-620f7ced7233",
+        "nickname": "nika_jok",
+        "kills": 61,
+        "deaths": 27,
+        "assists": 12
+      },
+      {
+        "player_id": "ce21732e-002e-4951-96cf-970d56a2eff4",
+        "nickname": "Kups2-0",
+        "kills": 34,
+        "deaths": 32,
+        "assists": 15
+      },
+      {
+        "player_id": "73866213-0a98-48c4-9858-912dc1a8ecad",
+        "nickname": "khachik92",
+        "kills": 30,
+        "deaths": 28,
+        "assists": 7
+      },
+      {
+        "player_id": "9f90958a-81b8-48bd-8018-34ff55c763e7",
+        "nickname": "madmax14888",
+        "kills": 28,
+        "deaths": 32,
+        "assists": 7
+      },
+      {
+        "player_id": "4fb8451b-e917-4c6f-9978-e7fb471a67b9",
+        "nickname": "w1ndyyyk_244",
+        "kills": 14,
+        "deaths": 28,
+        "assists": 9
+      }
+    ],
+    "mapBreakdown": [
+      {
+        "map": "de_mirage",
+        "score1": 9,
+        "score2": 13,
+        "players1": [
+          {
+            "nickname": "XZiBiTuM",
+            "kills": 21,
+            "deaths": 16,
+            "assists": 5,
+            "damage": 3096,
+            "headshots": 11,
+            "mvps": 3,
+            "player_id": "2c9dafb1-43d5-4883-b61d-30b7f7824d3c"
+          },
+          {
+            "nickname": "RT_BERS",
+            "kills": 16,
+            "deaths": 15,
+            "assists": 2,
+            "damage": 2280,
+            "headshots": 3,
+            "mvps": 2,
+            "player_id": "83c60ca6-2af7-42c4-98ec-fe5e8d500b96"
+          },
+          {
+            "nickname": "JIyHaTuK_1",
+            "kills": 15,
+            "deaths": 18,
+            "assists": 11,
+            "damage": 2390,
+            "headshots": 7,
+            "mvps": 2,
+            "player_id": "54ed2ca1-b3dd-4c31-9814-24698c33534e"
+          },
+          {
+            "nickname": "Stas1kudin",
+            "kills": 15,
+            "deaths": 15,
+            "assists": 4,
+            "damage": 2140,
+            "headshots": 7,
+            "mvps": 1,
+            "player_id": "52103406-f3d6-47ec-80cf-8b844ac1f96e"
+          },
+          {
+            "nickname": "AK_NoScope",
+            "kills": 10,
+            "deaths": 15,
+            "assists": 5,
+            "damage": 1560,
+            "headshots": 5,
+            "mvps": 1,
+            "player_id": "2d1244a2-1265-4c93-ae69-0b23f8edb278"
+          }
+        ],
+        "players2": [
+          {
+            "nickname": "nika_jok",
+            "kills": 32,
+            "deaths": 15,
+            "assists": 6,
+            "damage": 3852,
+            "headshots": 17,
+            "mvps": 5,
+            "player_id": "c9e13dd4-8ec4-4fec-b3d0-620f7ced7233"
+          },
+          {
+            "nickname": "Kups2-0",
+            "kills": 16,
+            "deaths": 17,
+            "assists": 10,
+            "damage": 2580,
+            "headshots": 8,
+            "mvps": 3,
+            "player_id": "ce21732e-002e-4951-96cf-970d56a2eff4"
+          },
+          {
+            "nickname": "khachik92",
+            "kills": 13,
+            "deaths": 14,
+            "assists": 4,
+            "damage": 1980,
+            "headshots": 7,
+            "mvps": 2,
+            "player_id": "73866213-0a98-48c4-9858-912dc1a8ecad"
+          },
+          {
+            "nickname": "madmax14888",
+            "kills": 13,
+            "deaths": 17,
+            "assists": 3,
+            "damage": 1870,
+            "headshots": 6,
+            "mvps": 2,
+            "player_id": "9f90958a-81b8-48bd-8018-34ff55c763e7"
+          },
+          {
+            "nickname": "w1ndyyyk_244",
+            "kills": 5,
+            "deaths": 14,
+            "assists": 4,
+            "damage": 920,
+            "headshots": 2,
+            "mvps": 1,
+            "player_id": "4fb8451b-e917-4c6f-9978-e7fb471a67b9"
+          }
+        ]
+      },
+      {
+        "map": "de_nuke",
+        "score1": 8,
+        "score2": 13,
+        "players1": [
+          {
+            "nickname": "JIyHaTuK_1",
+            "kills": 18,
+            "deaths": 17,
+            "assists": 6,
+            "damage": 2541,
+            "headshots": 9,
+            "mvps": 3,
+            "player_id": "54ed2ca1-b3dd-4c31-9814-24698c33534e"
+          },
+          {
+            "nickname": "XZiBiTuM",
+            "kills": 18,
+            "deaths": 19,
+            "assists": 5,
+            "damage": 2610,
+            "headshots": 9,
+            "mvps": 2,
+            "player_id": "2c9dafb1-43d5-4883-b61d-30b7f7824d3c"
+          },
+          {
+            "nickname": "AK_NoScope",
+            "kills": 17,
+            "deaths": 16,
+            "assists": 4,
+            "damage": 2280,
+            "headshots": 8,
+            "mvps": 2,
+            "player_id": "2d1244a2-1265-4c93-ae69-0b23f8edb278"
+          },
+          {
+            "nickname": "Stas1kudin",
+            "kills": 8,
+            "deaths": 17,
+            "assists": 3,
+            "damage": 1320,
+            "headshots": 4,
+            "mvps": 1,
+            "player_id": "52103406-f3d6-47ec-80cf-8b844ac1f96e"
+          },
+          {
+            "nickname": "RT_BERS",
+            "kills": 7,
+            "deaths": 19,
+            "assists": 2,
+            "damage": 1140,
+            "headshots": 2,
+            "mvps": 0,
+            "player_id": "83c60ca6-2af7-42c4-98ec-fe5e8d500b96"
+          }
+        ],
+        "players2": [
+          {
+            "nickname": "nika_jok",
+            "kills": 29,
+            "deaths": 12,
+            "assists": 6,
+            "damage": 3980,
+            "headshots": 15,
+            "mvps": 5,
+            "player_id": "c9e13dd4-8ec4-4fec-b3d0-620f7ced7233"
+          },
+          {
+            "nickname": "Kups2-0",
+            "kills": 18,
+            "deaths": 15,
+            "assists": 5,
+            "damage": 2710,
+            "headshots": 9,
+            "mvps": 3,
+            "player_id": "ce21732e-002e-4951-96cf-970d56a2eff4"
+          },
+          {
+            "nickname": "madmax14888",
+            "kills": 17,
+            "deaths": 14,
+            "assists": 3,
+            "damage": 2390,
+            "headshots": 8,
+            "mvps": 2,
+            "player_id": "9f90958a-81b8-48bd-8018-34ff55c763e7"
+          },
+          {
+            "nickname": "khachik92",
+            "kills": 15,
+            "deaths": 15,
+            "assists": 4,
+            "damage": 2150,
+            "headshots": 7,
+            "mvps": 2,
+            "player_id": "73866213-0a98-48c4-9858-912dc1a8ecad"
+          },
+          {
+            "nickname": "w1ndyyyk_244",
+            "kills": 9,
+            "deaths": 14,
+            "assists": 5,
+            "damage": 1420,
+            "headshots": 4,
+            "mvps": 1,
+            "player_id": "4fb8451b-e917-4c6f-9978-e7fb471a67b9"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "match_id": "cs_sigma_cup_m6",
+    "status": "FINISHED",
+    "started_at": 1789511400,
+    "finished_at": 1789514900,
+    "source": "Cybershoke",
+    "tournament_name": "Sigma Cyber Cup: Season 2",
+    "maps": [
+      "de_dust2",
+      "de_ancient"
+    ],
+    "teams": {
+      "faction1": {
+        "name": "Team massao61",
+        "score": 0
+      },
+      "faction2": {
+        "name": "Team nycujan",
+        "score": 2
+      }
+    },
+    "results": {
+      "winner": "faction2",
+      "score": {
+        "faction1": 0,
+        "faction2": 2
+      }
+    },
+    "seriesScores": [
+      {
+        "map": "de_dust2",
+        "score1": 9,
+        "score2": 13
+      },
+      {
+        "map": "de_ancient",
+        "score1": 4,
+        "score2": 13
+      }
+    ],
+    "players1": [
+      {
+        "player_id": "81ca8d1b-4037-4d7b-96ca-4f4fb2cfade1",
+        "nickname": "massao61",
+        "kills": 44,
+        "deaths": 28,
+        "assists": 7
+      },
+      {
+        "player_id": "af52ceb5-cde0-47dd-bf48-7e640d7372ac",
+        "nickname": "ANAKONDA330",
+        "kills": 31,
+        "deaths": 33,
+        "assists": 8
+      },
+      {
+        "player_id": "90a2b3cd-0c84-499b-915f-9f21bf4ae698",
+        "nickname": "DatObase",
+        "kills": 27,
+        "deaths": 34,
+        "assists": 5
+      },
+      {
+        "player_id": "bea53fe9-8339-4a9e-9023-b89a10d0da7a",
+        "nickname": "Bezhenec",
+        "kills": 18,
+        "deaths": 32,
+        "assists": 5
+      },
+      {
+        "player_id": "e1c67ef9-50cb-424b-b8d3-558aa0165b75",
+        "nickname": "MrChillout61",
+        "kills": 13,
+        "deaths": 34,
+        "assists": 4
+      }
+    ],
+    "players2": [
+      {
+        "player_id": "3769f84c-cb71-4f76-b261-87486842b967",
+        "nickname": "FCG_pilotiki",
+        "kills": 43,
+        "deaths": 26,
+        "assists": 13
+      },
+      {
+        "player_id": "7ea3bd3d-582e-4cd2-872a-703bf7af557c",
+        "nickname": "nycujan",
+        "kills": 35,
+        "deaths": 33,
+        "assists": 14
+      },
+      {
+        "player_id": "cea765cf-b74d-40ba-bc09-3a5bab0c28e9",
+        "nickname": "BryanOKnish1",
+        "kills": 32,
+        "deaths": 21,
+        "assists": 12
+      },
+      {
+        "player_id": "70f7c6cc-6229-4121-b9f8-39b1d6a58c94",
+        "nickname": "mendez161",
+        "kills": 27,
+        "deaths": 26,
+        "assists": 9
+      },
+      {
+        "player_id": "4e4df10d-ca21-4d85-84d0-93212bea7e76",
+        "nickname": "Raul800",
+        "kills": 23,
+        "deaths": 27,
+        "assists": 9
+      }
+    ],
+    "mapBreakdown": [
+      {
+        "map": "de_dust2",
+        "score1": 9,
+        "score2": 13,
+        "players1": [
+          {
+            "nickname": "massao61",
+            "kills": 23,
+            "deaths": 15,
+            "assists": 4,
+            "damage": 2874,
+            "headshots": 12,
+            "mvps": 4,
+            "player_id": "81ca8d1b-4037-4d7b-96ca-4f4fb2cfade1"
+          },
+          {
+            "nickname": "ANAKONDA330",
+            "kills": 19,
+            "deaths": 17,
+            "assists": 5,
+            "damage": 2841,
+            "headshots": 10,
+            "mvps": 3,
+            "player_id": "af52ceb5-cde0-47dd-bf48-7e640d7372ac"
+          },
+          {
+            "nickname": "DatObase",
+            "kills": 16,
+            "deaths": 17,
+            "assists": 3,
+            "damage": 2210,
+            "headshots": 8,
+            "mvps": 1,
+            "player_id": "90a2b3cd-0c84-499b-915f-9f21bf4ae698"
+          },
+          {
+            "nickname": "Bezhenec",
+            "kills": 11,
+            "deaths": 17,
+            "assists": 3,
+            "damage": 1760,
+            "headshots": 5,
+            "mvps": 1,
+            "player_id": "bea53fe9-8339-4a9e-9023-b89a10d0da7a"
+          },
+          {
+            "nickname": "MrChillout61",
+            "kills": 9,
+            "deaths": 18,
+            "assists": 3,
+            "damage": 1380,
+            "headshots": 4,
+            "mvps": 0,
+            "player_id": "e1c67ef9-50cb-424b-b8d3-558aa0165b75"
+          }
+        ],
+        "players2": [
+          {
+            "nickname": "FCG_pilotiki",
+            "kills": 21,
+            "deaths": 16,
+            "assists": 10,
+            "damage": 2713,
+            "headshots": 11,
+            "mvps": 4,
+            "player_id": "3769f84c-cb71-4f76-b261-87486842b967"
+          },
+          {
+            "nickname": "nycujan",
+            "kills": 17,
+            "deaths": 20,
+            "assists": 9,
+            "damage": 2650,
+            "headshots": 8,
+            "mvps": 3,
+            "player_id": "7ea3bd3d-582e-4cd2-872a-703bf7af557c"
+          },
+          {
+            "nickname": "BryanOKnish1",
+            "kills": 16,
+            "deaths": 13,
+            "assists": 6,
+            "damage": 2390,
+            "headshots": 8,
+            "mvps": 3,
+            "player_id": "cea765cf-b74d-40ba-bc09-3a5bab0c28e9"
+          },
+          {
+            "nickname": "mendez161",
+            "kills": 16,
+            "deaths": 15,
+            "assists": 5,
+            "damage": 2280,
+            "headshots": 8,
+            "mvps": 2,
+            "player_id": "70f7c6cc-6229-4121-b9f8-39b1d6a58c94"
+          },
+          {
+            "nickname": "Raul800",
+            "kills": 14,
+            "deaths": 14,
+            "assists": 4,
+            "damage": 2050,
+            "headshots": 4,
+            "mvps": 1,
+            "player_id": "4e4df10d-ca21-4d85-84d0-93212bea7e76"
+          }
+        ]
+      },
+      {
+        "map": "de_ancient",
+        "score1": 4,
+        "score2": 13,
+        "players1": [
+          {
+            "nickname": "massao61",
+            "kills": 21,
+            "deaths": 13,
+            "assists": 3,
+            "damage": 2534,
+            "headshots": 11,
+            "mvps": 2,
+            "player_id": "81ca8d1b-4037-4d7b-96ca-4f4fb2cfade1"
+          },
+          {
+            "nickname": "ANAKONDA330",
+            "kills": 12,
+            "deaths": 16,
+            "assists": 3,
+            "damage": 1890,
+            "headshots": 6,
+            "mvps": 1,
+            "player_id": "af52ceb5-cde0-47dd-bf48-7e640d7372ac"
+          },
+          {
+            "nickname": "MrChillout61",
+            "kills": 11,
+            "deaths": 17,
+            "assists": 2,
+            "damage": 1590,
+            "headshots": 5,
+            "mvps": 1,
+            "player_id": "e1c67ef9-50cb-424b-b8d3-558aa0165b75"
+          },
+          {
+            "nickname": "Bezhenec",
+            "kills": 7,
+            "deaths": 15,
+            "assists": 2,
+            "damage": 1140,
+            "headshots": 3,
+            "mvps": 0,
+            "player_id": "bea53fe9-8339-4a9e-9023-b89a10d0da7a"
+          },
+          {
+            "nickname": "DatObase",
+            "kills": 4,
+            "deaths": 16,
+            "assists": 1,
+            "damage": 790,
+            "headshots": 2,
+            "mvps": 0,
+            "player_id": "90a2b3cd-0c84-499b-915f-9f21bf4ae698"
+          }
+        ],
+        "players2": [
+          {
+            "nickname": "Raul800",
+            "kills": 22,
+            "deaths": 10,
+            "assists": 3,
+            "damage": 3601,
+            "headshots": 6,
+            "mvps": 5,
+            "player_id": "4e4df10d-ca21-4d85-84d0-93212bea7e76"
+          },
+          {
+            "nickname": "nycujan",
+            "kills": 18,
+            "deaths": 13,
+            "assists": 5,
+            "damage": 2680,
+            "headshots": 9,
+            "mvps": 3,
+            "player_id": "7ea3bd3d-582e-4cd2-872a-703bf7af557c"
+          },
+          {
+            "nickname": "FCG_pilotiki",
+            "kills": 16,
+            "deaths": 8,
+            "assists": 6,
+            "damage": 2410,
+            "headshots": 8,
+            "mvps": 3,
+            "player_id": "3769f84c-cb71-4f76-b261-87486842b967"
+          },
+          {
+            "nickname": "mendez161",
+            "kills": 11,
+            "deaths": 11,
+            "assists": 4,
+            "damage": 1820,
+            "headshots": 5,
+            "mvps": 1,
+            "player_id": "70f7c6cc-6229-4121-b9f8-39b1d6a58c94"
+          },
+          {
+            "nickname": "BryanOKnish1",
+            "kills": 9,
+            "deaths": 13,
+            "assists": 5,
+            "damage": 1450,
+            "headshots": 4,
+            "mvps": 1,
+            "player_id": "cea765cf-b74d-40ba-bc09-3a5bab0c28e9"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "match_id": "cs_series_1_inferno_dust2",
     "status": "FINISHED",
     "started_at": 1785787200,

@@ -3817,19 +3817,36 @@ export default function Home() {
 
                             {/* Match state & game info */}
                             <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", position: "relative", zIndex: 3, minWidth: "160px" }}>
-                              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                                {isFinished ? (
-                                  <span className="badge badge-success">Завершен</span>
-                                ) : isLive ? (
-                                  <span className="badge badge-info animate-pulse" style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem" }}>
-                                    <span style={{ display: "inline-block", width: "6px", height: "6px", background: "#fff", borderRadius: "50%" }} />
-                                    В эфире
-                                  </span>
-                                ) : (
-                                  <span className="badge badge-danger">{match.status}</span>
-                                )}
-                                <span style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>{matchDate}</span>
-                              </div>
+                                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+                                  {isFinished ? (
+                                    <span className="badge badge-success">Завершен</span>
+                                  ) : isLive ? (
+                                    <span className="badge badge-info animate-pulse" style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem" }}>
+                                      <span style={{ display: "inline-block", width: "6px", height: "6px", background: "#fff", borderRadius: "50%" }} />
+                                      В эфире
+                                    </span>
+                                  ) : (
+                                    <span className="badge badge-danger">{match.status}</span>
+                                  )}
+                                  {isCustom && (
+                                    <span 
+                                      style={{
+                                        background: "linear-gradient(135deg, rgba(255, 198, 25, 0.25), rgba(255, 107, 0, 0.25))",
+                                        border: "1px solid rgba(255, 198, 25, 0.6)",
+                                        color: "#ffc619",
+                                        fontSize: "0.75rem",
+                                        fontWeight: "800",
+                                        padding: "0.2rem 0.55rem",
+                                        borderRadius: "6px",
+                                        letterSpacing: "0.5px",
+                                        boxShadow: "0 0 10px rgba(255, 198, 25, 0.2)"
+                                      }}
+                                    >
+                                      🏆 SIGMA CYBER CUP (BO2)
+                                    </span>
+                                  )}
+                                  <span style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>{matchDate}</span>
+                                </div>
                               <span style={{ fontSize: "0.9rem", color: "var(--text-primary)", fontWeight: "500", marginTop: "0.25rem" }}>
                                 {matchMaps.length > 1 ? "Карты: " : "Карта: "}
                                 <strong style={{ color: "var(--accent-cyan)" }}>

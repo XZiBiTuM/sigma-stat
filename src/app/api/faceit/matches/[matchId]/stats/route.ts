@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { faceitFetch } from "@/lib/faceit";
+import { getStoragePath } from "@/lib/storage";
 import { promises as fs } from "fs";
 import path from "path";
 
-const customMatchesFilePath = path.join(process.cwd(), "src", "lib", "custom_matches.json");
+const customMatchesFilePath = getStoragePath("custom_matches.json");
 
 export async function GET(
   request: NextRequest,
@@ -40,9 +41,12 @@ export async function GET(
             teams: [
               {
                 team_id: "faction1",
-                team_stats: { Team: found.teams?.faction1?.name || "Команда 1" },
+                team_stats: { 
+                  Team: found.teams?.faction1?.name || "Команда 1",
+                  TeamWin: (mb.score1 || 0) > (mb.score2 || 0) ? "1" : "0"
+                },
                 players: (mb.players1 || []).map((p: any) => ({
-                  player_id: `cs_${p.nickname}`,
+                  player_id: p.player_id || `cs_${p.nickname}`,
                   nickname: p.nickname,
                   player_stats: {
                     Kills: (p.kills || 0).toString(),
@@ -55,9 +59,12 @@ export async function GET(
               },
               {
                 team_id: "faction2",
-                team_stats: { Team: found.teams?.faction2?.name || "Команда 2" },
+                team_stats: { 
+                  Team: found.teams?.faction2?.name || "Команда 2",
+                  TeamWin: (mb.score2 || 0) > (mb.score1 || 0) ? "1" : "0"
+                },
                 players: (mb.players2 || []).map((p: any) => ({
-                  player_id: `cs_${p.nickname}`,
+                  player_id: p.player_id || `cs_${p.nickname}`,
                   nickname: p.nickname,
                   player_stats: {
                     Kills: (p.kills || 0).toString(),

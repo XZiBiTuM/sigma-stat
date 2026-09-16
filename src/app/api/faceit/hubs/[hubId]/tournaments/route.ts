@@ -6,6 +6,7 @@ import path from "path";
 
 // Path to stats cache file
 const cacheFilePath = getStoragePath("match_stats_cache.json");
+const customMatchesFilePath = getStoragePath("custom_matches.json");
 
 // Local helper to read cache
 async function readStatsCache(): Promise<Record<string, any>> {
@@ -14,6 +15,16 @@ async function readStatsCache(): Promise<Record<string, any>> {
     return JSON.parse(data);
   } catch (error) {
     return {};
+  }
+}
+
+// Local helper to read custom matches
+async function readCustomMatches(): Promise<any[]> {
+  try {
+    const data = await fs.readFile(customMatchesFilePath, "utf8");
+    return JSON.parse(data || "[]");
+  } catch (error) {
+    return [];
   }
 }
 
@@ -254,6 +265,149 @@ export async function fetchHubTournamentsData(hubId: string) {
         players: playersList,
         matches: processedMatches,
       });
+    }
+
+    // Process Cybershoke Custom Tournament if custom matches exist
+    const customMatches = await readCustomMatches();
+    const cupMatches = customMatches.filter((m: any) => m.match_id && m.match_id.startsWith("cs_sigma_cup_"));
+    if (cupMatches.length > 0) {
+      const cMapCounts: Record<string, number> = {};
+      const cPlayerStats: Record<string, any> = {};
+      const cProcessedMatches: any[] = [];
+
+      for (const cm of cupMatches) {
+        const mapsList = (cm.mapBreakdown || []).map((mb: any) => mb.map || "de_mirage");
+        for (const mName of mapsList) {
+          cMapCounts[mName] = (cMapCounts[mName] || 0) + 1;
+        }
+
+        cProcessedMatches.push({
+          match_id: cm.match_id,
+          finished_at: cm.finished_at || 1789514900,
+          maps: mapsList,
+          teams: {
+            faction1: {
+              name: cm.teams?.faction1?.name || "Team 1",
+              score: cm.results?.score?.faction1 ?? 0,
+            },
+            faction2: {
+              name: cm.teams?.faction2?.name || "Team 2",
+              score: cm.results?.score?.faction2 ?? 0,
+            },
+          },
+        });
+
+        for (const mb of cm.mapBreakdown || []) {
+          const isFaction1Win = (mb.score1 || 0) > (mb.score2 || 0);
+          const isFaction2Win = (mb.score2 || 0) > (mb.score1 || 0);
+
+          for (const p of mb.players1 || []) {
+            const pId = p.player_id || `cs_p_${p.nickname}`;
+            if (!cPlayerStats[pId]) {
+              cPlayerStats[pId] = {
+                nickname: p.nickname,
+                kills: 0,
+                deaths: 0,
+                assists: 0,
+                mvps: 0,
+                played: 0,
+                wins: 0,
+                roundsPlayed: 0,
+                hsPctSum: 0,
+              };
+            }
+            cPlayerStats[pId].kills += p.kills || 0;
+            cPlayerStats[pId].deaths += p.deaths || 0;
+            cPlayerStats[pId].assists += p.assists || 0;
+            cPlayerStats[pId].mvps += p.mvps || 0;
+            cPlayerStats[pId].played += 1;
+            cPlayerStats[pId].roundsPlayed += 1;
+            cPlayerStats[pId].hsPctSum += (p.kills > 0 && p.headshots ? (p.headshots / p.kills) * 100 : 40);
+            if (isFaction1Win) cPlayerStats[pId].wins += 1;
+          }
+
+          for (const p of mb.players2 || []) {
+            const pId = p.player_id || `cs_p_${p.nickname}`;
+            if (!cPlayerStats[pId]) {
+              cPlayerStats[pId] = {
+                nickname: p.nickname,
+                kills: 0,
+                deaths: 0,
+                assists: 0,
+                mvps: 0,
+                played: 0,
+                wins: 0,
+                roundsPlayed: 0,
+                hsPctSum: 0,
+              };
+            }
+            cPlayerStats[pId].kills += p.kills || 0;
+            cPlayerStats[pId].deaths += p.deaths || 0;
+            cPlayerStats[pId].assists += p.assists || 0;
+            cPlayerStats[pId].mvps += p.mvps || 0;
+            cPlayerStats[pId].played += 1;
+            cPlayerStats[pId].roundsPlayed += 1;
+            cPlayerStats[pId].hsPctSum += (p.kills > 0 && p.headshots ? (p.headshots / p.kills) * 100 : 40);
+            if (isFaction2Win) cPlayerStats[pId].wins += 1;
+          }
+        }
+      }
+
+      let cPopularMap = "de_anubis";
+      let cMaxMapCount = 0;
+      for (const map in cMapCounts) {
+        if (cMapCounts[map] > cMaxMapCount) {
+          cMaxMapCount = cMapCounts[map];
+          cPopularMap = map;
+        }
+      }
+
+      const cPlayersList = Object.keys(cPlayerStats).map((playerId) => {
+        const p = cPlayerStats[playerId];
+        const avgKd = p.deaths > 0 ? p.kills / p.deaths : p.kills;
+        const winRate = p.roundsPlayed > 0 ? (p.wins / p.roundsPlayed) * 100 : 0;
+        const avgHs = p.roundsPlayed > 0 ? p.hsPctSum / p.roundsPlayed : 40;
+
+        return {
+          playerId,
+          nickname: p.nickname,
+          avatar: "",
+          played: p.played,
+          wins: p.wins,
+          losses: p.roundsPlayed - p.wins,
+          winRate: winRate.toFixed(1),
+          kills: p.kills,
+          deaths: p.deaths,
+          assists: p.assists,
+          mvps: p.mvps,
+          avgKd: avgKd.toFixed(2),
+          avgHs: avgHs.toFixed(1),
+        };
+      });
+
+      cPlayersList.sort((a, b) => {
+        const kdDiff = parseFloat(b.avgKd) - parseFloat(a.avgKd);
+        if (kdDiff !== 0) return kdDiff;
+        return parseFloat(b.winRate) - parseFloat(a.winRate);
+      });
+
+      const cMvp = cPlayersList[0] || null;
+
+      const cyberCupTournament = {
+        id: "tournament-cybershoke-s2",
+        name: `Турнир #${tournaments.length + 1} (Sigma Cyber Cup)`,
+        startDate: "15.09.2026",
+        endDate: "15.09.2026",
+        matchesCount: cupMatches.length,
+        popularMap: cPopularMap,
+        maxMapCount: cMaxMapCount,
+        mvp: cMvp,
+        players: cPlayersList,
+        matches: cProcessedMatches,
+      };
+
+      // Prepend to tournaments so it appears first
+      tournaments.unshift(cyberCupTournament);
     }
 
     // Write back updated cache if any new fetches occurred
