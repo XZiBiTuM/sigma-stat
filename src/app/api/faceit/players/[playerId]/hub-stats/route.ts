@@ -11,6 +11,7 @@ import { getHubPlayersFormMap } from "@/lib/player_form";
 import { fetchHubTournamentsData } from "@/app/api/faceit/hubs/[hubId]/tournaments/route";
 
 const cacheFilePath = getStoragePath("match_stats_cache.json");
+const customMatchesFilePath = getStoragePath("custom_matches.json");
 
 let cachedHubMatches: any = null;
 let lastHubMatchesFetch = 0;
@@ -93,6 +94,140 @@ export async function GET(
       });
     } catch (e) {
       console.warn("Failed to fetch match timestamps:", e);
+    }
+
+    // 2.2 Include Custom Matches (tournament/community matches) into cacheData
+    try {
+      const customMatchesRaw = await fs.readFile(customMatchesFilePath, "utf8").catch(() => "[]");
+      const customMatchesList = JSON.parse(customMatchesRaw || "[]");
+      if (Array.isArray(customMatchesList)) {
+        customMatchesList.forEach((cm: any) => {
+          if (!cm.match_id || cm.status !== "FINISHED" || isMatchExcluded(cm.match_id)) return;
+          
+          const mapsList = cm.mapBreakdown || [
+            {
+              map: cm.maps?.[0] || "de_mirage",
+              score1: cm.results?.score?.faction1 || 13,
+              score2: cm.results?.score?.faction2 || 9,
+              players1: cm.players1 || [],
+              players2: cm.players2 || []
+            }
+          ];
+
+          const rounds = mapsList.map((mb: any, idx: number) => {
+            const s1 = mb.score1 || 0;
+            const s2 = mb.score2 || 0;
+            const totalRounds = s1 + s2;
+            const t1Win = s1 > s2;
+            const t2Win = s2 > s1;
+
+            return {
+              match_id: `${cm.match_id}_map${idx}`,
+              round_stats: {
+                Map: mb.map || "de_mirage",
+                Score: `${s1}:${s2}`,
+                Rounds: totalRounds.toString(),
+                Winner: t1Win ? "faction1" : (t2Win ? "faction2" : "draw")
+              },
+              teams: [
+                {
+                  team_id: "faction1",
+                  team_stats: {
+                    Team: cm.teams?.faction1?.name || "Команда 1",
+                    TeamWin: t1Win ? "1" : "0"
+                  },
+                  players: (mb.players1 || []).map((p: any) => ({
+                    player_id: p.player_id,
+                    nickname: p.nickname,
+                    player_stats: {
+                      Kills: (p.kills || 0).toString(),
+                      Deaths: (p.deaths || 0).toString(),
+                      Assists: (p.assists || 0).toString(),
+                      Damage: (p.damage || 0).toString(),
+                      Headshots: (p.headshots || 0).toString(),
+                      MVPs: (p.mvps || 0).toString(),
+                      "K/D Ratio": (p.deaths > 0 ? (p.kills / p.deaths).toFixed(2) : p.kills.toString()),
+                      "K/R Ratio": (totalRounds > 0 ? (p.kills / totalRounds).toFixed(2) : "0.75"),
+                      Result: t1Win ? "1" : "0",
+                      "Double Kills": (p.doubles || 0).toString(),
+                      "Triple Kills": (p.triples || 0).toString(),
+                      "Quadro Kills": (p.quadros || 0).toString(),
+                      "Penta Kills": (p.pentas || 0).toString(),
+                      "Entry Count": (p.entryCount || 0).toString(),
+                      "Entry Wins": (p.entryWins || 0).toString(),
+                      "1v1Count": (p.clutch1v1Count || 0).toString(),
+                      "1v1Wins": (p.clutch1v1Wins || 0).toString(),
+                      "1v2Count": (p.clutch1v2Count || 0).toString(),
+                      "1v2Wins": (p.clutch1v2Wins || 0).toString(),
+                      "Clutch Kills": (p.clutchKills || 0).toString(),
+                      "Utility Count": (p.utilityCount || 0).toString(),
+                      "Utility Successes": (p.utilitySuccesses || 0).toString(),
+                      "Utility Damage": (p.utilityDamage || 0).toString(),
+                      "Flash Count": (p.flashCount || 0).toString(),
+                      "Flash Successes": (p.flashSuccesses || 0).toString(),
+                      "Enemies Flashed": (p.enemiesFlashed || 0).toString(),
+                      "Sniper Kills": (p.sniperKills || 0).toString()
+                    }
+                  }))
+                },
+                {
+                  team_id: "faction2",
+                  team_stats: {
+                    Team: cm.teams?.faction2?.name || "Команда 2",
+                    TeamWin: t2Win ? "1" : "0"
+                  },
+                  players: (mb.players2 || []).map((p: any) => ({
+                    player_id: p.player_id,
+                    nickname: p.nickname,
+                    player_stats: {
+                      Kills: (p.kills || 0).toString(),
+                      Deaths: (p.deaths || 0).toString(),
+                      Assists: (p.assists || 0).toString(),
+                      Damage: (p.damage || 0).toString(),
+                      Headshots: (p.headshots || 0).toString(),
+                      MVPs: (p.mvps || 0).toString(),
+                      "K/D Ratio": (p.deaths > 0 ? (p.kills / p.deaths).toFixed(2) : p.kills.toString()),
+                      "K/R Ratio": (totalRounds > 0 ? (p.kills / totalRounds).toFixed(2) : "0.75"),
+                      Result: t2Win ? "1" : "0",
+                      "Double Kills": (p.doubles || 0).toString(),
+                      "Triple Kills": (p.triples || 0).toString(),
+                      "Quadro Kills": (p.quadros || 0).toString(),
+                      "Penta Kills": (p.pentas || 0).toString(),
+                      "Entry Count": (p.entryCount || 0).toString(),
+                      "Entry Wins": (p.entryWins || 0).toString(),
+                      "1v1Count": (p.clutch1v1Count || 0).toString(),
+                      "1v1Wins": (p.clutch1v1Wins || 0).toString(),
+                      "1v2Count": (p.clutch1v2Count || 0).toString(),
+                      "1v2Wins": (p.clutch1v2Wins || 0).toString(),
+                      "Clutch Kills": (p.clutchKills || 0).toString(),
+                      "Utility Count": (p.utilityCount || 0).toString(),
+                      "Utility Successes": (p.utilitySuccesses || 0).toString(),
+                      "Utility Damage": (p.utilityDamage || 0).toString(),
+                      "Flash Count": (p.flashCount || 0).toString(),
+                      "Flash Successes": (p.flashSuccesses || 0).toString(),
+                      "Enemies Flashed": (p.enemiesFlashed || 0).toString(),
+                      "Sniper Kills": (p.sniperKills || 0).toString()
+                    }
+                  }))
+                }
+              ]
+            };
+          });
+
+          cacheData[cm.match_id] = {
+            match_id: cm.match_id,
+            finished_at: cm.finished_at || cm.started_at,
+            started_at: cm.started_at,
+            rounds
+          };
+
+          if (cm.finished_at || cm.started_at) {
+            matchTimestamps[cm.match_id] = cm.finished_at || cm.started_at;
+          }
+        });
+      }
+    } catch (e) {
+      console.warn("Failed to load custom matches into hub-stats:", e);
     }
 
     // 2.5 Check if player has a statsStartDate cutoff (e.g. 2026-07-14)
@@ -347,9 +482,24 @@ export async function GET(
 
     // Overall metrics calculation
     const avgKd = totalDeaths > 0 ? totalKills / totalDeaths : totalKills;
-    const finalMatchesCount = (cutoffTimestamp > 0) ? uniqueMatchIds.size : (typeof userLb?.played === "number" ? userLb.played : (typeof userLb?.matches === "number" ? userLb.matches : uniqueMatchIds.size));
-    const finalWinsCount = (cutoffTimestamp > 0) ? uniqueWinMatchIds.size : (typeof userLb?.won === "number" ? userLb.won : (typeof userLb?.wins === "number" ? userLb.wins : uniqueWinMatchIds.size));
-    const winrateOverall = (cutoffTimestamp > 0) ? (finalMatchesCount > 0 ? Math.round((finalWinsCount / finalMatchesCount) * 100) : 0) : (typeof userLb?.winrate === "number" ? userLb.winrate : (typeof userLb?.winRate === "number" ? userLb.winRate : (finalMatchesCount > 0 ? Math.round((finalWinsCount / finalMatchesCount) * 100) : 0)));
+    
+    // Count custom matches played/won by this player
+    let customMatchesPlayed = 0;
+    let customMatchesWon = 0;
+    for (const mId of uniqueMatchIds) {
+      if (mId.startsWith("cs_")) {
+        customMatchesPlayed++;
+        if (uniqueWinMatchIds.has(mId)) customMatchesWon++;
+      }
+    }
+
+    const baseLbPlayed = typeof userLb?.played === "number" ? userLb.played : (typeof userLb?.matches === "number" ? userLb.matches : 0);
+    const baseLbWon = typeof userLb?.won === "number" ? userLb.won : (typeof userLb?.wins === "number" ? userLb.wins : 0);
+
+    const finalMatchesCount = (cutoffTimestamp > 0) ? uniqueMatchIds.size : (baseLbPlayed > 0 ? baseLbPlayed + customMatchesPlayed : uniqueMatchIds.size);
+    const finalWinsCount = (cutoffTimestamp > 0) ? uniqueWinMatchIds.size : (baseLbPlayed > 0 ? baseLbWon + customMatchesWon : uniqueWinMatchIds.size);
+    const winrateOverall = finalMatchesCount > 0 ? Math.round((finalWinsCount / finalMatchesCount) * 100) : 0;
+
     const avgHs = totalKills > 0 ? Math.round((totalHeadshots / totalKills) * 100) : 0;
     const avgAdr = totalRounds > 0 ? totalDamage / totalRounds : 0;
     
@@ -452,9 +602,9 @@ export async function GET(
     const recentResults = recentMatchesList.map(m => m.result);
     const recentMaps = playerMatchesList.slice(0, 5).map((m: any) => m.won ? "1" : "0").reverse();
 
-    // Use official streak from leaderboard if available and no cutoff, else computed match streak
-    const finalMatchCurrentStreak = (cutoffTimestamp > 0 || officialStreak === null) ? matchCurrentStreak : officialStreak;
-    const finalMatchLongestStreak = (cutoffTimestamp > 0) ? matchLongestStreak : Math.max(matchLongestStreak, officialStreak || 0);
+    // Use computed match streak based on all matches (including tournament series), falling back to official leaderboard streak if higher
+    const finalMatchCurrentStreak = matchCurrentStreak;
+    const finalMatchLongestStreak = Math.max(matchLongestStreak, officialStreak || 0);
 
     // Calculate hub-wide averages from all matches in the cache
     let hubTotalKills = 0;
