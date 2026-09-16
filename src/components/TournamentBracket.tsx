@@ -888,31 +888,45 @@ export function TournamentBracketView({
         </div>
 
         {standings.length > 0 && standings[0].played > 0 && (
-          <div
-            style={{
-              background: "rgba(10, 8, 18, 0.7)",
-              border: "1px solid rgba(255, 198, 25, 0.4)",
-              borderRadius: "16px",
-              padding: "1rem 1.4rem",
-              display: "flex",
-              alignItems: "center",
-              gap: "1rem",
-              boxShadow: "0 8px 30px rgba(0,0,0,0.5)"
-            }}
-          >
-            <TeamBadgeLogo logo={standings[0].team.logo} name={standings[0].team.name} size="lg" />
-            <div>
-              <div style={{ fontSize: "0.72rem", color: "#ffc619", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.08em" }}>
-                1 МЕСТО В ТАБЛИЦЕ
+          (() => {
+            const topPoints = standings[0].points;
+            const topLeaders = standings.filter(s => s.played > 0 && s.points === topPoints);
+            const isShared = topLeaders.length > 1;
+
+            return (
+              <div
+                style={{
+                  background: "rgba(10, 8, 18, 0.7)",
+                  border: "1px solid rgba(255, 198, 25, 0.4)",
+                  borderRadius: "16px",
+                  padding: "1rem 1.4rem",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "1rem",
+                  boxShadow: "0 8px 30px rgba(0,0,0,0.5)"
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "-0.5rem" }}>
+                  {topLeaders.map(tl => (
+                    <div key={tl.team.id} style={{ marginRight: isShared ? "-8px" : "0" }}>
+                      <TeamBadgeLogo logo={tl.team.logo} name={tl.team.name} size="lg" />
+                    </div>
+                  ))}
+                </div>
+                <div>
+                  <div style={{ fontSize: "0.72rem", color: "#ffc619", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                    {isShared ? "1 МЕСТО ДЕЛЯТ КОМАНДЫ (ПО ОЧКАМ)" : "1 МЕСТО В ТАБЛИЦЕ"}
+                  </div>
+                  <div style={{ fontSize: "1.05rem", fontWeight: "900", color: "#fff", marginTop: "0.15rem" }}>
+                    {topLeaders.map(tl => tl.team.name).join(" и ")}
+                  </div>
+                  <div style={{ fontSize: "0.78rem", color: "var(--text-secondary)", marginTop: "0.2rem" }}>
+                    <strong style={{ color: "#ffc619" }}>{topPoints} PTS</strong> {isShared ? `(по ${topPoints} очка)` : `(${topLeaders[0].won}W - ${topLeaders[0].drawn}D - ${topLeaders[0].lost}L)`}
+                  </div>
+                </div>
               </div>
-              <div style={{ fontSize: "1.1rem", fontWeight: "900", color: "#fff", marginTop: "0.15rem" }}>
-                {standings[0].team.name}
-              </div>
-              <div style={{ fontSize: "0.78rem", color: "var(--text-secondary)", marginTop: "0.2rem" }}>
-                <strong style={{ color: "#ffc619" }}>{standings[0].points} PTS</strong> ({standings[0].won}W - {standings[0].drawn}D - {standings[0].lost}L)
-              </div>
-            </div>
-          </div>
+            );
+          })()
         )}
       </div>
 
@@ -924,28 +938,29 @@ export function TournamentBracketView({
           borderRadius: "20px",
           background: "var(--bg-secondary)",
           border: "1px solid var(--border-light)",
-          boxShadow: "var(--glass-shadow)"
+          boxShadow: "0 10px 40px rgba(0,0,0,0.4)"
         }}
       >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem", flexWrap: "wrap", gap: "0.5rem" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem", flexWrap: "wrap", gap: "1rem" }}>
           <div>
-            <h3 style={{ fontSize: "1.15rem", fontWeight: "800", color: "#fff", margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              Турнирная таблица
+            <h3 style={{ margin: 0, fontSize: "1.25rem", fontWeight: "800", display: "flex", alignItems: "center", gap: "0.6rem" }}>
+              <span>📊</span> Турнирная таблица (Круговая система)
             </h3>
-            <span style={{ fontSize: "0.76rem", color: "var(--text-muted)" }}>
-              Сортировка: Очки (PTS) &gt; Разница карт &gt; Выигранные карты &gt; Победы
-            </span>
+            <p style={{ margin: "0.3rem 0 0", fontSize: "0.82rem", color: "var(--text-secondary)" }}>
+              BO2 серии: Победа (2:0) = <strong>2 очка</strong>, Ничья (1:1) = <strong>1 очко</strong>, Поражение (0:2) = <strong>0 очков</strong>. При равенстве очков команды делят места.
+            </p>
           </div>
-          <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", background: "rgba(255,255,255,0.04)", padding: "0.3rem 0.75rem", borderRadius: "8px", border: "1px solid var(--border-light)" }}>
-            Победа 2:0 = 2 очка | Ничья 1:1 = 1 очко
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8rem", color: "var(--text-muted)" }}>
+            <span style={{ display: "inline-block", width: "8px", height: "8px", borderRadius: "50%", background: "#ffc619" }}></span>
+            <span>1-е место делят по очкам</span>
           </div>
         </div>
 
-        <div className="custom-table-container" style={{ border: "1px solid var(--border-light)", borderRadius: "14px" }}>
-          <table className="custom-table" style={{ width: "100%", borderCollapse: "collapse" }}>
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.88rem" }}>
             <thead>
-              <tr style={{ background: "rgba(22, 17, 38, 0.8)", borderBottom: "1px solid var(--border-light)" }}>
-                <th style={{ textAlign: "center", width: "48px", padding: "0.9rem 0.6rem" }}>#</th>
+              <tr style={{ borderBottom: "1px solid var(--border-light)", color: "var(--text-secondary)", fontSize: "0.78rem", textTransform: "uppercase" }}>
+                <th style={{ textAlign: "center", padding: "0.9rem 0.6rem", width: "50px" }}>#</th>
                 <th style={{ textAlign: "left", padding: "0.9rem 1rem" }}>Команда</th>
                 <th style={{ textAlign: "center", padding: "0.9rem 0.6rem" }}>И</th>
                 <th style={{ textAlign: "center", padding: "0.9rem 0.6rem", color: "var(--success)" }}>В (2:0)</th>
@@ -957,7 +972,14 @@ export function TournamentBracketView({
             </thead>
             <tbody>
               {standings.map((st, idx) => {
-                const isLeader = idx === 0 && st.played > 0;
+                // Compute displayed rank (equal points = equal rank)
+                let displayRank = 1;
+                for (let k = 0; k < idx; k++) {
+                  if (standings[k].points > st.points) {
+                    displayRank++;
+                  }
+                }
+                const isLeader = displayRank === 1 && st.played > 0;
                 return (
                   <tr
                     key={st.team.id}
@@ -978,11 +1000,11 @@ export function TournamentBracketView({
                           borderRadius: "8px",
                           fontSize: "0.78rem",
                           fontWeight: "900",
-                          background: idx === 0 ? "#ffc619" : idx === 1 ? "rgba(255,255,255,0.15)" : idx === 2 ? "rgba(205, 127, 50, 0.3)" : "rgba(255,255,255,0.05)",
-                          color: idx === 0 ? "#000" : "#fff"
+                          background: displayRank === 1 ? "#ffc619" : displayRank === 2 ? "rgba(255,255,255,0.15)" : displayRank === 3 ? "rgba(205, 127, 50, 0.3)" : "rgba(255,255,255,0.05)",
+                          color: displayRank === 1 ? "#000" : "#fff"
                         }}
                       >
-                        {idx + 1}
+                        {displayRank}
                       </span>
                     </td>
                     <td style={{ padding: "0.85rem 1rem" }}>
