@@ -3491,9 +3491,9 @@ export default function Home() {
                                     const wRecord = (playerId && weeklySkillMap[playerId]) || 
                                                     (nickname && weeklySkillMap[nickname.toLowerCase()]) || 
                                                     (nickname && weeklySkillMap[nickname]);
-                                    const rawDelta = wRecord?.weeklyDelta !== undefined 
-                                      ? wRecord.weeklyDelta 
-                                      : (sk.delta !== undefined ? sk.delta : 0);
+                                    const rawDelta = (sk.delta !== undefined && sk.delta !== 0)
+                                      ? sk.delta
+                                      : (wRecord?.weeklyDelta !== undefined ? wRecord.weeklyDelta : 0);
                                     const delta = rawDelta || 0;
                                     const isPositive = delta > 0;
                                     const isNegative = delta < 0;
