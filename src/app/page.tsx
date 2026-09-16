@@ -4126,7 +4126,7 @@ export default function Home() {
                                       letterSpacing: "0.05em",
                                       textTransform: "uppercase"
                                     }}>
-                                      ★ MVP ТУРНИРА (ПО HLTV 2.0)
+                                      ★ MVP ТУРНИРА
                                     </span>
                                     <div 
                                       style={{ fontSize: "1.35rem", fontWeight: "800", color: "#fff", marginTop: "0.15rem", cursor: "pointer" }} 
