@@ -60,15 +60,26 @@ function writeDraftState(data: DraftState) {
   }
 }
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 import { getHubPlayersFormMap } from "@/lib/player_form";
+import { fetchHubTournamentsData } from "@/app/api/faceit/hubs/[hubId]/tournaments/route";
+
+const HUB_ID = "d0701937-8eba-4df9-8830-22137001c0bd";
 
 export async function GET() {
   const state = readDraftState();
   let formMap: Record<string, any> = {};
   try {
-    formMap = getHubPlayersFormMap("0dd077bc-b401-4f5c-8a40-47578601ccb7");
+    const tourneysRes = await fetchHubTournamentsData(HUB_ID);
+    formMap = getHubPlayersFormMap(HUB_ID, tourneysRes?.tournaments);
   } catch (e) {
-    console.error("Failed to load player form in draft route:", e);
+    try {
+      formMap = getHubPlayersFormMap(HUB_ID);
+    } catch (err2) {
+      console.error("Failed to load player form in draft route:", err2);
+    }
   }
   return NextResponse.json({
     ...state,

@@ -962,14 +962,15 @@ export default function Home() {
   const getPlayerFormData = (name: string) => {
     if (!name) return null;
     const lower = name.toLowerCase();
-    if (draftFormMap[lower]) return draftFormMap[lower];
-    if (draftFormMap[name]) return draftFormMap[name];
-    // Check rankings fallback
+    // Prioritize active rankings table form first so it is 100% in sync with main page
     const rItem = (rankings || []).find((r: any) => {
       const rNick = (r.nickname || r.player?.nickname || "").toLowerCase();
-      return rNick === lower;
+      const rId = (r.player_id || r.player?.player_id || r.user_id || "").toLowerCase();
+      return rNick === lower || rId === lower;
     });
     if ((rItem as any)?.hubStats?.form) return (rItem as any).hubStats.form;
+    if (draftFormMap[lower]) return draftFormMap[lower];
+    if (draftFormMap[name]) return draftFormMap[name];
     return null;
   };
 
