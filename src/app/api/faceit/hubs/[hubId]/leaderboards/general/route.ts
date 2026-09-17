@@ -3,7 +3,7 @@ export const revalidate = 0;
 
 import { NextRequest, NextResponse } from "next/server";
 import { faceitFetch } from "@/lib/faceit";
-import { getStoragePath } from "@/lib/storage";
+import { getStoragePath, isMatchExcluded } from "@/lib/storage";
 import { promises as fs } from "fs";
 import { getHubPlayersFormMap } from "@/lib/player_form";
 import { fetchHubTournamentsData } from "@/app/api/faceit/hubs/[hubId]/tournaments/route";
@@ -37,6 +37,101 @@ export async function GET(
       console.warn("Failed to read match cache in general leaderboard:", e);
     }
 
+    // 1.1 Include Custom Matches into cacheData
+    try {
+      const customMatchesFilePath = getStoragePath("custom_matches.json");
+      const customMatchesRaw = await fs.readFile(customMatchesFilePath, "utf8").catch(() => "[]");
+      const customMatchesList = JSON.parse(customMatchesRaw || "[]");
+      if (Array.isArray(customMatchesList)) {
+        customMatchesList.forEach((cm: any) => {
+          if (!cm.match_id || cm.status !== "FINISHED" || isMatchExcluded(cm.match_id)) return;
+
+          const mapsList = cm.mapBreakdown || [
+            {
+              map: cm.maps?.[0] || "de_mirage",
+              score1: cm.results?.score?.faction1 || 13,
+              score2: cm.results?.score?.faction2 || 9,
+              players1: cm.players1 || [],
+              players2: cm.players2 || []
+            }
+          ];
+
+          const rounds = mapsList.map((mb: any, idx: number) => {
+            const s1 = mb.score1 || 0;
+            const s2 = mb.score2 || 0;
+            const totalRounds = s1 + s2;
+            const t1Win = s1 > s2;
+            const t2Win = s2 > s1;
+
+            return {
+              match_id: `${cm.match_id}_map${idx}`,
+              round_stats: {
+                Map: mb.map || "de_mirage",
+                Score: `${s1}:${s2}`,
+                Rounds: totalRounds.toString(),
+                Winner: t1Win ? "faction1" : (t2Win ? "faction2" : "draw")
+              },
+              teams: [
+                {
+                  team_id: "faction1",
+                  team_stats: {
+                    Team: cm.teams?.faction1?.name || "Команда 1",
+                    TeamWin: t1Win ? "1" : "0"
+                  },
+                  players: (mb.players1 || []).map((p: any) => ({
+                    player_id: p.player_id,
+                    nickname: p.nickname,
+                    player_stats: {
+                      Kills: (p.kills || 0).toString(),
+                      Deaths: (p.deaths || 0).toString(),
+                      Assists: (p.assists || 0).toString(),
+                      Damage: (p.damage || 0).toString(),
+                      Headshots: (p.headshots || 0).toString(),
+                      MVPs: (p.mvps || 0).toString(),
+                      "K/D Ratio": (p.deaths > 0 ? (p.kills / p.deaths).toFixed(2) : p.kills.toString()),
+                      "K/R Ratio": (totalRounds > 0 ? (p.kills / totalRounds).toFixed(2) : "0.75"),
+                      Result: t1Win ? "1" : "0"
+                    }
+                  }))
+                },
+                {
+                  team_id: "faction2",
+                  team_stats: {
+                    Team: cm.teams?.faction2?.name || "Команда 2",
+                    TeamWin: t2Win ? "1" : "0"
+                  },
+                  players: (mb.players2 || []).map((p: any) => ({
+                    player_id: p.player_id,
+                    nickname: p.nickname,
+                    player_stats: {
+                      Kills: (p.kills || 0).toString(),
+                      Deaths: (p.deaths || 0).toString(),
+                      Assists: (p.assists || 0).toString(),
+                      Damage: (p.damage || 0).toString(),
+                      Headshots: (p.headshots || 0).toString(),
+                      MVPs: (p.mvps || 0).toString(),
+                      "K/D Ratio": (p.deaths > 0 ? (p.kills / p.deaths).toFixed(2) : p.kills.toString()),
+                      "K/R Ratio": (totalRounds > 0 ? (p.kills / totalRounds).toFixed(2) : "0.75"),
+                      Result: t2Win ? "1" : "0"
+                    }
+                  }))
+                }
+              ]
+            };
+          });
+
+          cacheData[cm.match_id] = {
+            match_id: cm.match_id,
+            finished_at: cm.finished_at || cm.started_at,
+            started_at: cm.started_at,
+            rounds
+          };
+        });
+      }
+    } catch (e) {
+      console.warn("Failed to load custom matches into general leaderboard:", e);
+    }
+
     let overridesData: Record<string, any> = {};
     try {
       const overridesPath = getStoragePath("player_overrides.json");
@@ -53,12 +148,27 @@ export async function GET(
       damage: number;
       rounds: number;
       headshots: number;
+      maps: number;
     }> = {};
 
     for (const matchId in cacheData) {
+      if (isMatchExcluded(matchId)) continue;
       const match = cacheData[matchId];
       if (!match || !Array.isArray(match.rounds)) continue;
       const mTime = match.finished_at || match.started_at || match.created_at || 0;
+
+      const playersInMatch = new Map<string, {
+        pid: string;
+        nick: string;
+        isWin: boolean;
+        kills: number;
+        deaths: number;
+        assists: number;
+        damage: number;
+        rounds: number;
+        headshots: number;
+        maps: number;
+      }>();
 
       for (const round of match.rounds) {
         const roundsInMatch = parseInt(round.round_stats?.Rounds || "22", 10);
@@ -76,45 +186,71 @@ export async function GET(
             const pOv = (pid && overridesData[pid]) || (nick && overridesData[nick]) || (nick && overridesData[nick.toLowerCase()]);
             if (pOv?.statsStartDate) {
               const cutoff = Math.floor(new Date(pOv.statsStartDate).getTime() / 1000);
-              if (cutoff > 0 && mTime > 0 && mTime < cutoff) {
+              if (cutoff > 0 && (!mTime || mTime < cutoff)) {
                 continue; // Skip pre-cutoff matches for this player
               }
             }
 
             const primaryKey = pid || nick;
-            if (!playerAgg[primaryKey]) {
-              playerAgg[primaryKey] = {
-                matches: 0,
-                wins: 0,
+            if (!playersInMatch.has(primaryKey)) {
+              playersInMatch.set(primaryKey, {
+                pid,
+                nick,
+                isWin: false,
                 kills: 0,
                 deaths: 0,
                 assists: 0,
                 damage: 0,
                 rounds: 0,
-                headshots: 0
-              };
+                headshots: 0,
+                maps: 0
+              });
             }
 
+            const pEntry = playersInMatch.get(primaryKey)!;
             const isWin = (Boolean(roundWinner) && team.team_id === roundWinner) || 
                           team.team_stats?.TeamWin === "1" || 
                           team.team_stats?.["Team Win"] === "1" || 
                           ps.Result === "1";
-
-            const pObj = playerAgg[primaryKey];
-            pObj.matches++;
-            if (isWin) pObj.wins++;
-            pObj.kills += parseInt(ps.Kills || "0", 10);
-            pObj.deaths += parseInt(ps.Deaths || "0", 10);
-            pObj.assists += parseInt(ps.Assists || "0", 10);
-            pObj.damage += parseInt(ps.Damage || "0", 10);
-            pObj.rounds += roundsInMatch;
-            pObj.headshots += parseInt(ps.Headshots || "0", 10);
-
-            // Also alias by nickname if pid exists
-            if (pid && nick && !playerAgg[nick]) {
-              playerAgg[nick] = pObj;
-            }
+            if (isWin) pEntry.isWin = true;
+            pEntry.kills += parseInt(ps.Kills || "0", 10);
+            pEntry.deaths += parseInt(ps.Deaths || "0", 10);
+            pEntry.assists += parseInt(ps.Assists || "0", 10);
+            pEntry.damage += parseInt(ps.Damage || "0", 10);
+            pEntry.rounds += roundsInMatch;
+            pEntry.headshots += parseInt(ps.Headshots || "0", 10);
+            pEntry.maps++;
           }
+        }
+      }
+
+      for (const [primaryKey, pEntry] of playersInMatch.entries()) {
+        if (!playerAgg[primaryKey]) {
+          playerAgg[primaryKey] = {
+            matches: 0,
+            wins: 0,
+            kills: 0,
+            deaths: 0,
+            assists: 0,
+            damage: 0,
+            rounds: 0,
+            headshots: 0,
+            maps: 0
+          };
+        }
+        const pObj = playerAgg[primaryKey];
+        pObj.matches++;
+        if (pEntry.isWin) pObj.wins++;
+        pObj.kills += pEntry.kills;
+        pObj.deaths += pEntry.deaths;
+        pObj.assists += pEntry.assists;
+        pObj.damage += pEntry.damage;
+        pObj.rounds += pEntry.rounds;
+        pObj.headshots += pEntry.headshots;
+        pObj.maps += pEntry.maps;
+
+        if (pEntry.pid && pEntry.nick && !playerAgg[pEntry.nick]) {
+          playerAgg[pEntry.nick] = pObj;
         }
       }
     }
@@ -164,7 +300,8 @@ export async function GET(
         const st = (pid && playerAgg[pid]) || (nick && playerAgg[nick]) || null;
         if (st && st.matches > 0) {
           const kd = st.deaths > 0 ? parseFloat((st.kills / st.deaths).toFixed(2)) : st.kills;
-          const avgKills = parseFloat((st.kills / st.matches).toFixed(1));
+          const mapDivisor = st.maps > 0 ? st.maps : st.matches;
+          const avgKills = parseFloat((st.kills / mapDivisor).toFixed(1));
           const adr = st.rounds > 0 ? parseFloat((st.damage / st.rounds).toFixed(1)) : 0;
           const hsPct = st.kills > 0 ? Math.round((st.headshots / st.kills) * 100) : 0;
 
@@ -192,6 +329,7 @@ export async function GET(
             item.played = st.matches;
             item.won = st.wins;
             item.lost = Math.max(0, st.matches - st.wins);
+            item.win_rate = st.matches > 0 ? parseFloat((st.wins / st.matches).toFixed(2)) : 0.5;
           }
 
           const form = (pid && formMap[pid]) || (nick && formMap[nick]) || (pInfo.player_id && formMap[pInfo.player_id]) || null;
@@ -206,6 +344,7 @@ export async function GET(
             matches: matchesCount,
             wins: winsCount,
             rounds: st.rounds,
+            maps: st.maps,
             form
           };
         } else {

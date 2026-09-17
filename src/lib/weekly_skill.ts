@@ -153,7 +153,7 @@ export async function performWeeklyRecalibration(force: boolean = false): Promis
           const pOv = (pid && overrides[pid]) || (nick && overrides[nick]) || (nick && overrides[nick.toLowerCase()]);
           if (pOv?.statsStartDate) {
             const cutoff = Math.floor(new Date(pOv.statsStartDate).getTime() / 1000);
-            if (cutoff > 0 && mTime > 0 && mTime < cutoff) {
+            if (cutoff > 0 && (!mTime || mTime < cutoff)) {
               continue; // Skip pre-cutoff matches for this player
             }
           }

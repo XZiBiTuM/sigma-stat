@@ -56,7 +56,7 @@ export async function GET(
         for (const match of Object.values(cache) as any[]) {
           if (!match?.rounds) continue;
           const mTime = match.finished_at || match.started_at || match.created_at || 0;
-          if (cutoffTimestamp > 0 && mTime > 0 && mTime < cutoffTimestamp) {
+          if (cutoffTimestamp > 0 && (!mTime || mTime < cutoffTimestamp)) {
             continue;
           }
 
