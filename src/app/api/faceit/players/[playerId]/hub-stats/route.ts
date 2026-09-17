@@ -316,7 +316,7 @@ export async function GET(
       if (!match || !Array.isArray(match.rounds)) continue;
 
       const mTime = match.finished_at || match.started_at || match.created_at || matchTimestamps[matchId] || 0;
-      if (cutoffTimestamp > 0 && mTime > 0 && mTime < cutoffTimestamp) {
+      if (cutoffTimestamp > 0 && (!mTime || mTime < cutoffTimestamp)) {
         continue; // Skip matches before cutoff date for this player
       }
 
