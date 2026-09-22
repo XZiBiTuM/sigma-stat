@@ -411,12 +411,12 @@ export const COMBAT_CHALLENGES: ChallengeDefinition[] = [
   {
     id: "combat_kd_100",
     title: "Battlefront Ratio",
-    description: "Завершить турнирную карту с K/D соотношением не менее 1.15 (при от 12 фрагах)",
+    description: "Завершить турнирную карту с положительным K/D не менее 1.05 (при от 10 фрагах)",
     type: "COMBAT",
     difficulty: "EASY",
     rewardTokens: 1,
     conditionKey: "map_kd",
-    targetValue: 1.15
+    targetValue: 1.05
   },
   {
     id: "combat_mvp_1",
@@ -463,12 +463,12 @@ export const COMBAT_CHALLENGES: ChallengeDefinition[] = [
   {
     id: "combat_kd_130",
     title: "Lethal Efficiency",
-    description: "Завершить турнирную карту с K/D соотношением не менее 1.45 (при от 15 фрагах)",
+    description: "Завершить турнирную карту с K/D соотношением не менее 1.25 (при от 12 фрагах)",
     type: "COMBAT",
     difficulty: "MEDIUM",
     rewardTokens: 1,
     conditionKey: "map_kd",
-    targetValue: 1.45
+    targetValue: 1.25
   },
   {
     id: "combat_kills_25",
@@ -543,12 +543,12 @@ export const COMBAT_CHALLENGES: ChallengeDefinition[] = [
   {
     id: "combat_kd_150",
     title: "Tactical Dominator",
-    description: "Завершить карту с K/D 1.65 или выше (при не менее 15 фрагах)",
+    description: "Завершить карту с K/D 1.40 или выше (при не менее 12 фрагах)",
     type: "COMBAT",
     difficulty: "MEDIUM",
     rewardTokens: 1,
     conditionKey: "map_kd",
-    targetValue: 1.65
+    targetValue: 1.40
   },
   {
     id: "combat_series_kills_30",
@@ -565,12 +565,12 @@ export const COMBAT_CHALLENGES: ChallengeDefinition[] = [
   {
     id: "combat_kd_170",
     title: "Untouchable Godmode",
-    description: "Завершить турнирную карту с доминирующим K/D соотношением 1.95 или выше (при от 16 фрагах)",
+    description: "Завершить турнирную карту с доминирующим K/D соотношением 1.55 или выше (при от 14 фрагах)",
     type: "COMBAT",
     difficulty: "HARD",
     rewardTokens: 1,
     conditionKey: "map_kd",
-    targetValue: 1.95
+    targetValue: 1.55
   },
   {
     id: "combat_multikill_4k",
@@ -635,12 +635,12 @@ export const COMBAT_CHALLENGES: ChallengeDefinition[] = [
   {
     id: "combat_kd_200",
     title: "Apex Predator",
-    description: "Завершить турнирную карту с феноменальным K/D 2.30 или выше (при от 18 фрагах)",
+    description: "Завершить турнирную карту с превосходным K/D 1.75 или выше (при от 15 фрагах)",
     type: "COMBAT",
     difficulty: "HARD",
     rewardTokens: 1,
     conditionKey: "map_kd",
-    targetValue: 2.30
+    targetValue: 1.75
   },
   {
     id: "combat_util_damage_200",
