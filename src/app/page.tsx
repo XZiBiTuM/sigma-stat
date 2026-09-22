@@ -2528,37 +2528,21 @@ export default function Home() {
   return (
     <>
       <div className="container" style={{ minHeight: "100vh", display: "flex", flexDirection: "column", boxSizing: "border-box" }}>
-      {/* HEADER SECTION (REWORKED) */}
+      {/* HEADER SECTION (CLEAN SINGLE-ROW NAVBAR) */}
       <header className="main-navbar">
-        {/* Left: Brand / Logo */}
-        <Link href="/" className="navbar-brand" style={{ textDecoration: "none" }}>
-          <div className="brand-logo-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z"/>
-              <path d="m9 12 2 2 4-4"/>
-            </svg>
-          </div>
-          <div className="brand-text">
-            <div className="brand-title">
-              СИГМА КИБЕР КЛУБ
-            </div>
-            <div className="brand-subtitle">
-              Чем труднее битва — тем слаще победа
-            </div>
-          </div>
-        </Link>
+        <div className="navbar-left">
+          {/* Brand */}
+          <Link href="/" className="navbar-brand">
+            <span className="brand-title">СИГМА КИБЕР КЛУБ</span>
+          </Link>
 
-        {/* Right: Actions Container */}
-        <div className="navbar-actions">
-          {/* Main Navigation Buttons */}
+          {/* Navigation Links in the same line */}
           <nav className="navbar-nav">
             <button 
               onClick={() => setShowDraftModal(true)}
-              className="nav-btn nav-btn-draft"
-              title="Открыть Captain's Draft"
+              className="nav-link-btn"
             >
-              <span>⚔️</span>
-              <span>Captain's Draft</span>
+              Captain's Draft
             </button>
 
             <button 
@@ -2567,13 +2551,11 @@ export default function Home() {
                 fetchWeeklyChallenges();
                 setShowChallengesModal(true);
               }}
-              className="nav-btn nav-btn-challenges"
-              title="Открыть еженедельные челленджи"
+              className="nav-link-btn"
             >
-              <span>🏆</span>
               <span>Челленджи недели</span>
               {userTokenBalance > 0 && (
-                <span className="token-badge">
+                <span className="token-count">
                   {userTokenBalance}
                 </span>
               )}
@@ -2581,130 +2563,36 @@ export default function Home() {
 
             <button 
               onClick={() => { setTourStep(0); setShowTourModal(true); }}
-              className="nav-btn nav-btn-info"
-              title="Информация о клубе и сервисе"
+              className="nav-link-btn"
             >
-              <span>ℹ️</span>
-              <span>О сервисе</span>
+              О сервисе
             </button>
-          </nav>
 
-          {/* Admin Group (Direct Link to /admin + Quick Actions Dropdown) */}
-          <div className="admin-group">
-            <Link 
-              href="/admin"
-              className={`nav-btn-admin ${userRole === "ADMIN" ? "is-active-admin" : ""}`}
-              title="Перейти в панель администратора (/admin)"
-            >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              </svg>
-              <span>ADMIN</span>
-            </Link>
-
-            {/* Quick Admin Actions menu if logged in as Admin or Event Maker */}
-            {userRole !== "GUEST" && (
-              <div className="admin-dropdown-wrapper" style={{ position: "relative" }}>
-                <button 
-                  onClick={() => setShowAdminMenu(prev => !prev)}
-                  className="nav-btn-admin-menu"
-                  title="Быстрые инструменты администратора"
-                >
-                  ⚙️ ▾
-                </button>
-
-                {showAdminMenu && (
-                  <div className="admin-dropdown-menu">
-                    <div className="admin-dropdown-header">
-                      {userRole === "EVENT_MAKER" ? "EVENT MAKER" : "АДМИН-МЕНЮ"}
-                    </div>
-                    
-                    <Link 
-                      href="/admin"
-                      onClick={() => setShowAdminMenu(false)}
-                      className="admin-dropdown-item"
-                    >
-                      <span>🛠️</span>
-                      <span>Открыть панель /admin</span>
-                    </Link>
-
-                    {userRole === "ADMIN" && (
-                      <>
-                        <button 
-                          onClick={() => { 
-                            setShowAdminMenu(false); 
-                            setCsSubmitMsg(""); 
-                            setShowCybershokeModal(true); 
-                          }}
-                          className="admin-dropdown-item"
-                        >
-                          <span>📥</span>
-                          <span>Добавить матч Cybershoke</span>
-                        </button>
-
-                        <button 
-                          onClick={() => { 
-                            setShowAdminMenu(false);
-                            setBatchSaveMsg(""); 
-                            const initialPts: Record<string, string> = {};
-                            const initialScore: Record<string, string> = {};
-                            (rankings || []).forEach((item: any) => {
-                              const nick = item.nickname || item.player?.nickname;
-                              const pId = item.player_id || item.player?.player_id;
-                              const ov = (pId && playerOverridesMap[pId]) || (nick && playerOverridesMap[nick]) || {};
-                              if (nick) {
-                                initialPts[nick] = ov.csRating !== undefined ? ov.csRating.toString() : "";
-                                initialScore[nick] = ov.customSkillScore !== undefined ? ov.customSkillScore.toString() : "";
-                              }
-                            });
-                            setBatchPtsMap(initialPts);
-                            setBatchScoreMap(initialScore);
-                            setShowBatchPtsModal(true); 
-                          }}
-                          className="admin-dropdown-item"
-                        >
-                          <span>✏️</span>
-                          <span>PTS и Скилл игроков</span>
-                        </button>
-                      </>
-                    )}
-
-                    {(userRole === "EVENT_MAKER" || userRole === "ADMIN") && (
-                      <button 
-                        onClick={() => { 
-                          setShowAdminMenu(false); 
-                          setEventAnnMsg(""); 
-                          setShowEventModal(true); 
-                        }}
-                        className="admin-dropdown-item"
-                      >
-                        <span>📢</span>
-                        <span>Добавить Event</span>
-                      </button>
-                    )}
-
-                    <div className="admin-dropdown-divider" />
-
-                    <button 
-                      onClick={() => {
-                        setShowAdminMenu(false);
-                        localStorage.removeItem("sigma_user_role");
-                        localStorage.removeItem("sigma_user_name");
-                        setUserRole("GUEST");
-                        setUserName("");
-                      }}
-                      className="admin-dropdown-item text-danger"
-                    >
-                      <span>🚪</span>
-                      <span>Выйти из админ-режима</span>
-                    </button>
-                  </div>
-                )}
-              </div>
+            {/* ADMIN button — ONLY rendered when user is authorized as ADMIN */}
+            {userRole === "ADMIN" && (
+              <Link 
+                href="/admin"
+                className="nav-link-admin"
+                title="Панель администратора"
+              >
+                ADMIN
+              </Link>
             )}
-          </div>
 
-          {/* User Profile / Steam Auth Widget */}
+            {userRole === "EVENT_MAKER" && (
+              <Link 
+                href="/admin"
+                className="nav-link-admin"
+                title="Панель Event Maker"
+              >
+                EVENT MAKER
+              </Link>
+            )}
+          </nav>
+        </div>
+
+        {/* Right side: User Profile / Steam Auth */}
+        <div className="navbar-right">
           {currentUser ? (
             <div className="user-profile-bar">
               <img 
@@ -2717,7 +2605,7 @@ export default function Home() {
               </span>
 
               {currentUser.faceit?.elo && (
-                <span className="user-profile-elo" title="Текущий FACEIT ELO">
+                <span className="user-profile-elo" title="FACEIT ELO">
                   {(currentUser.faceit?.playerId && playerEloMap[currentUser.faceit.playerId]) || (currentUser.faceit?.nickname && playerEloMap[currentUser.faceit.nickname.toLowerCase()]) || currentUser.faceit.elo} ELO
                 </span>
               )}
@@ -2728,7 +2616,7 @@ export default function Home() {
                   e.preventDefault();
                   setActiveTab("bracket");
                 }}
-                title="Ваш баланс СИГМАНАТ (нажмите для перехода к ставкам)"
+                title="Перейти к ставкам"
                 className="user-profile-bet-btn"
               >
                 SIGMABET
@@ -2741,10 +2629,10 @@ export default function Home() {
                     fetchWeeklyChallenges();
                     setShowChallengesModal(true);
                   }}
-                  title="Ваши жетоны за челленджи (открыть задания)"
+                  title="Жетоны за челленджи"
                   className="user-profile-token-btn"
                 >
-                  🪙 {userTokenBalance}
+                  {userTokenBalance} жетонов
                 </button>
               )}
 
@@ -2757,7 +2645,6 @@ export default function Home() {
                   }
                 }}
                 className="user-profile-action-btn"
-                title="Открыть подробную статистику"
               >
                 Профиль
               </button>
@@ -2767,7 +2654,7 @@ export default function Home() {
                   await fetch("/api/auth/steam/logout", { method: "POST" });
                   setCurrentUser(null);
                 }}
-                title="Выйти из аккаунта Steam"
+                title="Выйти"
                 className="user-profile-logout-btn"
               >
                 ✕
@@ -2777,12 +2664,11 @@ export default function Home() {
             <a
               href="/api/auth/steam/login"
               className="steam-login-btn"
-              title="Войти через Steam для участия в турнирах и челленджах"
             >
               <img 
                 src="/steam-logo.svg" 
                 alt="Steam" 
-                style={{ width: "18px", height: "18px", objectFit: "contain" }} 
+                style={{ width: "16px", height: "16px", objectFit: "contain" }} 
               />
               <span>Войти через Steam</span>
             </a>
