@@ -1138,6 +1138,7 @@ export default function Home() {
 
     const targetBudget = targetDraftTeamBudget;
     const maxBudget = maxDraftTeamBudget;
+    const minBudget = minDraftTeamBudget;
     const remainingBudget = maxBudget - currentTeamPts;
 
     const sortedAvail = [...draftAvailablePlayers]
@@ -1146,18 +1147,28 @@ export default function Home() {
 
     if (sortedAvail.length === 0) return null;
 
-    // Final pick for this team
+    // Final pick for this team (slot 5)
     if (remainingSlots === 1) {
       const validPicks = sortedAvail.filter(p => p.skill <= remainingBudget);
       if (validPicks.length > 0) {
-        const best = validPicks[0];
+        // Pick the one closest to target budget
+        const sortedByTarget = [...validPicks].sort((a, b) => {
+          const diffA = Math.abs(currentTeamPts + a.skill - targetBudget);
+          const diffB = Math.abs(currentTeamPts + b.skill - targetBudget);
+          return diffA - diffB;
+        });
+        const best = sortedByTarget[0];
+        const alt = sortedByTarget.length > 1 ? sortedByTarget[1] : null;
         const diff = (currentTeamPts + best.skill) - targetBudget;
         const diffStr = diff > 0 ? `+${diff}` : `${diff}`;
         return {
           bestPlayer: best.name,
           bestPlayerSkill: best.skill,
           reason: `Финальный пик: закрывает состав ровно на ${currentTeamPts + best.skill} PTS (отклонение ${diffStr} от цели ${targetBudget} PTS)`,
-          isOverBudgetRisk: false
+          isOverBudgetRisk: false,
+          altPlayer: alt ? alt.name : null,
+          altPlayerSkill: alt ? alt.skill : undefined,
+          altReason: alt ? `Альтернатива: итого ${currentTeamPts + alt.skill} PTS` : undefined
         };
       } else {
         const lowest = sortedAvail[sortedAvail.length - 1];
@@ -1165,41 +1176,77 @@ export default function Home() {
         return {
           bestPlayer: lowest.name,
           bestPlayerSkill: lowest.skill,
-          reason: `Минимальный перебор бюджета (+${over} очков выше лимита команды)`,
+          reason: `Вынужденный пик: минимальный перебор (+${over} выше лимита команды)`,
           isOverBudgetRisk: true
         };
       }
     }
 
-    // Multiple picks remaining
+    // Multiple picks remaining (slots 2, 3, 4)
     const subsequentPicksCount = remainingSlots - 1;
+
+    // Total missing slots across ALL 4 teams
+    const allTeamsRemainingSlots = draftTeams.map(t => 5 - t.length);
+    const totalSlotsRemainingAllTeams = allTeamsRemainingSlots.reduce((a, b) => a + b, 0);
+
     const scoredCandidates = sortedAvail.map(cand => {
-      const remainingPool = sortedAvail.filter(p => p.name !== cand.name);
-      const cheapestSubsequent = [...remainingPool].sort((a, b) => a.skill - b.skill).slice(0, subsequentPicksCount);
-      const minSubsequentSum = cheapestSubsequent.reduce((sum, p) => sum + p.skill, 0);
+      const poolWithoutCand = sortedAvail.filter(p => p.name !== cand.name);
+      
+      // Calculate realistic pool quota for this team:
+      // Other teams will also take players! If pool has 15 players and this team needs 2 more,
+      // this team will NOT get the top 2 absolute cheapest; it gets a proportional slice of the pool.
+      const poolSortedAsc = [...poolWithoutCand].sort((a, b) => a.skill - b.skill);
+      
+      // Rank index estimation: instead of taking index 0..subsequentPicksCount,
+      // estimate realistic picks based on draft competition
+      const realisticSubsequentSum = subsequentPicksCount === 1
+        ? (poolSortedAsc[Math.min(poolSortedAsc.length - 1, Math.floor(poolSortedAsc.length * 0.25))]?.skill || poolSortedAsc[0]?.skill || 30)
+        : poolSortedAsc.slice(0, subsequentPicksCount).reduce((sum, p) => sum + p.skill, 0);
 
-      const budgetAfterCand = maxBudget - (currentTeamPts + cand.skill);
-      const targetBudgetAfterCand = targetBudget - (currentTeamPts + cand.skill);
-      const idealAvgForRemaining = subsequentPicksCount > 0 ? targetBudgetAfterCand / subsequentPicksCount : 0;
+      // Absolute minimum sum in pool (optimistic lower bound)
+      const optimisticMinSubsequentSum = poolSortedAsc.slice(0, subsequentPicksCount).reduce((sum, p) => sum + p.skill, 0);
 
-      const isFeasible = minSubsequentSum <= budgetAfterCand;
-      const overflow = minSubsequentSum > budgetAfterCand ? (minSubsequentSum - budgetAfterCand) : 0;
+      const teamPtsAfterCand = currentTeamPts + cand.skill;
+      const budgetAfterCand = maxBudget - teamPtsAfterCand;
+      const targetBudgetAfterCand = targetBudget - teamPtsAfterCand;
+      const idealAvgForRemaining = subsequentPicksCount > 0 ? (targetBudgetAfterCand / subsequentPicksCount) : 0;
 
+      // Feasibility checks
+      const isHardFeasible = optimisticMinSubsequentSum <= budgetAfterCand;
+      const isRealisticallyFeasible = realisticSubsequentSum <= budgetAfterCand;
+      const overflow = optimisticMinSubsequentSum > budgetAfterCand ? (optimisticMinSubsequentSum - budgetAfterCand) : 0;
+
+      // Score calculation:
+      // We want to maximize player quality (cand.skill) while strictly penalizing over-allocation
       let score = cand.skill;
-      if (!isFeasible) {
-        score -= (1000 + overflow * 20);
+
+      if (!isHardFeasible) {
+        score -= (5000 + overflow * 50);
+      } else if (!isRealisticallyFeasible) {
+        score -= (2000 + (realisticSubsequentSum - budgetAfterCand) * 25);
       } else {
-        if (idealAvgForRemaining < 30) {
-          score -= (30 - idealAvgForRemaining) * 6;
+        // Safe pick: how close is idealAvg to the median of the remaining pool?
+        const poolMedian = poolSortedAsc.length > 0 ? poolSortedAsc[Math.floor(poolSortedAsc.length / 2)].skill : 50;
+        const distFromMedian = Math.abs(idealAvgForRemaining - poolMedian);
+        score -= distFromMedian * 2;
+
+        // If remaining slots require unrealistically low average (< 38 PTS), heavily penalize
+        if (idealAvgForRemaining < 38) {
+          score -= (38 - idealAvgForRemaining) * 35;
+        } else if (idealAvgForRemaining < 45) {
+          score -= (45 - idealAvgForRemaining) * 15;
         }
-        if (idealAvgForRemaining > 85) {
-          score -= (idealAvgForRemaining - 85) * 4;
+
+        // If remaining slots require too high average (> 75 PTS), gently guide to take better player now
+        if (idealAvgForRemaining > 75) {
+          score -= (idealAvgForRemaining - 75) * 5;
         }
       }
 
       return {
         cand,
-        isFeasible,
+        isHardFeasible,
+        isRealisticallyFeasible,
         overflow,
         idealAvgForRemaining: Math.round(idealAvgForRemaining),
         score
@@ -1208,15 +1255,23 @@ export default function Home() {
 
     scoredCandidates.sort((a, b) => b.score - a.score);
     const best = scoredCandidates[0];
-    const alt = scoredCandidates.length > 1 && scoredCandidates[1].isFeasible && scoredCandidates[1].cand.name !== best.cand.name ? scoredCandidates[1] : null;
+    const alt = scoredCandidates.length > 1 && scoredCandidates[1].isHardFeasible && scoredCandidates[1].cand.name !== best.cand.name ? scoredCandidates[1] : null;
+
+    const isRisk = !best.isHardFeasible || !best.isRealisticallyFeasible;
+    let reasonText = "";
+    if (!best.isHardFeasible) {
+      reasonText = `Внимание: перебор бюджета команды на +${best.overflow} PTS`;
+    } else if (!best.isRealisticallyFeasible) {
+      reasonText = `Высокий риск дефицита очков: оставляет слишком мало (~${best.idealAvgForRemaining} PTS/слот)`;
+    } else {
+      reasonText = `Идеальный баланс: оставляет в среднем комфортные ~${best.idealAvgForRemaining} PTS на след. ${subsequentPicksCount} ${subsequentPicksCount === 1 ? "пик" : "пика"}`;
+    }
 
     return {
       bestPlayer: best.cand.name,
       bestPlayerSkill: best.cand.skill,
-      reason: best.isFeasible 
-        ? `Идеальный баланс: оставляет в среднем ~${best.idealAvgForRemaining} PTS на след. ${subsequentPicksCount} ${subsequentPicksCount === 1 ? "пик" : "пика"}` 
-        : `Внимание: перебор бюджета команды на +${best.overflow} PTS`,
-      isOverBudgetRisk: !best.isFeasible,
+      reason: reasonText,
+      isOverBudgetRisk: isRisk,
       altPlayer: alt ? alt.cand.name : null,
       altPlayerSkill: alt ? alt.cand.skill : undefined,
       altReason: alt ? `Альтернатива: оставляет ~${alt.idealAvgForRemaining} PTS/слот` : undefined
