@@ -51,22 +51,22 @@ export const TRAINING_CHALLENGES: ChallengeDefinition[] = [
   {
     id: "train_deagle_tuesday",
     title: "Desert Eagle Outlaw",
-    description: "Сделать не менее 10 киллов с Desert Eagle за матч 10х10",
+    description: "Сделать не менее 15 киллов с Desert Eagle за матч 10х10",
+    type: "TRAINING",
+    difficulty: "EASY",
+    rewardTokens: 0,
+    conditionKey: "manual_fun",
+    targetValue: 15
+  },
+  {
+    id: "train_shotgun_party",
+    title: "Heavy Buckshot",
+    description: "Сделать не менее 10 киллов с дробовиков (XM1014 / Nova / MAG-7) за матч 10х10",
     type: "TRAINING",
     difficulty: "EASY",
     rewardTokens: 0,
     conditionKey: "manual_fun",
     targetValue: 10
-  },
-  {
-    id: "train_shotgun_party",
-    title: "Heavy Buckshot",
-    description: "Сыграть не менее 6 раундов только с дробовиком (XM1014 / Nova / MAG-7)",
-    type: "TRAINING",
-    difficulty: "EASY",
-    rewardTokens: 0,
-    conditionKey: "manual_fun",
-    targetValue: 6
   },
   {
     id: "train_knife_master",
@@ -91,22 +91,22 @@ export const TRAINING_CHALLENGES: ChallengeDefinition[] = [
   {
     id: "train_mp9_rush",
     title: "Blitzkrieg Runner",
-    description: "Сделать 8 быстрых киллов с MP9 или MAC-10 на раннем тайминге раунда",
+    description: "Сделать 12 быстрых киллов с MP9 или MAC-10 на раннем тайминге раунда",
+    type: "TRAINING",
+    difficulty: "EASY",
+    rewardTokens: 0,
+    conditionKey: "manual_fun",
+    targetValue: 12
+  },
+  {
+    id: "train_p250_force",
+    title: "Eco Armor Piercer",
+    description: "Сделать 8 киллов за вечер с P250 или Five-SeveN в раундах эко/форс-бая",
     type: "TRAINING",
     difficulty: "EASY",
     rewardTokens: 0,
     conditionKey: "manual_fun",
     targetValue: 8
-  },
-  {
-    id: "train_p250_force",
-    title: "Eco Armor Piercer",
-    description: "Сделать 6 киллов за вечер с P250 или Five-SeveN в раундах форс-бая",
-    type: "TRAINING",
-    difficulty: "EASY",
-    rewardTokens: 0,
-    conditionKey: "manual_fun",
-    targetValue: 6
   },
   {
     id: "train_smoke_defuse",
@@ -121,44 +121,44 @@ export const TRAINING_CHALLENGES: ChallengeDefinition[] = [
   {
     id: "train_molotov_tag",
     title: "Flame Inquisitor",
-    description: "Нанести урон коктейлем Молотова или зажигалкой минимум 6 противникам за матч",
+    description: "Нанести урон коктейлем Молотова или зажигалкой минимум 8 противникам за матч",
+    type: "TRAINING",
+    difficulty: "EASY",
+    rewardTokens: 0,
+    conditionKey: "manual_fun",
+    targetValue: 8
+  },
+  {
+    id: "train_galil_famas",
+    title: "Budget Rifleman",
+    description: "Сделать не менее 18 киллов с бюджетных винтовок Galil AR или FAMAS за матч",
+    type: "TRAINING",
+    difficulty: "EASY",
+    rewardTokens: 0,
+    conditionKey: "manual_fun",
+    targetValue: 18
+  },
+  {
+    id: "train_dual_barettas",
+    title: "Dual Gunslinger",
+    description: "Сделать 6 киллов со стрельбы по-македонски из Dual Berettas за вечер",
     type: "TRAINING",
     difficulty: "EASY",
     rewardTokens: 0,
     conditionKey: "manual_fun",
     targetValue: 6
-  },
-  {
-    id: "train_galil_famas",
-    title: "Budget Rifleman",
-    description: "Сделать не менее 12 киллов с бюджетных винтовок Galil AR или FAMAS за матч",
-    type: "TRAINING",
-    difficulty: "EASY",
-    rewardTokens: 0,
-    conditionKey: "manual_fun",
-    targetValue: 12
-  },
-  {
-    id: "train_dual_barettas",
-    title: "Dual Gunslinger",
-    description: "Сделать 4 килла со стрельбы по-македонски из Dual Berettas за матч",
-    type: "TRAINING",
-    difficulty: "EASY",
-    rewardTokens: 0,
-    conditionKey: "manual_fun",
-    targetValue: 4
   },
 
   // MEDIUM (10 challenges)
   {
     id: "train_scout_head",
     title: "Scout Headhunter",
-    description: "Сделать 6 хедшотов с SSG 08 (Муха) за один матч 10х10",
+    description: "Сделать 8 хедшотов с SSG 08 (Муха) за один матч 10х10",
     type: "TRAINING",
     difficulty: "MEDIUM",
     rewardTokens: 0,
     conditionKey: "manual_fun",
-    targetValue: 6
+    targetValue: 8
   },
   {
     id: "train_zeus_shock",
@@ -173,22 +173,22 @@ export const TRAINING_CHALLENGES: ChallengeDefinition[] = [
   {
     id: "train_flasher",
     title: "Flashbang Maestro",
-    description: "Ослепить более 30 игроков за карту световыми гранатами",
+    description: "Ослепить более 35 игроков за карту световыми гранатами",
     type: "TRAINING",
     difficulty: "MEDIUM",
     rewardTokens: 0,
     conditionKey: "manual_fun",
-    targetValue: 30
+    targetValue: 35
   },
   {
     id: "train_submachine",
     title: "SMG Spray Down",
-    description: "Сделать 20 киллов с пистолетов-пулеметов (MP9 / MAC-10 / P90)",
+    description: "Сделать 25 киллов с пистолетов-пулеметов (MP9 / MAC-10 / P90)",
     type: "TRAINING",
     difficulty: "MEDIUM",
     rewardTokens: 0,
     conditionKey: "manual_fun",
-    targetValue: 20
+    targetValue: 25
   },
   {
     id: "train_negev_hold",
@@ -223,32 +223,32 @@ export const TRAINING_CHALLENGES: ChallengeDefinition[] = [
   {
     id: "train_awp_flick",
     title: "Glass Cannon Sniper",
-    description: "Сделать 12 фрагов с AWP за один матч без покупки брони",
+    description: "Сделать 14 фрагов с AWP за один матч без покупки брони",
     type: "TRAINING",
     difficulty: "MEDIUM",
     rewardTokens: 0,
     conditionKey: "manual_fun",
-    targetValue: 12
+    targetValue: 14
   },
   {
     id: "train_wallbang",
     title: "Wallbang Specialist",
-    description: "Сделать 4 убийства прострелом через стены, двери или ящики за матч",
+    description: "Сделать 5 убийств прострелом через стены, двери или ящики за матч",
     type: "TRAINING",
     difficulty: "MEDIUM",
     rewardTokens: 0,
     conditionKey: "manual_fun",
-    targetValue: 4
+    targetValue: 5
   },
   {
     id: "train_no_scope",
     title: "No-Scope Assassin",
-    description: "Сделать 2 килла с AWP или SSG 08 без использования прицела навскидку",
+    description: "Сделать 3 килла с AWP или SSG 08 без использования прицела навскидку",
     type: "TRAINING",
     difficulty: "MEDIUM",
     rewardTokens: 0,
     conditionKey: "manual_fun",
-    targetValue: 2
+    targetValue: 3
   },
 
   // HARD (10 challenges)
@@ -315,12 +315,12 @@ export const TRAINING_CHALLENGES: ChallengeDefinition[] = [
   {
     id: "train_mag7_jump",
     title: "Airborne Shotgunner",
-    description: "Сделать 5 фрагов в прыжке с дробовика MAG-7 за матч 10х10",
+    description: "Сделать 6 фрагов в прыжке с дробовика MAG-7 за матч 10х10",
     type: "TRAINING",
     difficulty: "HARD",
     rewardTokens: 0,
     conditionKey: "manual_fun",
-    targetValue: 5
+    targetValue: 6
   },
   {
     id: "train_molotov_kill",
@@ -361,12 +361,12 @@ export const COMBAT_CHALLENGES: ChallengeDefinition[] = [
   {
     id: "combat_kills_15",
     title: "Apex Fragger",
-    description: "Сделать суммарно не менее 22 убийств за турнирный матч / серию",
+    description: "Сделать суммарно не менее 28 убийств за турнирную серию (BO2)",
     type: "COMBAT",
     difficulty: "EASY",
     rewardTokens: 1,
     conditionKey: "match_kills",
-    targetValue: 22
+    targetValue: 28
   },
   {
     id: "combat_hs_40",
@@ -381,17 +381,17 @@ export const COMBAT_CHALLENGES: ChallengeDefinition[] = [
   {
     id: "combat_assists_5",
     title: "Tactical Wingman",
-    description: "Сделать от 7 ассистов за турнирную серию",
+    description: "Сделать не менее 8 ассистов суммарно за турнирную серию (BO2)",
     type: "COMBAT",
     difficulty: "EASY",
     rewardTokens: 1,
     conditionKey: "total_assists",
-    targetValue: 7
+    targetValue: 8
   },
   {
     id: "combat_rounds_won_10",
     title: "Map Conqueror",
-    description: "Выиграть не менее 13 раундов в составе своей команды на любой карте турнира",
+    description: "Выиграть турнирную карту в составе команды (взять 13 победных раундов)",
     type: "COMBAT",
     difficulty: "EASY",
     rewardTokens: 1,
@@ -401,7 +401,7 @@ export const COMBAT_CHALLENGES: ChallengeDefinition[] = [
   {
     id: "combat_first_map_win",
     title: "Dominant Decider",
-    description: "Выиграть карту с отрывом в 13+ взятых раундов в составе команды",
+    description: "Выиграть карту с отрывом в 13 взятых раундов в составе команды",
     type: "COMBAT",
     difficulty: "EASY",
     rewardTokens: 1,
@@ -411,12 +411,12 @@ export const COMBAT_CHALLENGES: ChallengeDefinition[] = [
   {
     id: "combat_kd_100",
     title: "Battlefront Ratio",
-    description: "Завершить турнирную карту с положительным K/D не менее 1.05 (при от 10 фрагах)",
+    description: "Завершить турнирную карту с положительным K/D не менее 1.10 (при от 10 фрагах)",
     type: "COMBAT",
     difficulty: "EASY",
     rewardTokens: 1,
     conditionKey: "map_kd",
-    targetValue: 1.05
+    targetValue: 1.10
   },
   {
     id: "combat_mvp_1",
@@ -431,12 +431,12 @@ export const COMBAT_CHALLENGES: ChallengeDefinition[] = [
   {
     id: "combat_headshots_8",
     title: "Skull Collector",
-    description: "Оформить не менее 12 хедшотов за одну турнирную карту",
+    description: "Оформить не менее 10 хедшотов за одну турнирную карту",
     type: "COMBAT",
     difficulty: "EASY",
     rewardTokens: 1,
     conditionKey: "map_headshots",
-    targetValue: 12
+    targetValue: 10
   },
   {
     id: "combat_util_damage_60",
@@ -451,34 +451,34 @@ export const COMBAT_CHALLENGES: ChallengeDefinition[] = [
   {
     id: "combat_series_kills_20",
     title: "Series Firepower",
-    description: "Набить не менее 26 фрагов суммарно за турнирную серию",
+    description: "Набрать не менее 30 фрагов суммарно за турнирную серию (BO2)",
     type: "COMBAT",
     difficulty: "EASY",
     rewardTokens: 1,
     conditionKey: "match_kills",
-    targetValue: 26
+    targetValue: 30
   },
 
   // MEDIUM (1 Token, 10 challenges)
   {
     id: "combat_kd_130",
     title: "Lethal Efficiency",
-    description: "Завершить турнирную карту с K/D соотношением не менее 1.25 (при от 12 фрагах)",
+    description: "Завершить турнирную карту с K/D соотношением не менее 1.30 (при от 12 фрагах)",
     type: "COMBAT",
     difficulty: "MEDIUM",
     rewardTokens: 1,
     conditionKey: "map_kd",
-    targetValue: 1.25
+    targetValue: 1.30
   },
   {
     id: "combat_kills_25",
     title: "Bullet Storm",
-    description: "Набить не менее 35 фрагов суммарно в турнирной серии",
+    description: "Набрать не менее 38 фрагов суммарно за серию из 2 карт турнира",
     type: "COMBAT",
     difficulty: "MEDIUM",
     rewardTokens: 1,
     conditionKey: "match_kills",
-    targetValue: 35
+    targetValue: 38
   },
   {
     id: "combat_util_damage_120",
@@ -503,42 +503,42 @@ export const COMBAT_CHALLENGES: ChallengeDefinition[] = [
   {
     id: "combat_assists_8",
     title: "Squad Strategist",
-    description: "Набрать не менее 11 результативных ассистов за турнирный матч",
+    description: "Набрать не менее 14 результативных ассистов суммарно за турнирную серию",
     type: "COMBAT",
     difficulty: "MEDIUM",
     rewardTokens: 1,
     conditionKey: "total_assists",
-    targetValue: 11
+    targetValue: 14
   },
   {
     id: "combat_mvp_3",
     title: "Frontline Star",
-    description: "Заработать не менее 4 MVP раундов на одной турнирной карте",
+    description: "Заработать не менее 3 MVP раундов на одной турнирной карте",
     type: "COMBAT",
     difficulty: "MEDIUM",
     rewardTokens: 1,
     conditionKey: "mvp_count",
-    targetValue: 4
+    targetValue: 3
   },
   {
     id: "combat_single_map_kills_18",
     title: "Heavy Impact Fragger",
-    description: "Сделать не менее 22 фрагов на одной конкретной карте турнира",
+    description: "Сделать не менее 20 фрагов на одной конкретной карте турнира",
     type: "COMBAT",
     difficulty: "MEDIUM",
     rewardTokens: 1,
     conditionKey: "max_single_map_kills",
-    targetValue: 22
+    targetValue: 20
   },
   {
     id: "combat_headshots_14",
     title: "Surgical Executioner",
-    description: "Сделать не менее 18 хедшотов за одну турнирную карту",
+    description: "Сделать не менее 14 хедшотов за одну турнирную карту",
     type: "COMBAT",
     difficulty: "MEDIUM",
     rewardTokens: 1,
     conditionKey: "map_headshots",
-    targetValue: 18
+    targetValue: 14
   },
   {
     id: "combat_kd_150",
@@ -553,7 +553,7 @@ export const COMBAT_CHALLENGES: ChallengeDefinition[] = [
   {
     id: "combat_series_kills_30",
     title: "Series Annihilator",
-    description: "Набрать суммарно 42 или более фрагов за турнирную серию",
+    description: "Набрать суммарно 42 или более фрагов за серию из 2 карт турнира",
     type: "COMBAT",
     difficulty: "MEDIUM",
     rewardTokens: 1,
@@ -595,37 +595,37 @@ export const COMBAT_CHALLENGES: ChallengeDefinition[] = [
   {
     id: "combat_series_mvp",
     title: "Match MVP Phenom",
-    description: "Получить 6 или более MVP раундов на турнирной карте",
+    description: "Получить 4 или более MVP раундов на турнирной карте MR12",
     type: "COMBAT",
     difficulty: "HARD",
     rewardTokens: 1,
     conditionKey: "mvp_count",
-    targetValue: 6
+    targetValue: 4
   },
   {
     id: "combat_kills_38",
     title: "Total Apex Carnage",
-    description: "Набрать 50 или более фрагов суммарно за серию матчей турнира",
+    description: "Набрать 48 или более фрагов суммарно за серию матчей турнира (BO2)",
     type: "COMBAT",
     difficulty: "HARD",
     rewardTokens: 1,
     conditionKey: "match_kills",
-    targetValue: 50
+    targetValue: 48
   },
   {
     id: "combat_single_map_kills_24",
     title: "One-Man Army",
-    description: "Оформить от 28 убийств на одной турнирной карте",
+    description: "Оформить от 25 убийств на одной турнирной карте MR12",
     type: "COMBAT",
     difficulty: "HARD",
     rewardTokens: 1,
     conditionKey: "max_single_map_kills",
-    targetValue: 28
+    targetValue: 25
   },
   {
     id: "combat_hs_60",
     title: "Deadeye Sniper",
-    description: "Показать процент попаданий в голову 65% и выше при 18+ фрагах на карте",
+    description: "Показать процент попаданий в голову 65% и выше при 15+ фрагах на карте",
     type: "COMBAT",
     difficulty: "HARD",
     rewardTokens: 1,
@@ -635,32 +635,32 @@ export const COMBAT_CHALLENGES: ChallengeDefinition[] = [
   {
     id: "combat_kd_200",
     title: "Apex Predator",
-    description: "Завершить турнирную карту с превосходным K/D 1.75 или выше (при от 15 фрагах)",
+    description: "Завершить турнирную карту с превосходным K/D 1.70 или выше (при от 14 фрагах)",
     type: "COMBAT",
     difficulty: "HARD",
     rewardTokens: 1,
     conditionKey: "map_kd",
-    targetValue: 1.75
+    targetValue: 1.70
   },
   {
     id: "combat_util_damage_200",
     title: "Heavy Artillery Siege",
-    description: "Нанести не менее 280 урона гранатами (Utility Damage) на турнирной карте",
+    description: "Нанести не менее 260 урона гранатами (Utility Damage) на турнирной карте",
     type: "COMBAT",
     difficulty: "HARD",
     rewardTokens: 1,
     conditionKey: "utility_damage",
-    targetValue: 280
+    targetValue: 260
   },
   {
     id: "combat_double_clutch",
     title: "Cold-Blooded Clutch King",
-    description: "Выиграть суммарно не менее 3 клатчей (1v1 или 1v2) за турнирный матч",
+    description: "Выиграть суммарно не менее 2 клатчей (1v1 или 1v2) за турнирный матч",
     type: "COMBAT",
     difficulty: "HARD",
     rewardTokens: 1,
     conditionKey: "clutch_wins",
-    targetValue: 3
+    targetValue: 2
   }
 ];
 
