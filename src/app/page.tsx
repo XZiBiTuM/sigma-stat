@@ -473,6 +473,7 @@ export default function Home() {
   const [eventAnnText, setEventAnnText] = useState<string>("");
   const [eventAnnPrize, setEventAnnPrize] = useState<string>("Knife");
   const [eventAnnMsg, setEventAnnMsg] = useState<string>("");
+  const [showAdminMenu, setShowAdminMenu] = useState<boolean>(false);
 
   // Restore session from localStorage on mount
   useEffect(() => {
@@ -2527,280 +2528,200 @@ export default function Home() {
   return (
     <>
       <div className="container" style={{ minHeight: "100vh", display: "flex", flexDirection: "column", boxSizing: "border-box" }}>
-      {/* HEADER SECTION */}
-      <header style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        flexWrap: "wrap",
-        gap: "1rem",
-        marginBottom: "2.5rem",
-        borderBottom: "1px solid var(--border-light)",
-        paddingBottom: "1.5rem"
-      }}>
-        <div>
-          <h1 className="glow-text-cyan" style={{ fontSize: "2rem", display: "flex", alignItems: "center", gap: "0.75rem" }}>
-            <span style={{
-              background: "linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-              fontWeight: "900"
-            }}>
+      {/* HEADER SECTION (REWORKED) */}
+      <header className="main-navbar">
+        {/* Left: Brand / Logo */}
+        <Link href="/" className="navbar-brand" style={{ textDecoration: "none" }}>
+          <div className="brand-logo-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+          </div>
+          <div className="brand-text">
+            <div className="brand-title">
               СИГМА КИБЕР КЛУБ
-            </span>
-          </h1>
-          <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem", marginTop: "0.25rem", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: "700" }}>
-            Чем труднее битва - тем слаще победа
-          </p>
-        </div>
-
-        {/* Centered Unified Header Navigation Buttons */}
-        <div style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: "0.65rem",
-          flexWrap: "wrap",
-          width: "100%",
-          marginTop: "1rem"
-        }}>
-          <button 
-            onClick={() => setShowDraftModal(true)}
-            style={{
-              height: "38px",
-              padding: "0 1.1rem",
-              borderRadius: "10px",
-              fontSize: "0.82rem",
-              fontWeight: "700",
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "rgba(0, 229, 255, 0.1)",
-              border: "1px solid rgba(0, 229, 255, 0.4)",
-              color: "#00e5ff",
-              cursor: "pointer",
-              transition: "all 0.2s ease-in-out",
-              boxShadow: "0 0 12px rgba(0, 229, 255, 0.15)"
-            }}
-          >
-            Captain's Draft
-          </button>
-
-          <button 
-            onClick={() => {
-              setChallengesFeedbackMsg("");
-              fetchWeeklyChallenges();
-              setShowChallengesModal(true);
-            }}
-            style={{
-              height: "38px",
-              padding: "0 1.1rem",
-              borderRadius: "10px",
-              fontSize: "0.82rem",
-              fontWeight: "700",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              justifyContent: "center",
-              background: challengesData?.isCombatWeek ? "rgba(255, 75, 75, 0.12)" : "rgba(168, 85, 247, 0.12)",
-              border: challengesData?.isCombatWeek ? "1px solid rgba(255, 75, 75, 0.45)" : "1px solid rgba(168, 85, 247, 0.45)",
-              color: challengesData?.isCombatWeek ? "#ff6b6b" : "#c084fc",
-              cursor: "pointer",
-              transition: "all 0.2s ease-in-out",
-              boxShadow: challengesData?.isCombatWeek ? "0 0 12px rgba(255, 75, 75, 0.15)" : "0 0 12px rgba(168, 85, 247, 0.15)"
-            }}
-          >
-            <span>Челленджи недели</span>
-            {userTokenBalance > 0 && (
-              <span style={{
-                background: "rgba(255, 215, 0, 0.25)",
-                border: "1px solid rgba(255, 215, 0, 0.6)",
-                color: "#ffd700",
-                fontSize: "0.7rem",
-                padding: "0.08rem 0.35rem",
-                borderRadius: "6px",
-                fontWeight: "900"
-              }}>
-                {userTokenBalance} ЖЕТОНОВ
-              </span>
-            )}
-          </button>
-
-          <button 
-            onClick={() => { setTourStep(0); setShowTourModal(true); }}
-            style={{
-              height: "38px",
-              padding: "0 1.1rem",
-              borderRadius: "10px",
-              fontSize: "0.82rem",
-              fontWeight: "700",
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "rgba(255, 255, 255, 0.05)",
-              border: "1px solid var(--border-light)",
-              color: "var(--text-secondary)",
-              cursor: "pointer",
-              transition: "all 0.2s ease-in-out"
-            }}
-          >
-            О сервисе
-          </button>
-
-          {userRole === "ADMIN" && (
-            <>
-              <button 
-                onClick={() => { setCsSubmitMsg(""); setShowCybershokeModal(true); }}
-                style={{
-                  height: "38px",
-                  padding: "0 1.1rem",
-                  borderRadius: "10px",
-                  fontSize: "0.82rem",
-                  fontWeight: "700",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  background: "rgba(255, 145, 0, 0.12)",
-                  border: "1px solid rgba(255, 145, 0, 0.5)",
-                  color: "#ff9100",
-                  cursor: "pointer",
-                  transition: "all 0.2s ease-in-out"
-                }}
-              >
-                Добавить матч Cybershoke
-              </button>
-              <button 
-                onClick={() => { 
-                  setBatchSaveMsg(""); 
-                  const initialPts: Record<string, string> = {};
-                  const initialScore: Record<string, string> = {};
-                  (rankings || []).forEach((item: any) => {
-                    const nick = item.nickname || item.player?.nickname;
-                    const pId = item.player_id || item.player?.player_id;
-                    const ov = (pId && playerOverridesMap[pId]) || (nick && playerOverridesMap[nick]) || {};
-                    if (nick) {
-                      initialPts[nick] = ov.csRating !== undefined ? ov.csRating.toString() : "";
-                      initialScore[nick] = ov.customSkillScore !== undefined ? ov.customSkillScore.toString() : "";
-                    }
-                  });
-                  setBatchPtsMap(initialPts);
-                  setBatchScoreMap(initialScore);
-                  setShowBatchPtsModal(true); 
-                }}
-                style={{
-                  height: "38px",
-                  padding: "0 1.1rem",
-                  borderRadius: "10px",
-                  fontSize: "0.82rem",
-                  fontWeight: "700",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  background: "rgba(0, 229, 255, 0.12)",
-                  border: "1px solid rgba(0, 229, 255, 0.5)",
-                  color: "var(--accent-cyan)",
-                  cursor: "pointer",
-                  transition: "all 0.2s ease-in-out"
-                }}
-              >
-                Массовое редактирование PTS и Скилла
-              </button>
-            </>
-          )}
-
-          {userRole !== "GUEST" ? (
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <span style={{ 
-                height: "38px",
-                padding: "0 1rem",
-                borderRadius: "10px",
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: userRole === "EVENT_MAKER" ? "rgba(124, 77, 255, 0.2)" : "rgba(255, 145, 0, 0.2)", 
-                border: userRole === "EVENT_MAKER" ? "1px solid #7c4dff" : "1px solid #ff9100",
-                color: userRole === "EVENT_MAKER" ? "#b388ff" : "#ffb74d", 
-                fontWeight: "700",
-                fontSize: "0.82rem"
-              }}>
-                {userRole === "EVENT_MAKER" ? "EVENT MAKER: Mr.Chillout" : "ADMIN"}
-              </span>
-
-              {(userRole === "EVENT_MAKER" || userRole === "ADMIN") && (
-                <button 
-                  onClick={() => { setEventAnnMsg(""); setShowEventModal(true); }}
-                  style={{
-                    height: "38px",
-                    padding: "0 1.1rem",
-                    borderRadius: "10px",
-                    fontSize: "0.82rem",
-                    fontWeight: "700",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    background: "rgba(124, 77, 255, 0.15)",
-                    border: "1px solid #7c4dff",
-                    color: "#b388ff",
-                    cursor: "pointer",
-                    transition: "all 0.2s ease-in-out"
-                  }}
-                >
-                  Добавить Event
-                </button>
-              )}
-
-              <button 
-                onClick={() => {
-                  localStorage.removeItem("sigma_user_role");
-                  localStorage.removeItem("sigma_user_name");
-                  setUserRole("GUEST");
-                  setUserName("");
-                }}
-                style={{
-                  height: "38px",
-                  padding: "0 1.1rem",
-                  borderRadius: "10px",
-                  fontSize: "0.82rem",
-                  fontWeight: "700",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  background: "rgba(255, 73, 73, 0.12)",
-                  border: "1px solid rgba(255, 73, 73, 0.4)",
-                  color: "#ff7b7b",
-                  cursor: "pointer",
-                  transition: "all 0.2s ease-in-out"
-                }}
-              >
-                Выйти
-              </button>
             </div>
-          ) : null}
+            <div className="brand-subtitle">
+              Чем труднее битва — тем слаще победа
+            </div>
+          </div>
+        </Link>
 
-          {/* STEAM OPENID AUTH / USER PROFILE WIDGET */}
+        {/* Right: Actions Container */}
+        <div className="navbar-actions">
+          {/* Main Navigation Buttons */}
+          <nav className="navbar-nav">
+            <button 
+              onClick={() => setShowDraftModal(true)}
+              className="nav-btn nav-btn-draft"
+              title="Открыть Captain's Draft"
+            >
+              <span>⚔️</span>
+              <span>Captain's Draft</span>
+            </button>
+
+            <button 
+              onClick={() => {
+                setChallengesFeedbackMsg("");
+                fetchWeeklyChallenges();
+                setShowChallengesModal(true);
+              }}
+              className="nav-btn nav-btn-challenges"
+              title="Открыть еженедельные челленджи"
+            >
+              <span>🏆</span>
+              <span>Челленджи недели</span>
+              {userTokenBalance > 0 && (
+                <span className="token-badge">
+                  {userTokenBalance}
+                </span>
+              )}
+            </button>
+
+            <button 
+              onClick={() => { setTourStep(0); setShowTourModal(true); }}
+              className="nav-btn nav-btn-info"
+              title="Информация о клубе и сервисе"
+            >
+              <span>ℹ️</span>
+              <span>О сервисе</span>
+            </button>
+          </nav>
+
+          {/* Admin Group (Direct Link to /admin + Quick Actions Dropdown) */}
+          <div className="admin-group">
+            <Link 
+              href="/admin"
+              className={`nav-btn-admin ${userRole === "ADMIN" ? "is-active-admin" : ""}`}
+              title="Перейти в панель администратора (/admin)"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              <span>ADMIN</span>
+            </Link>
+
+            {/* Quick Admin Actions menu if logged in as Admin or Event Maker */}
+            {userRole !== "GUEST" && (
+              <div className="admin-dropdown-wrapper" style={{ position: "relative" }}>
+                <button 
+                  onClick={() => setShowAdminMenu(prev => !prev)}
+                  className="nav-btn-admin-menu"
+                  title="Быстрые инструменты администратора"
+                >
+                  ⚙️ ▾
+                </button>
+
+                {showAdminMenu && (
+                  <div className="admin-dropdown-menu">
+                    <div className="admin-dropdown-header">
+                      {userRole === "EVENT_MAKER" ? "EVENT MAKER" : "АДМИН-МЕНЮ"}
+                    </div>
+                    
+                    <Link 
+                      href="/admin"
+                      onClick={() => setShowAdminMenu(false)}
+                      className="admin-dropdown-item"
+                    >
+                      <span>🛠️</span>
+                      <span>Открыть панель /admin</span>
+                    </Link>
+
+                    {userRole === "ADMIN" && (
+                      <>
+                        <button 
+                          onClick={() => { 
+                            setShowAdminMenu(false); 
+                            setCsSubmitMsg(""); 
+                            setShowCybershokeModal(true); 
+                          }}
+                          className="admin-dropdown-item"
+                        >
+                          <span>📥</span>
+                          <span>Добавить матч Cybershoke</span>
+                        </button>
+
+                        <button 
+                          onClick={() => { 
+                            setShowAdminMenu(false);
+                            setBatchSaveMsg(""); 
+                            const initialPts: Record<string, string> = {};
+                            const initialScore: Record<string, string> = {};
+                            (rankings || []).forEach((item: any) => {
+                              const nick = item.nickname || item.player?.nickname;
+                              const pId = item.player_id || item.player?.player_id;
+                              const ov = (pId && playerOverridesMap[pId]) || (nick && playerOverridesMap[nick]) || {};
+                              if (nick) {
+                                initialPts[nick] = ov.csRating !== undefined ? ov.csRating.toString() : "";
+                                initialScore[nick] = ov.customSkillScore !== undefined ? ov.customSkillScore.toString() : "";
+                              }
+                            });
+                            setBatchPtsMap(initialPts);
+                            setBatchScoreMap(initialScore);
+                            setShowBatchPtsModal(true); 
+                          }}
+                          className="admin-dropdown-item"
+                        >
+                          <span>✏️</span>
+                          <span>PTS и Скилл игроков</span>
+                        </button>
+                      </>
+                    )}
+
+                    {(userRole === "EVENT_MAKER" || userRole === "ADMIN") && (
+                      <button 
+                        onClick={() => { 
+                          setShowAdminMenu(false); 
+                          setEventAnnMsg(""); 
+                          setShowEventModal(true); 
+                        }}
+                        className="admin-dropdown-item"
+                      >
+                        <span>📢</span>
+                        <span>Добавить Event</span>
+                      </button>
+                    )}
+
+                    <div className="admin-dropdown-divider" />
+
+                    <button 
+                      onClick={() => {
+                        setShowAdminMenu(false);
+                        localStorage.removeItem("sigma_user_role");
+                        localStorage.removeItem("sigma_user_name");
+                        setUserRole("GUEST");
+                        setUserName("");
+                      }}
+                      className="admin-dropdown-item text-danger"
+                    >
+                      <span>🚪</span>
+                      <span>Выйти из админ-режима</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* User Profile / Steam Auth Widget */}
           {currentUser ? (
-            <div style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.6rem",
-              background: "rgba(255, 255, 255, 0.04)",
-              border: "1px solid var(--border-light)",
-              padding: "0.2rem 0.6rem 0.2rem 0.4rem",
-              borderRadius: "12px",
-              height: "38px"
-            }}>
+            <div className="user-profile-bar">
               <img 
                 src={currentUser.faceit?.avatar || currentUser.steamAvatar || "/default-avatar.png"} 
                 alt="Avatar" 
-                style={{ width: "26px", height: "26px", borderRadius: "50%", objectFit: "cover", border: "1.5px solid var(--accent-cyan)" }}
+                className="user-profile-avatar"
               />
-              <span style={{ fontSize: "0.82rem", fontWeight: "700", color: "#fff", maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              <span className="user-profile-name" title={currentUser.faceit?.nickname || currentUser.steamName}>
                 {currentUser.faceit?.nickname || currentUser.steamName}
               </span>
 
-              {/* SIGMANAT BALANCE BADGE */}
+              {currentUser.faceit?.elo && (
+                <span className="user-profile-elo" title="Текущий FACEIT ELO">
+                  {(currentUser.faceit?.playerId && playerEloMap[currentUser.faceit.playerId]) || (currentUser.faceit?.nickname && playerEloMap[currentUser.faceit.nickname.toLowerCase()]) || currentUser.faceit.elo} ELO
+                </span>
+              )}
+
               <a
                 href="#bracket"
                 onClick={(e) => {
@@ -2808,72 +2729,23 @@ export default function Home() {
                   setActiveTab("bracket");
                 }}
                 title="Ваш баланс СИГМАНАТ (нажмите для перехода к ставкам)"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "0.3rem",
-                  fontSize: "0.75rem",
-                  fontWeight: "900",
-                  padding: "0.2rem 0.6rem",
-                  borderRadius: "8px",
-                  background: "rgba(255, 198, 25, 0.15)",
-                  color: "#ffc619",
-                  border: "1px solid rgba(255, 198, 25, 0.4)",
-                  textDecoration: "none",
-                  cursor: "pointer",
-                  fontFamily: "var(--font-mono)",
-                  boxShadow: "0 0 10px rgba(255, 198, 25, 0.15)"
-                }}
+                className="user-profile-bet-btn"
               >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline-block" }}>
-                  <circle cx="12" cy="12" r="9"/>
-                  <path d="M12 6v12M15 9.5a2.5 2.5 0 0 0-5 0c0 4 5 1.5 5 5a2.5 2.5 0 0 1-5 0"/>
-                </svg>
-                <span>SIGMABET</span>
+                SIGMABET
               </a>
 
-              {/* TOKENS BALANCE BADGE */}
-              <button
-                onClick={() => {
-                  setChallengesFeedbackMsg("");
-                  fetchWeeklyChallenges();
-                  setShowChallengesModal(true);
-                }}
-                title="Ваши жетоны за челленджи (нажмите для открытия окна челленджей)"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "0.35rem",
-                  fontSize: "0.75rem",
-                  fontWeight: "900",
-                  padding: "0.2rem 0.55rem",
-                  borderRadius: "8px",
-                  background: "rgba(255, 215, 0, 0.15)",
-                  color: "#ffd700",
-                  border: "1px solid rgba(255, 215, 0, 0.4)",
-                  cursor: "pointer",
-                  fontFamily: "var(--font-mono)",
-                  boxShadow: "0 0 10px rgba(255, 215, 0, 0.15)"
-                }}
-              >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline-block" }}>
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                </svg>
-                <span>{userTokenBalance} ЖЕТОНОВ</span>
-              </button>
-
-              {currentUser.faceit?.elo && (
-                <span style={{
-                  fontSize: "0.72rem",
-                  fontWeight: "800",
-                  padding: "0.15rem 0.45rem",
-                  borderRadius: "6px",
-                  background: "rgba(0, 229, 255, 0.15)",
-                  color: "var(--accent-cyan)",
-                  border: "1px solid rgba(0, 229, 255, 0.3)"
-                }}>
-                  {(currentUser.faceit?.playerId && playerEloMap[currentUser.faceit.playerId]) || (currentUser.faceit?.nickname && playerEloMap[currentUser.faceit.nickname.toLowerCase()]) || currentUser.faceit.elo} ELO
-                </span>
+              {userTokenBalance > 0 && (
+                <button
+                  onClick={() => {
+                    setChallengesFeedbackMsg("");
+                    fetchWeeklyChallenges();
+                    setShowChallengesModal(true);
+                  }}
+                  title="Ваши жетоны за челленджи (открыть задания)"
+                  className="user-profile-token-btn"
+                >
+                  🪙 {userTokenBalance}
+                </button>
               )}
 
               <button
@@ -2884,18 +2756,10 @@ export default function Home() {
                     window.open(currentUser.profileUrl, "_blank");
                   }
                 }}
-                style={{
-                  background: "rgba(0, 229, 255, 0.12)",
-                  border: "1px solid var(--accent-cyan)",
-                  color: "var(--accent-cyan)",
-                  padding: "0.25rem 0.55rem",
-                  borderRadius: "8px",
-                  fontSize: "0.75rem",
-                  fontWeight: "700",
-                  cursor: "pointer"
-                }}
+                className="user-profile-action-btn"
+                title="Открыть подробную статистику"
               >
-                Мой профиль
+                Профиль
               </button>
 
               <button
@@ -2903,16 +2767,8 @@ export default function Home() {
                   await fetch("/api/auth/steam/logout", { method: "POST" });
                   setCurrentUser(null);
                 }}
-                title="Выйти из Steam"
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  color: "var(--text-muted)",
-                  fontSize: "0.85rem",
-                  cursor: "pointer",
-                  padding: "0 0.2rem",
-                  marginLeft: "0.1rem"
-                }}
+                title="Выйти из аккаунта Steam"
+                className="user-profile-logout-btn"
               >
                 ✕
               </button>
@@ -2920,31 +2776,15 @@ export default function Home() {
           ) : (
             <a
               href="/api/auth/steam/login"
-              style={{
-                height: "38px",
-                padding: "0 1.1rem",
-                borderRadius: "10px",
-                fontSize: "0.82rem",
-                fontWeight: "700",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                justifyContent: "center",
-                background: "linear-gradient(135deg, rgba(23, 26, 33, 0.95), rgba(42, 71, 94, 0.8))",
-                border: "1px solid #66c0f4",
-                color: "#c7d5e0",
-                textDecoration: "none",
-                cursor: "pointer",
-                boxShadow: "0 0 15px rgba(102, 192, 244, 0.2)",
-                transition: "all 0.2s ease-in-out"
-              }}
+              className="steam-login-btn"
+              title="Войти через Steam для участия в турнирах и челленджах"
             >
               <img 
                 src="/steam-logo.svg" 
                 alt="Steam" 
-                style={{ width: "20px", height: "20px", objectFit: "contain" }} 
+                style={{ width: "18px", height: "18px", objectFit: "contain" }} 
               />
-              Войти через Steam
+              <span>Войти через Steam</span>
             </a>
           )}
         </div>
