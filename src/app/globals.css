@@ -1659,3 +1659,190 @@ html, body {
     gap: 0.15rem !important;
   }
 }
+
+/* Weekly Challenges Modal Responsive Styles */
+.challenges-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(10px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.challenges-modal-card {
+  width: 100%;
+  max-width: 840px;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+.challenges-modal-header {
+  padding: 1.2rem 1.6rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.challenges-modal-body {
+  padding: 1.4rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.challenges-status-banner {
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.challenges-banner-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.challenges-banner-stat-badge {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 0.55rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  white-space: nowrap;
+}
+
+.challenges-banner-stat-badge .stat-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.challenges-banner-stat-badge .stat-value {
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.challenges-banner-stat-badge .stat-value.rerolls {
+  color: #ffd700;
+}
+
+.challenges-banner-stat-badge .stat-value.next-cycle {
+  color: var(--accent-cyan);
+}
+
+.challenge-item-card {
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.2rem;
+  transition: all 0.2s;
+}
+
+.challenge-item-content {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.challenge-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 0 0 auto;
+}
+
+/* Mobile Breakpoint for Challenges Modal */
+@media (max-width: 640px) {
+  .challenges-modal-overlay {
+    padding: 0.4rem !important;
+  }
+
+  .challenges-modal-card {
+    max-height: 96vh !important;
+    border-radius: 16px !important;
+  }
+
+  .challenges-modal-header {
+    padding: 1rem !important;
+    flex-wrap: wrap !important;
+    gap: 0.75rem !important;
+  }
+
+  .challenges-modal-body {
+    padding: 0.85rem !important;
+    gap: 0.9rem !important;
+  }
+
+  .challenges-status-banner {
+    padding: 0.85rem 1rem !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.85rem !important;
+  }
+
+  .challenges-banner-stats {
+    width: 100% !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.5rem !important;
+  }
+
+  .challenges-banner-stat-badge {
+    justify-content: space-between !important;
+    width: 100% !important;
+    padding: 0.5rem 0.85rem !important;
+  }
+
+  .challenge-item-card {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 0.85rem 1rem !important;
+    gap: 0.85rem !important;
+  }
+
+  .challenge-item-actions {
+    width: 100% !important;
+    justify-content: space-between !important;
+    margin-top: 0.2rem !important;
+  }
+
+  .challenge-item-actions button {
+    flex: 1 !important;
+    text-align: center !important;
+  }
+
+  .challenge-reward-badge {
+    flex: 1 !important;
+    text-align: center !important;
+  }
+
+  .challenges-auth-footer {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.85rem !important;
+  }
+
+  .challenges-auth-footer button {
+    width: 100% !important;
+  }
+}

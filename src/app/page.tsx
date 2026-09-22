@@ -11281,52 +11281,32 @@ export default function Home() {
       {/* WEEKLY CHALLENGES MODAL */}
       {showChallengesModal && (
         <div 
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: "rgba(3, 0, 10, 0.88)",
-            backdropFilter: "blur(12px)",
-            zIndex: 99999,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "1rem",
-            animation: "fadeIn 0.2s ease-out"
-          }}
+          className="challenges-modal-overlay"
           onClick={(e) => {
             if (e.target === e.currentTarget) setShowChallengesModal(false);
           }}
         >
-          <div style={{
-            background: "linear-gradient(145deg, rgba(17, 14, 28, 0.98), rgba(9, 7, 16, 0.99))",
-            border: challengesData?.isCombatWeek ? "1.5px solid rgba(255, 75, 75, 0.4)" : "1.5px solid rgba(168, 85, 247, 0.4)",
-            boxShadow: challengesData?.isCombatWeek ? "0 0 40px rgba(255, 75, 75, 0.2)" : "0 0 40px rgba(168, 85, 247, 0.2)",
-            borderRadius: "20px",
-            width: "100%",
-            maxWidth: "820px",
-            maxHeight: "92vh",
-            display: "flex",
-            flexDirection: "column",
-            overflow: "hidden"
-          }}>
+          <div 
+            className="challenges-modal-card"
+            style={{
+              background: "linear-gradient(145deg, rgba(17, 14, 28, 0.98), rgba(9, 7, 16, 0.99))",
+              border: challengesData?.isCombatWeek ? "1.5px solid rgba(255, 75, 75, 0.4)" : "1.5px solid rgba(168, 85, 247, 0.4)",
+              boxShadow: challengesData?.isCombatWeek ? "0 0 40px rgba(255, 75, 75, 0.2)" : "0 0 40px rgba(168, 85, 247, 0.2)"
+            }}
+          >
             {/* Header */}
-            <div style={{
-              padding: "1.2rem 1.6rem",
-              borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              background: challengesData?.isCombatWeek 
-                ? "linear-gradient(90deg, rgba(255, 75, 75, 0.12), transparent)" 
-                : "linear-gradient(90deg, rgba(168, 85, 247, 0.12), transparent)"
-            }}>
+            <div 
+              className="challenges-modal-header"
+              style={{
+                background: challengesData?.isCombatWeek 
+                  ? "linear-gradient(90deg, rgba(255, 75, 75, 0.12), transparent)" 
+                  : "linear-gradient(90deg, rgba(168, 85, 247, 0.12), transparent)"
+              }}
+            >
               <div>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
                   <h3 style={{ margin: 0, fontSize: "1.15rem", fontWeight: "900", color: "#fff" }}>
-                    {challengesData?.isCombatWeek ? "Боевые челленджи недели" : "Челленджи недели (10х10)"}
+                    Челленджи недели
                   </h3>
                   <span style={{
                     fontSize: "0.68rem",
@@ -11388,31 +11368,25 @@ export default function Home() {
             </div>
 
             {/* Content Body */}
-            <div style={{ padding: "1.4rem", overflowY: "auto", display: "flex", flexDirection: "column", gap: "1.2rem" }}>
+            <div className="challenges-modal-body">
               
               {/* STATUS BANNER */}
-              <div style={{
-                background: challengesData?.isCombatWeek 
-                  ? "rgba(255, 75, 75, 0.08)" 
-                  : "rgba(168, 85, 247, 0.08)",
-                border: challengesData?.isCombatWeek 
-                  ? "1px solid rgba(255, 75, 75, 0.25)" 
-                  : "1px solid rgba(168, 85, 247, 0.25)",
-                borderRadius: "14px",
-                padding: "1rem 1.25rem",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                flexWrap: "wrap",
-                gap: "0.75rem"
-              }}>
+              <div 
+                className="challenges-status-banner"
+                style={{
+                  background: challengesData?.isCombatWeek 
+                    ? "rgba(255, 75, 75, 0.08)" 
+                    : "rgba(168, 85, 247, 0.08)",
+                  border: challengesData?.isCombatWeek 
+                    ? "1px solid rgba(255, 75, 75, 0.25)" 
+                    : "1px solid rgba(168, 85, 247, 0.25)"
+                }}
+              >
                 <div>
                   <div style={{ fontWeight: "800", color: "#fff", fontSize: "0.88rem", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                    <span>{challengesData?.isCombatWeek ? "Турнир:" : "Формат:"}</span>
+                    <span>Формат:</span>
                     <span style={{ color: challengesData?.isCombatWeek ? "#ff8a80" : "#d8b4fe" }}>
-                      {challengesData?.isCombatWeek 
-                        ? (challengesData.tournamentTitle || "Sigma Cup") 
-                        : "Игры 10х10 (Вторник)"}
+                      {challengesData?.isCombatWeek ? "Турнирный" : "Тренировочный"}
                     </span>
                   </div>
                   <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.25rem", lineHeight: "1.4" }}>
@@ -11422,36 +11396,20 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                  <div style={{
-                    background: "rgba(0, 0, 0, 0.35)",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
-                    borderRadius: "10px",
-                    padding: "0.45rem 0.8rem",
-                    textAlign: "right"
-                  }}>
-                    <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "700" }}>
-                      Замен на неделю:
-                    </div>
-                    <div style={{ fontSize: "0.82rem", fontWeight: "800", color: "#ffd700", marginTop: "0.15rem" }}>
+                <div className="challenges-banner-stats">
+                  <div className="challenges-banner-stat-badge">
+                    <span className="stat-label">Замен на неделю:</span>
+                    <span className="stat-value rerolls">
                       {challengesData?.rerollsRemaining ?? 3} из 3
-                    </div>
+                    </span>
                   </div>
 
                   {challengesData?.weekEnd && (
-                    <div style={{
-                      background: "rgba(0, 0, 0, 0.35)",
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
-                      borderRadius: "10px",
-                      padding: "0.45rem 0.8rem",
-                      textAlign: "right"
-                    }}>
-                      <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "700" }}>
-                        След. цикл:
-                      </div>
-                      <div style={{ fontSize: "0.82rem", fontWeight: "800", color: "var(--accent-cyan)", marginTop: "0.15rem" }}>
+                    <div className="challenges-banner-stat-badge">
+                      <span className="stat-label">След. цикл:</span>
+                      <span className="stat-value next-cycle">
                         {new Date(challengesData.weekEnd).toLocaleDateString("ru-RU", { day: "numeric", month: "long" })} 00:00
-                      </div>
+                      </span>
                     </div>
                   )}
                 </div>
@@ -11488,21 +11446,15 @@ export default function Home() {
                     return (
                       <div 
                         key={idx}
+                        className="challenge-item-card"
                         style={{
                           background: isDone 
                             ? "linear-gradient(135deg, rgba(0, 230, 118, 0.08), rgba(12, 10, 23, 0.95))" 
                             : "rgba(255, 255, 255, 0.03)",
-                          border: isDone ? "1.5px solid rgba(0, 230, 118, 0.5)" : `1px solid ${diffColors.border}`,
-                          borderRadius: "14px",
-                          padding: "1rem 1.25rem",
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          gap: "1.2rem",
-                          transition: "all 0.2s"
+                          border: isDone ? "1.5px solid rgba(0, 230, 118, 0.5)" : `1px solid ${diffColors.border}`
                         }}
                       >
-                        <div style={{ flex: "1 1 auto", minWidth: 0 }}>
+                        <div className="challenge-item-content">
                           <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "0.6rem", marginBottom: "0.35rem" }}>
                             <span style={{
                               fontSize: "0.65rem",
@@ -11562,7 +11514,7 @@ export default function Home() {
                         </div>
 
                         {/* Right Actions & Badge */}
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flex: "0 0 auto" }}>
+                        <div className="challenge-item-actions">
                           {!isDone && (
                             <button
                               onClick={() => handleRerollChallenge(idx)}
@@ -11586,22 +11538,25 @@ export default function Home() {
                           )}
 
                           {/* Reward Badge */}
-                          <div style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            minWidth: "96px",
-                            padding: "0.55rem 0.9rem",
-                            borderRadius: "10px",
-                            background: isCombat 
-                              ? (isDone ? "rgba(0, 230, 118, 0.15)" : "rgba(255, 215, 0, 0.1)") 
-                              : "rgba(255, 255, 255, 0.04)",
-                            border: isCombat 
-                              ? (isDone ? "1px solid rgba(0, 230, 118, 0.4)" : "1px solid rgba(255, 215, 0, 0.3)") 
-                              : "1px solid rgba(255, 255, 255, 0.08)",
-                            whiteSpace: "nowrap"
-                          }}>
+                          <div 
+                            className="challenge-reward-badge"
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              minWidth: "96px",
+                              padding: "0.55rem 0.9rem",
+                              borderRadius: "10px",
+                              background: isCombat 
+                                ? (isDone ? "rgba(0, 230, 118, 0.15)" : "rgba(255, 215, 0, 0.1)") 
+                                : "rgba(255, 255, 255, 0.04)",
+                              border: isCombat 
+                                ? (isDone ? "1px solid rgba(0, 230, 118, 0.4)" : "1px solid rgba(255, 215, 0, 0.3)") 
+                                : "1px solid rgba(255, 255, 255, 0.08)",
+                              whiteSpace: "nowrap"
+                            }}
+                          >
                             <span style={{
                               fontSize: "0.62rem",
                               fontWeight: "800",
@@ -11647,17 +11602,20 @@ export default function Home() {
               )}
 
               {/* ACTION & AUTH CHECK */}
-              <div style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                background: "rgba(255,255,255,0.02)",
-                border: "1px solid rgba(255,255,255,0.06)",
-                borderRadius: "14px",
-                padding: "1rem 1.25rem",
-                flexWrap: "wrap",
-                gap: "0.8rem"
-              }}>
+              <div 
+                className="challenges-auth-footer"
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  background: "rgba(255,255,255,0.02)",
+                  border: "1px solid rgba(255,255,255,0.06)",
+                  borderRadius: "14px",
+                  padding: "1rem 1.25rem",
+                  flexWrap: "wrap",
+                  gap: "0.8rem"
+                }}
+              >
                 <div>
                   <div style={{ fontSize: "0.82rem", fontWeight: "800", color: "#fff" }}>
                     {currentUser 

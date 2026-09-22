@@ -840,6 +840,44 @@ export function readWeeklyChallengesState(): WeeklyChallengesState {
     console.error("Failed to read weekly challenges state:", e);
   }
 
+  // Auto-synchronize all stored challenge definitions with the current codebase pool (titles, descriptions, targets)
+  try {
+    const allPool = [...TRAINING_CHALLENGES, ...COMBAT_CHALLENGES];
+    const poolMap = new Map<string, ChallengeDefinition>();
+    allPool.forEach(p => poolMap.set(p.id, p));
+
+    let needsSave = false;
+    for (const userRecord of Object.values(state.userChallenges)) {
+      if (userRecord && Array.isArray(userRecord.challenges)) {
+        userRecord.challenges.forEach(c => {
+          const fresh = poolMap.get(c.definition?.id);
+          if (fresh) {
+            if (
+              c.definition.title !== fresh.title ||
+              c.definition.description !== fresh.description ||
+              (!c.completed && c.target !== fresh.targetValue)
+            ) {
+              c.definition = { ...fresh };
+              if (!c.completed) {
+                c.target = fresh.targetValue;
+              }
+              needsSave = true;
+            }
+          }
+        });
+        if (userRecord.rerollsRemaining === undefined) {
+          userRecord.rerollsRemaining = 3;
+          needsSave = true;
+        }
+      }
+    }
+    if (needsSave) {
+      writeWeeklyChallengesState(state);
+    }
+  } catch (err) {
+    console.error("Failed to sync weekly challenge definitions:", err);
+  }
+
   return state;
 }
 
@@ -871,10 +909,34 @@ export function getUserWeeklyChallenges(
   const existing = state.userChallenges[normalizedUser];
 
   if (existing && Array.isArray(existing.challenges) && existing.challenges.length === 3) {
+    let changed = false;
     if (existing.rerollsRemaining === undefined) {
       existing.rerollsRemaining = 3;
+      changed = true;
+    }
+
+    const allPool = [...TRAINING_CHALLENGES, ...COMBAT_CHALLENGES];
+    existing.challenges.forEach(c => {
+      const fresh = allPool.find(p => p.id === c.definition?.id);
+      if (fresh) {
+        if (
+          c.definition.title !== fresh.title ||
+          c.definition.description !== fresh.description ||
+          (!c.completed && c.target !== fresh.targetValue)
+        ) {
+          c.definition = { ...fresh };
+          if (!c.completed) {
+            c.target = fresh.targetValue;
+          }
+          changed = true;
+        }
+      }
+    });
+
+    if (changed) {
       writeWeeklyChallengesState(state);
     }
+
     return { challenges: existing.challenges, rerollsRemaining: existing.rerollsRemaining };
   }
 
