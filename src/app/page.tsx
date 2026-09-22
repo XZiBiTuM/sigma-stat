@@ -10385,10 +10385,13 @@ export default function Home() {
                                 onClick={() => isCurrentCaptainTurn && handlePickPlayer(rec.altPlayer!)}
                                 disabled={!isCurrentCaptainTurn}
                                 style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "0.45rem",
                                   padding: "0.5rem 0.85rem",
                                   borderRadius: "8px",
                                   background: "rgba(255, 255, 255, 0.06)",
-                                  border: "1px solid var(--border-light)",
+                                  border: "1px solid rgba(255, 255, 255, 0.15)",
                                   color: isCurrentCaptainTurn ? "#fff" : "var(--text-muted)",
                                   fontSize: "0.75rem",
                                   fontWeight: "700",
@@ -10396,9 +10399,23 @@ export default function Home() {
                                   opacity: isCurrentCaptainTurn ? 1 : 0.4,
                                   transition: "all 0.2s"
                                 }}
-                                title={!isCurrentCaptainTurn ? "Пикать может только активный капитан" : rec.altReason}
+                                title={!isCurrentCaptainTurn ? "Пикать может только активный капитан" : (rec.altReason ? `Альтернативное предложение: ${rec.altReason}` : "Альтернативное предложение")}
                               >
-                                {rec.altPlayer} ({rec.altPlayerSkill} PTS)
+                                <span style={{
+                                  fontSize: "0.65rem",
+                                  color: "var(--accent-cyan)",
+                                  textTransform: "uppercase",
+                                  fontWeight: "800",
+                                  letterSpacing: "0.3px",
+                                  background: "rgba(0, 229, 255, 0.12)",
+                                  padding: "0.15rem 0.4rem",
+                                  borderRadius: "4px",
+                                  border: "1px solid rgba(0, 229, 255, 0.3)"
+                                }}>
+                                  Альтернатива:
+                                </span>
+                                <span>{rec.altPlayer}</span>
+                                <span style={{ color: "#c084fc", fontWeight: "800" }}>({rec.altPlayerSkill} PTS)</span>
                               </button>
                             )}
                             <button
