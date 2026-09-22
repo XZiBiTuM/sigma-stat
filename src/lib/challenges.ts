@@ -45,9 +45,9 @@ export interface WeeklyChallengesState {
 const LOCAL_STORAGE_FILE = path.join(process.cwd(), "src/lib/weekly_challenges.json");
 const PERSISTENT_STORAGE_FILE = path.join(process.cwd(), "..", "sigma_persistent_weekly_challenges.json");
 
-// Pool of TRAINING challenges (10x10 matches, no demo verification)
+// Pool of TRAINING challenges (10x10 matches, 10 Easy, 10 Medium, 10 Hard)
 export const TRAINING_CHALLENGES: ChallengeDefinition[] = [
-  // EASY
+  // EASY (10 challenges)
   {
     id: "train_deagle_tuesday",
     title: "Диглер",
@@ -88,8 +88,68 @@ export const TRAINING_CHALLENGES: ChallengeDefinition[] = [
     conditionKey: "manual_fun",
     targetValue: 2
   },
+  {
+    id: "train_mp9_rush",
+    title: "Спринтер MP9",
+    description: "Сделать 4 быстрых килла с MP9 или MAC-10 на раннем тайминге раунда",
+    type: "TRAINING",
+    difficulty: "EASY",
+    rewardTokens: 0,
+    conditionKey: "manual_fun",
+    targetValue: 4
+  },
+  {
+    id: "train_p250_force",
+    title: "Экономный бронебой",
+    description: "Сделать 3 килла за матч с P250 или Five-SeveN в раунде форс-бая",
+    type: "TRAINING",
+    difficulty: "EASY",
+    rewardTokens: 0,
+    conditionKey: "manual_fun",
+    targetValue: 3
+  },
+  {
+    id: "train_smoke_defuse",
+    title: "Ниндзя в дыму",
+    description: "Разминировать бомбу внутри дымовой завесы в матче 10х10",
+    type: "TRAINING",
+    difficulty: "EASY",
+    rewardTokens: 0,
+    conditionKey: "manual_fun",
+    targetValue: 1
+  },
+  {
+    id: "train_molotov_tag",
+    title: "Пламенный привет",
+    description: "Нанести урон коктейлем Молотова или зажигалкой минимум 3 врагам за матч",
+    type: "TRAINING",
+    difficulty: "EASY",
+    rewardTokens: 0,
+    conditionKey: "manual_fun",
+    targetValue: 3
+  },
+  {
+    id: "train_galil_famas",
+    title: "Рабочая лошадка",
+    description: "Сделать не менее 6 киллов с бюджетных винтовок Galil AR или FAMAS за матч",
+    type: "TRAINING",
+    difficulty: "EASY",
+    rewardTokens: 0,
+    conditionKey: "manual_fun",
+    targetValue: 6
+  },
+  {
+    id: "train_dual_barettas",
+    title: "Двойной огонь",
+    description: "Оформить 2 килла в одном раунде со стрельбы по-македонски из Dual Berettas",
+    type: "TRAINING",
+    difficulty: "EASY",
+    rewardTokens: 0,
+    conditionKey: "manual_fun",
+    targetValue: 2
+  },
 
-  // MEDIUM
+  // MEDIUM (10 challenges)
   {
     id: "train_scout_head",
     title: "Снайпер SSG",
@@ -130,8 +190,68 @@ export const TRAINING_CHALLENGES: ChallengeDefinition[] = [
     conditionKey: "manual_fun",
     targetValue: 10
   },
+  {
+    id: "train_negev_hold",
+    title: "Свинцовый заслон",
+    description: "Зажать точку с пулемета Negev и сделать 3 килла за один раунд",
+    type: "TRAINING",
+    difficulty: "MEDIUM",
+    rewardTokens: 0,
+    conditionKey: "manual_fun",
+    targetValue: 3
+  },
+  {
+    id: "train_jump_scout",
+    title: "Прыгучий разведчик",
+    description: "Сделать убийство с SSG 08 в прыжке (Jump Shot)",
+    type: "TRAINING",
+    difficulty: "MEDIUM",
+    rewardTokens: 0,
+    conditionKey: "manual_fun",
+    targetValue: 1
+  },
+  {
+    id: "train_revolver_cowboy",
+    title: "Ковбой R8",
+    description: "Сделать 3 хедшота с револьвера R8 за вечер 10х10",
+    type: "TRAINING",
+    difficulty: "MEDIUM",
+    rewardTokens: 0,
+    conditionKey: "manual_fun",
+    targetValue: 3
+  },
+  {
+    id: "train_awp_flick",
+    title: "Снайпер точки",
+    description: "Сделать 7 фрагов с AWP за один матч без единой покупки защиты брони",
+    type: "TRAINING",
+    difficulty: "MEDIUM",
+    rewardTokens: 0,
+    conditionKey: "manual_fun",
+    targetValue: 7
+  },
+  {
+    id: "train_wallbang",
+    title: "Сквозь препятствие",
+    description: "Сделать 2 убийства прострелом через стену, двери или ящик",
+    type: "TRAINING",
+    difficulty: "MEDIUM",
+    rewardTokens: 0,
+    conditionKey: "manual_fun",
+    targetValue: 2
+  },
+  {
+    id: "train_no_scope",
+    title: "Стрельба навскидку",
+    description: "Сделать килл с AWP или SSG 08 без использования оптического прицела (No-Scope)",
+    type: "TRAINING",
+    difficulty: "MEDIUM",
+    rewardTokens: 0,
+    conditionKey: "manual_fun",
+    targetValue: 1
+  },
 
-  // HARD
+  // HARD (10 challenges)
   {
     id: "train_ace_hunt",
     title: "Король 10х10",
@@ -161,12 +281,83 @@ export const TRAINING_CHALLENGES: ChallengeDefinition[] = [
     rewardTokens: 0,
     conditionKey: "manual_fun",
     targetValue: 1
+  },
+  {
+    id: "train_knife_duel",
+    title: "Мастер дуэли на ножах",
+    description: "Выиграть ножевую дуэль 1v1 в конце раунда в матче 10х10",
+    type: "TRAINING",
+    difficulty: "HARD",
+    rewardTokens: 0,
+    conditionKey: "manual_fun",
+    targetValue: 1
+  },
+  {
+    id: "train_deagle_one_tap",
+    title: "Тройной ван-тап",
+    description: "Оформить 3 хедшота подряд с Desert Eagle за один раунд",
+    type: "TRAINING",
+    difficulty: "HARD",
+    rewardTokens: 0,
+    conditionKey: "manual_fun",
+    targetValue: 3
+  },
+  {
+    id: "train_double_zeus",
+    title: "Повелитель молний",
+    description: "Оформить 2 успешных поражения шокером Zeus x27 за один матч",
+    type: "TRAINING",
+    difficulty: "HARD",
+    rewardTokens: 0,
+    conditionKey: "manual_fun",
+    targetValue: 2
+  },
+  {
+    id: "train_mag7_jump",
+    title: "Летающий дробовик",
+    description: "Сделать 3 фрага в прыжке с MAG-7 за матч 10х10",
+    type: "TRAINING",
+    difficulty: "HARD",
+    rewardTokens: 0,
+    conditionKey: "manual_fun",
+    targetValue: 3
+  },
+  {
+    id: "train_molotov_kill",
+    title: "Огненный финал",
+    description: "Добить противника прямым сожжением от коктейля Молотова",
+    type: "TRAINING",
+    difficulty: "HARD",
+    rewardTokens: 0,
+    conditionKey: "manual_fun",
+    targetValue: 1
+  },
+  {
+    id: "train_smoke_kill_blind",
+    title: "Призрачный стрелок",
+    description: "Убить 2 врагов сквозь плотный смок стрельбой по интуиции за один раунд",
+    type: "TRAINING",
+    difficulty: "HARD",
+    rewardTokens: 0,
+    conditionKey: "manual_fun",
+    targetValue: 2
+  },
+  {
+    id: "train_flawless_round",
+    title: "Чистая работа",
+    description: "Сделать 3 фрага за раунд и завершить его с полными 100 HP",
+    type: "TRAINING",
+    difficulty: "HARD",
+    rewardTokens: 0,
+    conditionKey: "manual_fun",
+    targetValue: 3
   }
 ];
 
 // Pool of COMBAT challenges (tournament matches with real verification, gives 1 token each)
+// 10 Easy, 10 Medium, 10 Hard (30 total)
 export const COMBAT_CHALLENGES: ChallengeDefinition[] = [
-  // EASY (1 Token)
+  // EASY (1 Token, 10 challenges)
   {
     id: "combat_kills_15",
     title: "Турнирный отстрел",
@@ -207,8 +398,68 @@ export const COMBAT_CHALLENGES: ChallengeDefinition[] = [
     conditionKey: "map_rounds_won",
     targetValue: 10
   },
+  {
+    id: "combat_first_map_win",
+    title: "Победный дебют",
+    description: "Выиграть хотя бы одну карту (13+ раундов) в составе команды на турнире",
+    type: "COMBAT",
+    difficulty: "EASY",
+    rewardTokens: 1,
+    conditionKey: "map_rounds_won",
+    targetValue: 13
+  },
+  {
+    id: "combat_kd_100",
+    title: "Стабильный размен",
+    description: "Завершить турнирную карту с K/D соотношением не менее 1.00 (при от 10 фрагах)",
+    type: "COMBAT",
+    difficulty: "EASY",
+    rewardTokens: 1,
+    conditionKey: "map_kd",
+    targetValue: 1.00
+  },
+  {
+    id: "combat_mvp_1",
+    title: "Звездный момент",
+    description: "Заработать хотя бы одну звезду лучшего игрока раунда (MVP) в матче турнира",
+    type: "COMBAT",
+    difficulty: "EASY",
+    rewardTokens: 1,
+    conditionKey: "mvp_count",
+    targetValue: 1
+  },
+  {
+    id: "combat_headshots_8",
+    title: "Стрелок по головам",
+    description: "Оформить не менее 8 хедшотов за одну турнирную карту",
+    type: "COMBAT",
+    difficulty: "EASY",
+    rewardTokens: 1,
+    conditionKey: "map_headshots",
+    targetValue: 8
+  },
+  {
+    id: "combat_util_damage_60",
+    title: "Поддержка гранатами",
+    description: "Нанести не менее 60 урона гранатами (Utility Damage) за карту турнира",
+    type: "COMBAT",
+    difficulty: "EASY",
+    rewardTokens: 1,
+    conditionKey: "utility_damage",
+    targetValue: 60
+  },
+  {
+    id: "combat_series_kills_20",
+    title: "Боевой порог",
+    description: "Набить не менее 20 фрагов суммарно за все карты турнирной серии",
+    type: "COMBAT",
+    difficulty: "EASY",
+    rewardTokens: 1,
+    conditionKey: "match_kills",
+    targetValue: 20
+  },
 
-  // MEDIUM (1 Token)
+  // MEDIUM (1 Token, 10 challenges)
   {
     id: "combat_kd_130",
     title: "Положительный баланс",
@@ -249,8 +500,68 @@ export const COMBAT_CHALLENGES: ChallengeDefinition[] = [
     conditionKey: "headshot_pct_min10",
     targetValue: 50
   },
+  {
+    id: "combat_assists_8",
+    title: "Мастер содействия",
+    description: "Набрать не менее 8 результативных ассистов за турнирный матч",
+    type: "COMBAT",
+    difficulty: "MEDIUM",
+    rewardTokens: 1,
+    conditionKey: "total_assists",
+    targetValue: 8
+  },
+  {
+    id: "combat_mvp_3",
+    title: "Лидер атаки",
+    description: "Заработать не менее 3 MVP раундов на одной турнирной карте",
+    type: "COMBAT",
+    difficulty: "MEDIUM",
+    rewardTokens: 1,
+    conditionKey: "mvp_count",
+    targetValue: 3
+  },
+  {
+    id: "combat_single_map_kills_18",
+    title: "Ударный калибр",
+    description: "Сделать не менее 18 фрагов на одной конкретной карте турнира",
+    type: "COMBAT",
+    difficulty: "MEDIUM",
+    rewardTokens: 1,
+    conditionKey: "max_single_map_kills",
+    targetValue: 18
+  },
+  {
+    id: "combat_headshots_14",
+    title: "Хирургическая точность",
+    description: "Сделать не менее 14 хедшотов за одну турнирную карту",
+    type: "COMBAT",
+    difficulty: "MEDIUM",
+    rewardTokens: 1,
+    conditionKey: "map_headshots",
+    targetValue: 14
+  },
+  {
+    id: "combat_kd_150",
+    title: "Огневое преимущество",
+    description: "Завершить карту с K/D 1.50 или выше (при не менее 12 фрагах)",
+    type: "COMBAT",
+    difficulty: "MEDIUM",
+    rewardTokens: 1,
+    conditionKey: "map_kd",
+    targetValue: 1.50
+  },
+  {
+    id: "combat_series_kills_30",
+    title: "Серийный бомбардир",
+    description: "Набрать суммарно 30 или более фрагов за турнирную встречу",
+    type: "COMBAT",
+    difficulty: "MEDIUM",
+    rewardTokens: 1,
+    conditionKey: "match_kills",
+    targetValue: 30
+  },
 
-  // HARD (1 Token)
+  // HARD (1 Token, 10 challenges)
   {
     id: "combat_kd_170",
     title: "Неприкасаемый",
@@ -290,6 +601,66 @@ export const COMBAT_CHALLENGES: ChallengeDefinition[] = [
     rewardTokens: 1,
     conditionKey: "mvp_count",
     targetValue: 4
+  },
+  {
+    id: "combat_kills_38",
+    title: "Тотальное доминирование",
+    description: "Набрать 38 или более фрагов суммарно за серию матчей турнира",
+    type: "COMBAT",
+    difficulty: "HARD",
+    rewardTokens: 1,
+    conditionKey: "match_kills",
+    targetValue: 38
+  },
+  {
+    id: "combat_single_map_kills_24",
+    title: "Машина для фрагов",
+    description: "Оформить от 24 убийств на одной турнирной карте",
+    type: "COMBAT",
+    difficulty: "HARD",
+    rewardTokens: 1,
+    conditionKey: "max_single_map_kills",
+    targetValue: 24
+  },
+  {
+    id: "combat_hs_60",
+    title: "Железный прицел",
+    description: "Показать процент попаданий в голову 60% и выше при 15+ фрагах на карте",
+    type: "COMBAT",
+    difficulty: "HARD",
+    rewardTokens: 1,
+    conditionKey: "headshot_pct_min15",
+    targetValue: 60
+  },
+  {
+    id: "combat_kd_200",
+    title: "Двукратный перевес",
+    description: "Завершить турнирную карту с феноменальным K/D 2.00 или выше",
+    type: "COMBAT",
+    difficulty: "HARD",
+    rewardTokens: 1,
+    conditionKey: "map_kd",
+    targetValue: 2.00
+  },
+  {
+    id: "combat_util_damage_200",
+    title: "Мастер артиллерии",
+    description: "Нанести не менее 200 урона гранатами (Utility Damage) на турнирной карте",
+    type: "COMBAT",
+    difficulty: "HARD",
+    rewardTokens: 1,
+    conditionKey: "utility_damage",
+    targetValue: 200
+  },
+  {
+    id: "combat_double_clutch",
+    title: "Железные нервы",
+    description: "Выиграть суммарно не менее 2 клатчей (1v1 или 1v2) за турнирный матч",
+    type: "COMBAT",
+    difficulty: "HARD",
+    rewardTokens: 1,
+    conditionKey: "clutch_wins",
+    targetValue: 2
   }
 ];
 
@@ -690,10 +1061,13 @@ export function verifyUserCombatChallenges(
   const normalizedKeys = playerKeys.map(k => (k || "").toLowerCase()).filter(Boolean);
 
   let totalMatchKills = 0;
+  let maxSingleMapKills = 0;
   let totalAssists = 0;
   let maxMapKd = 0;
   let maxMapHsPct = 0;
   let maxMapHsPctMin10 = 0;
+  let maxMapHsPctMin15 = 0;
+  let maxMapHeadshots = 0;
   let maxMapRoundsWon = 0;
   let maxUtilityDamage = 0;
   let totalQuadroKills = 0;
@@ -731,6 +1105,8 @@ export function verifyUserCombatChallenges(
             const utilDmg = parseInt(st.utilityDamage || "0", 10);
 
             matchKillsSum += kills;
+            if (kills > maxSingleMapKills) maxSingleMapKills = kills;
+            if (hs > maxMapHeadshots) maxMapHeadshots = hs;
             totalAssists += assists;
             totalQuadroKills += quadros;
             totalClutchWins += clutches;
@@ -743,6 +1119,7 @@ export function verifyUserCombatChallenges(
             const hsPct = kills > 0 ? (hs / kills) * 100 : 0;
             if (hsPct > maxMapHsPct) maxMapHsPct = hsPct;
             if (kills >= 10 && hsPct > maxMapHsPctMin10) maxMapHsPctMin10 = hsPct;
+            if (kills >= 15 && hsPct > maxMapHsPctMin15) maxMapHsPctMin15 = hsPct;
 
             // Rounds won on this map
             const isWin = t.team_stats?.TeamWin === "1" || t.team_stats?.["Team Win"] === "1";
@@ -773,11 +1150,20 @@ export function verifyUserCombatChallenges(
       case "match_kills":
         progress = totalMatchKills;
         break;
+      case "max_single_map_kills":
+        progress = maxSingleMapKills;
+        break;
+      case "map_headshots":
+        progress = maxMapHeadshots;
+        break;
       case "headshot_pct":
         progress = Math.round(maxMapHsPct);
         break;
       case "headshot_pct_min10":
         progress = Math.round(maxMapHsPctMin10);
+        break;
+      case "headshot_pct_min15":
+        progress = Math.round(maxMapHsPctMin15);
         break;
       case "total_assists":
         progress = totalAssists;
