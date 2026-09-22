@@ -9979,6 +9979,48 @@ export default function Home() {
                       <div style={{ fontSize: "1.25rem", fontWeight: "900", color: "#fff", marginTop: "0.15rem" }}>
                         Выбирает: <span style={{ color: "var(--accent-cyan)" }}>{draftCaptains[draftTurnSequence[draftCurrentStepIndex]]}</span>
                       </div>
+                      {(() => {
+                        const activeCapIdx = draftTurnSequence[draftCurrentStepIndex];
+                        if (activeCapIdx === undefined) return null;
+                        const currentRoster = draftTeams[activeCapIdx] || [];
+                        const currentTeamPts = currentRoster.reduce((sum, p) => sum + getPlayerSkillNumber(p), 0);
+                        const slotsLeft = 5 - currentRoster.length;
+                        const remainingBudget = maxDraftTeamBudget - currentTeamPts;
+                        const subsequentPicks = Math.max(0, slotsLeft - 1);
+                        
+                        const sortedPool = [...draftAvailablePlayers]
+                          .map(p => getPlayerSkillNumber(p))
+                          .sort((a, b) => a - b);
+                        const cheapestSubsequentSum = sortedPool.slice(0, subsequentPicks).reduce((s, v) => s + v, 0);
+                        const safeMaxForThisPick = Math.max(0, remainingBudget - cheapestSubsequentSum);
+
+                        return (
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginTop: "0.35rem", flexWrap: "wrap" }}>
+                            <span style={{
+                              fontSize: "0.74rem",
+                              background: "rgba(0, 229, 255, 0.12)",
+                              border: "1px solid rgba(0, 229, 255, 0.3)",
+                              padding: "0.15rem 0.5rem",
+                              borderRadius: "5px",
+                              color: "var(--accent-cyan)",
+                              fontWeight: "800"
+                            }}>
+                              Осталось пиков: {slotsLeft}
+                            </span>
+                            <span style={{
+                              fontSize: "0.74rem",
+                              background: "rgba(255, 255, 255, 0.08)",
+                              border: "1px solid rgba(255, 255, 255, 0.15)",
+                              padding: "0.15rem 0.5rem",
+                              borderRadius: "5px",
+                              color: "#fff",
+                              fontWeight: "800"
+                            }}>
+                              Максимум на этот ход: <strong style={{ color: "#ffd54f" }}>до {safeMaxForThisPick} PTS</strong>
+                            </span>
+                          </div>
+                        );
+                      })()}
                     </div>
 
                     <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
@@ -10085,6 +10127,12 @@ export default function Home() {
                               {remainingPts >= 0 ? `${remainingPts} очков` : `Перебор: +${Math.abs(remainingPts)} очков`}
                             </span>
                           </div>
+                          {roster.length < 5 && (
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.68rem", marginTop: "0.2rem", borderTop: "1px dashed rgba(255,255,255,0.08)", paddingTop: "0.25rem" }}>
+                              <span style={{ color: "var(--text-muted)" }}>Осталось слотов:</span>
+                              <span style={{ color: "#fff", fontWeight: "700" }}>{5 - roster.length}</span>
+                            </div>
+                          )}
                           {isBalanced && (
                             <div style={{ fontSize: "0.68rem", color: "#00e676", fontWeight: "800", marginTop: "0.25rem", textAlign: "center" }}>
                               Баланс соблюден (±5)
@@ -10458,10 +10506,33 @@ export default function Home() {
                           const activeCapIdx = draftTurnSequence[draftCurrentStepIndex];
                           const currentRoster = draftTeams[activeCapIdx] || [];
                           const currentTeamPts = currentRoster.reduce((sum, p) => sum + getPlayerSkillNumber(p), 0);
-                          const wouldExceedLimit = currentTeamPts + pSkill > maxDraftTeamBudget;
-                          const exceedPts = (currentTeamPts + pSkill) - maxDraftTeamBudget;
+                          const slotsLeft = 5 - currentRoster.length;
+                          const subsequentSlots = Math.max(0, slotsLeft - 1);
+                          const remainingBudgetAfterThisPick = maxDraftTeamBudget - (currentTeamPts + pSkill);
+
+                          // Find cheapest subsequent players in remaining pool to test future feasibility
+                          const remainingPoolSkills = [...draftAvailablePlayers]
+                            .filter(n => n !== pName)
+                            .map(n => getPlayerSkillNumber(n))
+                            .sort((a, b) => a - b);
+                          const minSubsequentSum = remainingPoolSkills.slice(0, subsequentSlots).reduce((s, v) => s + v, 0);
+
+                          const isDeadlockRisk = subsequentSlots > 0 && minSubsequentSum > remainingBudgetAfterThisPick;
+                          const futureShortage = isDeadlockRisk ? (minSubsequentSum - remainingBudgetAfterThisPick) : 0;
+
+                          const wouldExceedDirectly = currentTeamPts + pSkill > maxDraftTeamBudget;
+                          const directExceedPts = (currentTeamPts + pSkill) - maxDraftTeamBudget;
+
+                          const hasWarning = wouldExceedDirectly || isDeadlockRisk;
                           const rec = getDraftRecommendation();
                           const isRecommended = rec?.bestPlayer === pName;
+
+                          let warningTooltip = "";
+                          if (wouldExceedDirectly) {
+                            warningTooltip = `Прямой перебор бюджета: +${directExceedPts} PTS (итого ${currentTeamPts + pSkill} из ${targetDraftTeamBudget} PTS)`;
+                          } else if (isDeadlockRisk) {
+                            warningTooltip = `Риск перебора в будущем: на след. ${subsequentSlots} слота нужно мин. ${minSubsequentSum} PTS, а останется ${remainingBudgetAfterThisPick} PTS (нехватка ~${futureShortage} PTS)`;
+                          }
 
                           return (
                             <div 
@@ -10472,13 +10543,13 @@ export default function Home() {
                                 alignItems: "center",
                                 background: isRecommended 
                                   ? "rgba(0, 229, 255, 0.08)" 
-                                  : wouldExceedLimit 
-                                  ? "rgba(255, 145, 0, 0.05)" 
+                                  : hasWarning 
+                                  ? "rgba(255, 145, 0, 0.06)" 
                                   : "rgba(255,255,255,0.03)",
                                 border: isRecommended
                                   ? "1.5px solid var(--accent-cyan)"
-                                  : wouldExceedLimit
-                                  ? "1px solid rgba(255, 145, 0, 0.4)"
+                                  : hasWarning
+                                  ? "1px solid rgba(255, 145, 0, 0.45)"
                                   : "1px solid var(--border-light)",
                                 borderRadius: "9px",
                                 padding: "0.55rem 0.75rem",
@@ -10495,6 +10566,14 @@ export default function Home() {
                                   {isRecommended && (
                                     <span style={{ fontSize: "0.58rem", background: "var(--accent-cyan)", color: "#000", padding: "0.08rem 0.3rem", borderRadius: "3px", fontWeight: "900" }}>
                                       СОВЕТ
+                                    </span>
+                                  )}
+                                  {!wouldExceedDirectly && isDeadlockRisk && (
+                                    <span 
+                                      style={{ fontSize: "0.58rem", background: "rgba(255, 145, 0, 0.2)", color: "#ffb74d", border: "1px solid rgba(255, 145, 0, 0.5)", padding: "0.05rem 0.25rem", borderRadius: "3px", fontWeight: "800" }}
+                                      title={warningTooltip}
+                                    >
+                                      РИСК
                                     </span>
                                   )}
                                 </div>
@@ -10521,8 +10600,8 @@ export default function Home() {
                                       <span>{pForm.score}</span>
                                     </span>
                                   )}
-                                  <span style={{ fontSize: "0.7rem", color: wouldExceedLimit ? "#ffb74d" : pSkill >= 80 ? "#c084fc" : pSkill >= 60 ? "var(--accent-cyan)" : "var(--text-muted)", fontWeight: "800" }}>
-                                    {pSkill} pts {wouldExceedLimit && <span style={{ color: "#ff9100", fontSize: "0.62rem" }}>(+{exceedPts})</span>}
+                                  <span style={{ fontSize: "0.7rem", color: wouldExceedDirectly ? "#ff5252" : isDeadlockRisk ? "#ffb74d" : pSkill >= 80 ? "#c084fc" : pSkill >= 60 ? "var(--accent-cyan)" : "var(--text-muted)", fontWeight: "800" }}>
+                                    {pSkill} pts {wouldExceedDirectly ? <span style={{ color: "#ff5252", fontSize: "0.62rem" }}>(+{directExceedPts})</span> : isDeadlockRisk ? <span style={{ color: "#ffb74d", fontSize: "0.62rem" }}>(! риск)</span> : null}
                                   </span>
                                 </div>
                               </div>
@@ -10534,12 +10613,16 @@ export default function Home() {
                                     ? "rgba(255, 255, 255, 0.05)"
                                     : isRecommended 
                                     ? "linear-gradient(135deg, #00e5ff, #7c4dff)" 
-                                    : wouldExceedLimit 
+                                    : wouldExceedDirectly
+                                    ? "rgba(255, 82, 82, 0.2)"
+                                    : isDeadlockRisk
                                     ? "rgba(255, 145, 0, 0.2)" 
                                     : "var(--accent-cyan)",
                                   border: !isCurrentCaptainTurn
                                     ? "1px solid var(--border-light)"
-                                    : wouldExceedLimit 
+                                    : wouldExceedDirectly
+                                    ? "1px solid rgba(255, 82, 82, 0.6)"
+                                    : isDeadlockRisk
                                     ? "1px solid rgba(255, 145, 0, 0.5)" 
                                     : "none",
                                   borderRadius: "6px",
@@ -10548,7 +10631,9 @@ export default function Home() {
                                     ? "var(--text-muted)"
                                     : isRecommended 
                                     ? "#fff" 
-                                    : wouldExceedLimit 
+                                    : wouldExceedDirectly
+                                    ? "#ff8a80"
+                                    : isDeadlockRisk
                                     ? "#ffb74d" 
                                     : "#000",
                                   fontSize: "0.72rem",
@@ -10558,9 +10643,9 @@ export default function Home() {
                                   boxShadow: isCurrentCaptainTurn && isRecommended ? "0 0 10px rgba(0, 229, 255, 0.4)" : "none",
                                   transition: "all 0.2s"
                                 }}
-                                title={!isCurrentCaptainTurn ? "Пикать может только активный капитан" : wouldExceedLimit ? `Превышение лимита команды на +${exceedPts} очков (итого будет ${currentTeamPts + pSkill} из ${targetDraftTeamBudget} PTS)` : undefined}
+                                title={!isCurrentCaptainTurn ? "Пикать может только активный капитан" : warningTooltip || undefined}
                               >
-                                {wouldExceedLimit ? `Пикнуть (+${exceedPts})` : "Пикнуть"}
+                                {wouldExceedDirectly ? `Пикнуть (+${directExceedPts})` : isDeadlockRisk ? "Пикнуть (!)" : "Пикнуть"}
                               </button>
                             </div>
                           );
