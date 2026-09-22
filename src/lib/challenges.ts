@@ -24,6 +24,12 @@ export interface UserChallengeState {
   completedAt?: number;
 }
 
+export interface UserChallengeRecord {
+  challenges: UserChallengeState[];
+  generatedAt: number;
+  rerollsRemaining: number;
+}
+
 export interface WeeklyChallengesState {
   weekId: string; // e.g. "2026-w38" or "2026-09-22"
   weekStart: string; // ISO Tuesday 00:00:00
@@ -31,10 +37,7 @@ export interface WeeklyChallengesState {
   isCombatWeek: boolean;
   tournamentTitle?: string;
   tournamentDate?: string;
-  userChallenges: Record<string, {
-    challenges: UserChallengeState[];
-    generatedAt: number;
-  }>;
+  userChallenges: Record<string, UserChallengeRecord>;
   tokenBalances: Record<string, number>; // userId -> tokens count
   updatedAt: number;
 }
@@ -42,13 +45,13 @@ export interface WeeklyChallengesState {
 const LOCAL_STORAGE_FILE = path.join(process.cwd(), "src/lib/weekly_challenges.json");
 const PERSISTENT_STORAGE_FILE = path.join(process.cwd(), "..", "sigma_persistent_weekly_challenges.json");
 
-// Pool of TRAINING challenges (fun 10x10 challenges, no demo verification)
+// Pool of TRAINING challenges (10x10 matches, no demo verification)
 export const TRAINING_CHALLENGES: ChallengeDefinition[] = [
   // EASY
   {
     id: "train_deagle_tuesday",
-    title: "Диглер Вторника",
-    description: "Сделать от 5 киллов с Desert Eagle за вечерний фан-матч 10х10",
+    title: "Диглер",
+    description: "Сделать не менее 5 киллов с Desert Eagle за матч 10х10",
     type: "TRAINING",
     difficulty: "EASY",
     rewardTokens: 0,
@@ -57,8 +60,8 @@ export const TRAINING_CHALLENGES: ChallengeDefinition[] = [
   },
   {
     id: "train_shotgun_party",
-    title: "Дробовиковый беспредел",
-    description: "Сыграть минимум 3 раунда только с дробовиком (XM1014 / Nova / MAG-7)",
+    title: "Дробовики к бою",
+    description: "Сыграть не менее 3 раундов только с дробовиком (XM1014 / Nova / MAG-7)",
     type: "TRAINING",
     difficulty: "EASY",
     rewardTokens: 0,
@@ -68,7 +71,7 @@ export const TRAINING_CHALLENGES: ChallengeDefinition[] = [
   {
     id: "train_knife_master",
     title: "Шелест клинка",
-    description: "Оформить 1 фраговый удар ножом в спину в матче 10х10",
+    description: "Сделать 1 килл ножом в спину в матче 10х10",
     type: "TRAINING",
     difficulty: "EASY",
     rewardTokens: 0,
@@ -78,7 +81,7 @@ export const TRAINING_CHALLENGES: ChallengeDefinition[] = [
   {
     id: "train_first_pistol",
     title: "Мастер пистолетки",
-    description: "Сделать 2 фрага на пистолетном раунде с базового пистолета (USP / Glock)",
+    description: "Сделать 2 килла на пистолетном раунде с базового пистолета (USP / Glock)",
     type: "TRAINING",
     difficulty: "EASY",
     rewardTokens: 0,
@@ -89,7 +92,7 @@ export const TRAINING_CHALLENGES: ChallengeDefinition[] = [
   // MEDIUM
   {
     id: "train_scout_head",
-    title: "Снайпер без зума",
+    title: "Снайпер SSG",
     description: "Сделать 3 хедшота с SSG 08 (Муха) за один матч 10х10",
     type: "TRAINING",
     difficulty: "MEDIUM",
@@ -100,7 +103,7 @@ export const TRAINING_CHALLENGES: ChallengeDefinition[] = [
   {
     id: "train_zeus_shock",
     title: "Зевс-Шокер",
-    description: "Успешно поразить врага электрошокером Zeus x27",
+    description: "Поразить противника электрошокером Zeus x27",
     type: "TRAINING",
     difficulty: "MEDIUM",
     rewardTokens: 0,
@@ -109,7 +112,7 @@ export const TRAINING_CHALLENGES: ChallengeDefinition[] = [
   },
   {
     id: "train_flasher",
-    title: "Ослепительный вечер",
+    title: "Ослепление",
     description: "Ослепить более 15 игроков за карту световыми гранатами",
     type: "TRAINING",
     difficulty: "MEDIUM",
@@ -132,7 +135,7 @@ export const TRAINING_CHALLENGES: ChallengeDefinition[] = [
   {
     id: "train_ace_hunt",
     title: "Король 10х10",
-    description: "Сделать квадро-килл (4k) или Эйс (5k) за один раунд на фановом вторнике",
+    description: "Сделать 4 килла или Эйс (5 киллов) за один раунд в матче 10х10",
     type: "TRAINING",
     difficulty: "HARD",
     rewardTokens: 0,
@@ -142,7 +145,7 @@ export const TRAINING_CHALLENGES: ChallengeDefinition[] = [
   {
     id: "train_clutch_crowd",
     title: "Один против толпы",
-    description: "Остаться в живых и выиграть раунд против 3 или более противников",
+    description: "Выиграть раунд, оставшись против 3 или более противников",
     type: "TRAINING",
     difficulty: "HARD",
     rewardTokens: 0,
@@ -151,8 +154,8 @@ export const TRAINING_CHALLENGES: ChallengeDefinition[] = [
   },
   {
     id: "train_he_grenade_kill",
-    title: "Мясной взрыв",
-    description: "Оформить прямое убийство осколочной гранатой HE",
+    title: "Осколочный удар",
+    description: "Сделать килл осколочной гранатой HE",
     type: "TRAINING",
     difficulty: "HARD",
     rewardTokens: 0,
@@ -492,12 +495,16 @@ export function writeWeeklyChallengesState(state: WeeklyChallengesState): void {
 export function getUserWeeklyChallenges(
   userId: string,
   state: WeeklyChallengesState
-): UserChallengeState[] {
+): { challenges: UserChallengeState[]; rerollsRemaining: number } {
   const normalizedUser = (userId || "guest").toLowerCase();
   const existing = state.userChallenges[normalizedUser];
 
   if (existing && Array.isArray(existing.challenges) && existing.challenges.length === 3) {
-    return existing.challenges;
+    if (existing.rerollsRemaining === undefined) {
+      existing.rerollsRemaining = 3;
+      writeWeeklyChallengesState(state);
+    }
+    return { challenges: existing.challenges, rerollsRemaining: existing.rerollsRemaining };
   }
 
   // Generate new
@@ -511,11 +518,103 @@ export function getUserWeeklyChallenges(
 
   state.userChallenges[normalizedUser] = {
     challenges: newChallenges,
-    generatedAt: Date.now()
+    generatedAt: Date.now(),
+    rerollsRemaining: 3
   };
 
   writeWeeklyChallengesState(state);
-  return newChallenges;
+  return { challenges: newChallenges, rerollsRemaining: 3 };
+}
+
+/**
+ * Re-rolls a specific challenge for a user (3 per week allowed)
+ */
+export function rerollUserChallenge(
+  userId: string,
+  challengeIndex: number,
+  state: WeeklyChallengesState
+): {
+  success: boolean;
+  message: string;
+  challenges: UserChallengeState[];
+  rerollsRemaining: number;
+} {
+  const normalizedUser = (userId || "guest").toLowerCase();
+  const userRecord = state.userChallenges[normalizedUser];
+
+  if (!userRecord || !userRecord.challenges || userRecord.challenges.length <= challengeIndex) {
+    const init = getUserWeeklyChallenges(normalizedUser, state);
+    return {
+      success: false,
+      message: "Челленджи не найдены",
+      challenges: init.challenges,
+      rerollsRemaining: init.rerollsRemaining
+    };
+  }
+
+  if (userRecord.rerollsRemaining === undefined) {
+    userRecord.rerollsRemaining = 3;
+  }
+
+  if (userRecord.rerollsRemaining <= 0) {
+    return {
+      success: false,
+      message: "Закончились замены на эту неделю (максимум 3).",
+      challenges: userRecord.challenges,
+      rerollsRemaining: 0
+    };
+  }
+
+  const currentChallenge = userRecord.challenges[challengeIndex];
+  if (currentChallenge.completed) {
+    return {
+      success: false,
+      message: "Нельзя заменить уже выполненное задание!",
+      challenges: userRecord.challenges,
+      rerollsRemaining: userRecord.rerollsRemaining
+    };
+  }
+
+  const targetDifficulty = currentChallenge.definition.difficulty;
+  const pool = (state.isCombatWeek ? COMBAT_CHALLENGES : TRAINING_CHALLENGES)
+    .filter(c => c.difficulty === targetDifficulty);
+
+  const currentIds = new Set(userRecord.challenges.map(c => c.definition.id));
+  const availableAlternatives = pool.filter(c => !currentIds.has(c.id));
+
+  const candidatePool = availableAlternatives.length > 0 
+    ? availableAlternatives 
+    : pool.filter(c => c.id !== currentChallenge.definition.id);
+
+  if (candidatePool.length === 0) {
+    return {
+      success: false,
+      message: "Нет доступных альтернативных заданий этой сложности.",
+      challenges: userRecord.challenges,
+      rerollsRemaining: userRecord.rerollsRemaining
+    };
+  }
+
+  const randomIndex = Math.floor(Math.random() * candidatePool.length);
+  const newDef = candidatePool[randomIndex];
+
+  userRecord.challenges[challengeIndex] = {
+    definition: newDef,
+    completed: false,
+    progress: 0,
+    target: newDef.targetValue
+  };
+
+  userRecord.rerollsRemaining -= 1;
+  state.userChallenges[normalizedUser] = userRecord;
+  writeWeeklyChallengesState(state);
+
+  return {
+    success: true,
+    message: `Задание заменено на «${newDef.title}». Осталось замен: ${userRecord.rerollsRemaining}`,
+    challenges: userRecord.challenges,
+    rerollsRemaining: userRecord.rerollsRemaining
+  };
 }
 
 /**
@@ -530,10 +629,12 @@ export function verifyUserCombatChallenges(
   message: string;
 } {
   const primaryKey = (playerKeys[0] || "guest").toLowerCase();
-  const userObj = state.userChallenges[primaryKey] || {
-    challenges: getUserWeeklyChallenges(primaryKey, state),
-    generatedAt: Date.now()
-  };
+  let userRecord = state.userChallenges[primaryKey];
+  if (!userRecord || !userRecord.challenges) {
+    const init = getUserWeeklyChallenges(primaryKey, state);
+    userRecord = state.userChallenges[primaryKey];
+  }
+  const userObj = userRecord;
 
   let tokensAwarded = 0;
   if (!state.isCombatWeek) {
@@ -724,7 +825,7 @@ export function verifyUserCombatChallenges(
 
   let message = "";
   if (tokensAwarded > 0) {
-    message = `Поздравляем! Выполнено заданий: ${tokensAwarded}. Начислено жетонов: +${tokensAwarded} 🪙!`;
+    message = `Поздравляем! Выполнено заданий: ${tokensAwarded}. Начислено жетонов: +${tokensAwarded}!`;
   } else {
     message = "Проверка завершена. Новых выполненных боевых заданий пока не найдено. Сыграйте в матчах турнира!";
   }

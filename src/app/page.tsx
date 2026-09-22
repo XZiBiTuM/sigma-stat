@@ -678,18 +678,62 @@ export default function Home() {
     }
   };
 
-  const handleVerifyChallenges = async () => {
+  const [challengesRerollingIdx, setChallengesRerollingIdx] = useState<number | null>(null);
+
+  const handleRerollChallenge = async (index: number) => {
     try {
-      setChallengesVerifying(true);
+      setChallengesRerollingIdx(index);
       setChallengesFeedbackMsg("");
-      const res = await fetch("/api/challenges", { method: "POST" });
+      const res = await fetch("/api/challenges", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "reroll", index })
+      });
       const data = await res.json();
       if (res.ok) {
         if (data.tokensBalance !== undefined) {
           setUserTokenBalance(data.tokensBalance);
         }
         if (data.challenges) {
-          setChallengesData((prev: any) => prev ? { ...prev, challenges: data.challenges, tokensBalance: data.tokensBalance } : prev);
+          setChallengesData((prev: any) => prev ? { 
+            ...prev, 
+            challenges: data.challenges, 
+            tokensBalance: data.tokensBalance,
+            rerollsRemaining: data.rerollsRemaining
+          } : prev);
+        }
+        setChallengesFeedbackMsg(data.message || "Задание успешно заменено!");
+      } else {
+        setChallengesFeedbackMsg(data.message || data.error || "Не удалось заменить задание");
+      }
+    } catch (e: any) {
+      setChallengesFeedbackMsg(e.message || "Ошибка при замене задания");
+    } finally {
+      setChallengesRerollingIdx(null);
+    }
+  };
+
+  const handleVerifyChallenges = async () => {
+    try {
+      setChallengesVerifying(true);
+      setChallengesFeedbackMsg("");
+      const res = await fetch("/api/challenges", { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "verify" })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        if (data.tokensBalance !== undefined) {
+          setUserTokenBalance(data.tokensBalance);
+        }
+        if (data.challenges) {
+          setChallengesData((prev: any) => prev ? { 
+            ...prev, 
+            challenges: data.challenges, 
+            tokensBalance: data.tokensBalance,
+            rerollsRemaining: data.rerollsRemaining ?? prev.rerollsRemaining
+          } : prev);
         }
         setChallengesFeedbackMsg(data.message || "Проверка завершена!");
       } else {
@@ -2558,7 +2602,7 @@ export default function Home() {
               fontWeight: "700",
               display: "inline-flex",
               alignItems: "center",
-              gap: "0.4rem",
+              gap: "0.5rem",
               justifyContent: "center",
               background: challengesData?.isCombatWeek ? "rgba(255, 75, 75, 0.12)" : "rgba(168, 85, 247, 0.12)",
               border: challengesData?.isCombatWeek ? "1px solid rgba(255, 75, 75, 0.45)" : "1px solid rgba(168, 85, 247, 0.45)",
@@ -2568,7 +2612,6 @@ export default function Home() {
               boxShadow: challengesData?.isCombatWeek ? "0 0 12px rgba(255, 75, 75, 0.15)" : "0 0 12px rgba(168, 85, 247, 0.15)"
             }}
           >
-            <span>{challengesData?.isCombatWeek ? "🥊" : "🎯"}</span>
             <span>Челленджи недели</span>
             {userTokenBalance > 0 && (
               <span style={{
@@ -2580,7 +2623,7 @@ export default function Home() {
                 borderRadius: "6px",
                 fontWeight: "900"
               }}>
-                {userTokenBalance} 🪙
+                {userTokenBalance} ЖЕТОНОВ
               </span>
             )}
           </button>
@@ -2800,7 +2843,7 @@ export default function Home() {
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
-                  gap: "0.25rem",
+                  gap: "0.35rem",
                   fontSize: "0.75rem",
                   fontWeight: "900",
                   padding: "0.2rem 0.55rem",
@@ -2813,7 +2856,9 @@ export default function Home() {
                   boxShadow: "0 0 10px rgba(255, 215, 0, 0.15)"
                 }}
               >
-                <span>🪙</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline-block" }}>
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
                 <span>{userTokenBalance} ЖЕТОНОВ</span>
               </button>
 
@@ -11261,7 +11306,7 @@ export default function Home() {
             boxShadow: challengesData?.isCombatWeek ? "0 0 40px rgba(255, 75, 75, 0.2)" : "0 0 40px rgba(168, 85, 247, 0.2)",
             borderRadius: "20px",
             width: "100%",
-            maxWidth: "760px",
+            maxWidth: "820px",
             maxHeight: "92vh",
             display: "flex",
             flexDirection: "column",
@@ -11269,7 +11314,7 @@ export default function Home() {
           }}>
             {/* Header */}
             <div style={{
-              padding: "1.2rem 1.5rem",
+              padding: "1.2rem 1.6rem",
               borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
               display: "flex",
               justifyContent: "space-between",
@@ -11278,28 +11323,25 @@ export default function Home() {
                 ? "linear-gradient(90deg, rgba(255, 75, 75, 0.12), transparent)" 
                 : "linear-gradient(90deg, rgba(168, 85, 247, 0.12), transparent)"
             }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.8rem" }}>
-                <span style={{ fontSize: "1.8rem" }}>{challengesData?.isCombatWeek ? "🥊" : "🎯"}</span>
-                <div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-                    <h3 style={{ margin: 0, fontSize: "1.15rem", fontWeight: "900", color: "#fff" }}>
-                      {challengesData?.isCombatWeek ? "Боевые Челленджи Недели" : "Тренировочные Челленджи (10х10)"}
-                    </h3>
-                    <span style={{
-                      fontSize: "0.68rem",
-                      fontWeight: "900",
-                      padding: "0.2rem 0.6rem",
-                      borderRadius: "6px",
-                      background: challengesData?.isCombatWeek ? "rgba(255, 75, 75, 0.2)" : "rgba(168, 85, 247, 0.2)",
-                      color: challengesData?.isCombatWeek ? "#ff7b7b" : "#d8b4fe",
-                      border: challengesData?.isCombatWeek ? "1px solid rgba(255, 75, 75, 0.5)" : "1px solid rgba(168, 85, 247, 0.5)"
-                    }}>
-                      {challengesData?.isCombatWeek ? "ТУРНИРНАЯ НЕДЕЛЯ" : "ФАНОВЫЙ ВТОРНИК"}
-                    </span>
-                  </div>
-                  <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "0.2rem" }}>
-                    Обновление каждый вторник в 00:00 • У каждого игрока свои персональные задания
-                  </div>
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+                  <h3 style={{ margin: 0, fontSize: "1.15rem", fontWeight: "900", color: "#fff" }}>
+                    {challengesData?.isCombatWeek ? "Боевые челленджи недели" : "Челленджи недели (10х10)"}
+                  </h3>
+                  <span style={{
+                    fontSize: "0.68rem",
+                    fontWeight: "900",
+                    padding: "0.2rem 0.6rem",
+                    borderRadius: "6px",
+                    background: challengesData?.isCombatWeek ? "rgba(255, 75, 75, 0.2)" : "rgba(168, 85, 247, 0.2)",
+                    color: challengesData?.isCombatWeek ? "#ff7b7b" : "#d8b4fe",
+                    border: challengesData?.isCombatWeek ? "1px solid rgba(255, 75, 75, 0.5)" : "1px solid rgba(168, 85, 247, 0.5)"
+                  }}>
+                    {challengesData?.isCombatWeek ? "ТУРНИРНЫЙ РЕЖИМ" : "РЕЖИМ 10х10"}
+                  </span>
+                </div>
+                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "0.25rem" }}>
+                  Обновление каждый вторник в 00:00 • У каждого игрока свои задания
                 </div>
               </div>
 
@@ -11308,13 +11350,15 @@ export default function Home() {
                 <div style={{
                   background: "rgba(255, 215, 0, 0.12)",
                   border: "1px solid rgba(255, 215, 0, 0.4)",
-                  padding: "0.35rem 0.75rem",
+                  padding: "0.35rem 0.8rem",
                   borderRadius: "10px",
                   display: "flex",
                   alignItems: "center",
-                  gap: "0.4rem"
+                  gap: "0.45rem"
                 }}>
-                  <span style={{ fontSize: "1.1rem" }}>🪙</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffd700" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                  </svg>
                   <div>
                     <div style={{ fontSize: "0.62rem", color: "#ffd700", fontWeight: "700", textTransform: "uppercase" }}>Баланс</div>
                     <div style={{ fontSize: "0.85rem", color: "#fff", fontWeight: "900", lineHeight: 1 }}>{userTokenBalance} жетонов</div>
@@ -11355,7 +11399,7 @@ export default function Home() {
                   ? "1px solid rgba(255, 75, 75, 0.25)" 
                   : "1px solid rgba(168, 85, 247, 0.25)",
                 borderRadius: "14px",
-                padding: "1rem 1.2rem",
+                padding: "1rem 1.25rem",
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
@@ -11364,21 +11408,21 @@ export default function Home() {
               }}>
                 <div>
                   <div style={{ fontWeight: "800", color: "#fff", fontSize: "0.88rem", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                    <span>{challengesData?.isCombatWeek ? "🔥 Назначен турнир:" : "🎪 Обычные тренировочные вторники:"}</span>
+                    <span>{challengesData?.isCombatWeek ? "Турнир:" : "Формат:"}</span>
                     <span style={{ color: challengesData?.isCombatWeek ? "#ff8a80" : "#d8b4fe" }}>
                       {challengesData?.isCombatWeek 
                         ? (challengesData.tournamentTitle || "Sigma Cup") 
-                        : "Матчи 10х10 на одной карте по фану"}
+                        : "Игры 10х10 (Вторник)"}
                     </span>
                   </div>
                   <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.25rem", lineHeight: "1.4" }}>
                     {challengesData?.isCombatWeek 
-                      ? "В боевую неделю фиксируются турнирные матчи. За каждое выполненное задание начисляется 1 жетон 🪙." 
-                      : "В режиме 10х10 демо-запись отключена и статистика не фиксируется. Задания носят развлекательный тренировочный характер без начисления жетонов."}
+                      ? "Фиксируются официальные матчи турнира. За каждое выполненное задание дается 1 жетон." 
+                      : "В режиме 10х10 демо не записывается. Задания выполняются для интереса, без начисления жетонов."}
                   </div>
                 </div>
 
-                {challengesData?.weekEnd && (
+                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
                   <div style={{
                     background: "rgba(0, 0, 0, 0.35)",
                     border: "1px solid rgba(255, 255, 255, 0.1)",
@@ -11387,23 +11431,40 @@ export default function Home() {
                     textAlign: "right"
                   }}>
                     <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "700" }}>
-                      След. цикл со вторника:
+                      Замен на неделю:
                     </div>
-                    <div style={{ fontSize: "0.82rem", fontWeight: "800", color: "var(--accent-cyan)", marginTop: "0.15rem" }}>
-                      {new Date(challengesData.weekEnd).toLocaleDateString("ru-RU", { day: "numeric", month: "long" })} 00:00
+                    <div style={{ fontSize: "0.82rem", fontWeight: "800", color: "#ffd700", marginTop: "0.15rem" }}>
+                      {challengesData?.rerollsRemaining ?? 3} из 3
                     </div>
                   </div>
-                )}
+
+                  {challengesData?.weekEnd && (
+                    <div style={{
+                      background: "rgba(0, 0, 0, 0.35)",
+                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      borderRadius: "10px",
+                      padding: "0.45rem 0.8rem",
+                      textAlign: "right"
+                    }}>
+                      <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "700" }}>
+                        След. цикл:
+                      </div>
+                      <div style={{ fontSize: "0.82rem", fontWeight: "800", color: "var(--accent-cyan)", marginTop: "0.15rem" }}>
+                        {new Date(challengesData.weekEnd).toLocaleDateString("ru-RU", { day: "numeric", month: "long" })} 00:00
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* CHALLENGE CARDS LIST */}
               <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>
                   <span style={{ fontSize: "0.85rem", fontWeight: "800", color: "#fff", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                    Ваши персональные задания недели:
+                    Задания на эту неделю:
                   </span>
                   <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
-                    3 уровня сложности (Easy • Medium • Hard)
+                    3 уровня: Легкий • Средний • Сложный
                   </span>
                 </div>
 
@@ -11421,6 +11482,8 @@ export default function Home() {
 
                     const isDone = c.completed;
                     const isCombat = challengesData?.isCombatWeek;
+                    const rerollsLeft = challengesData?.rerollsRemaining ?? 3;
+                    const isRerolling = challengesRerollingIdx === idx;
 
                     return (
                       <div 
@@ -11435,12 +11498,12 @@ export default function Home() {
                           display: "flex",
                           justifyContent: "space-between",
                           alignItems: "center",
-                          gap: "1rem",
+                          gap: "1.2rem",
                           transition: "all 0.2s"
                         }}
                       >
-                        <div style={{ flex: 1 }}>
-                          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.35rem" }}>
+                        <div style={{ flex: "1 1 auto", minWidth: 0 }}>
+                          <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "0.6rem", marginBottom: "0.35rem" }}>
                             <span style={{
                               fontSize: "0.65rem",
                               fontWeight: "900",
@@ -11464,7 +11527,7 @@ export default function Home() {
                                 padding: "0.15rem 0.5rem",
                                 borderRadius: "6px"
                               }}>
-                                ✓ ВЫПОЛНЕНО
+                                ВЫПОЛНЕНО
                               </span>
                             )}
                           </div>
@@ -11498,31 +11561,65 @@ export default function Home() {
                           )}
                         </div>
 
-                        {/* Reward Badge */}
-                        <div style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          minWidth: "90px",
-                          padding: "0.6rem 0.8rem",
-                          borderRadius: "10px",
-                          background: isCombat 
-                            ? (isDone ? "rgba(0, 230, 118, 0.15)" : "rgba(255, 215, 0, 0.1)") 
-                            : "rgba(255, 255, 255, 0.04)",
-                          border: isCombat 
-                            ? (isDone ? "1px solid rgba(0, 230, 118, 0.4)" : "1px solid rgba(255, 215, 0, 0.3)") 
-                            : "1px solid rgba(255, 255, 255, 0.08)"
-                        }}>
-                          <span style={{ fontSize: "1.3rem" }}>{isCombat ? (isDone ? "✅" : "🪙") : "🎯"}</span>
-                          <span style={{
-                            fontSize: "0.75rem",
-                            fontWeight: "900",
-                            marginTop: "0.2rem",
-                            color: isCombat ? (isDone ? "#00e676" : "#ffd700") : "var(--text-muted)"
+                        {/* Right Actions & Badge */}
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flex: "0 0 auto" }}>
+                          {!isDone && (
+                            <button
+                              onClick={() => handleRerollChallenge(idx)}
+                              disabled={rerollsLeft <= 0 || isRerolling}
+                              title={rerollsLeft <= 0 ? "Лимит замен на эту неделю исчерпан (3/3)" : `Заменить задание (осталось ${rerollsLeft})`}
+                              style={{
+                                background: rerollsLeft <= 0 ? "rgba(255, 255, 255, 0.03)" : "rgba(255, 255, 255, 0.06)",
+                                border: "1px solid rgba(255, 255, 255, 0.12)",
+                                borderRadius: "8px",
+                                padding: "0.45rem 0.75rem",
+                                color: rerollsLeft <= 0 ? "var(--text-muted)" : "var(--text-secondary)",
+                                fontSize: "0.72rem",
+                                fontWeight: "700",
+                                cursor: rerollsLeft <= 0 || isRerolling ? "not-allowed" : "pointer",
+                                transition: "all 0.2s",
+                                whiteSpace: "nowrap"
+                              }}
+                            >
+                              {isRerolling ? "Замена..." : "Заменить"}
+                            </button>
+                          )}
+
+                          {/* Reward Badge */}
+                          <div style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            minWidth: "96px",
+                            padding: "0.55rem 0.9rem",
+                            borderRadius: "10px",
+                            background: isCombat 
+                              ? (isDone ? "rgba(0, 230, 118, 0.15)" : "rgba(255, 215, 0, 0.1)") 
+                              : "rgba(255, 255, 255, 0.04)",
+                            border: isCombat 
+                              ? (isDone ? "1px solid rgba(0, 230, 118, 0.4)" : "1px solid rgba(255, 215, 0, 0.3)") 
+                              : "1px solid rgba(255, 255, 255, 0.08)",
+                            whiteSpace: "nowrap"
                           }}>
-                            {isCombat ? (isDone ? "+1 Получен" : "+1 Жетон") : "Без наград"}
-                          </span>
+                            <span style={{
+                              fontSize: "0.62rem",
+                              fontWeight: "800",
+                              color: "var(--text-muted)",
+                              textTransform: "uppercase",
+                              letterSpacing: "0.05em"
+                            }}>
+                              Награда
+                            </span>
+                            <span style={{
+                              fontSize: "0.78rem",
+                              fontWeight: "900",
+                              marginTop: "0.15rem",
+                              color: isCombat ? (isDone ? "#00e676" : "#ffd700") : "var(--text-muted)"
+                            }}>
+                              {isCombat ? (isDone ? "+1 Получен" : "+1 Жетон") : "Без наград"}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     );
@@ -11535,10 +11632,10 @@ export default function Home() {
                 <div style={{
                   padding: "0.8rem 1.1rem",
                   borderRadius: "10px",
-                  background: challengesFeedbackMsg.includes("Поздравляем") 
+                  background: challengesFeedbackMsg.includes("Поздравляем") || challengesFeedbackMsg.includes("заменено")
                     ? "rgba(0, 230, 118, 0.15)" 
                     : "rgba(0, 229, 255, 0.12)",
-                  border: challengesFeedbackMsg.includes("Поздравляем") 
+                  border: challengesFeedbackMsg.includes("Поздравляем") || challengesFeedbackMsg.includes("заменено")
                     ? "1px solid rgba(0, 230, 118, 0.4)" 
                     : "1px solid rgba(0, 229, 255, 0.4)",
                   color: "#fff",
@@ -11565,12 +11662,12 @@ export default function Home() {
                   <div style={{ fontSize: "0.82rem", fontWeight: "800", color: "#fff" }}>
                     {currentUser 
                       ? `Игрок: ${currentUser.faceit?.nickname || currentUser.steamName}` 
-                      : "Вы просматриваете челленджи как гость"}
+                      : "Вы просматриваете задания как гость"}
                   </div>
                   <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", marginTop: "0.15rem" }}>
                     {currentUser 
-                      ? "Авторизация подтверждена. Ваши матчи анализируются автоматически." 
-                      : "Авторизуйтесь через Steam в шапке сайта, чтобы получать жетоны и сохранять прогресс!"}
+                      ? "Авторизация активна. Доступны персональные задания и замена." 
+                      : "Авторизуйтесь через Steam в шапке сайта, чтобы получать жетоны и сохранять прогресс."}
                   </div>
                 </div>
 
@@ -11593,7 +11690,7 @@ export default function Home() {
                       transition: "all 0.2s"
                     }}
                   >
-                    {challengesVerifying ? "Анализ матчей..." : "🔍 Проверить выполнение"}
+                    {challengesVerifying ? "Анализ матчей..." : "Проверить выполнение"}
                   </button>
                 )}
               </div>
@@ -11608,14 +11705,30 @@ export default function Home() {
                 alignItems: "center",
                 gap: "1rem"
               }}>
-                <span style={{ fontSize: "2rem" }}>🛍️</span>
+                <div style={{
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "10px",
+                  background: "rgba(255, 215, 0, 0.12)",
+                  border: "1px solid rgba(255, 215, 0, 0.3)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0
+                }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffd700" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <path d="M16 10a4 4 0 0 1-8 0"/>
+                  </svg>
+                </div>
                 <div>
                   <div style={{ fontSize: "0.85rem", fontWeight: "900", color: "#ffd700", display: "flex", alignItems: "center", gap: "0.5rem" }}>
                     <span>СКОРО: МАГАЗИН НАГРАД ЗА ЖЕТОНЫ</span>
                     <span style={{ fontSize: "0.65rem", background: "rgba(255, 215, 0, 0.2)", padding: "0.1rem 0.4rem", borderRadius: "4px" }}>В РАЗРАБОТКЕ</span>
                   </div>
                   <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.25rem", lineHeight: "1.4" }}>
-                    Копите жетоны за боевые челленджи! В скором времени в магазине появятся уникальные кастомные плашки профиля, клан-теги, анимации карточек в драфте и клубные призы.
+                    Копите жетоны за боевые челленджи. В будущем в магазине появятся кастомные плашки профиля, клан-теги, анимации карточек в драфте и клубные призы.
                   </div>
                 </div>
               </div>
@@ -11624,7 +11737,7 @@ export default function Home() {
 
             {/* Modal Footer */}
             <div style={{
-              padding: "1rem 1.5rem",
+              padding: "1rem 1.6rem",
               borderTop: "1px solid rgba(255, 255, 255, 0.08)",
               display: "flex",
               justifyContent: "flex-end"
