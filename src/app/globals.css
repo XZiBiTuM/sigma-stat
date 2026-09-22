@@ -1895,6 +1895,14 @@ html, body {
   flex-wrap: wrap;
 }
 
+.nav-divider {
+  color: rgba(255, 255, 255, 0.2);
+  font-weight: 300;
+  font-size: 0.82rem;
+  user-select: none;
+  padding: 0 0.15rem;
+}
+
 .nav-link-btn {
   background: transparent;
   border: 1px solid transparent;

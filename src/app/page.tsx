@@ -2536,6 +2536,8 @@ export default function Home() {
             <span className="brand-title">СИГМА КИБЕР КЛУБ</span>
           </Link>
 
+          <span className="nav-divider">|</span>
+
           {/* Navigation Links in the same line */}
           <nav className="navbar-nav">
             <button 
@@ -2544,6 +2546,8 @@ export default function Home() {
             >
               Captain's Draft
             </button>
+
+            <span className="nav-divider">|</span>
 
             <button 
               onClick={() => {
@@ -2561,6 +2565,8 @@ export default function Home() {
               )}
             </button>
 
+            <span className="nav-divider">|</span>
+
             <button 
               onClick={() => { setTourStep(0); setShowTourModal(true); }}
               className="nav-link-btn"
@@ -2570,23 +2576,29 @@ export default function Home() {
 
             {/* ADMIN button — ONLY rendered when user is authorized as ADMIN */}
             {userRole === "ADMIN" && (
-              <Link 
-                href="/admin"
-                className="nav-link-admin"
-                title="Панель администратора"
-              >
-                ADMIN
-              </Link>
+              <>
+                <span className="nav-divider">|</span>
+                <Link 
+                  href="/admin"
+                  className="nav-link-admin"
+                  title="Панель администратора"
+                >
+                  ADMIN
+                </Link>
+              </>
             )}
 
             {userRole === "EVENT_MAKER" && (
-              <Link 
-                href="/admin"
-                className="nav-link-admin"
-                title="Панель Event Maker"
-              >
-                EVENT MAKER
-              </Link>
+              <>
+                <span className="nav-divider">|</span>
+                <Link 
+                  href="/admin"
+                  className="nav-link-admin"
+                  title="Панель Event Maker"
+                >
+                  EVENT MAKER
+                </Link>
+              </>
             )}
           </nav>
         </div>
@@ -2605,10 +2617,15 @@ export default function Home() {
               </span>
 
               {currentUser.faceit?.elo && (
-                <span className="user-profile-elo" title="FACEIT ELO">
-                  {(currentUser.faceit?.playerId && playerEloMap[currentUser.faceit.playerId]) || (currentUser.faceit?.nickname && playerEloMap[currentUser.faceit.nickname.toLowerCase()]) || currentUser.faceit.elo} ELO
-                </span>
+                <>
+                  <span className="nav-divider">|</span>
+                  <span className="user-profile-elo" title="FACEIT ELO">
+                    {(currentUser.faceit?.playerId && playerEloMap[currentUser.faceit.playerId]) || (currentUser.faceit?.nickname && playerEloMap[currentUser.faceit.nickname.toLowerCase()]) || currentUser.faceit.elo} ELO
+                  </span>
+                </>
               )}
+
+              <span className="nav-divider">|</span>
 
               <a
                 href="#bracket"
@@ -2623,18 +2640,23 @@ export default function Home() {
               </a>
 
               {userTokenBalance > 0 && (
-                <button
-                  onClick={() => {
-                    setChallengesFeedbackMsg("");
-                    fetchWeeklyChallenges();
-                    setShowChallengesModal(true);
-                  }}
-                  title="Жетоны за челленджи"
-                  className="user-profile-token-btn"
-                >
-                  {userTokenBalance} жетонов
-                </button>
+                <>
+                  <span className="nav-divider">|</span>
+                  <button
+                    onClick={() => {
+                      setChallengesFeedbackMsg("");
+                      fetchWeeklyChallenges();
+                      setShowChallengesModal(true);
+                    }}
+                    title="Жетоны за челленджи"
+                    className="user-profile-token-btn"
+                  >
+                    {userTokenBalance} жетонов
+                  </button>
+                </>
               )}
+
+              <span className="nav-divider">|</span>
 
               <button
                 onClick={() => {
@@ -2648,6 +2670,8 @@ export default function Home() {
               >
                 Профиль
               </button>
+
+              <span className="nav-divider">|</span>
 
               <button
                 onClick={async () => {
