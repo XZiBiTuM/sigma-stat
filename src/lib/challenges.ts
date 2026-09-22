@@ -351,6 +351,36 @@ export const TRAINING_CHALLENGES: ChallengeDefinition[] = [
     rewardTokens: 0,
     conditionKey: "manual_fun",
     targetValue: 4
+  },
+  {
+    id: "train_noscope_hard",
+    title: "Blind No-Scope Menace",
+    description: "Сделать 2 убийства без прицела с AWP за один раунд в матче 10х10",
+    type: "TRAINING",
+    difficulty: "HARD",
+    rewardTokens: 0,
+    conditionKey: "manual_fun",
+    targetValue: 2
+  },
+  {
+    id: "train_wallbang_hard",
+    title: "Piercing Ballistics",
+    description: "Сделать 4 убийства прострелом сквозь плотные препятствия или стены за матч 10х10",
+    type: "TRAINING",
+    difficulty: "HARD",
+    rewardTokens: 0,
+    conditionKey: "manual_fun",
+    targetValue: 4
+  },
+  {
+    id: "train_jumpshot_head_hard",
+    title: "Mid-Air Predator",
+    description: "Сделать убийство в прыжке в голову (Jump Headshot) со снайперской винтовки за матч 10х10",
+    type: "TRAINING",
+    difficulty: "HARD",
+    rewardTokens: 0,
+    conditionKey: "manual_fun",
+    targetValue: 1
   }
 ];
 
